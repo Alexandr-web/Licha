@@ -15,43 +15,59 @@
   <script>
     const myChart = new Chart({
       canvasSelector: ".canvas",
-      background: "#222222",
+      background: "#ffffff",
       axisY: {
         line: {
-          color: "#c2c2c2",
+          color: "#EFF3F6",
           width: 1,
         },
-        color: "white",
-        fontSize: 12,
+        color: "#D9D9D9",
+        fontSize: 14,
       },
       axisX: {
         line: {
-          color: "#c2c2c2",
+          color: "#EFF3F6",
           width: 1,
         },
-        color: "white",
-        fontSize: 10,
+        color: "#D9D9D9",
+        fontSize: 14,
       },
       line: {
-        color: "#CC397B",
+        color: "#5E9BF2",
         width: 3,
       },
       cap: {
-        color: "#222222",
+        color: "#5E9BF2",
         radius: 5,
         stroke: {
-          color: "#CC397B",
+          color: "#ffffff",
           width: 2,
         },
       },
       data: [
-        { name: "Name 1", value: 0, },
-        { name: "Name 2", value: 100, },
-        { name: "Name 3", value: 20, },
-        { name: "Name 4", value: 50, },
-        { name: "Name 5", value: 0, },
+        { name: "Понедельник", value: 0, },
+        { name: "Вторник", value: 10, },
+        { name: "Среда", value: 5, },
+        { name: "Четверг", value: 3, },
+        { name: "Пятница", value: 3, },
+        { name: "Суббота", value: 4, },
+        { name: "Воскресенье", value: 1, },
       ],
     }).init();
+
+    // setInterval(() => {
+    //   if (myChart.data.length >= 10) {
+    //     myChart.data.splice(0, 1);
+    //   }
+
+    //   const num = +myChart.data[myChart.data.length - 1].name.match(/\d+$/);
+
+    //   myChart.data.push({
+    //     name: `Name ${num + 1}`,
+    //     value: Math.round(Math.random() * 1000),
+    //   });
+    //   myChart.update();
+    // }, 500);
   </script>
 </body>
 

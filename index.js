@@ -34,7 +34,7 @@ class Chart {
     // Содержит данные ординаты ({ x, y, width, height, value, })
     this.axisXData = [];
     // Расстояние между горизонтальной линией и ординатой
-    this.indentFromYAxisToGraph = 10;
+    this.indentFromXAxisToGraph = 15;
     // Расстояние между осями
     this.distanceBetweenAxles = 15;
     // Внутренние отступы графика (vertical, horizontal)
@@ -78,7 +78,7 @@ class Chart {
 
   // Устанавливает ординату
   _setYAxis() {
-    const canvasHeight = this._getCanvasSizes().height - this.padding.vertical;
+    const canvasHeight = this._getCanvasSizes().height - this.padding.vertical * 2;
     // Шаг, с которым рисуем текст по оси абсцисс
     const step = canvasHeight / (this.uniqueValues.length - 1);
 
@@ -88,7 +88,7 @@ class Chart {
       this.ctx.fillStyle = this.axisY.color;
 
       const text = this.ctx.measureText(value);
-      const y = index > 0 ? (step * index) : text.actualBoundingBoxAscent + this.padding.vertical;
+      const y = step * index + text.actualBoundingBoxAscent + this.padding.vertical;
       const x = this.padding.horizontal;
 
       this.axisYData.push({
@@ -117,7 +117,7 @@ class Chart {
   // Устанавливает абсциссу
   _setXAxis() {
     // Размеры холста с учетом внутренних отступов
-    const canvasWidth = this._getCanvasSizes().width - this.padding.horizontal;
+    const canvasWidth = this._getCanvasSizes().width - this.padding.horizontal * 2;
     const canvasHeight = this._getCanvasSizes().height - this.padding.vertical;
     // Шаг, с которым рисуем текст по оси абсцисс
     const step = canvasWidth / (this.data.length - 1);
@@ -128,9 +128,10 @@ class Chart {
       this.ctx.fillStyle = this.axisX.color;
 
       const text = this.ctx.measureText(name);
-      const x = index > 0 ? (step * index) : this.padding.horizontal + this._getMaxTextWidthAtYAxis() + text.width / 2;
-      const y = canvasHeight + text.actualBoundingBoxAscent + this.indentFromYAxisToGraph;
+      const x = step * index + text.width / 2 + this._getMaxTextWidthAtYAxis();
+      const y = canvasHeight + text.actualBoundingBoxAscent + this.indentFromXAxisToGraph;
 
+      // Рисуем текст
       this.axisXData.push({
         x,
         y,
@@ -140,8 +141,16 @@ class Chart {
         value,
       });
 
-      // Рисуем текст
-      this.ctx.fillText(name, x - text.width / 2, y);
+      switch (index) {
+        case 0:
+          this.ctx.fillText(name, x, y);
+          break;
+        case this.data.length - 1:
+          this.ctx.fillText(name, x - text.width, y);
+          break;
+        default:
+          this.ctx.fillText(name, x - text.width / 2, y);
+      }
     });
   }
 
@@ -155,7 +164,7 @@ class Chart {
 
         // Рисуем линию
         this.ctx.beginPath();
-        this.ctx.moveTo(findYAxisItem.x + this._getMaxTextWidthAtYAxis() + firstXAxisItem.width / 2, findYAxisItem.y);
+        this.ctx.moveTo(firstXAxisItem.x, findYAxisItem.y);
         this.ctx.strokeStyle = this.axisX.line.color;
         this.ctx.lineWidth = this.axisX.line.width;
         this.ctx.lineTo(lastXAxisItem.x, findYAxisItem.y);
@@ -185,13 +194,12 @@ class Chart {
 
   // Рисует основные линии графика
   _setChart() {
-    for (let i = 0; i < this.data.length; i++) {
-      const dataItem = this.data[i];
-      const nextDataItem = this.data[i + 1];
+    this.data.map(({ value, name, }, index) => {
+      const nextDataItem = this.data[index + 1];
       // Находим элемент из ординаты, подходящий по значению
-      const findAxisYItem = this.axisYData.find((axisYItem) => axisYItem.value === dataItem.value);
+      const findAxisYItem = this.axisYData.find((axisYItem) => axisYItem.value === value);
       // Находим элемент из абсциссы, подходящий по имени
-      const findAxisXItem = this.axisXData.find((axisXItem) => axisXItem.name === dataItem.name);
+      const findAxisXItem = this.axisXData.find((axisXItem) => axisXItem.name === name);
 
       // Начало линии
       this.ctx.beginPath();
@@ -213,7 +221,7 @@ class Chart {
 
       // Рисуем линию
       this.ctx.stroke();
-    }
+    });
   }
 
   // Устанавливает колпачок на конец линии
