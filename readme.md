@@ -13,7 +13,7 @@
 const myChart = new Chart({
   canvasSelector: ".canvas",
   background: "#222222",
-  vLegend: {
+  axisY: {
     line: {
       color: "#c2c2c2",
       width: 1,
@@ -21,7 +21,7 @@ const myChart = new Chart({
     color: "white",
     fontSize: 12,
   },
-  hLegend: {
+  axisX: {
     line: {
       color: "#c2c2c2",
       width: 1,
