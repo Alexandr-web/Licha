@@ -12,24 +12,41 @@
 ```js
 const myChart = new Chart({
   canvasSelector: ".canvas",
-  background: "black",
-  colorVerticalLegend: "white",
-  colorHorizontalLine: "#c2c2c2",
-  colorHorizontalLegend: "white",
+  background: "#222222",
+  vLegend: {
+    line: {
+      color: "#c2c2c2",
+      width: 1,
+    },
+    color: "white",
+    fontSize: 12,
+  },
+  hLegend: {
+    line: {
+      color: "#c2c2c2",
+      width: 1,
+    },
+    color: "white",
+    fontSize: 10,
+  },
   line: {
     color: "#CC397B",
     width: 3,
   },
   cap: {
-    color: "#CC005C",
-    radius: 3,
+    color: "#222222",
+    radius: 5,
+    stroke: {
+      color: "#CC397B",
+      width: 2,
+    },
   },
   data: [
     { name: "Name 1", value: 0, },
-    { name: "Name 2", value: 10, },
-    { name: "Name 3", value: 5, },
-    { name: "Name 4", value: 15, },
-    { name: "Name 5", value: 35, },
+    { name: "Name 2", value: 100, },
+    { name: "Name 3", value: 20, },
+    { name: "Name 4", value: 50, },
+    { name: "Name 5", value: 0, },
   ],
 }).init();
 ```

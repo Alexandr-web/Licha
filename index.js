@@ -5,20 +5,18 @@ class Chart {
     canvasSelector,
     data,
     background = "black",
-    colorVerticalLegend = "white",
-    colorHorizontalLegend = "white",
-    colorHorizontalLine = "#c2c2c2",
     line = {},
     cap = {},
+    hLegend = { fontSize: 12, color: "white", },
+    vLegend = { fontSize: 12, color: "white", },
+    padding = { vertical: 30, horizontal: 30, },
   }) {
+    // Объект с данными горизонтальной легенды
+    this.hLegend = hLegend;
+    // Объект с данными вертикальной легенды
+    this.vLegend = vLegend;
     // Задний фон графика
     this.background = background;
-    // Цвет горизонтальной линии
-    this.colorHorizontalLine = colorHorizontalLine;
-    // Цвет текста у вертикальной легенды
-    this.colorVerticalLegend = colorVerticalLegend;
-    // Цвет текста у горизонтальной легенды
-    this.colorHorizontalLegend = colorHorizontalLegend;
     // Объект с данными линии (цвет, ширина, ...)
     this.line = line;
     // Объект с данными графика ({ name, value, })
@@ -36,12 +34,11 @@ class Chart {
     // Содержит данные вертикальной легенды ({ x, y, width, height, value, })
     this.verticalLegend = [];
     // Расстояние между горизонтальной линией и вертикальной легендой
-    this.lineDistanceFromLegend = 8;
-    // Внутренние отступы графика
-    this.padding = {
-      vertical: 15,
-      horizontal: 15,
-    };
+    this.indentFromVerticalLegendToGraph = 10;
+    // Расстояние между осями
+    this.distanceBetweenAxles = 15;
+    // Внутренние отступы графика (vertical, horizontal)
+    this.padding = padding;
   }
 
   // Устанавливает размеры элементу canvas
@@ -81,18 +78,17 @@ class Chart {
 
   // Устанавливает вертикальную легенду
   _setVerticalLegend() {
-    // Высота холста с учетом внутренних отступов
-    const canvasHeight = this._getCanvasSizes().height - this.padding.vertical * 2;
+    const canvasHeight = this._getCanvasSizes().height - this.padding.vertical;
     // Шаг, с которым рисуем текст по оси абсцисс
-    const step = canvasHeight / this.uniqueValues.length;
+    const step = canvasHeight / (this.uniqueValues.length - 1);
 
     this.uniqueValues.map((value, index) => {
-      this.ctx.font = "12px Calibri";
+      this.ctx.font = `${this.vLegend.fontSize}px Calibri`;
       this.ctx.fontKerning = "none";
-      this.ctx.fillStyle = this.colorVerticalLegend;
+      this.ctx.fillStyle = this.vLegend.color;
 
       const text = this.ctx.measureText(value);
-      const y = step * index + step - text.actualBoundingBoxAscent;
+      const y = index > 0 ? (step * index) : text.actualBoundingBoxAscent + this.padding.vertical;
       const x = this.padding.horizontal;
 
       this.verticalLegend.push({
@@ -121,20 +117,19 @@ class Chart {
   // Устанавливает горизонтальную легенду
   _setHorizontalLegend() {
     // Размеры холста с учетом внутренних отступов
-    const canvasWidth = this._getCanvasSizes().width - this.padding.horizontal * 2;
-    const canvasHeight = this._getCanvasSizes().height - this.padding.vertical * 2;
+    const canvasWidth = this._getCanvasSizes().width - this.padding.horizontal;
+    const canvasHeight = this._getCanvasSizes().height - this.padding.vertical;
     // Шаг, с которым рисуем текст по оси абсцисс
-    const step = canvasWidth / this.data.length;
+    const step = canvasWidth / (this.data.length - 1);
 
     this.data.map(({ name, value, }, index) => {
-      this.ctx.font = "12px Calibri";
-      this.ctx.textBaseline = "middle";
+      this.ctx.font = `${this.hLegend.fontSize}px Calibri`;
       this.ctx.fontKerning = "none";
-      this.ctx.fillStyle = this.colorHorizontalLegend;
+      this.ctx.fillStyle = this.hLegend.color;
 
       const text = this.ctx.measureText(name);
-      const x = (step * index) + this.padding.horizontal + this._getMaxTextWidthAtVerticalLegend() + this.lineDistanceFromLegend;
-      const y = canvasHeight;
+      const x = index > 0 ? (step * index) : this.padding.horizontal + this._getMaxTextWidthAtVerticalLegend() + text.width / 2;
+      const y = canvasHeight + text.actualBoundingBoxAscent + this.indentFromVerticalLegendToGraph;
 
       this.horizontalLegend.push({
         x,
@@ -152,32 +147,46 @@ class Chart {
 
   // Устанавливает горизонтальные линии
   _setHorizontalLines() {
-    // Размеры холста с учетом внутренних отступов
-    const canvasHeight = this._getCanvasSizes().height - this.padding.vertical * 2;
-    const canvasWidth = this._getCanvasSizes().width - this.padding.horizontal * 2;
-    // Шаг, с которым рисуем линии по оси ординат
-    const step = canvasHeight / this.uniqueValues.length;
+    if (Object.keys(this.hLegend.line || {}).length) {
+      this.uniqueValues.map((value) => {
+        const findVerticalLegendItem = this.verticalLegend.find((verticalLegendItem) => verticalLegendItem.value === value);
+        const firstHorizontalLegendItem = this.horizontalLegend[0];
+        const lastHorizontalLegendItem = this.horizontalLegend[this.horizontalLegend.length - 1];
 
-    this.uniqueValues.map((value, index) => {
-      // Находим элемент из вертикальной легенды, подходящий по значению
-      const findVerticalLegendItem = this.verticalLegend.find((verticalLegendItem) => verticalLegendItem.value === value);
-      const y = (step * index) + (step - findVerticalLegendItem.height) - (findVerticalLegendItem.height / 2);
-      const x = this.padding.horizontal + this._getMaxTextWidthAtVerticalLegend() + this.lineDistanceFromLegend;
+        // Рисуем линию
+        this.ctx.beginPath();
+        this.ctx.moveTo(findVerticalLegendItem.x + this._getMaxTextWidthAtVerticalLegend() + firstHorizontalLegendItem.width / 2, findVerticalLegendItem.y);
+        this.ctx.strokeStyle = this.hLegend.line.color;
+        this.ctx.lineWidth = this.hLegend.line.width;
+        this.ctx.lineTo(lastHorizontalLegendItem.x, findVerticalLegendItem.y);
+        this.ctx.stroke();
+      });
+    }
+  }
 
-      // Рисуем линию
-      this.ctx.beginPath();
-      this.ctx.moveTo(x, y);
-      this.ctx.strokeStyle = this.colorHorizontalLine;
-      this.ctx.lineTo(canvasWidth, y);
-      this.ctx.stroke();
-    });
+  // Устанавливает вертикальные линии
+  _setVerticalLines() {
+    if (Object.keys(this.vLegend.line || {}).length) {
+      this.data.map(({ name, }) => {
+        const findHorizontalLegendItem = this.horizontalLegend.find((horizontalLegendItem) => horizontalLegendItem.name === name);
+        const firstVerticalLegendItem = this.verticalLegend[0];
+        const lastVerticalLegendItem = this.verticalLegend[this.verticalLegend.length - 1];
+
+        // Рисуем линию
+        this.ctx.beginPath();
+        this.ctx.moveTo(findHorizontalLegendItem.x, firstVerticalLegendItem.y);
+        this.ctx.strokeStyle = this.vLegend.line.color;
+        this.ctx.lineWidth = this.vLegend.line.width;
+        this.ctx.lineTo(findHorizontalLegendItem.x, lastVerticalLegendItem.y);
+        this.ctx.stroke();
+      });
+    }
   }
 
   // Рисует основные линии графика
-  _setLines() {
+  _setChart() {
     for (let i = 0; i < this.data.length; i++) {
       const dataItem = this.data[i];
-      const dataItemLine = dataItem.line || {};
       const nextDataItem = this.data[i + 1];
       // Находим элемент из вертикальной легенды, подходящий по значению
       const findVerticalLegendItem = this.verticalLegend.find((verticalLegendItem) => verticalLegendItem.value === dataItem.value);
@@ -187,8 +196,8 @@ class Chart {
       // Начало линии
       this.ctx.beginPath();
       this.ctx.moveTo(findHorizontalLegendItem.x, findVerticalLegendItem.y);
-      this.ctx.lineWidth = dataItemLine.width || this.line.width;
-      this.ctx.strokeStyle = dataItemLine.color || this.line.color;
+      this.ctx.lineWidth = this.line.width;
+      this.ctx.strokeStyle = this.line.color;
       this.ctx.lineJoin = "round"
 
       // Направлением линию только тогда, когда есть следующий элемент
@@ -210,7 +219,6 @@ class Chart {
   // Устанавливает колпачок на конец линии
   _setLinesCap() {
     this.data.map((dataItem) => {
-      const dataItemCap = dataItem.cap || {};
       // Находим элемент из горизонтальной легенды, подходящий по имени
       const findHorizontalLegendItem = this.horizontalLegend.find((horizontalLegendItem) => horizontalLegendItem.name === dataItem.name);
       // Находим элемент из вертикальной легенды, подходящий по значению
@@ -218,10 +226,17 @@ class Chart {
 
       // Рисуем колпачок
       this.ctx.beginPath();
-      this.ctx.arc(findHorizontalLegendItem.x, findVerticalLegendItem.y, dataItemCap.radius || this.cap.radius, Math.PI * 2, false);
-      this.ctx.fillStyle = dataItemCap.color || this.cap.color;
+      this.ctx.arc(findHorizontalLegendItem.x, findVerticalLegendItem.y, this.cap.radius, Math.PI * 2, false);
+      this.ctx.fillStyle = this.cap.color;
       this.ctx.fill();
-    })
+
+      // Установка обводки колпачка линии
+      if ("stroke" in this.cap) {
+        this.ctx.lineWidth = this.cap.stroke.width;
+        this.ctx.strokeStyle = this.cap.stroke.color;
+        this.ctx.stroke();
+      }
+    });
   }
 
   // Перерисовывает график при изменении размеров окна
@@ -239,8 +254,9 @@ class Chart {
     this._setCanvasStyles();
     this._setVerticalLegend();
     this._setHorizontalLegend();
+    this._setVerticalLines();
     this._setHorizontalLines();
-    this._setLines();
+    this._setChart();
     this._setLinesCap();
   }
 
@@ -251,36 +267,12 @@ class Chart {
     this._setCanvasStyles();
     this._setVerticalLegend();
     this._setHorizontalLegend();
+    this._setVerticalLines();
     this._setHorizontalLines();
-    this._setLines();
+    this._setChart();
     this._setLinesCap();
     this._drawWhenResizeScreen();
 
     return this;
   }
 }
-
-const myChart = new Chart({
-  canvasSelector: ".canvas",
-  background: "black",
-  colorVerticalLegend: "white",
-  colorHorizontalLegend: "white",
-  colorHorizontalLine: "#c2c2c2",
-  line: {
-    color: "#CC397B",
-    width: 3,
-  },
-  cap: {
-    color: "#CC005C",
-    radius: 3,
-  },
-  data: [
-    { name: "Name 1", value: 0, },
-    { name: "Name 2", value: 10, },
-    { name: "Name 3", value: 5, },
-    { name: "Name 4", value: 15, },
-    { name: "Name 5", value: 35, },
-    { name: "Name 6", value: 35, },
-    { name: "Name 7", value: 35, },
-  ],
-}).init();
