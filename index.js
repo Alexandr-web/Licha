@@ -95,7 +95,7 @@ class Chart {
     const step = canvasHeight / (this.uniqueValues.length - 1);
 
     this.uniqueValues.map((value, index) => {
-      this.ctx.font = `${this.axisY.fontSize}px Calibri`;
+      this.ctx.font = `${this.axisY.fontSize}px Arial`;
       this.ctx.fontKerning = "none";
       this.ctx.fillStyle = this.axisY.color;
 
@@ -160,7 +160,7 @@ class Chart {
           const step = canvasWidth / (this._getMaxGroup().length - 1);
           const { name, value, } = findGroupItem;
 
-          this.ctx.font = `${this.axisX.fontSize}px Calibri`;
+          this.ctx.font = `400 ${this.axisX.fontSize}px Arial, sans-serif`;
           this.ctx.fontKerning = "none";
           this.ctx.fillStyle = this.axisX.color;
 
@@ -254,7 +254,6 @@ class Chart {
 
         // Начало линии
         this.ctx.beginPath();
-        // Начало линии
         this.ctx.moveTo(findAxisXItem.x, findAxisYItem.y);
         this.ctx.lineWidth = groupLine.width || this.line.width;
         this.ctx.strokeStyle = groupLine.color || this.line.color;
@@ -279,24 +278,36 @@ class Chart {
   // Устанавливает колпачок на конец линии
   _setLinesCap() {
     for (let group in this.data) {
-      const { data: groupData, cap: groupCap = {}, } = this.data[group];
+      const {
+        data: groupData,
+        cap: groupCap = {},
+      } = this.data[group];
 
       groupData.map(({ name, value, }) => {
         // Находим элемент из абсциссы, подходящий по имени
         const findAxisXItem = this.axisXData.find((axisXItem) => axisXItem.name === name && axisXItem.group === group);
         // Находим элемент из ординаты, подходящий по значению
         const findAxisYItem = this.axisYData.find((axisYItem) => axisYItem.value === value);
+        const dataCapStroke = groupCap.stroke || this.cap.stroke;
 
         // Рисуем колпачок
         this.ctx.beginPath();
+
+        if (this.cap.shadow) {
+          this.ctx.shadowOffsetX = 0;
+          this.ctx.shadowOffsetY = 0;
+          this.ctx.shadowColor = this.cap.shadow.color;
+          this.ctx.shadowBlur = this.cap.shadow.blur;
+        }
+
         this.ctx.arc(findAxisXItem.x, findAxisYItem.y, groupCap.radius || this.cap.radius, Math.PI * 2, false);
         this.ctx.fillStyle = groupCap.color || this.cap.color;
         this.ctx.fill();
 
         // Установка обводки колпачка линии
-        if ("stroke" in this.cap) {
-          this.ctx.lineWidth = this.cap.stroke.width;
-          this.ctx.strokeStyle = this.cap.stroke.color;
+        if (dataCapStroke) {
+          this.ctx.lineWidth = dataCapStroke.width;
+          this.ctx.strokeStyle = dataCapStroke.color;
           this.ctx.stroke();
         }
       });
