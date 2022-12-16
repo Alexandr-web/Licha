@@ -3,42 +3,46 @@
 class Chart {
   constructor({
     canvasSelector,
-    data,
     background = "black",
+    data = {},
     line = {},
     cap = {},
     axisY = { fontSize: 12, color: "white", },
     axisX = { fontSize: 12, color: "white", },
-    padding = { vertical: 30, horizontal: 30, },
   }) {
-    // Объект с данными ординаты
-    this.axisX = axisX;
     // Объект с данными абсциссы
+    this.axisX = axisX;
+    // Объект с данными ординаты
     this.axisY = axisY;
     // Задний фон графика
     this.background = background;
-    // Объект с данными линии (цвет, ширина, ...)
+    // Объект с данными линии
     this.line = line;
-    // Объект с данными графика ({ name, value, })
+    // Объект с данными графика
     this.data = data;
-    // Объект с данными колпачка линии (цвет, радиус, ...)
+    // Объект с данными колпачка линии
     this.cap = cap;
     // HTML элемент canvas
     this.canvasElement = document.querySelector(canvasSelector);
     // Контекст элемента canvas
     this.ctx = this.canvasElement.getContext("2d");
-    // Содержит уникальные значения данных графика (0, 100, 200, ...)
+    // Содержит уникальные значения на оси ординат
     this.uniqueValues = [];
-    // Содержит данные абсциссы ({ name, x, y, width, height, value, })
+    // Содержит уникальные названия на оси абсцисс
+    this.uniqueNames = [];
+    // Содержит объекты данных абсциссы
     this.axisYData = [];
-    // Содержит данные ординаты ({ x, y, width, height, value, })
+    // Содержит объекты данных ординаты
     this.axisXData = [];
-    // Расстояние между горизонтальной линией и ординатой
+    // Расстояние между горизонтальной линией и графиком
     this.indentFromXAxisToGraph = 15;
     // Расстояние между осями
     this.distanceBetweenAxles = 15;
-    // Внутренние отступы графика (vertical, horizontal)
-    this.padding = padding;
+    // Внутренние отступы графика
+    this.padding = {
+      vertical: 30,
+      horizontal: 30,
+    };
   }
 
   // Устанавливает размеры элементу canvas
@@ -49,12 +53,20 @@ class Chart {
     this.canvasElement.height = offsetHeight;
   }
 
-  /**
-   * Записывает уникальные значения данных графика
-   * и сортирует их от большего к меньшему
-   */
+  // Записывает уникальные данные осей графика
   _setUniqueValues() {
-    this.uniqueValues = [...new Set(this.data.map(({ value, }) => value))].sort((val1, val2) => val2 - val1);
+    const values = [];
+    const names = [];
+
+    for (let group in this.data) {
+      const groupData = this.data[group].data;
+
+      names.push(...groupData.map(({ name, }) => name));
+      values.push(...groupData.map(({ value, }) => value));
+    }
+
+    this.uniqueValues = [...new Set(values)].sort((val1, val2) => val2 - val1);
+    this.uniqueNames = [...new Set(names)];
   }
 
   /**
@@ -87,12 +99,13 @@ class Chart {
       this.ctx.fontKerning = "none";
       this.ctx.fillStyle = this.axisY.color;
 
-      const text = this.ctx.measureText(value);
-      const y = step * index + text.actualBoundingBoxAscent + this.padding.vertical;
+      const text = this.ctx.measureText(value); // Здесь хранятся данные о текущем тексте
+      const y = (step * index) + (text.actualBoundingBoxAscent + this.padding.vertical);
       const x = this.padding.horizontal;
 
+      // Добавляем элемент оси ординат в массив
       this.axisYData.push({
-        y: y - text.actualBoundingBoxAscent / 2,
+        y: y - text.actualBoundingBoxAscent / 2, // Ставим по середине
         x,
         width: text.width,
         height: text.actualBoundingBoxAscent,
@@ -114,42 +127,74 @@ class Chart {
     return axisYItem.width;
   }
 
+  /**
+   * Возвращает самую длинную группу (учитываются названия)
+   * @returns {array} масси (группа)
+   */
+  _getMaxGroup() {
+    let maxGroup = [];
+
+    for (let group in this.data) {
+      if (this.data[group].data.length > maxGroup.length) {
+        maxGroup = this.data[group].data;
+      }
+    }
+
+    return maxGroup;
+  }
+
   // Устанавливает абсциссу
   _setXAxis() {
     // Размеры холста с учетом внутренних отступов
-    const canvasWidth = this._getCanvasSizes().width - this.padding.horizontal * 2;
+    const canvasWidth = this._getCanvasSizes().width - (this.padding.horizontal * 2 + this._getMaxTextWidthAtYAxis());
     const canvasHeight = this._getCanvasSizes().height - this.padding.vertical;
-    // Шаг, с которым рисуем текст по оси абсцисс
-    const step = canvasWidth / (this.data.length - 1);
 
-    this.data.map(({ name, value, }, index) => {
-      this.ctx.font = `${this.axisX.fontSize}px Calibri`;
-      this.ctx.fontKerning = "none";
-      this.ctx.fillStyle = this.axisX.color;
+    this.uniqueNames.map((name) => {
+      for (let group in this.data) {
+        const groupData = this.data[group].data;
+        const findGroupItem = groupData.find((groupItem) => groupItem.name === name);
+        const findGroupIndex = groupData.findIndex((groupItem) => groupItem.name === name);
 
-      const text = this.ctx.measureText(name);
-      const x = step * index + text.width / 2 + this._getMaxTextWidthAtYAxis();
-      const y = canvasHeight + text.actualBoundingBoxAscent + this.indentFromXAxisToGraph;
+        if (findGroupItem) {
+          // Шаг, с которым рисуем текст по оси абсцисс
+          const step = canvasWidth / (this._getMaxGroup().length - 1);
+          const { name, value, } = findGroupItem;
 
-      // Рисуем текст
-      this.axisXData.push({
-        x,
-        y,
-        name,
-        width: text.width,
-        height: text.actualBoundingBoxAscent,
-        value,
-      });
+          this.ctx.font = `${this.axisX.fontSize}px Calibri`;
+          this.ctx.fontKerning = "none";
+          this.ctx.fillStyle = this.axisX.color;
 
-      switch (index) {
-        case 0:
-          this.ctx.fillText(name, x, y);
-          break;
-        case this.data.length - 1:
-          this.ctx.fillText(name, x - text.width, y);
-          break;
-        default:
-          this.ctx.fillText(name, x - text.width / 2, y);
+
+          const text = this.ctx.measureText(name); // Здесь хранятся данные о текущем тексте
+          const x = (step * findGroupIndex) + (text.width / 2 + this._getMaxTextWidthAtYAxis());
+          const y = canvasHeight + text.actualBoundingBoxAscent + this.indentFromXAxisToGraph;
+
+          // Рисуем текст
+          this.axisXData.push({
+            x,
+            y,
+            name,
+            width: text.width,
+            height: text.actualBoundingBoxAscent,
+            value,
+            group,
+          });
+
+          // Определяем его расположение на графике в зависимости от индекса
+          switch (findGroupIndex) {
+            case 0:
+              // С правой стороны
+              this.ctx.fillText(name, x, y);
+              break;
+            case this._getMaxGroup().length - 1:
+              // С левой стороны
+              this.ctx.fillText(name, x - text.width, y);
+              break;
+            default:
+              // По середине
+              this.ctx.fillText(name, x - text.width / 2, y);
+          }
+        }
       }
     });
   }
@@ -176,7 +221,7 @@ class Chart {
   // Устанавливает вертикальные линии
   _setVerticalLines() {
     if (Object.keys(this.axisY.line || {}).length) {
-      this.data.map(({ name, }) => {
+      this._getMaxGroup().map(({ name, }) => {
         const findAxisXItem = this.axisXData.find((axisXDataItem) => axisXDataItem.name === name);
         const firstAxisYItem = this.axisYData[0];
         const lastAxisYItem = this.axisYData[this.axisYData.length - 1];
@@ -192,59 +237,70 @@ class Chart {
     }
   }
 
-  // Рисует основные линии графика
+  // Рисует график
   _setChart() {
-    this.data.map(({ value, name, }, index) => {
-      const nextDataItem = this.data[index + 1];
-      // Находим элемент из ординаты, подходящий по значению
-      const findAxisYItem = this.axisYData.find((axisYItem) => axisYItem.value === value);
-      // Находим элемент из абсциссы, подходящий по имени
-      const findAxisXItem = this.axisXData.find((axisXItem) => axisXItem.name === name);
+    for (let group in this.data) {
+      const {
+        data: groupData,
+        line: groupLine = {},
+      } = this.data[group];
 
-      // Начало линии
-      this.ctx.beginPath();
-      this.ctx.moveTo(findAxisXItem.x, findAxisYItem.y);
-      this.ctx.lineWidth = this.line.width;
-      this.ctx.strokeStyle = this.line.color;
-      this.ctx.lineJoin = "round";
+      groupData.map(({ value, name, group, }, index) => {
+        const nextDataItem = groupData.find((groupDataItem, idx) => groupDataItem.group === group && idx > index);
+        // Находим элемент из ординаты, подходящий по значению
+        const findAxisYItem = this.axisYData.find((axisYItem) => axisYItem.value === value);
+        // Находим элемент из абсциссы, подходящий по имени
+        const findAxisXItem = this.axisXData.find((axisXItem) => axisXItem.name === name);
 
-      // Направлением линию только тогда, когда есть следующий элемент
-      if (nextDataItem) {
-        // Находим следующий элемент из ординаты, подходящий по значению
-        const findNextAxisYItem = this.axisYData.find((nextAxisYItem) => nextAxisYItem.value === nextDataItem.value);
-        // Находим следующий элемент из абсциссы, подходящий по имени
-        const findNextAxisXItem = this.axisXData.find((nextAxisXItem) => nextAxisXItem.name === nextDataItem.name);
+        // Начало линии
+        this.ctx.beginPath();
+        // Начало линии
+        this.ctx.moveTo(findAxisXItem.x, findAxisYItem.y);
+        this.ctx.lineWidth = groupLine.width || this.line.width;
+        this.ctx.strokeStyle = groupLine.color || this.line.color;
+        this.ctx.lineJoin = "round";
 
-        // Направляем линию к следующему элементу
-        this.ctx.lineTo(findNextAxisXItem.x, findNextAxisYItem.y);
-      }
+        if (nextDataItem) {
+          // Находим следующий элемент из ординаты, подходящий по значению
+          const findNextAxisYItem = this.axisYData.find((nextAxisYItem) => nextAxisYItem.value === nextDataItem.value);
+          // Находим следующий элемент из абсциссы, подходящий по имени
+          const findNextAxisXItem = this.axisXData.find((nextAxisXItem) => nextAxisXItem.name === nextDataItem.name);
 
-      // Рисуем линию
-      this.ctx.stroke();
-    });
+          // Направляем линию к следующему элементу
+          this.ctx.lineTo(findNextAxisXItem.x, findNextAxisYItem.y);
+        }
+
+        // Рисуем линию
+        this.ctx.stroke();
+      });
+    }
   }
 
   // Устанавливает колпачок на конец линии
   _setLinesCap() {
-    this.data.map(({ name, value, }) => {
-      // Находим элемент из абсциссы, подходящий по имени
-      const findAxisXItem = this.axisXData.find((axisXItem) => axisXItem.name === name);
-      // Находим элемент из ординаты, подходящий по значению
-      const findAxisYItem = this.axisYData.find((axisYItem) => axisYItem.value === value);
+    for (let group in this.data) {
+      const { data: groupData, cap: groupCap = {}, } = this.data[group];
 
-      // Рисуем колпачок
-      this.ctx.beginPath();
-      this.ctx.arc(findAxisXItem.x, findAxisYItem.y, this.cap.radius, Math.PI * 2, false);
-      this.ctx.fillStyle = this.cap.color;
-      this.ctx.fill();
+      groupData.map(({ name, value, }) => {
+        // Находим элемент из абсциссы, подходящий по имени
+        const findAxisXItem = this.axisXData.find((axisXItem) => axisXItem.name === name && axisXItem.group === group);
+        // Находим элемент из ординаты, подходящий по значению
+        const findAxisYItem = this.axisYData.find((axisYItem) => axisYItem.value === value);
 
-      // Установка обводки колпачка линии
-      if ("stroke" in this.cap) {
-        this.ctx.lineWidth = this.cap.stroke.width;
-        this.ctx.strokeStyle = this.cap.stroke.color;
-        this.ctx.stroke();
-      }
-    });
+        // Рисуем колпачок
+        this.ctx.beginPath();
+        this.ctx.arc(findAxisXItem.x, findAxisYItem.y, groupCap.radius || this.cap.radius, Math.PI * 2, false);
+        this.ctx.fillStyle = groupCap.color || this.cap.color;
+        this.ctx.fill();
+
+        // Установка обводки колпачка линии
+        if ("stroke" in this.cap) {
+          this.ctx.lineWidth = this.cap.stroke.width;
+          this.ctx.strokeStyle = this.cap.stroke.color;
+          this.ctx.stroke();
+        }
+      });
+    }
   }
 
   // Перерисовывает график при изменении размеров окна

@@ -21,7 +21,7 @@
           color: "#EFF3F6",
           width: 1,
         },
-        color: "#D9D9D9",
+        color: "#222222",
         fontSize: 14,
       },
       axisX: {
@@ -29,7 +29,7 @@
           color: "#EFF3F6",
           width: 1,
         },
-        color: "#D9D9D9",
+        color: "#222222",
         fontSize: 14,
       },
       line: {
@@ -44,30 +44,56 @@
           width: 2,
         },
       },
-      data: [
-        { name: "Понедельник", value: 0, },
-        { name: "Вторник", value: 10, },
-        { name: "Среда", value: 5, },
-        { name: "Четверг", value: 3, },
-        { name: "Пятница", value: 3, },
-        { name: "Суббота", value: 4, },
-        { name: "Воскресенье", value: 1, },
-      ],
+      data: {
+        group1: {
+          data: [
+            { name: "Понедельник", value: 0, },
+            { name: "Вторник", value: 5, },
+            { name: "Среда", value: 10, },
+            { name: "Четверг", value: 15, },
+            { name: "Пятница", value: 20, },
+            { name: "Суббота", value: 25, },
+            { name: "Воскресенье", value: 30, },
+          ]
+        },
+        group2: {
+          line: {
+            color: "blue",
+          },
+          cap: {
+            radius: 5,
+            color: "blue",
+          },
+          data: [
+            { name: "Понедельник", value: 20, },
+            { name: "Вторник", value: 30, },
+            { name: "Среда", value: 25, },
+            { name: "Четверг", value: 16, },
+            { name: "Пятница", value: 0, },
+            { name: "Суббота", value: 5, },
+            { name: "Воскресенье", value: 0, },
+          ],
+        },
+        group3: {
+          line: {
+            color: "red",
+          },
+          cap: {
+            radius: 5,
+            color: "red",
+          },
+          data: [
+            { name: "Понедельник", value: 3130, },
+            { name: "Вторник", value: 2352, },
+            { name: "Среда", value: 204, },
+            { name: "Четверг", value: 1025, },
+            { name: "Пятница", value: 130, },
+            { name: "Суббота", value: 52, },
+            { name: "Воскресенье", value: 10, },
+          ],
+        },
+      },
     }).init();
-
-    // setInterval(() => {
-    //   if (myChart.data.length >= 10) {
-    //     myChart.data.splice(0, 1);
-    //   }
-
-    //   const num = +myChart.data[myChart.data.length - 1].name.match(/\d+$/);
-
-    //   myChart.data.push({
-    //     name: `Name ${num + 1}`,
-    //     value: Math.round(Math.random() * 1000),
-    //   });
-    //   myChart.update();
-    // }, 500);
   </script>
 </body>
 

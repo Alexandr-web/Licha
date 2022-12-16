@@ -11,8 +11,7 @@
 }
 
 .canvas {
-  width: 60vw;
-  height: 60vh;
-  margin: 15px auto;
+  width: 100vw;
+  height: 100vh;
   display: block;
 }
