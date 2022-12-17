@@ -152,48 +152,47 @@ class Chart {
     const canvasHeight = this._getCanvasSizes().height;
 
     this.uniqueNames.map((name, index) => {
+      this.ctx.font = `400 ${this.axisX.fontSize}px Arial, sans-serif`;
+      this.ctx.fontKerning = "none";
+      this.ctx.fillStyle = this.axisX.color;
+
+      const text = this.ctx.measureText(name); // Здесь хранятся данные о текущем тексте
+      const x = step * index + startPoint;
+      const y = canvasHeight - text.actualBoundingBoxAscent;
+
+      // Проверяем в каких группах находится это название
       for (let group in this.data) {
         const groupData = this.data[group].data;
-        const findGroupItem = groupData.find((groupItem) => groupItem.name === name);
-        const findGroupIndex = groupData.findIndex((groupItem) => groupItem.name === name);
 
-        if (findGroupItem) {
-          const { name, value, } = findGroupItem;
-
-          this.ctx.font = `400 ${this.axisX.fontSize}px Arial, sans-serif`;
-          this.ctx.fontKerning = "none";
-          this.ctx.fillStyle = this.axisX.color;
-
-          const text = this.ctx.measureText(name); // Здесь хранятся данные о текущем тексте
-          const x = step * index + startPoint;
-          const y = canvasHeight - text.actualBoundingBoxAscent;
-
-          // Добавляем элемент оси абсцисс в массив
-          this.axisXData.push({
-            x,
-            y,
-            name,
-            width: text.width,
-            height: text.actualBoundingBoxAscent,
-            value,
-            group,
-          });
-
-          // Рисуем текст на графике в зависимости от индекса
-          switch (findGroupIndex) {
-            case 0:
-              // С правой стороны
-              this.ctx.fillText(name, x, y);
-              break;
-            case this._getMaxGroup().length - 1:
-              // С левой стороны
-              this.ctx.fillText(name, x - text.width, y);
-              break;
-            default:
-              // По середине
-              this.ctx.fillText(name, x - text.width / 2, y);
+        groupData.map((groupDataItem) => {
+          if (groupDataItem.name === name) {
+            // Добавление элемента оси абсцисс в массив
+            this.axisXData.push({
+              x,
+              y,
+              name,
+              value: groupDataItem.value,
+              width: text.width,
+              height: text.actualBoundingBoxAscent,
+              group: group,
+            });
           }
-        }
+        });
+      }
+
+      // Рисуем текст на графике в зависимости от индекса
+      switch (index) {
+        case 0:
+          // С правой стороны
+          this.ctx.fillText(name, x, y);
+          break;
+        case this.uniqueNames.length - 1:
+          // С левой стороны
+          this.ctx.fillText(name, x - text.width, y);
+          break;
+        default:
+          // По середине
+          this.ctx.fillText(name, x - text.width / 2, y);
       }
     });
   }
@@ -269,6 +268,7 @@ class Chart {
         }
 
         // Рисуем линию
+        this.ctx.closePath();
         this.ctx.stroke();
       });
     }
