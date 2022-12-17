@@ -35,13 +35,15 @@ class Chart {
     // Содержит объекты данных ординаты
     this.axisXData = [];
     // Расстояние между горизонтальной линией и графиком
-    this.indentFromXAxisToGraph = 15;
+    this.indentFromXAxisToGraph = 25;
     // Расстояние между осями
-    this.distanceBetweenAxles = 15;
+    this.distanceBetweenAxles = 10;
     // Внутренние отступы графика
     this.padding = {
-      vertical: 30,
-      horizontal: 30,
+      top: 20,
+      left: 20,
+      right: 20,
+      bottom: 10,
     };
   }
 
@@ -90,30 +92,29 @@ class Chart {
 
   // Устанавливает ординату
   _setYAxis() {
-    const canvasHeight = this._getCanvasSizes().height - this.padding.vertical * 2;
-    // Шаг, с которым рисуем текст по оси абсцисс
-    const step = canvasHeight / (this.uniqueValues.length - 1);
+    const startPoint = this.padding.top;
+    const endPoint = this._getCanvasSizes().height - startPoint - this.padding.bottom - this.indentFromXAxisToGraph;
+    const step = endPoint / (this.uniqueValues.length - 1);
+
+    this.ctx.font = `${this.axisY.fontSize}px Arial`;
+    this.ctx.fontKerning = "none";
+    this.ctx.fillStyle = this.axisY.color;
 
     this.uniqueValues.map((value, index) => {
-      this.ctx.font = `${this.axisY.fontSize}px Arial`;
-      this.ctx.fontKerning = "none";
-      this.ctx.fillStyle = this.axisY.color;
-
       const text = this.ctx.measureText(value); // Здесь хранятся данные о текущем тексте
-      const y = (step * index) + (text.actualBoundingBoxAscent + this.padding.vertical);
-      const x = this.padding.horizontal;
+      const y = step * index + startPoint;
+      const x = this.padding.left;
 
       // Добавляем элемент оси ординат в массив
       this.axisYData.push({
-        y: y - text.actualBoundingBoxAscent / 2, // Ставим по середине
+        y,
         x,
         width: text.width,
         height: text.actualBoundingBoxAscent,
         value,
       });
 
-      // Рисуем текст
-      this.ctx.fillText(value, this.padding.horizontal, y);
+      this.ctx.fillText(value, x, y + text.actualBoundingBoxAscent / 2);
     });
   }
 
@@ -129,7 +130,7 @@ class Chart {
 
   /**
    * Возвращает самую длинную группу (учитываются названия)
-   * @returns {array} масси (группа)
+   * @returns {array} массив (группа)
    */
   _getMaxGroup() {
     let maxGroup = [];
@@ -145,31 +146,29 @@ class Chart {
 
   // Устанавливает абсциссу
   _setXAxis() {
-    // Размеры холста с учетом внутренних отступов
-    const canvasWidth = this._getCanvasSizes().width - (this.padding.horizontal * 2 + this._getMaxTextWidthAtYAxis());
-    const canvasHeight = this._getCanvasSizes().height - this.padding.vertical;
+    const startPoint = this.padding.left + this._getMaxTextWidthAtYAxis() + this.distanceBetweenAxles;
+    const endPoint = this._getCanvasSizes().width - startPoint - this.padding.right;
+    const step = endPoint / (this.uniqueNames.length - 1);
+    const canvasHeight = this._getCanvasSizes().height;
 
-    this.uniqueNames.map((name) => {
+    this.uniqueNames.map((name, index) => {
       for (let group in this.data) {
         const groupData = this.data[group].data;
         const findGroupItem = groupData.find((groupItem) => groupItem.name === name);
         const findGroupIndex = groupData.findIndex((groupItem) => groupItem.name === name);
 
         if (findGroupItem) {
-          // Шаг, с которым рисуем текст по оси абсцисс
-          const step = canvasWidth / (this._getMaxGroup().length - 1);
           const { name, value, } = findGroupItem;
 
           this.ctx.font = `400 ${this.axisX.fontSize}px Arial, sans-serif`;
           this.ctx.fontKerning = "none";
           this.ctx.fillStyle = this.axisX.color;
 
-
           const text = this.ctx.measureText(name); // Здесь хранятся данные о текущем тексте
-          const x = (step * findGroupIndex) + (text.width / 2 + this._getMaxTextWidthAtYAxis());
-          const y = canvasHeight + text.actualBoundingBoxAscent + this.indentFromXAxisToGraph;
+          const x = step * index + startPoint;
+          const y = canvasHeight - text.actualBoundingBoxAscent;
 
-          // Рисуем текст
+          // Добавляем элемент оси абсцисс в массив
           this.axisXData.push({
             x,
             y,
@@ -180,7 +179,7 @@ class Chart {
             group,
           });
 
-          // Определяем его расположение на графике в зависимости от индекса
+          // Рисуем текст на графике в зависимости от индекса
           switch (findGroupIndex) {
             case 0:
               // С правой стороны
