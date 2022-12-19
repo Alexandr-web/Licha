@@ -1,5 +1,77 @@
 "use strict";
 
+class WindowInfoBlock {
+  constructor({
+    color = "rgba(34,34,34, .8)",
+    colorText = "white",
+    colorLine = "white",
+    width = 150,
+    height = 50,
+    ctx,
+    fontSize = 12,
+    padding = {
+      vertical: 10,
+      horizontal: 10,
+      fromCap: 10,
+    },
+  }) {
+    // Цвет окна
+    this.ctx = ctx;
+    // Цвет содержимого
+    this.color = color;
+    // Цвет линии
+    this.colorText = colorText;
+    // Ширина окна
+    this.width = width;
+    // Высота окна
+    this.height = height;
+    // Контекст canvas
+    this.padding = padding;
+    // Размер шрифта
+    this.fontSize = fontSize;
+    // Внутренние отступы
+    this.colorLine = colorLine;
+  }
+
+  /**
+   * Рисует блок
+   * @param {number} x позиция по оси абсцисс
+   * @param {number} y позиция по оси ординат
+   */
+  drawWindow(x, y) {
+    this.ctx.fillStyle = this.color;
+    this.ctx.fillRect(x, y, this.width, this.height);
+  }
+
+  /**
+   * Рисует текст
+   * @param {string|number} value значение текста
+   * @param {number} x позиция по оси абсцисс
+   * @param {number} y позиция по оси ординат
+   */
+  drawContains(value, x, y) {
+    this.ctx.font = `400 ${this.fontSize}px Arial, sans-serif`;
+    this.ctx.fontKerning = "none";
+    this.ctx.fillStyle = this.colorText;
+    this.ctx.fillText(value, x, y);
+  }
+
+  /**
+   * Рисует линию группы
+   * @param {object} start Объект, содержащий позиции начала линии
+   * @param {object} to Объект, содержащий позиции направления линии
+   */
+  drawGroupLine({ start: { x: startX, y: startY, }, to: { x: toX, y: toY, } }) {
+    this.ctx.beginPath();
+    this.ctx.strokeStyle = this.colorLine;
+    this.ctx.lineWidth = 2;
+    this.ctx.lineCap = "round";
+    this.ctx.moveTo(startX, startY);
+    this.ctx.lineTo(toX, toY);
+    this.ctx.stroke();
+  }
+}
+
 class Chart {
   constructor({
     canvasSelector,
@@ -34,10 +106,24 @@ class Chart {
     this.axisYData = [];
     // Содержит объекты данных ординаты
     this.axisXData = [];
+    // Содержит объекты данных колпачка линии
+    this.capsData = [];
     // Расстояние между горизонтальной линией и графиком
     this.indentFromXAxisToGraph = 25;
     // Расстояние между осями
     this.distanceBetweenAxles = 10;
+    // Содержит данные блока информации
+    this.windowInfoBlock = {
+      color: "rgba(34,34,34, .8)",
+      colorText: "white",
+      width: 150,
+      height: 50,
+      padding: {
+        vertical: 10,
+        horizontal: 10,
+        fromCap: 10,
+      },
+    };
     // Внутренние отступы графика
     this.padding = {
       top: 20,
@@ -128,22 +214,6 @@ class Chart {
     return axisYItem.width;
   }
 
-  /**
-   * Возвращает самую длинную группу (учитываются названия)
-   * @returns {array} массив (группа)
-   */
-  _getMaxGroup() {
-    let maxGroup = [];
-
-    for (let group in this.data) {
-      if (this.data[group].data.length > maxGroup.length) {
-        maxGroup = this.data[group].data;
-      }
-    }
-
-    return maxGroup;
-  }
-
   // Устанавливает абсциссу
   _setXAxis() {
     const startPoint = this.padding.left + this._getMaxTextWidthAtYAxis() + this.distanceBetweenAxles;
@@ -210,6 +280,7 @@ class Chart {
         this.ctx.moveTo(firstXAxisItem.x, findYAxisItem.y);
         this.ctx.strokeStyle = this.axisX.line.color;
         this.ctx.lineWidth = this.axisX.line.width;
+        this.ctx.lineCap = "round";
         this.ctx.lineTo(lastXAxisItem.x, findYAxisItem.y);
         this.ctx.stroke();
       });
@@ -219,7 +290,7 @@ class Chart {
   // Устанавливает вертикальные линии
   _setVerticalLines() {
     if (Object.keys(this.axisY.line || {}).length) {
-      this._getMaxGroup().map(({ name, }) => {
+      this.uniqueNames.map((name) => {
         const findAxisXItem = this.axisXData.find((axisXDataItem) => axisXDataItem.name === name);
         const firstAxisYItem = this.axisYData[0];
         const lastAxisYItem = this.axisYData[this.axisYData.length - 1];
@@ -229,6 +300,7 @@ class Chart {
         this.ctx.moveTo(findAxisXItem.x, firstAxisYItem.y);
         this.ctx.strokeStyle = this.axisY.line.color;
         this.ctx.lineWidth = this.axisY.line.width;
+        this.ctx.lineCap = "round";
         this.ctx.lineTo(findAxisXItem.x, lastAxisYItem.y);
         this.ctx.stroke();
       });
@@ -268,7 +340,6 @@ class Chart {
         }
 
         // Рисуем линию
-        this.ctx.closePath();
         this.ctx.stroke();
       });
     }
@@ -282,14 +353,17 @@ class Chart {
         cap: groupCap = {},
       } = this.data[group];
 
-      groupData.map(({ name, value, }) => {
+      groupData.map(({ name, value, cap = {}, }) => {
         // Находим элемент из абсциссы, подходящий по имени
         const findAxisXItem = this.axisXData.find((axisXItem) => axisXItem.name === name && axisXItem.group === group);
         // Находим элемент из ординаты, подходящий по значению
         const findAxisYItem = this.axisYData.find((axisYItem) => axisYItem.value === value);
-        const dataCapStroke = groupCap.stroke || this.cap.stroke;
+        const dataCapStroke = cap.stroke || groupCap.stroke || this.cap.stroke;
+        const x = findAxisXItem.x;
+        const y = findAxisYItem.y;
+        const radius = cap.radius || groupCap.radius || this.cap.radius;
+        const color = cap.color || groupCap.color || this.cap.color;
 
-        // Рисуем колпачок
         this.ctx.beginPath();
 
         if (this.cap.shadow) {
@@ -299,8 +373,19 @@ class Chart {
           this.ctx.shadowBlur = this.cap.shadow.blur;
         }
 
-        this.ctx.arc(findAxisXItem.x, findAxisYItem.y, groupCap.radius || this.cap.radius, Math.PI * 2, false);
-        this.ctx.fillStyle = groupCap.color || this.cap.color;
+        // Добавляем данные колпачка в массив
+        this.capsData.push({
+          x,
+          y,
+          group,
+          value,
+          name,
+          radius,
+        });
+
+        // Рисуем колпачок
+        this.ctx.arc(x, y, radius, Math.PI * 2, false);
+        this.ctx.fillStyle = color;
         this.ctx.fill();
 
         // Установка обводки колпачка линии
@@ -316,6 +401,78 @@ class Chart {
   // Перерисовывает график при изменении размеров окна
   _drawWhenResizeScreen() {
     window.addEventListener("resize", () => this.update());
+  }
+
+  /**
+   * Рисует окно с информацией активного элемента
+   * @param {string} group Название группы элемента
+   * @param {string} value значение элемента
+   * @param {string} name название элемента
+   * @param {number} x позиция элемента относительно оси абсцисс
+   * @param {number} y позиция элемента относительно оси ординат
+   * @param {number} radius радиус колпачка линии
+   */
+  _drawWindowInfoBlock({ group, value, name, x, y, radius, }) {
+    const colorLineGroup = (this.data[group].line || {}).color || this.line.color;
+    const windowBlock = new WindowInfoBlock({
+      colorLine: colorLineGroup,
+      ctx: this.ctx,
+    });
+    // Содержит позиции всего содержимого окна
+    const containPositions = {
+      group: {
+        x: x + radius + windowBlock.padding.fromCap,
+        y: y - windowBlock.height / 2 + this.ctx.measureText(group).actualBoundingBoxAscent + windowBlock.padding.vertical,
+      },
+      value: {
+        x: x + radius + windowBlock.padding.fromCap,
+        y: y + windowBlock.height / 2 - windowBlock.padding.vertical,
+      },
+      line: {
+        start: {
+          x: x + radius + windowBlock.padding.fromCap + windowBlock.width - windowBlock.padding.horizontal,
+          y: y - windowBlock.height / 2 + windowBlock.padding.vertical,
+        },
+        to: {
+          x: x + radius + windowBlock.padding.fromCap + windowBlock.width - windowBlock.padding.horizontal,
+          y: y - windowBlock.height / 2 + windowBlock.height - windowBlock.padding.vertical,
+        },
+      },
+    };
+
+    // Рисуем блок окна
+    windowBlock.drawWindow(x + windowBlock.padding.fromCap, y - windowBlock.height / 2);
+    // Рисуем название группы
+    windowBlock.drawContains(group, containPositions.group.x, containPositions.group.y);
+    // Рисуем значение
+    windowBlock.drawContains(`${name}: ${value}`, containPositions.value.x, containPositions.value.y);
+    // Рисуем линию группы
+    windowBlock.drawGroupLine(containPositions.line);
+  }
+
+  // Показывает окно с информацией активного элемента
+  _showWindowInfoBlock() {
+    this.canvasElement.addEventListener("click", (e) => {
+      const x = e.layerX;
+      const y = e.layerY;
+      const findMatchCap = this.capsData.find((cap) => {
+        const capY = Math.floor(cap.y);
+        const capX = Math.floor(cap.x);
+
+        if (y >= capY - cap.radius && y <= capY + cap.radius
+          && x >= capX - cap.radius && x <= capX + cap.radius) {
+          return true;
+        }
+
+        return false;
+      });
+
+      this.update();
+
+      if (findMatchCap) {
+        this._drawWindowInfoBlock(findMatchCap);
+      }
+    });
   }
 
   // Перерисовывает график
@@ -346,6 +503,7 @@ class Chart {
     this._setChart();
     this._setLinesCap();
     this._drawWhenResizeScreen();
+    this._showWindowInfoBlock();
 
     return this;
   }

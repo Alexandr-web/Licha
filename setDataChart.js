@@ -15,7 +15,7 @@ btns.forEach((btn) => {
 
         myChart.data[nameLastGroup + count] = {
           line: {
-            color: "#9457EB",
+            color: ["#9457EB", "green", "purple", "#A08424", "#CD6824"][Math.floor(Math.random() * 4)],
           },
           data: [
             { name: "Понедельник", value: Math.round(Math.random() * 20), },
