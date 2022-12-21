@@ -1,2 +1,5 @@
-*.html
-*.css
+node_modules
+src/scss
+src/*.html
+src/js/index.js
+dist

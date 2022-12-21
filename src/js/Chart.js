@@ -1,76 +1,4 @@
-"use strict";
-
-class WindowInfoBlock {
-  constructor({
-    color = "rgba(34,34,34, .8)",
-    colorText = "white",
-    colorLine = "white",
-    width = 150,
-    height = 50,
-    ctx,
-    fontSize = 12,
-    padding = {
-      vertical: 10,
-      horizontal: 10,
-      fromCap: 10,
-    },
-  }) {
-    // Цвет окна
-    this.ctx = ctx;
-    // Цвет содержимого
-    this.color = color;
-    // Цвет линии
-    this.colorText = colorText;
-    // Ширина окна
-    this.width = width;
-    // Высота окна
-    this.height = height;
-    // Контекст canvas
-    this.padding = padding;
-    // Размер шрифта
-    this.fontSize = fontSize;
-    // Внутренние отступы
-    this.colorLine = colorLine;
-  }
-
-  /**
-   * Рисует блок
-   * @param {number} x позиция по оси абсцисс
-   * @param {number} y позиция по оси ординат
-   */
-  drawWindow(x, y) {
-    this.ctx.fillStyle = this.color;
-    this.ctx.fillRect(x, y, this.width, this.height);
-  }
-
-  /**
-   * Рисует текст
-   * @param {string|number} value значение текста
-   * @param {number} x позиция по оси абсцисс
-   * @param {number} y позиция по оси ординат
-   */
-  drawContains(value, x, y) {
-    this.ctx.font = `400 ${this.fontSize}px Arial, sans-serif`;
-    this.ctx.fontKerning = "none";
-    this.ctx.fillStyle = this.colorText;
-    this.ctx.fillText(value, x, y);
-  }
-
-  /**
-   * Рисует линию группы
-   * @param {object} start Объект, содержащий позиции начала линии
-   * @param {object} to Объект, содержащий позиции направления линии
-   */
-  drawGroupLine({ start: { x: startX, y: startY, }, to: { x: toX, y: toY, } }) {
-    this.ctx.beginPath();
-    this.ctx.strokeStyle = this.colorLine;
-    this.ctx.lineWidth = 2;
-    this.ctx.lineCap = "round";
-    this.ctx.moveTo(startX, startY);
-    this.ctx.lineTo(toX, toY);
-    this.ctx.stroke();
-  }
-}
+import WindowInfoBlock from "./WindowInfoBlock";
 
 class Chart {
   constructor({
@@ -135,6 +63,101 @@ class Chart {
     };
   }
 
+  /**
+   * Устанавливает стили для колпачка
+   * @param {string} group Название группы, в которой находится колпачок
+   * @param {string} color Цвет
+   * @param {number} radius Радиус
+   * @param {object} stroke Обводка
+   * @param {number} x Позиция по оси абсцисс
+   * @param {number} y Позиция по оси ординат
+   */
+  _setStylesToCap({ group, color, radius, stroke, x, y, }) {
+    this.ctx.globalAlpha = Object.keys(this.activeGroup).length ? 0.6 : 1;
+
+    if (group === this.activeGroup.group) {
+      // Стили для активного колпачка
+      const { active: { cap: activeCap = {}, }, } = this.activeGroup;
+      const activeParams = {
+        radius: activeCap.radius || radius,
+        color: activeCap.color || color,
+        stroke: activeCap.stroke || stroke,
+      };
+
+      this.ctx.globalAlpha = 1;
+      this.ctx.fillStyle = activeParams.color;
+      this.ctx.arc(x, y, activeParams.radius, Math.PI * 2, false);
+
+      // Установка обводки колпачка линии
+      if (Object.keys(activeParams.stroke).length) {
+        this.ctx.lineWidth = activeParams.stroke.width;
+        this.ctx.strokeStyle = activeParams.stroke.color;
+        this.ctx.stroke();
+      }
+    } else {
+      // Стили для обычного колпачка
+      this.ctx.fillStyle = color;
+      this.ctx.arc(x, y, radius, Math.PI * 2, false);
+
+      // Установка обводки колпачка линии
+      if (Object.keys(stroke).length) {
+        this.ctx.lineWidth = stroke.width;
+        this.ctx.strokeStyle = stroke.color;
+        this.ctx.stroke();
+      }
+    }
+  }
+
+  /**
+   * Устанавливает стили для текста осей
+   * @param {string} contain Содержание текста оси
+   * @param {string} color Цвет
+   * @param {number} fontSize Размер шрифта
+   */
+  _setStylesToAxisText({ contain, color, fontSize, }) {
+    this.ctx.globalAlpha = Object.keys(this.activeGroup).length ? 0.6 : 1;
+
+    if ([this.activeGroup.name, this.activeGroup.value].includes(contain)) {
+      const { active: { text: activeText = {}, }, } = this.activeGroup;
+      const activeParams = {
+        color: activeText.color || color,
+        fontSize: activeText.fontSize || fontSize,
+      };
+
+      this.ctx.globalAlpha = 1;
+      this.ctx.fillStyle = activeParams.color;
+      this.ctx.font = `400 ${activeParams.fontSize}px Arial, sans-serif`;
+    } else {
+      this.ctx.font = `400 ${fontSize}px Arial, sans-serif`;
+      this.ctx.fillStyle = color;
+    }
+  }
+
+  /**
+   * Установка стилей для линий графика
+   * @param {string} group Группа, в которой находится линия
+   * @param {number} width Ширина
+   * @param {string} color Цвет
+   */
+  _setStylesToChartLine({ group, width, color, }) {
+    this.ctx.globalAlpha = Object.keys(this.activeGroup).length ? 0.6 : 1;
+
+    if (group === this.activeGroup.group) {
+      const { active: { line: activeLine = {}, }, } = this.activeGroup;
+      const activeParams = {
+        width: activeLine.width || width,
+        color: activeLine.color || color,
+      };
+
+      this.ctx.globalAlpha = 1;
+      this.ctx.lineWidth = activeParams.width;
+      this.ctx.strokeStyle = activeParams.color;
+    } else {
+      this.ctx.lineWidth = width;
+      this.ctx.strokeStyle = color;
+    }
+  }
+
   // Устанавливает размеры элементу canvas
   _setCanvasSizes() {
     const { offsetWidth, offsetHeight, } = this.canvasElement;
@@ -148,7 +171,7 @@ class Chart {
     const values = [];
     const names = [];
 
-    for (let group in this.data) {
+    for (const group in this.data) {
       const groupData = this.data[group].data;
 
       names.push(...groupData.map(({ name, }) => name));
@@ -178,7 +201,12 @@ class Chart {
     this.ctx.fillRect(0, 0, this._getCanvasSizes().width, this._getCanvasSizes().height);
   }
 
-  // Получает наибольший общий делитель
+  /**
+   * Ищет наибольший общий делитель
+   * @param {number} num1 Первое число
+   * @param {number} num2 Второе число
+   * @returns {number} Наибольший общий делитель
+   */
   _getNOD(num1, num2) {
     if ([num1, num2].includes(0)) {
       return 1;
@@ -231,10 +259,8 @@ class Chart {
       });
 
       if (value % nod === 0) {
-        // Применяем стили для текста
         this._setStylesToAxisText({ contain: value, color, fontSize, });
         this.ctx.fontKerning = "none";
-
         this.ctx.fillText(value, x, y + height / 2);
       }
     });
@@ -281,28 +307,6 @@ class Chart {
     return axisYItem.width;
   }
 
-  /**
-   * Устанавливает стили для текста осей
-   * @param {string} contain Содержание текста оси
-   * @param {string} color Цвет
-   * @param {number} fontSize Размер шрифта
-   */
-  _setStylesToAxisText({ contain, color, fontSize, }) {
-    if ([this.activeGroup.name, this.activeGroup.value].includes(contain)) {
-      const { active: { text: activeText = {}, }, } = this.activeGroup;
-      const activeParams = {
-        color: activeText.color || color,
-        fontSize: activeText.fontSize || fontSize,
-      };
-
-      this.ctx.fillStyle = activeParams.color;
-      this.ctx.font = `400 ${activeParams.fontSize}px Arial, sans-serif`;
-    } else {
-      this.ctx.font = `400 ${fontSize}px Arial, sans-serif`;
-      this.ctx.fillStyle = color;
-    }
-  }
-
   // Устанавливает абсциссу
   _setXAxis() {
     const startPoint = this.padding.left + this._getMaxTextWidthAtYAxis() + this.distanceBetweenAxles;
@@ -313,7 +317,6 @@ class Chart {
     const color = this.axisX.color;
 
     this.uniqueNames.map((name, index) => {
-      // Применяем стили для текста
       this._setStylesToAxisText({ contain: name, color, fontSize, });
       this.ctx.fontKerning = "none";
 
@@ -322,7 +325,7 @@ class Chart {
       const y = canvasHeight - text.actualBoundingBoxAscent;
 
       // Проверяем в каких группах находится это название
-      for (let group in this.data) {
+      for (const group in this.data) {
         const groupData = this.data[group].data;
 
         groupData.map((groupDataItem) => {
@@ -335,7 +338,7 @@ class Chart {
               value: groupDataItem.value,
               width: text.width,
               height: text.actualBoundingBoxAscent,
-              group: group,
+              group,
             });
           }
         });
@@ -367,6 +370,7 @@ class Chart {
 
         // Рисуем линию
         this.ctx.beginPath();
+        this.ctx.globalAlpha = 1;
         this.ctx.moveTo(firstXAxisItem.x, y);
         this.ctx.strokeStyle = this.axisX.line.color;
         this.ctx.lineWidth = this.axisX.line.width;
@@ -388,6 +392,7 @@ class Chart {
 
         // Рисуем линию
         this.ctx.beginPath();
+        this.ctx.globalAlpha = 1;
         this.ctx.moveTo(findAxisXItem.x, firstAxisYItem.y);
         this.ctx.strokeStyle = this.axisY.line.color;
         this.ctx.lineWidth = this.axisY.line.width;
@@ -398,31 +403,9 @@ class Chart {
     }
   }
 
-  /**
-   * Установка стилей для линий графика
-   * @param {string} group Группа, в которой находится линия
-   * @param {number} width Ширина
-   * @param {string} color Цвет
-   */
-  _setStylesToChartLine({ group, width, color, }) {
-    if (group === this.activeGroup.group) {
-      const { active: { line: activeLine = {} } } = this.activeGroup;
-      const activeParams = {
-        width: activeLine.width || width,
-        color: activeLine.color || color,
-      };
-
-      this.ctx.lineWidth = activeParams.width;
-      this.ctx.strokeStyle = activeParams.color;
-    } else {
-      this.ctx.lineWidth = width;
-      this.ctx.strokeStyle = color;
-    }
-  }
-
   // Рисует график
   _setChart() {
-    for (let group in this.data) {
+    for (const group in this.data) {
       const {
         data: groupData,
         line: groupLine = {},
@@ -460,52 +443,9 @@ class Chart {
     }
   }
 
-  /**
-   * Устанавливает стили для колпачка
-   * @param {string} group Название группы, в которой находится колпачок
-   * @param {string} color Цвет
-   * @param {number} radius Радиус
-   * @param {object} stroke Обводка
-   * @param {number} x Позиция по оси абсцисс
-   * @param {number} y Позиция по оси ординат
-   */
-  _setStylesToCap({ group, color, radius, stroke, x, y, }) {
-    if (group === this.activeGroup.group) {
-      // Стили для активного колпачка
-      const { active: { cap: activeCap = {}, }, } = this.activeGroup;
-      const activeParams = {
-        radius: activeCap.radius || radius,
-        color: activeCap.color || color,
-        stroke: activeCap.stroke || stroke,
-      };
-
-      this.ctx.fillStyle = activeParams.color;
-      this.ctx.arc(x, y, activeParams.radius, Math.PI * 2, false);
-
-      // Установка обводки колпачка линии
-      if (Object.keys(activeParams.stroke).length) {
-        this.ctx.lineWidth = activeParams.stroke.width;
-        this.ctx.strokeStyle = activeParams.stroke.color;
-        this.ctx.stroke();
-      }
-    } else {
-      // Стили для обычного колпачка
-      this.ctx.fillStyle = color;
-
-      this.ctx.arc(x, y, radius, Math.PI * 2, false);
-
-      // Установка обводки колпачка линии
-      if (Object.keys(stroke).length) {
-        this.ctx.lineWidth = stroke.width;
-        this.ctx.strokeStyle = stroke.color;
-        this.ctx.stroke();
-      }
-    }
-  }
-
   // Устанавливает колпачок на конец линии
   _setLinesCap() {
-    for (let group in this.data) {
+    for (const group in this.data) {
       const {
         data: groupData,
         cap: groupCap = {},
@@ -532,6 +472,7 @@ class Chart {
           name,
           radius,
           active: groupActive,
+          strokeWidth: stroke.width || 0,
         });
 
         this.ctx.beginPath();
@@ -556,45 +497,60 @@ class Chart {
 
     const { group, value, name, x, y, radius, } = this.activeGroup;
     const colorLineGroup = (this.data[group].line || {}).color || this.line.color;
+    const minWindowBlockWidth = 150;
+    const windowContains = {
+      top: group,
+      bottom: `${name}: ${value}`,
+    };
+    const windowPadding = {
+      vertical: 10,
+      horizontal: 10,
+      fromCap: 10,
+      fromInnerLine: 10,
+    };
+    const maxContainWidth = [this.ctx.measureText(windowContains.top).width, this.ctx.measureText(windowContains.bottom).width].sort((a, b) => b - a)[0];
+    const windowBlockWidth = (maxContainWidth > minWindowBlockWidth) ? (maxContainWidth + windowPadding.horizontal + windowPadding.fromInnerLine) : minWindowBlockWidth;
     const windowBlock = new WindowInfoBlock({
-      width: 150,
+      width: windowBlockWidth,
       colorLine: colorLineGroup,
       ctx: this.ctx,
-      fontSize: 150 / 12,
+      fontSize: 14,
+      padding: windowPadding,
     });
+
     // Содержит позиции всего содержимого окна
     const containPositions = {
-      group: {
-        x: x + radius + windowBlock.padding.fromCap,
-        y: y - windowBlock.height / 2 + this.ctx.measureText(group).actualBoundingBoxAscent + windowBlock.padding.vertical,
+      top: {
+        x: x + radius + windowPadding.fromCap,
+        y: y - windowBlock.height / 2 + this.ctx.measureText(group).actualBoundingBoxAscent + windowPadding.vertical,
       },
-      value: {
-        x: x + radius + windowBlock.padding.fromCap,
-        y: y + windowBlock.height / 2 - windowBlock.padding.vertical,
+      bottom: {
+        x: x + radius + windowPadding.fromCap,
+        y: y + windowBlock.height / 2 - windowPadding.vertical,
       },
       line: {
         start: {
-          x: x + radius + windowBlock.padding.fromCap + windowBlock.width - windowBlock.padding.horizontal,
-          y: y - windowBlock.height / 2 + windowBlock.padding.vertical,
+          x: x + radius + windowPadding.fromCap + windowBlock.width - windowPadding.horizontal,
+          y: y - windowBlock.height / 2 + windowPadding.vertical,
         },
         to: {
-          x: x + radius + windowBlock.padding.fromCap + windowBlock.width - windowBlock.padding.horizontal,
-          y: y - windowBlock.height / 2 + windowBlock.height - windowBlock.padding.vertical,
+          x: x + radius + windowPadding.fromCap + windowBlock.width - windowPadding.horizontal,
+          y: y - windowBlock.height / 2 + windowBlock.height - windowPadding.vertical,
         },
       },
     };
 
     // Рисуем блок окна
-    windowBlock.drawWindow(x + windowBlock.padding.fromCap, y - windowBlock.height / 2);
+    windowBlock.drawWindow(x + windowPadding.fromCap, y - windowBlock.height / 2);
     // Рисуем название группы
-    windowBlock.drawContains(group, containPositions.group.x, containPositions.group.y);
+    windowBlock.drawContains(windowContains.top, containPositions.top.x, containPositions.top.y);
     // Рисуем значение
-    windowBlock.drawContains(`${name}: ${value}`, containPositions.value.x, containPositions.value.y);
+    windowBlock.drawContains(windowContains.bottom, containPositions.bottom.x, containPositions.bottom.y);
     // Рисуем линию группы
     windowBlock.drawGroupLine(containPositions.line);
   }
 
-  // Показывает окно с информацией активного элемента
+  // Показывает окно с информацией активного элемента при клике на колпачок
   _showWindowInfoBlock() {
     this.canvasElement.addEventListener("click", (e) => {
       const x = e.layerX;
@@ -603,8 +559,8 @@ class Chart {
         const capY = Math.floor(cap.y);
         const capX = Math.floor(cap.x);
 
-        if (y >= capY - cap.radius && y <= capY + cap.radius
-          && x >= capX - cap.radius && x <= capX + cap.radius) {
+        if (y >= capY - (cap.radius + cap.strokeWidth) && y <= capY + (cap.radius + cap.strokeWidth)
+          && x >= capX - (cap.radius + cap.strokeWidth) && x <= capX + (cap.radius + cap.strokeWidth)) {
           return true;
         }
 
@@ -652,3 +608,5 @@ class Chart {
     return this;
   }
 }
+
+export default Chart;

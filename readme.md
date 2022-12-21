@@ -1,3 +1,5 @@
 # MyChart
 
-<img src="./example.jpg" alt="Chart" />
+Creating simple graphs
+
+<img src="./.github/example.jpg" alt="Chart" />
