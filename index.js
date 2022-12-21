@@ -112,6 +112,8 @@ class Chart {
     this.indentFromXAxisToGraph = 25;
     // Расстояние между осями
     this.distanceBetweenAxles = 10;
+    // Содержит объект данных, которые будут применяться к активной группе
+    this.activeGroup = {};
     // Содержит данные блока информации
     this.windowInfoBlock = {
       color: "rgba(34,34,34, .8)",
@@ -176,31 +178,94 @@ class Chart {
     this.ctx.fillRect(0, 0, this._getCanvasSizes().width, this._getCanvasSizes().height);
   }
 
+  // Получает наибольший общий делитель
+  _getNOD(num1, num2) {
+    if ([num1, num2].includes(0)) {
+      return 1;
+    }
+
+    if (num1 === num2) {
+      return num1;
+    }
+
+    if (num1 > num2) {
+      return this._getNOD(num1 - num2, num2);
+    }
+
+    return this._getNOD(num1, num2 - num1);
+  }
+
   // Устанавливает ординату
   _setYAxis() {
     const startPoint = this.padding.top;
     const endPoint = this._getCanvasSizes().height - startPoint - this.padding.bottom - this.indentFromXAxisToGraph;
-    const step = endPoint / (this.uniqueValues.length - 1);
+    const firstValue = Math.ceil(this.uniqueValues[0]);
+    const lastValue = Math.floor(this.uniqueValues[this.uniqueValues.length - 1]);
+    const nod = this._getNOD(Math.abs(firstValue), Math.abs(lastValue));
+    const valuesFromFirstValueToLastValue = [];
+    const fontSize = this.axisY.fontSize;
+    const color = this.axisY.color;
 
-    this.ctx.font = `${this.axisY.fontSize}px Arial`;
-    this.ctx.fontKerning = "none";
-    this.ctx.fillStyle = this.axisY.color;
+    // Добавляем все значения от начального до последнего с интервалом 1
+    for (let i = firstValue; i >= lastValue; i--) {
+      valuesFromFirstValueToLastValue.push(i);
+    }
 
-    this.uniqueValues.map((value, index) => {
-      const text = this.ctx.measureText(value); // Здесь хранятся данные о текущем тексте
-      const y = step * index + startPoint;
+    // Шаг, с которым рисуем значения
+    const step = endPoint / (valuesFromFirstValueToLastValue.length - 1);
+
+    // Добавляем целые значения в массив ординат
+    valuesFromFirstValueToLastValue.map((value, index) => {
+      const text = this.ctx.measureText(value);
       const x = this.padding.left;
+      const y = step * index + startPoint;
+      const height = text.actualBoundingBoxAscent;
 
-      // Добавляем элемент оси ординат в массив
       this.axisYData.push({
         y,
         x,
         width: text.width,
-        height: text.actualBoundingBoxAscent,
+        height,
         value,
+        onScreen: value % nod === 0,
       });
 
-      this.ctx.fillText(value, x, y + text.actualBoundingBoxAscent / 2);
+      if (value % nod === 0) {
+        // Применяем стили для текста
+        this._setStylesToAxisText({ contain: value, color, fontSize, });
+        this.ctx.fontKerning = "none";
+
+        this.ctx.fillText(value, x, y + height / 2);
+      }
+    });
+
+    // Определяем позицию Y у всех значений и добавляем их в массив ординат
+    this.uniqueValues.map((n) => {
+      const findMaxNum = valuesFromFirstValueToLastValue.sort((val1, val2) => Math.abs(val1 - Math.ceil(n)) - Math.abs(val2 - Math.ceil(n)))[0];
+      const findAxisYIndex = this.axisYData.findIndex(({ value, }) => value === findMaxNum);
+
+      if (findAxisYIndex !== -1) {
+        const findAxisYItem = this.axisYData[findAxisYIndex];
+        const findNextAxisYItem = this.axisYData.find(({ value, }) => n >= findAxisYItem.value ? value > findAxisYItem.value : value < findAxisYItem.value);
+
+        if (findNextAxisYItem) {
+          const text = this.ctx.measureText(n);
+          const percentStr = ((n.toString().match(/\.\d{1,2}/) || [])[0] || "").replace(/\./, "") || n.toString();
+          const percent = percentStr.length < 2 ? +percentStr * 10 : +percentStr;
+          const height = text.actualBoundingBoxAscent;
+          const area = Math.abs(findAxisYItem.y - findNextAxisYItem.y);
+          const y = (percent * area) / 100;
+
+          this.axisYData.push({
+            x: this.padding.left,
+            y: findNextAxisYItem.y - y,
+            width: text.width,
+            height,
+            value: n,
+            onScreen: false,
+          });
+        }
+      }
     });
   }
 
@@ -209,9 +274,33 @@ class Chart {
    * @returns {number} Ширина текста
    */
   _getMaxTextWidthAtYAxis() {
-    const axisYItem = this.axisYData.sort(({ width: width1, }, { width: width2, }) => width2 - width1)[0];
+    const axisYItem = this.axisYData
+      .filter(({ onScreen, }) => onScreen)
+      .sort(({ width: width1, }, { width: width2, }) => width2 - width1)[0];
 
     return axisYItem.width;
+  }
+
+  /**
+   * Устанавливает стили для текста осей
+   * @param {string} contain Содержание текста оси
+   * @param {string} color Цвет
+   * @param {number} fontSize Размер шрифта
+   */
+  _setStylesToAxisText({ contain, color, fontSize, }) {
+    if ([this.activeGroup.name, this.activeGroup.value].includes(contain)) {
+      const { active: { text: activeText = {}, }, } = this.activeGroup;
+      const activeParams = {
+        color: activeText.color || color,
+        fontSize: activeText.fontSize || fontSize,
+      };
+
+      this.ctx.fillStyle = activeParams.color;
+      this.ctx.font = `400 ${activeParams.fontSize}px Arial, sans-serif`;
+    } else {
+      this.ctx.font = `400 ${fontSize}px Arial, sans-serif`;
+      this.ctx.fillStyle = color;
+    }
   }
 
   // Устанавливает абсциссу
@@ -220,11 +309,13 @@ class Chart {
     const endPoint = this._getCanvasSizes().width - startPoint - this.padding.right;
     const step = endPoint / (this.uniqueNames.length - 1);
     const canvasHeight = this._getCanvasSizes().height;
+    const fontSize = this.axisX.fontSize;
+    const color = this.axisX.color;
 
     this.uniqueNames.map((name, index) => {
-      this.ctx.font = `400 ${this.axisX.fontSize}px Arial, sans-serif`;
+      // Применяем стили для текста
+      this._setStylesToAxisText({ contain: name, color, fontSize, });
       this.ctx.fontKerning = "none";
-      this.ctx.fillStyle = this.axisX.color;
 
       const text = this.ctx.measureText(name); // Здесь хранятся данные о текущем тексте
       const x = step * index + startPoint;
@@ -270,18 +361,17 @@ class Chart {
   // Устанавливает горизонтальные линии
   _setHorizontalLines() {
     if (Object.keys(this.axisX.line || {}).length) {
-      this.uniqueValues.map((value) => {
-        const findYAxisItem = this.axisYData.find((yAxisItem) => yAxisItem.value === value);
+      this.axisYData.filter(({ onScreen, }) => onScreen).map(({ y, }) => {
         const firstXAxisItem = this.axisXData[0];
         const lastXAxisItem = this.axisXData[this.axisXData.length - 1];
 
         // Рисуем линию
         this.ctx.beginPath();
-        this.ctx.moveTo(firstXAxisItem.x, findYAxisItem.y);
+        this.ctx.moveTo(firstXAxisItem.x, y);
         this.ctx.strokeStyle = this.axisX.line.color;
         this.ctx.lineWidth = this.axisX.line.width;
         this.ctx.lineCap = "round";
-        this.ctx.lineTo(lastXAxisItem.x, findYAxisItem.y);
+        this.ctx.lineTo(lastXAxisItem.x, y);
         this.ctx.stroke();
       });
     }
@@ -292,8 +382,9 @@ class Chart {
     if (Object.keys(this.axisY.line || {}).length) {
       this.uniqueNames.map((name) => {
         const findAxisXItem = this.axisXData.find((axisXDataItem) => axisXDataItem.name === name);
-        const firstAxisYItem = this.axisYData[0];
-        const lastAxisYItem = this.axisYData[this.axisYData.length - 1];
+        const axisYOnScreen = this.axisYData.filter(({ onScreen, }) => onScreen);
+        const firstAxisYItem = axisYOnScreen[0];
+        const lastAxisYItem = axisYOnScreen[axisYOnScreen.length - 1];
 
         // Рисуем линию
         this.ctx.beginPath();
@@ -307,6 +398,28 @@ class Chart {
     }
   }
 
+  /**
+   * Установка стилей для линий графика
+   * @param {string} group Группа, в которой находится линия
+   * @param {number} width Ширина
+   * @param {string} color Цвет
+   */
+  _setStylesToChartLine({ group, width, color, }) {
+    if (group === this.activeGroup.group) {
+      const { active: { line: activeLine = {} } } = this.activeGroup;
+      const activeParams = {
+        width: activeLine.width || width,
+        color: activeLine.color || color,
+      };
+
+      this.ctx.lineWidth = activeParams.width;
+      this.ctx.strokeStyle = activeParams.color;
+    } else {
+      this.ctx.lineWidth = width;
+      this.ctx.strokeStyle = color;
+    }
+  }
+
   // Рисует график
   _setChart() {
     for (let group in this.data) {
@@ -315,18 +428,20 @@ class Chart {
         line: groupLine = {},
       } = this.data[group];
 
-      groupData.map(({ value, name, group, }, index) => {
-        const nextDataItem = groupData.find((groupDataItem, idx) => groupDataItem.group === group && idx > index);
+      groupData.map(({ value, name, }, index) => {
+        const nextDataItem = groupData.find((groupDataItem, idx) => idx > index);
         // Находим элемент из ординаты, подходящий по значению
         const findAxisYItem = this.axisYData.find((axisYItem) => axisYItem.value === value);
         // Находим элемент из абсциссы, подходящий по имени
         const findAxisXItem = this.axisXData.find((axisXItem) => axisXItem.name === name);
+        const width = groupLine.width || this.line.width;
+        const color = groupLine.color || this.line.color;
 
         // Начало линии
         this.ctx.beginPath();
         this.ctx.moveTo(findAxisXItem.x, findAxisYItem.y);
-        this.ctx.lineWidth = groupLine.width || this.line.width;
-        this.ctx.strokeStyle = groupLine.color || this.line.color;
+        // Применяем стили к линии
+        this._setStylesToChartLine({ group, width, color, });
         this.ctx.lineJoin = "round";
 
         if (nextDataItem) {
@@ -345,12 +460,56 @@ class Chart {
     }
   }
 
+  /**
+   * Устанавливает стили для колпачка
+   * @param {string} group Название группы, в которой находится колпачок
+   * @param {string} color Цвет
+   * @param {number} radius Радиус
+   * @param {object} stroke Обводка
+   * @param {number} x Позиция по оси абсцисс
+   * @param {number} y Позиция по оси ординат
+   */
+  _setStylesToCap({ group, color, radius, stroke, x, y, }) {
+    if (group === this.activeGroup.group) {
+      // Стили для активного колпачка
+      const { active: { cap: activeCap = {}, }, } = this.activeGroup;
+      const activeParams = {
+        radius: activeCap.radius || radius,
+        color: activeCap.color || color,
+        stroke: activeCap.stroke || stroke,
+      };
+
+      this.ctx.fillStyle = activeParams.color;
+      this.ctx.arc(x, y, activeParams.radius, Math.PI * 2, false);
+
+      // Установка обводки колпачка линии
+      if (Object.keys(activeParams.stroke).length) {
+        this.ctx.lineWidth = activeParams.stroke.width;
+        this.ctx.strokeStyle = activeParams.stroke.color;
+        this.ctx.stroke();
+      }
+    } else {
+      // Стили для обычного колпачка
+      this.ctx.fillStyle = color;
+
+      this.ctx.arc(x, y, radius, Math.PI * 2, false);
+
+      // Установка обводки колпачка линии
+      if (Object.keys(stroke).length) {
+        this.ctx.lineWidth = stroke.width;
+        this.ctx.strokeStyle = stroke.color;
+        this.ctx.stroke();
+      }
+    }
+  }
+
   // Устанавливает колпачок на конец линии
   _setLinesCap() {
     for (let group in this.data) {
       const {
         data: groupData,
         cap: groupCap = {},
+        active: groupActive = {},
       } = this.data[group];
 
       groupData.map(({ name, value, cap = {}, }) => {
@@ -358,20 +517,11 @@ class Chart {
         const findAxisXItem = this.axisXData.find((axisXItem) => axisXItem.name === name && axisXItem.group === group);
         // Находим элемент из ординаты, подходящий по значению
         const findAxisYItem = this.axisYData.find((axisYItem) => axisYItem.value === value);
-        const dataCapStroke = cap.stroke || groupCap.stroke || this.cap.stroke;
         const x = findAxisXItem.x;
         const y = findAxisYItem.y;
         const radius = cap.radius || groupCap.radius || this.cap.radius;
         const color = cap.color || groupCap.color || this.cap.color;
-
-        this.ctx.beginPath();
-
-        if (this.cap.shadow) {
-          this.ctx.shadowOffsetX = 0;
-          this.ctx.shadowOffsetY = 0;
-          this.ctx.shadowColor = this.cap.shadow.color;
-          this.ctx.shadowBlur = this.cap.shadow.blur;
-        }
+        const stroke = cap.stroke || groupCap.stroke || this.cap.stroke || {};
 
         // Добавляем данные колпачка в массив
         this.capsData.push({
@@ -381,19 +531,14 @@ class Chart {
           value,
           name,
           radius,
+          active: groupActive,
         });
 
+        this.ctx.beginPath();
+        // Применяем стили к колпачку
+        this._setStylesToCap({ group, color, radius, stroke, x, y, });
         // Рисуем колпачок
-        this.ctx.arc(x, y, radius, Math.PI * 2, false);
-        this.ctx.fillStyle = color;
         this.ctx.fill();
-
-        // Установка обводки колпачка линии
-        if (dataCapStroke) {
-          this.ctx.lineWidth = dataCapStroke.width;
-          this.ctx.strokeStyle = dataCapStroke.color;
-          this.ctx.stroke();
-        }
       });
     }
   }
@@ -403,20 +548,19 @@ class Chart {
     window.addEventListener("resize", () => this.update());
   }
 
-  /**
-   * Рисует окно с информацией активного элемента
-   * @param {string} group Название группы элемента
-   * @param {string} value значение элемента
-   * @param {string} name название элемента
-   * @param {number} x позиция элемента относительно оси абсцисс
-   * @param {number} y позиция элемента относительно оси ординат
-   * @param {number} radius радиус колпачка линии
-   */
-  _drawWindowInfoBlock({ group, value, name, x, y, radius, }) {
+  // Рисует окно с информацией активного элемента
+  _drawWindowInfoBlock() {
+    if (!Object.keys(this.activeGroup).length) {
+      return;
+    }
+
+    const { group, value, name, x, y, radius, } = this.activeGroup;
     const colorLineGroup = (this.data[group].line || {}).color || this.line.color;
     const windowBlock = new WindowInfoBlock({
+      width: 150,
       colorLine: colorLineGroup,
       ctx: this.ctx,
+      fontSize: 150 / 12,
     });
     // Содержит позиции всего содержимого окна
     const containPositions = {
@@ -467,11 +611,10 @@ class Chart {
         return false;
       });
 
-      this.update();
+      this.activeGroup = findMatchCap || {};
 
-      if (findMatchCap) {
-        this._drawWindowInfoBlock(findMatchCap);
-      }
+      this.update();
+      this._drawWindowInfoBlock();
     });
   }
 
@@ -479,6 +622,7 @@ class Chart {
   update() {
     this.axisXData = [];
     this.axisYData = [];
+    this.capsData = [];
 
     this._setUniqueValues();
     this._setCanvasSizes();
