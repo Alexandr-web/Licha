@@ -39,7 +39,7 @@ class WindowInfoBlock {
   drawWindow(x, y) {
     this.ctx.globalAlpha = 1;
     this.ctx.fillStyle = this.color;
-    this.ctx.fillRect(x, y, this.width, this.height);
+    this.ctx.fillRect(x, y, this.width, this.height, [10]);
   }
 
   /**
@@ -62,8 +62,8 @@ class WindowInfoBlock {
    * @param {object} to Объект, содержащий позиции направления линии
    */
   drawGroupLine({ start: { x: startX, y: startY, }, to: { x: toX, y: toY, }, }) {
-    this.ctx.globalAlpha = 1;
     this.ctx.beginPath();
+    this.ctx.globalAlpha = 1;
     this.ctx.strokeStyle = this.colorLine;
     this.ctx.lineWidth = 2;
     this.ctx.lineCap = "round";

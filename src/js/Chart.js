@@ -9,6 +9,12 @@ class Chart {
     cap = {},
     axisY = { fontSize: 12, color: "white", },
     axisX = { fontSize: 12, color: "white", },
+    padding = {
+      top: 10,
+      left: 10,
+      right: 10,
+      bottom: 10,
+    },
   }) {
     // Объект с данными абсциссы
     this.axisX = axisX;
@@ -55,12 +61,7 @@ class Chart {
       },
     };
     // Внутренние отступы графика
-    this.padding = {
-      top: 20,
-      left: 20,
-      right: 20,
-      bottom: 10,
-    };
+    this.padding = padding;
   }
 
   /**
@@ -73,7 +74,7 @@ class Chart {
    * @param {number} y Позиция по оси ординат
    */
   _setStylesToCap({ group, color, radius, stroke, x, y, }) {
-    this.ctx.globalAlpha = Object.keys(this.activeGroup).length ? 0.6 : 1;
+    this.ctx.globalAlpha = Object.keys(this.activeGroup).length ? 0.5 : 1;
 
     if (group === this.activeGroup.group) {
       // Стили для активного колпачка
@@ -115,7 +116,7 @@ class Chart {
    * @param {number} fontSize Размер шрифта
    */
   _setStylesToAxisText({ contain, color, fontSize, }) {
-    this.ctx.globalAlpha = Object.keys(this.activeGroup).length ? 0.6 : 1;
+    this.ctx.globalAlpha = Object.keys(this.activeGroup).length ? 0.5 : 1;
 
     if ([this.activeGroup.name, this.activeGroup.value].includes(contain)) {
       const { active: { text: activeText = {}, }, } = this.activeGroup;
@@ -126,9 +127,7 @@ class Chart {
 
       this.ctx.globalAlpha = 1;
       this.ctx.fillStyle = activeParams.color;
-      this.ctx.font = `400 ${activeParams.fontSize}px Arial, sans-serif`;
     } else {
-      this.ctx.font = `400 ${fontSize}px Arial, sans-serif`;
       this.ctx.fillStyle = color;
     }
   }
@@ -140,7 +139,7 @@ class Chart {
    * @param {string} color Цвет
    */
   _setStylesToChartLine({ group, width, color, }) {
-    this.ctx.globalAlpha = Object.keys(this.activeGroup).length ? 0.6 : 1;
+    this.ctx.globalAlpha = Object.keys(this.activeGroup).length ? 0.5 : 1;
 
     if (group === this.activeGroup.group) {
       const { active: { line: activeLine = {}, }, } = this.activeGroup;
@@ -159,11 +158,18 @@ class Chart {
   }
 
   // Устанавливает размеры элементу canvas
-  _setCanvasSizes() {
+  _setDefaultStylesToCanvas() {
     const { offsetWidth, offsetHeight, } = this.canvasElement;
+    const defaultStyles = {
+      display: "block",
+      boxSizing: "border-box",
+    };
 
     this.canvasElement.width = offsetWidth;
     this.canvasElement.height = offsetHeight;
+    this.canvasElement.style = Object.keys(defaultStyles)
+      .map((key) => `${key}:${defaultStyles[key]}`)
+      .join(";");
   }
 
   // Записывает уникальные данные осей графика
@@ -196,7 +202,7 @@ class Chart {
   }
 
   // Задает задний фон графику
-  _setCanvasStyles() {
+  _setStylesToCanvas() {
     this.ctx.fillStyle = this.background;
     this.ctx.fillRect(0, 0, this._getCanvasSizes().width, this._getCanvasSizes().height);
   }
@@ -225,8 +231,6 @@ class Chart {
 
   // Устанавливает ординату
   _setYAxis() {
-    const startPoint = this.padding.top;
-    const endPoint = this._getCanvasSizes().height - startPoint - this.padding.bottom - this.indentFromXAxisToGraph;
     const firstValue = Math.ceil(this.uniqueValues[0]);
     const lastValue = Math.floor(this.uniqueValues[this.uniqueValues.length - 1]);
     const nod = this._getNOD(Math.abs(firstValue), Math.abs(lastValue));
@@ -239,11 +243,13 @@ class Chart {
       valuesFromFirstValueToLastValue.push(i);
     }
 
-    // Шаг, с которым рисуем значения
-    const step = endPoint / (valuesFromFirstValueToLastValue.length - 1);
-
     // Добавляем целые значения в массив ординат
     valuesFromFirstValueToLastValue.map((value, index) => {
+      this.ctx.font = `400 ${this.axisY.fontSize}px Arial, sans-serif`;
+
+      const startPoint = this.padding.top + this.ctx.measureText(firstValue).actualBoundingBoxAscent / 2;
+      const endPoint = this._getCanvasSizes().height - startPoint - this.padding.bottom - this.indentFromXAxisToGraph;
+      const step = endPoint / (valuesFromFirstValueToLastValue.length - 1);
       const text = this.ctx.measureText(value);
       const x = this.padding.left;
       const y = step * index + startPoint;
@@ -310,17 +316,20 @@ class Chart {
   // Устанавливает абсциссу
   _setXAxis() {
     const startPoint = this.padding.left + this._getMaxTextWidthAtYAxis() + this.distanceBetweenAxles;
-    const endPoint = this._getCanvasSizes().width - startPoint - this.padding.right;
-    const step = endPoint / (this.uniqueNames.length - 1);
     const canvasHeight = this._getCanvasSizes().height;
     const fontSize = this.axisX.fontSize;
     const color = this.axisX.color;
 
     this.uniqueNames.map((name, index) => {
       this._setStylesToAxisText({ contain: name, color, fontSize, });
+
+      const lastXItem = this.uniqueNames[this.uniqueNames.length - 1];
+      const endPoint = this._getCanvasSizes().width - startPoint - this.padding.right - this.ctx.measureText(lastXItem).width / 2;
+      const step = endPoint / (this.uniqueNames.length - 1);
+
       this.ctx.fontKerning = "none";
 
-      const text = this.ctx.measureText(name); // Здесь хранятся данные о текущем тексте
+      const text = this.ctx.measureText(name);
       const x = step * index + startPoint;
       const y = canvasHeight - text.actualBoundingBoxAscent;
 
@@ -345,19 +354,7 @@ class Chart {
       }
 
       // Рисуем текст на графике в зависимости от индекса
-      switch (index) {
-        case 0:
-          // С правой стороны
-          this.ctx.fillText(name, x, y);
-          break;
-        case this.uniqueNames.length - 1:
-          // С левой стороны
-          this.ctx.fillText(name, x - text.width, y);
-          break;
-        default:
-          // По середине
-          this.ctx.fillText(name, x - text.width / 2, y);
-      }
+      this.ctx.fillText(name, x - text.width / 2, y);
     });
   }
 
@@ -550,11 +547,16 @@ class Chart {
     windowBlock.drawGroupLine(containPositions.line);
   }
 
-  // Показывает окно с информацией активного элемента при клике на колпачок
+  // Показывает окно с информацией активного элемента при клике
   _showWindowInfoBlock() {
+    this._drawWindowInfoBlock();
+
+    const elemLeft = this.canvasElement.offsetLeft + this.canvasElement.clientLeft;
+    const elemTop = this.canvasElement.offsetTop + this.canvasElement.clientTop;
+
     this.canvasElement.addEventListener("click", (e) => {
-      const x = e.layerX;
-      const y = e.layerY;
+      const x = e.pageX - elemLeft;
+      const y = e.pageY - elemTop;
       const findMatchCap = this.capsData.find((cap) => {
         const capY = Math.floor(cap.y);
         const capX = Math.floor(cap.x);
@@ -567,10 +569,12 @@ class Chart {
         return false;
       });
 
-      this.activeGroup = findMatchCap || {};
-
+      this.activeGroup = findMatchCap ? { ...findMatchCap, x, y, } : {};
       this.update();
-      this._drawWindowInfoBlock();
+
+      if (findMatchCap) {
+        this._drawWindowInfoBlock();
+      }
     });
   }
 
@@ -581,8 +585,8 @@ class Chart {
     this.capsData = [];
 
     this._setUniqueValues();
-    this._setCanvasSizes();
-    this._setCanvasStyles();
+    this._setDefaultStylesToCanvas();
+    this._setStylesToCanvas();
     this._setYAxis();
     this._setXAxis();
     this._setVerticalLines();
@@ -594,8 +598,8 @@ class Chart {
   // Рисует график
   init() {
     this._setUniqueValues();
-    this._setCanvasSizes();
-    this._setCanvasStyles();
+    this._setDefaultStylesToCanvas();
+    this._setStylesToCanvas();
     this._setYAxis();
     this._setXAxis();
     this._setVerticalLines();

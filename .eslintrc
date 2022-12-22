@@ -78,6 +78,7 @@
     "no-underscore-dangle": "off",
     "guard-for-in": "off",
     "no-restricted-syntax": "off",
-    "quote-props": "off"
+    "quote-props": "off",
+    "func-names": "off"
   }
 }
