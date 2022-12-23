@@ -250,7 +250,7 @@ class aCharty {
 
       const text = this.ctx.measureText(value);
       const startPoint = this.padding.top + this.ctx.measureText(firstValue).actualBoundingBoxAscent / 2;
-      const endPoint = this._getCanvasSizes().height - startPoint - this.padding.bottom - this.indentFromXAxisToGraph;
+      const endPoint = this._getCanvasSizes().height - startPoint - this.padding.bottom - (this.axisX.showText ? this.indentFromXAxisToGraph : 0);
       const step = endPoint / (valuesFromFirstValueToLastValue.length - 1);
       const x = this.padding.left;
       const y = step * index + startPoint;
@@ -265,7 +265,7 @@ class aCharty {
         onScreen: value % nod === 0,
       });
 
-      if (value % nod === 0) {
+      if (value % nod === 0 && this.axisY.showText) {
         this._setStylesToAxisText({ contain: value, color, fontSize, });
         this.ctx.fillText(value, x, y + height / 2);
       }
@@ -325,7 +325,7 @@ class aCharty {
       this.ctx.beginPath();
       this.ctx.font = `400 ${fontSize}px Arial, sans-serif`;
 
-      const startPoint = this.ctx.measureText(firstName).width / 2 + this.padding.left + this._getMaxTextWidthAtYAxis() + this.distanceBetweenYAndChart;
+      const startPoint = this.ctx.measureText(firstName).width / 2 + this.padding.left + (this.axisY.showText ? this._getMaxTextWidthAtYAxis() + this.distanceBetweenYAndChart : 0);
       const endPoint = this._getCanvasSizes().width - this.ctx.measureText(lastName).width / 2 - startPoint - this.padding.right;
       const step = endPoint / (this.uniqueNames.length - 1);
 
@@ -356,7 +356,9 @@ class aCharty {
       }
 
       // Рисуем текст
-      this.ctx.fillText(name, x - text.width / 2, y);
+      if (this.axisX.showText) {
+        this.ctx.fillText(name, x - text.width / 2, y);
+      }
     });
   }
 
