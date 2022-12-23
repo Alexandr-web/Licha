@@ -1,6 +1,6 @@
 import WindowInfoBlock from "./WindowInfoBlock";
 
-class Chart {
+class aCharty {
   constructor({
     canvasSelector,
     background,
@@ -9,6 +9,7 @@ class Chart {
     cap = {},
     axisY = {},
     axisX = {},
+    updateWhenResizing = true,
     padding = {
       top: 10,
       left: 10,
@@ -16,6 +17,8 @@ class Chart {
       bottom: 10,
     },
   }) {
+    // Правило, которое будет обновлять график при изменении экрана
+    this.updateWhenResizing = updateWhenResizing;
     // Объект с данными абсциссы
     this.axisX = axisX;
     // Объект с данными ординаты
@@ -44,6 +47,8 @@ class Chart {
     this.capsData = [];
     // Расстояние между горизонтальной линией и графиком
     this.indentFromXAxisToGraph = 20;
+    // Расстояние между ординатой и графиком
+    this.distanceBetweenYAndChart = 10;
     // Содержит объект данных, которые будут применяться к активной группе
     this.activeGroup = {};
     // Содержит данные блока информации
@@ -320,7 +325,7 @@ class Chart {
       this.ctx.beginPath();
       this.ctx.font = `400 ${fontSize}px Arial, sans-serif`;
 
-      const startPoint = this.ctx.measureText(firstName).width / 2 + this.padding.left + this._getMaxTextWidthAtYAxis();
+      const startPoint = this.ctx.measureText(firstName).width / 2 + this.padding.left + this._getMaxTextWidthAtYAxis() + this.distanceBetweenYAndChart;
       const endPoint = this._getCanvasSizes().width - this.ctx.measureText(lastName).width / 2 - startPoint - this.padding.right;
       const step = endPoint / (this.uniqueNames.length - 1);
 
@@ -477,9 +482,28 @@ class Chart {
     }
   }
 
-  // Перерисовывает график при изменении размеров окна
   _drawWhenResizeScreen() {
-    window.addEventListener("resize", () => this.update());
+    window.addEventListener("resize", () => {
+      // Перерисовывает график при изменении размеров окна
+      if (this.updateWhenResizing) {
+        this.update();
+      }
+
+      // Вызывает функции контрольных точек, если ширина экрана станет меньше или равна этим точкам
+      for (const group in this.data) {
+        const { breakpoints = {}, data, } = this.data[group];
+
+        if (Object.keys(breakpoints).length) {
+          const widthWindow = document.documentElement.offsetWidth;
+
+          for (const breakpoint in breakpoints) {
+            if (widthWindow <= breakpoint) {
+              return breakpoints[breakpoint](group, data);
+            }
+          }
+        }
+      }
+    });
   }
 
   // Рисует окно с информацией активного элемента
@@ -609,4 +633,4 @@ class Chart {
   }
 }
 
-export default Chart;
+export default aCharty;
