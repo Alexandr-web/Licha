@@ -1,4 +1,4 @@
-# MyChart
+# aCharty
 
 Creating simple graphs
 

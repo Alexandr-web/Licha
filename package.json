@@ -1,5 +1,5 @@
 {
-  "name": "my_chart",
+  "name": "aCharty",
   "version": "1.0.0",
   "description": "Creating simple graphs",
   "main": "./src/js/Chart.js",
