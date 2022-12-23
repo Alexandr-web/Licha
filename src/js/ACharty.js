@@ -49,6 +49,10 @@ class aCharty {
     this.indentFromXAxisToGraph = 20;
     // Расстояние между ординатой и графиком
     this.distanceBetweenYAndChart = 10;
+    // Содержит данные о названии оси абсцисс
+    this.axisXTitle = {};
+    // Содержит данные о названии оси ординат
+    this.axisYTitle = {};
     // Содержит объект данных, которые будут применяться к активной группе
     this.activeGroup = {};
     // Содержит данные блока информации
@@ -229,6 +233,22 @@ class aCharty {
     return this._getNOD(num1, num2 - num1);
   }
 
+  /**
+   * Определяет размеры текста
+   * @param {string} text содержимое текста
+   * @param {string} font данные шрифта (жирность, размер, ...)
+   * @returns {object} ширина и высота текста
+   */
+  _getSizesText(text, font) {
+    this.ctx.font = font;
+    const txt = this.ctx.measureText(text);
+
+    return {
+      width: txt.width,
+      height: txt.actualBoundingBoxAscent,
+    };
+  }
+
   // Устанавливает ординату
   _setYAxis() {
     const firstValue = Math.ceil(this.uniqueValues[0]);
@@ -237,6 +257,7 @@ class aCharty {
     const valuesFromFirstValueToLastValue = [];
     const fontSize = this.axisY.fontSize;
     const color = this.axisY.color;
+    const heightFirstName = this._getSizesText(this.uniqueNames[0], `400 ${fontSize}px Arial, sans-serif`).height;
 
     // Добавляем все значения от начального до последнего с интервалом 1
     for (let i = firstValue; i >= lastValue; i--) {
@@ -245,21 +266,19 @@ class aCharty {
 
     // Добавляем целые значения в массив ординат
     valuesFromFirstValueToLastValue.map((value, index) => {
-      this.ctx.beginPath();
-      this.ctx.font = `400 ${fontSize}px Arial, sans-serif`;
-
-      const text = this.ctx.measureText(value);
-      const startPoint = this.padding.top + this.ctx.measureText(firstValue).actualBoundingBoxAscent / 2;
-      const endPoint = this._getCanvasSizes().height - startPoint - this.padding.bottom - (this.axisX.showText ? this.indentFromXAxisToGraph : 0);
+      const valueSizes = this._getSizesText(value, `400 ${fontSize}px Arial, sans-serif`);
+      const firstValueSizes = this._getSizesText(firstValue, `400 ${fontSize}px Arial, sans-serif`);
+      const startPoint = this.padding.top + firstValueSizes.height / 2;
+      const endPoint = this._getCanvasSizes().height - startPoint - this.padding.bottom - (this.axisX.showText ? this.indentFromXAxisToGraph + heightFirstName : 0);
       const step = endPoint / (valuesFromFirstValueToLastValue.length - 1);
       const x = this.padding.left;
       const y = step * index + startPoint;
-      const height = text.actualBoundingBoxAscent;
+      const height = valueSizes.height;
 
       this.axisYData.push({
         y,
         x,
-        width: text.width,
+        width: valueSizes.width,
         height,
         value,
         onScreen: value % nod === 0,
@@ -281,17 +300,17 @@ class aCharty {
         const findNextAxisYItem = this.axisYData.find(({ value, }) => n >= findAxisYItem.value ? value > findAxisYItem.value : value < findAxisYItem.value);
 
         if (findNextAxisYItem) {
-          const text = this.ctx.measureText(n);
+          const textSizes = this._getSizesText(n, `400 ${fontSize}px Arial, sans-serif`);
           const percentStr = ((n.toString().match(/\.\d{1,2}/) || [])[0] || "").replace(/\./, "") || n.toString();
           const percent = percentStr.length < 2 ? +percentStr * 10 : +percentStr;
-          const height = text.actualBoundingBoxAscent;
+          const height = textSizes.height;
           const area = Math.abs(findAxisYItem.y - findNextAxisYItem.y);
           const y = (percent * area) / 100;
 
           this.axisYData.push({
             x: this.padding.left,
             y: findNextAxisYItem.y - y,
-            width: text.width,
+            width: textSizes.width,
             height,
             value: n,
             onScreen: false,
@@ -322,18 +341,17 @@ class aCharty {
     const lastName = this.uniqueNames[this.uniqueNames.length - 1];
 
     this.uniqueNames.map((name, index) => {
-      this.ctx.beginPath();
-      this.ctx.font = `400 ${fontSize}px Arial, sans-serif`;
-
-      const startPoint = this.ctx.measureText(firstName).width / 2 + this.padding.left + (this.axisY.showText ? this._getMaxTextWidthAtYAxis() + this.distanceBetweenYAndChart : 0);
-      const endPoint = this._getCanvasSizes().width - this.ctx.measureText(lastName).width / 2 - startPoint - this.padding.right;
+      const firstNameSizes = this._getSizesText(firstName, `400 ${fontSize}px Arial, sans-serif`);
+      const lastNameSizes = this._getSizesText(lastName, `400 ${fontSize}px Arial, sans-serif`);
+      const startPoint = firstNameSizes.width / 2 + this.padding.left + (this.axisY.showText ? this._getMaxTextWidthAtYAxis() + this.distanceBetweenYAndChart : 0);
+      const endPoint = this._getCanvasSizes().width - lastNameSizes.width / 2 - startPoint - this.padding.right;
       const step = endPoint / (this.uniqueNames.length - 1);
 
       this._setStylesToAxisText({ contain: name, color, fontSize, });
 
-      const text = this.ctx.measureText(name);
+      const nameSizes = this._getSizesText(name, `400 ${fontSize}px Arial, sans-serif`);
       const x = step * index + startPoint;
-      const y = canvasHeight - this.padding.bottom;
+      const y = canvasHeight - this.padding.bottom - (this.axisXTitle.height || 0);
 
       // Проверяем в каких группах находится это название
       for (const group in this.data) {
@@ -344,11 +362,11 @@ class aCharty {
             // Добавление элемента оси абсцисс в массив
             this.axisXData.push({
               x,
-              y,
+              y: y - nameSizes.height / 2,
               name,
               value: groupDataItem.value,
-              width: text.width,
-              height: text.actualBoundingBoxAscent,
+              width: nameSizes.width,
+              height: nameSizes.height,
               group,
             });
           }
@@ -357,9 +375,41 @@ class aCharty {
 
       // Рисуем текст
       if (this.axisX.showText) {
-        this.ctx.fillText(name, x - text.width / 2, y);
+        this.ctx.fillText(name, x - nameSizes.width / 2, y);
       }
     });
+  }
+
+  // Рисует название оси абсцисс
+  _setXAxisTitle() {
+    if (!Object.keys(this.axisX.title).length) {
+      return;
+    }
+
+    const { title, } = this.axisX;
+    const startX = this.padding.left + this._getMaxTextWidthAtYAxis() + this.distanceBetweenYAndChart;
+    const startY = this._getCanvasSizes().height - this.padding.bottom;
+    const areaWidth = this._getCanvasSizes().width - this.padding.right;
+    const x = areaWidth / 2;
+    const y = startY;
+
+    this.ctx.beginPath();
+    this.ctx.moveTo(startX, startY);
+    this.ctx.globalAlpha = 1;
+    this.ctx.fillStyle = "white";
+
+    const textSizes = this._getSizesText(title, `400 ${14}px Arial, sans-serif`);
+
+    this.axisXTitle = {
+      x,
+      y,
+      title,
+      width: textSizes.width,
+      height: textSizes.height,
+    };
+
+    // Рисуем название
+    this.ctx.fillText(title, x, y);
   }
 
   // Устанавливает горизонтальные линии
@@ -518,8 +568,16 @@ class aCharty {
     const colorLineGroup = (this.data[group].line || {}).color || this.line.color;
     const minWindowBlockWidth = 150;
     const windowContains = {
-      top: group,
-      bottom: `${name}: ${value}`,
+      top: {
+        text: group,
+        width: this._getSizesText(group, "400 14px Arial, sans-serif").width,
+        height: this._getSizesText(group, "400 14px Arial, sans-serif").height,
+      },
+      bottom: {
+        text: `${name}: ${value}`,
+        width: this._getSizesText(`${name}: ${value}`, "400 14px Arial, sans-serif").width,
+        height: this._getSizesText(`${name}: ${value}`, "400 14px Arial, sans-serif").height,
+      },
     };
     const windowPadding = {
       vertical: 10,
@@ -527,7 +585,7 @@ class aCharty {
       fromCap: 10,
       fromInnerLine: 10,
     };
-    const maxContainWidth = [this.ctx.measureText(windowContains.top).width, this.ctx.measureText(windowContains.bottom).width].sort((a, b) => b - a)[0];
+    const maxContainWidth = [windowContains.top.width, windowContains.bottom.width].sort((a, b) => b - a)[0];
     const windowBlockWidth = (maxContainWidth > minWindowBlockWidth) ? (maxContainWidth + windowPadding.horizontal + windowPadding.fromInnerLine) : minWindowBlockWidth;
     const windowBlock = new WindowInfoBlock({
       width: windowBlockWidth,
@@ -541,7 +599,7 @@ class aCharty {
     const containPositions = {
       top: {
         x: x + radius + windowPadding.fromCap,
-        y: y - windowBlock.height / 2 + this.ctx.measureText(group).actualBoundingBoxAscent + windowPadding.vertical,
+        y: y - windowBlock.height / 2 + windowContains.top.height + windowPadding.vertical,
       },
       bottom: {
         x: x + radius + windowPadding.fromCap,
@@ -562,9 +620,9 @@ class aCharty {
     // Рисуем блок окна
     windowBlock.drawWindow(x + windowPadding.fromCap, y - windowBlock.height / 2);
     // Рисуем название группы
-    windowBlock.drawContains(windowContains.top, containPositions.top.x, containPositions.top.y);
+    windowBlock.drawContains(windowContains.top.text, containPositions.top.x, containPositions.top.y);
     // Рисуем значение
-    windowBlock.drawContains(windowContains.bottom, containPositions.bottom.x, containPositions.bottom.y);
+    windowBlock.drawContains(windowContains.bottom.text, containPositions.bottom.x, containPositions.bottom.y);
     // Рисуем линию группы
     windowBlock.drawGroupLine(containPositions.line);
   }
@@ -610,6 +668,7 @@ class aCharty {
     this._setDefaultStylesToCanvas();
     this._setStylesToCanvas();
     this._setYAxis();
+    this._setXAxisTitle();
     this._setXAxis();
     this._setVerticalLines();
     this._setHorizontalLines();
@@ -623,6 +682,7 @@ class aCharty {
     this._setDefaultStylesToCanvas();
     this._setStylesToCanvas();
     this._setYAxis();
+    this._setXAxisTitle();
     this._setXAxis();
     this._setVerticalLines();
     this._setHorizontalLines();

@@ -21,6 +21,7 @@ Creating simple graphs
       },
       color: "#A1ABB4",
       fontSize: 12,
+      showText: true,
     },
     axisY: {
       line: {
@@ -29,6 +30,7 @@ Creating simple graphs
       },
       color: "#A1ABB4",
       fontSize: 12,
+      showText: true,
     },
     cap: { radius: 4, },
     data: {
@@ -142,6 +144,7 @@ new ACharty({
     },
     color: "#A1ABB4",
     fontSize: 12,
+    showText: true,
   },
 }).init();
 ```
@@ -159,6 +162,7 @@ new ACharty({
     },
     color: "#A1ABB4",
     fontSize: 12,
+    showText: true,
   },
 }).init();
 ```
