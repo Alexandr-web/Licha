@@ -3,12 +3,12 @@ import WindowInfoBlock from "./WindowInfoBlock";
 class Chart {
   constructor({
     canvasSelector,
-    background = "black",
+    background,
     data = {},
     line = {},
     cap = {},
-    axisY = { fontSize: 12, color: "white", },
-    axisX = { fontSize: 12, color: "white", },
+    axisY = {},
+    axisX = {},
     padding = {
       top: 10,
       left: 10,
@@ -43,9 +43,7 @@ class Chart {
     // Содержит объекты данных колпачка линии
     this.capsData = [];
     // Расстояние между горизонтальной линией и графиком
-    this.indentFromXAxisToGraph = 25;
-    // Расстояние между осями
-    this.distanceBetweenAxles = 10;
+    this.indentFromXAxisToGraph = 20;
     // Содержит объект данных, которые будут применяться к активной группе
     this.activeGroup = {};
     // Содержит данные блока информации
@@ -115,15 +113,12 @@ class Chart {
    * @param {string} color Цвет
    * @param {number} fontSize Размер шрифта
    */
-  _setStylesToAxisText({ contain, color, fontSize, }) {
-    this.ctx.globalAlpha = Object.keys(this.activeGroup).length ? 0.5 : 1;
+  _setStylesToAxisText({ contain, color, }) {
+    this.ctx.globalAlpha = Object.keys(this.activeGroup).length ? 0.6 : 1;
 
     if ([this.activeGroup.name, this.activeGroup.value].includes(contain)) {
       const { active: { text: activeText = {}, }, } = this.activeGroup;
-      const activeParams = {
-        color: activeText.color || color,
-        fontSize: activeText.fontSize || fontSize,
-      };
+      const activeParams = { color: activeText.color || color, };
 
       this.ctx.globalAlpha = 1;
       this.ctx.fillStyle = activeParams.color;
@@ -245,12 +240,13 @@ class Chart {
 
     // Добавляем целые значения в массив ординат
     valuesFromFirstValueToLastValue.map((value, index) => {
-      this.ctx.font = `400 ${this.axisY.fontSize}px Arial, sans-serif`;
+      this.ctx.beginPath();
+      this.ctx.font = `400 ${fontSize}px Arial, sans-serif`;
 
+      const text = this.ctx.measureText(value);
       const startPoint = this.padding.top + this.ctx.measureText(firstValue).actualBoundingBoxAscent / 2;
       const endPoint = this._getCanvasSizes().height - startPoint - this.padding.bottom - this.indentFromXAxisToGraph;
       const step = endPoint / (valuesFromFirstValueToLastValue.length - 1);
-      const text = this.ctx.measureText(value);
       const x = this.padding.left;
       const y = step * index + startPoint;
       const height = text.actualBoundingBoxAscent;
@@ -266,7 +262,6 @@ class Chart {
 
       if (value % nod === 0) {
         this._setStylesToAxisText({ contain: value, color, fontSize, });
-        this.ctx.fontKerning = "none";
         this.ctx.fillText(value, x, y + height / 2);
       }
     });
@@ -315,23 +310,25 @@ class Chart {
 
   // Устанавливает абсциссу
   _setXAxis() {
-    const startPoint = this.padding.left + this._getMaxTextWidthAtYAxis() + this.distanceBetweenAxles;
     const canvasHeight = this._getCanvasSizes().height;
     const fontSize = this.axisX.fontSize;
     const color = this.axisX.color;
+    const firstName = this.uniqueNames[0];
+    const lastName = this.uniqueNames[this.uniqueNames.length - 1];
 
     this.uniqueNames.map((name, index) => {
-      this._setStylesToAxisText({ contain: name, color, fontSize, });
+      this.ctx.beginPath();
+      this.ctx.font = `400 ${fontSize}px Arial, sans-serif`;
 
-      const lastXItem = this.uniqueNames[this.uniqueNames.length - 1];
-      const endPoint = this._getCanvasSizes().width - startPoint - this.padding.right - this.ctx.measureText(lastXItem).width / 2;
+      const startPoint = this.ctx.measureText(firstName).width / 2 + this.padding.left + this._getMaxTextWidthAtYAxis();
+      const endPoint = this._getCanvasSizes().width - this.ctx.measureText(lastName).width / 2 - startPoint - this.padding.right;
       const step = endPoint / (this.uniqueNames.length - 1);
 
-      this.ctx.fontKerning = "none";
+      this._setStylesToAxisText({ contain: name, color, fontSize, });
 
       const text = this.ctx.measureText(name);
       const x = step * index + startPoint;
-      const y = canvasHeight - text.actualBoundingBoxAscent;
+      const y = canvasHeight - this.padding.bottom;
 
       // Проверяем в каких группах находится это название
       for (const group in this.data) {
@@ -353,7 +350,7 @@ class Chart {
         });
       }
 
-      // Рисуем текст на графике в зависимости от индекса
+      // Рисуем текст
       this.ctx.fillText(name, x - text.width / 2, y);
     });
   }
@@ -367,8 +364,8 @@ class Chart {
 
         // Рисуем линию
         this.ctx.beginPath();
-        this.ctx.globalAlpha = 1;
         this.ctx.moveTo(firstXAxisItem.x, y);
+        this.ctx.globalAlpha = 1;
         this.ctx.strokeStyle = this.axisX.line.color;
         this.ctx.lineWidth = this.axisX.line.width;
         this.ctx.lineCap = "round";
@@ -389,8 +386,8 @@ class Chart {
 
         // Рисуем линию
         this.ctx.beginPath();
-        this.ctx.globalAlpha = 1;
         this.ctx.moveTo(findAxisXItem.x, firstAxisYItem.y);
+        this.ctx.globalAlpha = 1;
         this.ctx.strokeStyle = this.axisY.line.color;
         this.ctx.lineWidth = this.axisY.line.width;
         this.ctx.lineCap = "round";
@@ -420,9 +417,8 @@ class Chart {
         // Начало линии
         this.ctx.beginPath();
         this.ctx.moveTo(findAxisXItem.x, findAxisYItem.y);
-        // Применяем стили к линии
-        this._setStylesToChartLine({ group, width, color, });
         this.ctx.lineJoin = "round";
+        this._setStylesToChartLine({ group, width, color, });
 
         if (nextDataItem) {
           // Находим следующий элемент из ординаты, подходящий по значению
