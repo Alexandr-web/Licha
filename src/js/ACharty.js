@@ -10,6 +10,7 @@ class aCharty {
     axisY = {},
     axisX = {},
     updateWhenResizing = true,
+    stepped = false,
     padding = {
       top: 10,
       left: 10,
@@ -19,6 +20,8 @@ class aCharty {
   }) {
     // Правило, которое будет обновлять график при изменении экрана
     this.updateWhenResizing = updateWhenResizing;
+    // Правило, которое будет рисовать линию пошагово
+    this.stepped = stepped;
     // Объект с данными абсциссы
     this.axisX = axisX;
     // Объект с данными ординаты
@@ -46,13 +49,9 @@ class aCharty {
     // Содержит объекты данных колпачка линии
     this.capsData = [];
     // Расстояние между горизонтальной линией и графиком
-    this.indentFromXAxisToGraph = 20;
+    this.indentFromXAxisToGraph = 10;
     // Расстояние между ординатой и графиком
     this.distanceBetweenYAndChart = 10;
-    // Содержит данные о названии оси абсцисс
-    this.axisXTitle = {};
-    // Содержит данные о названии оси ординат
-    this.axisYTitle = {};
     // Содержит объект данных, которые будут применяться к активной группе
     this.activeGroup = {};
     // Содержит данные блока информации
@@ -351,7 +350,7 @@ class aCharty {
 
       const nameSizes = this._getSizesText(name, `400 ${fontSize}px Arial, sans-serif`);
       const x = step * index + startPoint;
-      const y = canvasHeight - this.padding.bottom - (this.axisXTitle.height || 0);
+      const y = canvasHeight - this.padding.bottom;
 
       // Проверяем в каких группах находится это название
       for (const group in this.data) {
@@ -359,10 +358,9 @@ class aCharty {
 
         groupData.map((groupDataItem) => {
           if (groupDataItem.name === name) {
-            // Добавление элемента оси абсцисс в массив
             this.axisXData.push({
               x,
-              y: y - nameSizes.height / 2,
+              y,
               name,
               value: groupDataItem.value,
               width: nameSizes.width,
@@ -378,38 +376,6 @@ class aCharty {
         this.ctx.fillText(name, x - nameSizes.width / 2, y);
       }
     });
-  }
-
-  // Рисует название оси абсцисс
-  _setXAxisTitle() {
-    if (!Object.keys(this.axisX.title).length) {
-      return;
-    }
-
-    const { title, } = this.axisX;
-    const startX = this.padding.left + this._getMaxTextWidthAtYAxis() + this.distanceBetweenYAndChart;
-    const startY = this._getCanvasSizes().height - this.padding.bottom;
-    const areaWidth = this._getCanvasSizes().width - this.padding.right;
-    const x = areaWidth / 2;
-    const y = startY;
-
-    this.ctx.beginPath();
-    this.ctx.moveTo(startX, startY);
-    this.ctx.globalAlpha = 1;
-    this.ctx.fillStyle = "white";
-
-    const textSizes = this._getSizesText(title, `400 ${14}px Arial, sans-serif`);
-
-    this.axisXTitle = {
-      x,
-      y,
-      title,
-      width: textSizes.width,
-      height: textSizes.height,
-    };
-
-    // Рисуем название
-    this.ctx.fillText(title, x, y);
   }
 
   // Устанавливает горизонтальные линии
@@ -463,7 +429,7 @@ class aCharty {
       } = this.data[group];
 
       groupData.map(({ value, name, }, index) => {
-        const nextDataItem = groupData.find((groupDataItem, idx) => idx > index);
+        const nextDataItem = groupData[index + 1];
         // Находим элемент из ординаты, подходящий по значению
         const findAxisYItem = this.axisYData.find((axisYItem) => axisYItem.value === value);
         // Находим элемент из абсциссы, подходящий по имени
@@ -483,8 +449,12 @@ class aCharty {
           // Находим следующий элемент из абсциссы, подходящий по имени
           const findNextAxisXItem = this.axisXData.find((nextAxisXItem) => nextAxisXItem.name === nextDataItem.name);
 
-          // Направляем линию к следующему элементу
-          this.ctx.lineTo(findNextAxisXItem.x, findNextAxisYItem.y);
+          if (!this.stepped) {
+            this.ctx.lineTo(findNextAxisXItem.x, findNextAxisYItem.y);
+          } else {
+            this.ctx.lineTo(findNextAxisXItem.x, findAxisYItem.y);
+            this.ctx.lineTo(findNextAxisXItem.x, findNextAxisYItem.y);
+          }
         }
 
         // Рисуем линию
@@ -668,7 +638,6 @@ class aCharty {
     this._setDefaultStylesToCanvas();
     this._setStylesToCanvas();
     this._setYAxis();
-    this._setXAxisTitle();
     this._setXAxis();
     this._setVerticalLines();
     this._setHorizontalLines();
@@ -682,7 +651,6 @@ class aCharty {
     this._setDefaultStylesToCanvas();
     this._setStylesToCanvas();
     this._setYAxis();
-    this._setXAxisTitle();
     this._setXAxis();
     this._setVerticalLines();
     this._setHorizontalLines();
