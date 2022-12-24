@@ -9,6 +9,7 @@ class aCharty {
     cap = {},
     axisY = {},
     axisX = {},
+    title = {},
     updateWhenResizing = true,
     stepped = false,
     padding = {
@@ -18,6 +19,8 @@ class aCharty {
       bottom: 10,
     },
   }) {
+    // Объект с данными названия диаграммы
+    this.title = title;
     // Правило, которое будет обновлять график при изменении экрана
     this.updateWhenResizing = updateWhenResizing;
     // Правило, которое будет рисовать линию пошагово
@@ -52,6 +55,8 @@ class aCharty {
     this.indentFromXAxisToGraph = 10;
     // Расстояние между ординатой и графиком
     this.distanceBetweenYAndChart = 10;
+    // Расстояние между графиком и названием диаграммы
+    this.distanceBetweenTitleChartAndChart = 10;
     // Содержит объект данных, которые будут применяться к активной группе
     this.activeGroup = {};
     // Содержит данные блока информации
@@ -210,6 +215,32 @@ class aCharty {
     this.ctx.fillRect(0, 0, this._getCanvasSizes().width, this._getCanvasSizes().height);
   }
 
+  // Устанавливает название диаграммы
+  _setTitleChart() {
+    if (!Object.keys(this.title).length) {
+      return;
+    }
+
+    const { fontSize, name, color, } = this.title;
+    const widthCanvas = this._getCanvasSizes().width - this.padding.right;
+    const textSizes = this._getSizesText(name, `600 ${fontSize}px Arial, sans-serif`);
+    const y = this.padding.top + textSizes.height;
+    const x = widthCanvas / 2;
+
+    this.ctx.moveTo(this.padding.left, this.padding.top);
+    this.ctx.fillStyle = color;
+    this.ctx.textAlign = "center";
+    this.ctx.fillText(name, x, y);
+
+    this.title = {
+      ...this.title,
+      x,
+      y,
+      width: textSizes.width,
+      height: textSizes.height,
+    };
+  }
+
   /**
    * Ищет наибольший общий делитель
    * @param {number} num1 Первое число
@@ -267,10 +298,10 @@ class aCharty {
     valuesFromFirstValueToLastValue.map((value, index) => {
       const valueSizes = this._getSizesText(value, `400 ${fontSize}px Arial, sans-serif`);
       const firstValueSizes = this._getSizesText(firstValue, `400 ${fontSize}px Arial, sans-serif`);
-      const startPoint = this.padding.top + firstValueSizes.height / 2;
+      const startPoint = this.padding.top + firstValueSizes.height / 2 + (Object.keys(this.title).length ? this.title.height + this.distanceBetweenTitleChartAndChart : 0);
       const endPoint = this._getCanvasSizes().height - startPoint - this.padding.bottom - (this.axisX.showText ? this.indentFromXAxisToGraph + heightFirstName : 0);
       const step = endPoint / (valuesFromFirstValueToLastValue.length - 1);
-      const x = this.padding.left;
+      const x = this.padding.left + valueSizes.width / 2;
       const y = step * index + startPoint;
       const height = valueSizes.height;
 
@@ -504,6 +535,7 @@ class aCharty {
     }
   }
 
+  // Действия при изменении размеров экрана
   _drawWhenResizeScreen() {
     window.addEventListener("resize", () => {
       // Перерисовывает график при изменении размеров окна
@@ -637,6 +669,7 @@ class aCharty {
     this._setUniqueValues();
     this._setDefaultStylesToCanvas();
     this._setStylesToCanvas();
+    this._setTitleChart();
     this._setYAxis();
     this._setXAxis();
     this._setVerticalLines();
@@ -650,6 +683,7 @@ class aCharty {
     this._setUniqueValues();
     this._setDefaultStylesToCanvas();
     this._setStylesToCanvas();
+    this._setTitleChart();
     this._setYAxis();
     this._setXAxis();
     this._setVerticalLines();
