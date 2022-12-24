@@ -301,7 +301,7 @@ class aCharty {
       const startPoint = this.padding.top + firstValueSizes.height / 2 + (Object.keys(this.title).length ? this.title.height + this.distanceBetweenTitleChartAndChart : 0);
       const endPoint = this._getCanvasSizes().height - startPoint - this.padding.bottom - (this.axisX.showText ? this.indentFromXAxisToGraph + heightFirstName : 0);
       const step = endPoint / (valuesFromFirstValueToLastValue.length - 1);
-      const x = this.padding.left + valueSizes.width / 2;
+      const x = this.padding.left;
       const y = step * index + startPoint;
       const height = valueSizes.height;
 
