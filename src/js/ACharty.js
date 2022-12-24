@@ -316,6 +316,7 @@ class aCharty {
 
       if (value % nod === 0 && this.axisY.showText) {
         this._setStylesToAxisText({ contain: value, color, fontSize, });
+        this.ctx.textAlign = "left";
         this.ctx.fillText(value, x, y + height / 2);
       }
     });
@@ -378,6 +379,7 @@ class aCharty {
       const step = endPoint / (this.uniqueNames.length - 1);
 
       this._setStylesToAxisText({ contain: name, color, fontSize, });
+      this.ctx.textAlign = "left";
 
       const nameSizes = this._getSizesText(name, `400 ${fontSize}px Arial, sans-serif`);
       const x = step * index + startPoint;
@@ -572,13 +574,11 @@ class aCharty {
     const windowContains = {
       top: {
         text: group,
-        width: this._getSizesText(group, "400 14px Arial, sans-serif").width,
-        height: this._getSizesText(group, "400 14px Arial, sans-serif").height,
+        ...this._getSizesText(group, "400 14px Arial, sans-serif"),
       },
       bottom: {
         text: `${name}: ${value}`,
-        width: this._getSizesText(`${name}: ${value}`, "400 14px Arial, sans-serif").width,
-        height: this._getSizesText(`${name}: ${value}`, "400 14px Arial, sans-serif").height,
+        ...this._getSizesText(`${name}: ${value}`, "400 14px Arial, sans-serif"),
       },
     };
     const windowPadding = {

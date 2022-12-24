@@ -53,6 +53,7 @@ class WindowInfoBlock {
 		this.ctx.font = `400 ${this.fontSize}px Arial, sans-serif`;
 		this.ctx.fontKerning = "none";
 		this.ctx.fillStyle = this.colorText;
+		this.ctx.textAlign = "left";
 		this.ctx.fillText(value, x, y);
 	}
 
