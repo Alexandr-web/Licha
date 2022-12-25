@@ -676,11 +676,17 @@ class aCharty {
 			ctx: this.ctx,
 			fontSize: 14,
 			padding: windowPadding,
-		}).beyondTheBorders(
-			x, y, windowPadding.fromCap,
-			containPositions, windowBlock, radius,
-			windowPadding.horizontal, windowPadding.horizontal, this._getCanvasSizes().width
-		);
+		}).getWindowPosition({
+			x,
+			y,
+			capPadding: windowPadding.fromCap,
+			containPositions,
+			windowBlock,
+			radius,
+			horizontalPadding: windowPadding.horizontal,
+			verticalPadding: windowPadding.vertical,
+			canvasWidth: this._getCanvasSizes().width,
+		});
 
 		// Рисуем блок окна
 		windowBlock.drawWindow(xBlock, yBlock);

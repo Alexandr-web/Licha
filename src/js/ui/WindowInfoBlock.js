@@ -97,9 +97,17 @@ class WindowInfoBlock {
 	 * @param {number} verticalPadding Внутренний вертикальный отступ
 	 * @param {number} canvasWidth Ширина канваса
 	 */
-	beyondTheBorders(
-		x, y, capPadding, containPositions, windowBlock, radius, horizontalPadding, verticalPadding, canvasWidth
-	) {
+	getWindowPosition({
+		x,
+		y,
+		capPadding,
+		containPositions,
+		windowBlock,
+		radius,
+		horizontalPadding,
+		verticalPadding,
+		canvasWidth,
+	}) {
 		const blockCoords = {
 			x: x + capPadding,
 			y: y - this.height / 2,
