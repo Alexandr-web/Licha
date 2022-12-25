@@ -85,6 +85,54 @@ class WindowInfoBlock {
 			ctx: this.ctx,
 		}).draw();
 	}
+
+	/**
+	 * Проверка выхода блока за границы канваса
+	 * @param {number} x Координата x активной группы
+	 * @param {number} y Координата y активной группы
+	 * @param {number} capPadding Внутренний отступ
+	 * @param {object} containPositions Объект, содержащий позиции элементов блока
+	 * @param {number} radius Радиус
+	 * @param {number} horizontalPadding Внутренний горизонтальный отступ
+	 * @param {number} verticalPadding Внутренний вертикальный отступ
+	 * @param {number} canvasWidth Ширина канваса
+	 */
+	beyondTheBorders(
+		x, y, capPadding, containPositions, windowBlock, radius, horizontalPadding, verticalPadding, canvasWidth
+	) {
+		const blockCoords = {
+			x: x + capPadding,
+			y: y - this.height / 2,
+		};
+		const {
+			width: blockWidth,
+			height: blockHeight,
+		} = windowBlock;
+
+		if ((x + this.width + capPadding) > canvasWidth) {
+			// блок с инфо
+			blockCoords.x = x - blockWidth - capPadding;
+			containPositions.top.x = blockCoords.x - radius + capPadding;
+			containPositions.bottom.x = blockCoords.x - radius + capPadding;
+
+			// линия
+			containPositions.line.start.x = x - blockWidth + radius - capPadding + blockWidth - horizontalPadding;
+			containPositions.line.to.x = x - blockWidth + radius - capPadding + blockWidth - horizontalPadding;
+		}
+
+		if (blockCoords.y < 0) {
+			// блок с инфо
+			blockCoords.y = y + verticalPadding;
+			containPositions.top.y = blockCoords.y + blockHeight / 2 - radius;
+			containPositions.bottom.y = blockCoords.y + blockHeight / 2 + radius + verticalPadding;
+
+			// линия
+			containPositions.line.start.y = blockCoords.y + verticalPadding;
+			containPositions.line.to.y = blockCoords.y + blockHeight / 2 + verticalPadding + capPadding - radius;
+		}
+
+		return blockCoords;
+	}
 }
 
 export default WindowInfoBlock;

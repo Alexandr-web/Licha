@@ -670,43 +670,24 @@ class aCharty {
 			},
 		};
 
-		let xBlock = x + windowPadding.fromCap;
-		let yBlock = y - windowBlock.height / 2;
-		let { top: { x: xGroupName, y: yGroupName, }, bottom: { x: xGroupValue, y: yGroupValue, }, } = containPositions;
-
-		const { width: canvasWidth, } = this._getCanvasSizes();
-		const { width: blockWidth, height: blockHeight, } = windowBlock;
-
-		// Если блок с информацией вылез за пределы канваса по оси x
-		if ((x + blockWidth + windowPadding.fromCap) > canvasWidth) {
-			// блок с инфо
-			xBlock = x - blockWidth - windowPadding.fromCap;
-			xGroupName = xBlock - radius + windowPadding.fromCap;
-			xGroupValue = xBlock - radius + windowPadding.fromCap;
-
-			// линия
-			containPositions.line.start.x = x - blockWidth + radius - windowPadding.fromCap + blockWidth - windowPadding.horizontal;
-			containPositions.line.to.x = x - blockWidth + radius - windowPadding.fromCap + blockWidth - windowPadding.horizontal;
-		}
-
-		// Если блок с информацией вылез за пределы канваса по оси y
-		if (yBlock < 0) {
-			// блок с инфо
-			yBlock = y + windowPadding.vertical;
-			yGroupName = yBlock + blockHeight / 2 - radius;
-			yGroupValue = yBlock + blockHeight / 2 + radius + windowPadding.vertical;
-
-			// линия
-			containPositions.line.start.y = yBlock + windowPadding.vertical;
-			containPositions.line.to.y = yBlock + blockHeight / 2 + windowPadding.vertical + windowPadding.fromCap - radius;
-		}
+		const { x: xBlock, y: yBlock, } = new WindowInfoBlock({
+			width: windowBlockWidth,
+			colorLine: colorLineGroup,
+			ctx: this.ctx,
+			fontSize: 14,
+			padding: windowPadding,
+		}).beyondTheBorders(
+			x, y, windowPadding.fromCap,
+			containPositions, windowBlock, radius,
+			windowPadding.horizontal, windowPadding.horizontal, this._getCanvasSizes().width
+		);
 
 		// Рисуем блок окна
 		windowBlock.drawWindow(xBlock, yBlock);
 		// Рисуем название группы
-		windowBlock.drawContains(windowContains.top.text, xGroupName, yGroupName);
+		windowBlock.drawContains(windowContains.top.text, containPositions.top.x, containPositions.top.y);
 		// Рисуем значение
-		windowBlock.drawContains(windowContains.bottom.text, xGroupValue, yGroupValue);
+		windowBlock.drawContains(windowContains.bottom.text, containPositions.bottom.x, containPositions.bottom.y);
 		// Рисуем линию группы
 		windowBlock.drawGroupLine(containPositions.line);
 	}
