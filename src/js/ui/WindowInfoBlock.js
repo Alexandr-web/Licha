@@ -1,3 +1,7 @@
+import Text from "./Text";
+import Rect from "./Rect";
+import Line from "./Line";
+
 class WindowInfoBlock {
 	constructor({
 		color = "rgba(34,34,34, .8)",
@@ -37,9 +41,15 @@ class WindowInfoBlock {
 	 * @param {number} y позиция по оси ординат
 	 */
 	drawWindow(x, y) {
-		this.ctx.globalAlpha = 1;
-		this.ctx.fillStyle = this.color;
-		this.ctx.fillRect(x, y, this.width, this.height, [10]);
+		new Rect({
+			x,
+			y,
+			ctx: this.ctx,
+			width: this.width,
+			height: this.height,
+			color: this.color,
+			opacity: 1,
+		}).draw();
 	}
 
 	/**
@@ -49,12 +59,15 @@ class WindowInfoBlock {
 	 * @param {number} y позиция по оси ординат
 	 */
 	drawContains(value, x, y) {
-		this.ctx.globalAlpha = 1;
-		this.ctx.font = `400 ${this.fontSize}px Arial, sans-serif`;
-		this.ctx.fontKerning = "none";
-		this.ctx.fillStyle = this.colorText;
-		this.ctx.textAlign = "left";
-		this.ctx.fillText(value, x, y);
+		new Text({
+			text: value,
+			color: this.colorText,
+			font: `400 ${this.fontSize}px Arial, sans-serif`,
+			x,
+			y,
+			ctx: this.ctx,
+			opacity: 1,
+		}).draw();
 	}
 
 	/**
@@ -63,14 +76,14 @@ class WindowInfoBlock {
 	 * @param {object} to Объект, содержащий позиции направления линии
 	 */
 	drawGroupLine({ start: { x: startX, y: startY, }, to: { x: toX, y: toY, }, }) {
-		this.ctx.beginPath();
-		this.ctx.globalAlpha = 1;
-		this.ctx.strokeStyle = this.colorLine;
-		this.ctx.lineWidth = 2;
-		this.ctx.lineCap = "round";
-		this.ctx.moveTo(startX, startY);
-		this.ctx.lineTo(toX, toY);
-		this.ctx.stroke();
+		new Line({
+			color: this.colorLine,
+			opacity: 1,
+			width: 2,
+			moveTo: { x: startX, y: startY, },
+			lineTo: [{ x: toX, y: toY, }],
+			ctx: this.ctx,
+		}).draw();
 	}
 }
 

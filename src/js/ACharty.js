@@ -1,4 +1,8 @@
-import WindowInfoBlock from "./WindowInfoBlock";
+import Text from "./ui/Text";
+import Rect from "./ui/Rect";
+import Line from "./ui/Line";
+import Cap from "./ui/Cap";
+import WindowInfoBlock from "./ui/WindowInfoBlock";
 
 class aCharty {
   constructor({
@@ -85,7 +89,15 @@ class aCharty {
    * @param {number} y Позиция по оси ординат
    */
   _setStylesToCap({ group, color, radius, stroke, x, y, }) {
-    this.ctx.globalAlpha = Object.keys(this.activeGroup).length ? 0.5 : 1;
+    let capData = {
+      ctx: this.ctx,
+      x,
+      y,
+      radius,
+      stroke,
+      color,
+      opacity: Object.keys(this.activeGroup).length ? 0.5 : 1,
+    };
 
     if (group === this.activeGroup.group) {
       // Стили для активного колпачка
@@ -96,58 +108,69 @@ class aCharty {
         stroke: activeCap.stroke || stroke,
       };
 
-      this.ctx.globalAlpha = 1;
-      this.ctx.fillStyle = activeParams.color;
-      this.ctx.arc(x, y, activeParams.radius, Math.PI * 2, false);
-
-      // Установка обводки колпачка линии
-      if (Object.keys(activeParams.stroke).length) {
-        this.ctx.lineWidth = activeParams.stroke.width;
-        this.ctx.strokeStyle = activeParams.stroke.color;
-        this.ctx.stroke();
-      }
-    } else {
-      // Стили для обычного колпачка
-      this.ctx.fillStyle = color;
-      this.ctx.arc(x, y, radius, Math.PI * 2, false);
-
-      // Установка обводки колпачка линии
-      if (Object.keys(stroke).length) {
-        this.ctx.lineWidth = stroke.width;
-        this.ctx.strokeStyle = stroke.color;
-        this.ctx.stroke();
-      }
+      capData = {
+        ...capData,
+        opacity: 1,
+        color: activeParams.color,
+        radius: activeParams.radius,
+        stroke: activeParams.stroke,
+      };
     }
+
+    new Cap(capData).draw();
   }
 
   /**
    * Устанавливает стили для текста осей
    * @param {string} contain Содержание текста оси
    * @param {string} color Цвет
-   * @param {number} fontSize Размер шрифта
+   * @param {number} x Позиция по оси абсцисс
+   * @param {number} y Позиция по оси ординат
+   * @param {string} font Данные шрифта в строковом виде
    */
-  _setStylesToAxisText({ contain, color, }) {
-    this.ctx.globalAlpha = Object.keys(this.activeGroup).length ? 0.6 : 1;
+  _setStylesToAxisText({ contain, color, x, y, font, }) {
+    let textData = {
+      ctx: this.ctx,
+      color,
+      opacity: Object.keys(this.activeGroup).length ? 0.6 : 1,
+      x,
+      y,
+      font,
+      text: contain,
+    };
 
     if ([this.activeGroup.name, this.activeGroup.value].includes(contain)) {
       const { active: { text: activeText = {}, }, } = this.activeGroup;
       const activeParams = { color: activeText.color || color, };
 
-      this.ctx.globalAlpha = 1;
-      this.ctx.fillStyle = activeParams.color;
-    } else {
-      this.ctx.fillStyle = color;
+      textData = {
+        ...textData,
+        ctx: this.ctx,
+        color: activeParams.color,
+        opacity: 1,
+      };
     }
+
+    new Text(textData).draw();
   }
 
   /**
    * Установка стилей для линий графика
    * @param {string} group Группа, в которой находится линия
+   * @param {object} moveTo Объект с начальными координатами линии
    * @param {number} width Ширина
    * @param {string} color Цвет
+   * @param {array} lineTo Следующие позиции линии
    */
-  _setStylesToChartLine({ group, width, color, }) {
-    this.ctx.globalAlpha = Object.keys(this.activeGroup).length ? 0.5 : 1;
+  _setStylesToChartLine({ moveTo, group, width, color, lineTo, }) {
+    let lineData = {
+      moveTo,
+      lineTo,
+      width,
+      color,
+      ctx: this.ctx,
+      opacity: Object.keys(this.activeGroup).length ? 0.5 : 1,
+    };
 
     if (group === this.activeGroup.group) {
       const { active: { line: activeLine = {}, }, } = this.activeGroup;
@@ -156,13 +179,15 @@ class aCharty {
         color: activeLine.color || color,
       };
 
-      this.ctx.globalAlpha = 1;
-      this.ctx.lineWidth = activeParams.width;
-      this.ctx.strokeStyle = activeParams.color;
-    } else {
-      this.ctx.lineWidth = width;
-      this.ctx.strokeStyle = color;
+      lineData = {
+        ...lineData,
+        opacity: 1,
+        width: activeParams.width,
+        color: activeParams.color,
+      };
     }
+
+    new Line(lineData).draw();
   }
 
   // Устанавливает размеры элементу canvas
@@ -211,8 +236,14 @@ class aCharty {
 
   // Задает задний фон графику
   _setStylesToCanvas() {
-    this.ctx.fillStyle = this.background;
-    this.ctx.fillRect(0, 0, this._getCanvasSizes().width, this._getCanvasSizes().height);
+    new Rect({
+      x: 0,
+      y: 0,
+      ...this._getCanvasSizes(),
+      color: this.background,
+      opacity: 1,
+      ctx: this.ctx,
+    }).draw();
   }
 
   // Устанавливает название диаграммы
@@ -227,10 +258,19 @@ class aCharty {
     const y = this.padding.top + textSizes.height;
     const x = widthCanvas / 2;
 
-    this.ctx.moveTo(this.padding.left, this.padding.top);
-    this.ctx.fillStyle = color;
-    this.ctx.textAlign = "center";
-    this.ctx.fillText(name, x, y);
+    new Text({
+      moveTo: {
+        x: this.padding.left,
+        y: this.padding.top,
+      },
+      text: name,
+      x,
+      y,
+      color,
+      align: "center",
+      font: `600 ${fontSize}px Arial, sans-serif`,
+      ctx: this.ctx,
+    }).draw();
 
     this.title = {
       ...this.title,
@@ -315,9 +355,13 @@ class aCharty {
       });
 
       if (value % nod === 0 && this.axisY.showText) {
-        this._setStylesToAxisText({ contain: value, color, fontSize, });
-        this.ctx.textAlign = "left";
-        this.ctx.fillText(value, x, y + height / 2);
+        this._setStylesToAxisText({
+          contain: value,
+          color,
+          font: `400 ${fontSize}px Arial, sans-serif`,
+          x,
+          y: y + height / 2,
+        });
       }
     });
 
@@ -377,10 +421,6 @@ class aCharty {
       const startPoint = firstNameSizes.width / 2 + this.padding.left + (this.axisY.showText ? this._getMaxTextWidthAtYAxis() + this.distanceBetweenYAndChart : 0);
       const endPoint = this._getCanvasSizes().width - lastNameSizes.width / 2 - startPoint - this.padding.right;
       const step = endPoint / (this.uniqueNames.length - 1);
-
-      this._setStylesToAxisText({ contain: name, color, fontSize, });
-      this.ctx.textAlign = "left";
-
       const nameSizes = this._getSizesText(name, `400 ${fontSize}px Arial, sans-serif`);
       const x = step * index + startPoint;
       const y = canvasHeight - this.padding.bottom;
@@ -406,7 +446,13 @@ class aCharty {
 
       // Рисуем текст
       if (this.axisX.showText) {
-        this.ctx.fillText(name, x - nameSizes.width / 2, y);
+        this._setStylesToAxisText({
+          contain: name,
+          color,
+          font: `400 ${fontSize}px Arial, sans-serif`,
+          x: x - nameSizes.width / 2,
+          y,
+        });
       }
     });
   }
@@ -419,14 +465,13 @@ class aCharty {
         const lastXAxisItem = this.axisXData[this.axisXData.length - 1];
 
         // Рисуем линию
-        this.ctx.beginPath();
-        this.ctx.moveTo(firstXAxisItem.x, y);
-        this.ctx.globalAlpha = 1;
-        this.ctx.strokeStyle = this.axisX.line.color;
-        this.ctx.lineWidth = this.axisX.line.width;
-        this.ctx.lineCap = "round";
-        this.ctx.lineTo(lastXAxisItem.x, y);
-        this.ctx.stroke();
+        new Line({
+          ctx: this.ctx,
+          color: this.axisX.line.color,
+          width: this.axisX.line.width,
+          moveTo: { x: firstXAxisItem.x, y, },
+          lineTo: [{ x: lastXAxisItem.x, y, }],
+        }).draw();
       });
     }
   }
@@ -441,14 +486,14 @@ class aCharty {
         const lastAxisYItem = axisYOnScreen[axisYOnScreen.length - 1];
 
         // Рисуем линию
-        this.ctx.beginPath();
-        this.ctx.moveTo(findAxisXItem.x, firstAxisYItem.y);
-        this.ctx.globalAlpha = 1;
-        this.ctx.strokeStyle = this.axisY.line.color;
-        this.ctx.lineWidth = this.axisY.line.width;
-        this.ctx.lineCap = "round";
-        this.ctx.lineTo(findAxisXItem.x, lastAxisYItem.y);
-        this.ctx.stroke();
+        new Line({
+          ctx: this.ctx,
+          moveTo: { x: findAxisXItem.x, y: firstAxisYItem.y, },
+          opacity: 1,
+          color: this.axisY.line.color,
+          width: this.axisY.line.width,
+          lineTo: [{ x: findAxisXItem.x, y: lastAxisYItem.y, }],
+        }).draw();
       });
     }
   }
@@ -469,12 +514,7 @@ class aCharty {
         const findAxisXItem = this.axisXData.find((axisXItem) => axisXItem.name === name);
         const width = groupLine.width || this.line.width;
         const color = groupLine.color || this.line.color;
-
-        // Начало линии
-        this.ctx.beginPath();
-        this.ctx.moveTo(findAxisXItem.x, findAxisYItem.y);
-        this.ctx.lineJoin = "round";
-        this._setStylesToChartLine({ group, width, color, });
+        const lineToArray = [];
 
         if (nextDataItem) {
           // Находим следующий элемент из ординаты, подходящий по значению
@@ -483,15 +523,29 @@ class aCharty {
           const findNextAxisXItem = this.axisXData.find((nextAxisXItem) => nextAxisXItem.name === nextDataItem.name);
 
           if (!this.stepped) {
-            this.ctx.lineTo(findNextAxisXItem.x, findNextAxisYItem.y);
+            lineToArray.push({ x: findNextAxisXItem.x, y: findNextAxisYItem.y, });
           } else {
-            this.ctx.lineTo(findNextAxisXItem.x, findAxisYItem.y);
-            this.ctx.lineTo(findNextAxisXItem.x, findNextAxisYItem.y);
+            lineToArray.push(
+              {
+                x: findNextAxisXItem.x,
+                y: findAxisYItem.y,
+              },
+              {
+                x: findNextAxisXItem.x,
+                y: findNextAxisYItem.y,
+              }
+            );
           }
         }
 
         // Рисуем линию
-        this.ctx.stroke();
+        this._setStylesToChartLine({
+          moveTo: { x: findAxisXItem.x, y: findAxisYItem.y, },
+          group,
+          width,
+          color,
+          lineTo: lineToArray,
+        });
       });
     }
   }
@@ -528,11 +582,8 @@ class aCharty {
           strokeWidth: stroke.width || 0,
         });
 
-        this.ctx.beginPath();
-        // Применяем стили к колпачку
-        this._setStylesToCap({ group, color, radius, stroke, x, y, });
         // Рисуем колпачок
-        this.ctx.fill();
+        this._setStylesToCap({ group, color, radius, stroke, x, y, });
       });
     }
   }
