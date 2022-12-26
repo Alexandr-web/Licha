@@ -217,8 +217,28 @@ class aCharty {
 			values.push(...groupData.map(({ value, }) => value));
 		}
 
-		this.uniqueValues = [...new Set(values)].sort((val1, val2) => val2 - val1);
+		const sortedValues = [...new Set(values)].sort((val1, val2) => val2 - val1);
+		const firstValue = Math.ceil(sortedValues[0]);
+		const lastValue = Math.floor(sortedValues[sortedValues.length - 1]);
+
+		sortedValues.splice(0, 1, this._getMaxAxisYValue(firstValue, lastValue));
+
+		this.uniqueValues = sortedValues;
 		this.uniqueNames = [...new Set(names)];
+	}
+
+	/**
+	 * Определяет максимальное значение для оси ординат
+	 * @param {number} num1 Максимальное значение
+	 * @param {number} num2 Минимальное значение
+	 * @returns {number} максимальное значение
+	 */
+	_getMaxAxisYValue(num1, num2) {
+		if (num1 % num2 !== 0) {
+			return this._getMaxAxisYValue(num1 + 1, num2);
+		}
+
+		return num1;
 	}
 
 	/**
