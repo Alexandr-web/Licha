@@ -670,30 +670,30 @@ class aCharty {
 			},
 		};
 
-		const { x: xBlock, y: yBlock, } = new WindowInfoBlock({
+		const windowInfoBlock = new WindowInfoBlock({
 			width: windowBlockWidth,
 			colorLine: colorLineGroup,
 			ctx: this.ctx,
 			fontSize: 14,
 			padding: windowPadding,
-		}).getWindowPosition({
+		});
+
+		const { block: blockPos, contain: containPos, } = windowInfoBlock.getWindowPosition({
 			x,
 			y,
-			capPadding: windowPadding.fromCap,
+			padding: windowPadding,
 			containPositions,
 			windowBlock,
 			radius,
-			horizontalPadding: windowPadding.horizontal,
-			verticalPadding: windowPadding.vertical,
 			canvasWidth: this._getCanvasSizes().width,
 		});
 
 		// Рисуем блок окна
-		windowBlock.drawWindow(xBlock, yBlock);
+		windowBlock.drawWindow(...Object.values(blockPos));
 		// Рисуем название группы
-		windowBlock.drawContains(windowContains.top.text, containPositions.top.x, containPositions.top.y);
+		windowBlock.drawContains(windowContains.top.text, containPos.top.x, containPos.top.y);
 		// Рисуем значение
-		windowBlock.drawContains(windowContains.bottom.text, containPositions.bottom.x, containPositions.bottom.y);
+		windowBlock.drawContains(windowContains.bottom.text, containPos.bottom.x, containPos.bottom.y);
 		// Рисуем линию группы
 		windowBlock.drawGroupLine(containPositions.line);
 	}

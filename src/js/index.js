@@ -1,11 +1,12 @@
 import ACharty from "./ACharty";
+import "../scss/index.scss";
 
 new ACharty({
 	canvasSelector: "canvas",
 	background: "#212932",
 	updateWhenResizing: true,
 	title: {
-		name: "Моя диаграмма 23434274982374893274982374983274982374923749327493827498237439827498237489239",
+		name: "Моя диаграмма",
 		fontSize: 16,
 		color: "#A1ABB4",
 	},
