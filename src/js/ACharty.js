@@ -217,8 +217,28 @@ class aCharty {
 			values.push(...groupData.map(({ value, }) => value));
 		}
 
-		this.uniqueValues = [...new Set(values)].sort((val1, val2) => val2 - val1);
+		const sortedValues = [...new Set(values)].sort((val1, val2) => val2 - val1);
+		const firstValue = Math.ceil(sortedValues[0]);
+		const lastValue = Math.floor(sortedValues[sortedValues.length - 1]);
+
+		sortedValues.splice(0, 1, this._getMaxAxisYValue(firstValue, lastValue));
+
+		this.uniqueValues = sortedValues;
 		this.uniqueNames = [...new Set(names)];
+	}
+
+	/**
+	 * Определяет максимальное значение для оси ординат
+	 * @param {number} num1 Максимальное значение
+	 * @param {number} num2 Минимальное значение
+	 * @returns {number} максимальное значение
+	 */
+	_getMaxAxisYValue(num1, num2) {
+		if (num1 % num2 !== 0) {
+			return this._getMaxAxisYValue(num1 + 1, num2);
+		}
+
+		return num1;
 	}
 
 	/**
@@ -504,6 +524,8 @@ class aCharty {
 			const {
 				data: groupData,
 				line: groupLine = {},
+				active: groupActive = {},
+				cap: groupCap = {},
 			} = this.data[group];
 
 			groupData.map(({ value, name, }, index) => {
@@ -546,46 +568,42 @@ class aCharty {
 					color,
 					lineTo: lineToArray,
 				});
+
+				// Рисуем колпачок
+				this._setLineCap({
+					color: groupCap.color || this.cap.color,
+					radius: groupCap.radius || this.cap.radius,
+					stroke: groupCap.stroke || this.cap.stroke || {},
+					x: findAxisXItem.x,
+					y: findAxisYItem.y,
+				}, group, value, name, groupActive);
 			});
 		}
 	}
 
-	// Устанавливает колпачок на конец линии
-	_setLinesCap() {
-		for (const group in this.data) {
-			const {
-				data: groupData,
-				cap: groupCap = {},
-				active: groupActive = {},
-			} = this.data[group];
+	/**
+	 * Рисует колпачок для линии
+	 * @param {object} cap Содержит данные колпачка (цвет, радиус, ...)
+	 * @param {string} group Название группы, к которому принадлежит этот колпачок
+	 * @param {string} value Значение, к которому принадлежит этот колпачок
+	 * @param {string} name Название, к которому принадлежит этот колпачок
+	 * @param {object} active Содержит данные для активного колпачка (цвет, радиус, ...)
+	 */
+	_setLineCap(cap, group, value, name, active) {
+		// Добавляем данные колпачка в массив
+		this.capsData.push({
+			x: cap.x,
+			y: cap.y,
+			group,
+			value,
+			name,
+			radius: cap.radius,
+			active,
+			strokeWidth: cap.stroke.width || 0,
+		});
 
-			groupData.map(({ name, value, cap = {}, }) => {
-				// Находим элемент из абсциссы, подходящий по имени
-				const findAxisXItem = this.axisXData.find((axisXItem) => axisXItem.name === name && axisXItem.group === group);
-				// Находим элемент из ординаты, подходящий по значению
-				const findAxisYItem = this.axisYData.find((axisYItem) => axisYItem.value === value);
-				const x = findAxisXItem.x;
-				const y = findAxisYItem.y;
-				const radius = cap.radius || groupCap.radius || this.cap.radius;
-				const color = cap.color || groupCap.color || this.cap.color;
-				const stroke = cap.stroke || groupCap.stroke || this.cap.stroke || {};
-
-				// Добавляем данные колпачка в массив
-				this.capsData.push({
-					x,
-					y,
-					group,
-					value,
-					name,
-					radius,
-					active: groupActive,
-					strokeWidth: stroke.width || 0,
-				});
-
-				// Рисуем колпачок
-				this._setStylesToCap({ group, color, radius, stroke, x, y, });
-			});
-		}
+		// Рисуем колпачок
+		this._setStylesToCap({ group, ...cap, });
 	}
 
 	// Действия при изменении размеров экрана
@@ -670,30 +688,30 @@ class aCharty {
 			},
 		};
 
-		const { x: xBlock, y: yBlock, } = new WindowInfoBlock({
+		const windowInfoBlock = new WindowInfoBlock({
 			width: windowBlockWidth,
 			colorLine: colorLineGroup,
 			ctx: this.ctx,
 			fontSize: 14,
 			padding: windowPadding,
-		}).getWindowPosition({
+		});
+
+		const { block: blockPos, contain: containPos, } = windowInfoBlock.getWindowPosition({
 			x,
 			y,
-			capPadding: windowPadding.fromCap,
+			padding: windowPadding,
 			containPositions,
 			windowBlock,
 			radius,
-			horizontalPadding: windowPadding.horizontal,
-			verticalPadding: windowPadding.vertical,
 			canvasWidth: this._getCanvasSizes().width,
 		});
 
 		// Рисуем блок окна
-		windowBlock.drawWindow(xBlock, yBlock);
+		windowBlock.drawWindow(...Object.values(blockPos));
 		// Рисуем название группы
-		windowBlock.drawContains(windowContains.top.text, containPositions.top.x, containPositions.top.y);
+		windowBlock.drawContains(windowContains.top.text, containPos.top.x, containPos.top.y);
 		// Рисуем значение
-		windowBlock.drawContains(windowContains.bottom.text, containPositions.bottom.x, containPositions.bottom.y);
+		windowBlock.drawContains(windowContains.bottom.text, containPos.bottom.x, containPos.bottom.y);
 		// Рисуем линию группы
 		windowBlock.drawGroupLine(containPositions.line);
 	}
@@ -744,7 +762,6 @@ class aCharty {
 		this._setVerticalLines();
 		this._setHorizontalLines();
 		this._setChart();
-		this._setLinesCap();
 	}
 
 	// Рисует график
@@ -758,7 +775,6 @@ class aCharty {
 		this._setVerticalLines();
 		this._setHorizontalLines();
 		this._setChart();
-		this._setLinesCap();
 		this._drawWhenResizeScreen();
 		this._showWindowInfoBlock();
 

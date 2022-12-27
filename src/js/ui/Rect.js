@@ -35,11 +35,12 @@ class Rect {
 
   // Рисует фигуру
   draw() {
+    this.setStyles();
+
     if (Object.keys(this.moveTo).length) {
       this.ctx.moveTo(this.moveTo.x, this.moveTo.y);
     }
 
-    this.setStyles();
     this.ctx.fillRect(this.x, this.y, this.width, this.height);
   }
 }

@@ -90,56 +90,59 @@ class WindowInfoBlock {
 	 * Проверка выхода блока за границы канваса
 	 * @param {number} x Координата x активной группы
 	 * @param {number} y Координата y активной группы
-	 * @param {number} capPadding Внутренний отступ
 	 * @param {object} containPositions Объект, содержащий позиции элементов блока
 	 * @param {number} radius Радиус
-	 * @param {number} horizontalPadding Внутренний горизонтальный отступ
-	 * @param {number} verticalPadding Внутренний вертикальный отступ
 	 * @param {number} canvasWidth Ширина канваса
+	 * @param {object} padding Содержит отступы
+	 * @return {object} объект с координатами окна
 	 */
 	getWindowPosition({
 		x,
 		y,
-		capPadding,
 		containPositions,
 		windowBlock,
 		radius,
-		horizontalPadding,
-		verticalPadding,
 		canvasWidth,
+		padding,
 	}) {
 		const blockCoords = {
-			x: x + capPadding,
+			x: x + padding.fromCap,
 			y: y - this.height / 2,
 		};
 		const {
 			width: blockWidth,
 			height: blockHeight,
 		} = windowBlock;
+		const cp = { ...containPositions, };
 
-		if ((x + this.width + capPadding) > canvasWidth) {
+		if ((x + this.width + padding.fromCap) > canvasWidth) {
 			// блок с инфо
-			blockCoords.x = x - blockWidth - capPadding;
-			containPositions.top.x = blockCoords.x - radius + capPadding;
-			containPositions.bottom.x = blockCoords.x - radius + capPadding;
+			blockCoords.x = x - blockWidth - padding.fromCap;
+
+			cp.top.x = blockCoords.x - radius + padding.fromCap;
+			cp.bottom.x = blockCoords.x - radius + padding.fromCap;
 
 			// линия
-			containPositions.line.start.x = x - blockWidth + radius - capPadding + blockWidth - horizontalPadding;
-			containPositions.line.to.x = x - blockWidth + radius - capPadding + blockWidth - horizontalPadding;
+			cp.line.start.x = x - blockWidth + radius - padding.fromCap + blockWidth - padding.horizontal;
+			cp.line.to.x = x - blockWidth + radius - padding.fromCap + blockWidth - padding.horizontal;
 		}
 
 		if (blockCoords.y < 0) {
 			// блок с инфо
-			blockCoords.y = y + verticalPadding;
-			containPositions.top.y = blockCoords.y + blockHeight / 2 - radius;
-			containPositions.bottom.y = blockCoords.y + blockHeight / 2 + radius + verticalPadding;
+			blockCoords.y = y + padding.vertical;
+
+			cp.top.y = blockCoords.y + blockHeight / 2 - radius;
+			cp.bottom.y = blockCoords.y + blockHeight / 2 + radius + padding.vertical;
 
 			// линия
-			containPositions.line.start.y = blockCoords.y + verticalPadding;
-			containPositions.line.to.y = blockCoords.y + blockHeight / 2 + verticalPadding + capPadding - radius;
+			cp.line.start.y = blockCoords.y + padding.vertical;
+			cp.line.to.y = blockCoords.y + blockHeight / 2 + padding.vertical + padding.fromCap - radius;
 		}
 
-		return blockCoords;
+		return {
+			block: blockCoords,
+			contain: cp,
+		};
 	}
 }
 
