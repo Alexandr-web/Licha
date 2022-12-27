@@ -10,7 +10,7 @@ new ACharty({
 		fontSize: 16,
 		color: "#A1ABB4",
 	},
-	// stepped: true,
+	stepped: true,
 	line: { width: 3, },
 	axisX: {
 		line: {
@@ -35,13 +35,14 @@ new ACharty({
 		"Group 1": {
 			line: { color: "#4781B4", },
 			cap: { color: "#4781B4", },
+			active: { cap: { color: "red", }, text: { color: "red", }, line: { color: "red", }, },
 			breakpoints: {
 				"800": function (groupName, groupData) {
 					console.log(groupName, groupData);
 				},
 			},
 			data: [
-				{ name: "1", value: 300, },
+				{ name: "1", value: 231, },
 				{ name: "2", value: 302, },
 				{ name: "3", value: 531, },
 				{ name: "4", value: 1000, },
@@ -49,18 +50,18 @@ new ACharty({
 				{ name: "6", value: 898, }
 			],
 		},
-		// "Group 2": {
-		// 	line: { color: "#CA81B4", },
-		// 	cap: { color: "#CA81B4", },
-		// 	data: [
-		// 		{ name: "1", value: 19, },
-		// 		{ name: "2", value: 19.24, },
-		// 		{ name: "3", value: 32, },
-		// 		{ name: "4", value: 31, },
-		// 		{ name: "5", value: 40, },
-		// 		{ name: "6", value: 34, },
-		// 		{ name: "7", value: 105, }
-		// 	],
-		// },
+		"Group 2": {
+			line: { color: "#CA81B4", },
+			cap: { color: "#CA81B4", },
+			data: [
+				{ name: "1", value: 305, },
+				{ name: "2", value: 894, },
+				{ name: "3", value: 421, },
+				{ name: "4", value: 845, },
+				{ name: "5", value: 442, },
+				{ name: "6", value: 344, },
+				{ name: "7", value: 904, }
+			],
+		},
 	},
 }).init();
