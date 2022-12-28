@@ -234,7 +234,7 @@ class aCharty {
 	 * @returns {number} максимальное значение
 	 */
 	_getMaxAxisYValue(num1, num2) {
-		if (num1 % num2 !== 0) {
+		if (num1 % (num2 || 1) !== 0 || num1 % 4 !== 0) {
 			return this._getMaxAxisYValue(num1 + 1, num2);
 		}
 
@@ -309,7 +309,7 @@ class aCharty {
 	 */
 	_getNOD(num1, num2) {
 		if ([num1, num2].includes(0)) {
-			return 1;
+			return num1 / 4;
 		}
 
 		if (num1 === num2) {

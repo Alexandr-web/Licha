@@ -42,26 +42,26 @@ new ACharty({
 				},
 			},
 			data: [
-				{ name: "1", value: 231, },
-				{ name: "2", value: 302, },
-				{ name: "3", value: 531, },
-				{ name: "4", value: 1000, },
-				{ name: "5", value: 601, },
-				{ name: "6", value: 898, }
+				{ name: "1", value: 0, },
+				{ name: "2", value: -3, },
+				{ name: "3", value: 5, },
+				{ name: "4", value: 11, },
+				{ name: "5", value: 4, },
+				{ name: "6", value: 5, }
 			],
 		},
-		"Group 2": {
-			line: { color: "#CA81B4", },
-			cap: { color: "#CA81B4", },
-			data: [
-				{ name: "1", value: 305, },
-				{ name: "2", value: 894, },
-				{ name: "3", value: 421, },
-				{ name: "4", value: 845, },
-				{ name: "5", value: 442, },
-				{ name: "6", value: 344, },
-				{ name: "7", value: 904, }
-			],
-		},
+		// "Group 2": {
+		// 	line: { color: "#CA81B4", },
+		// 	cap: { color: "#CA81B4", },
+		// 	data: [
+		// 		{ name: "1", value: 305, },
+		// 		{ name: "2", value: 894, },
+		// 		{ name: "3", value: 421, },
+		// 		{ name: "4", value: 845, },
+		// 		{ name: "5", value: 442, },
+		// 		{ name: "6", value: 344, },
+		// 		{ name: "7", value: 904, }
+		// 	],
+		// },
 	},
 }).init();
