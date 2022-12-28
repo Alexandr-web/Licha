@@ -42,12 +42,15 @@ new ACharty({
 				},
 			},
 			data: [
-				{ name: "1", value: 0, },
-				{ name: "2", value: -3, },
-				{ name: "3", value: 5, },
-				{ name: "4", value: 11, },
-				{ name: "5", value: 4, },
-				{ name: "6", value: 5, }
+				// { name: "1", value: -2, },
+				// { name: "2", value: -3, },
+				// { name: "3", value: -10, },
+				// { name: "4", value: -15, }
+				// { name: "5", value: 0, },
+				{ name: "2", value: 300, },
+				{ name: "3", value: 232, },
+				{ name: "4", value: 341, },
+				{ name: "7", value: 1092, }
 			],
 		},
 		// "Group 2": {
