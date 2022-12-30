@@ -89,7 +89,7 @@ class aCharty {
 	 * @param {number} y Позиция по оси ординат
 	 */
 	_setStylesToCap({ group, color, radius, stroke, x, y, }) {
-		let capData = {
+		const capData = {
 			ctx: this.ctx,
 			x,
 			y,
@@ -99,25 +99,27 @@ class aCharty {
 			opacity: this.activeGroups.length ? 0.5 : 1,
 		};
 
-		if (this.activeGroups.map((g) => g.group).includes(group)) {
-			// Стили для активного колпачка
-			const { active: { cap: activeCap = {}, }, } = this.activeGroups[0];
-			const activeParams = {
-				radius: activeCap.radius || radius,
-				color: activeCap.color || color,
-				stroke: activeCap.stroke || stroke,
-			};
+		if (this.activeGroups.find(({ group: activeGroupName, }) => activeGroupName === group)) {
+			this.activeGroups.forEach((g) => {
+				if (g.group === group) {
+					// Стили для активного колпачка
+					const { active: { cap: activeCap = {}, }, } = g;
+					const activeParams = {
+						radius: activeCap.radius || radius,
+						color: activeCap.color || color,
+						stroke: activeCap.stroke || stroke,
+					};
 
-			capData = {
-				...capData,
-				opacity: 1,
-				color: activeParams.color,
-				radius: activeParams.radius,
-				stroke: activeParams.stroke,
-			};
+					new Cap({
+						...capData,
+						...activeParams,
+						opacity: 1,
+					}).draw();
+				}
+			});
+		} else {
+			new Cap(capData).draw();
 		}
-
-		new Cap(capData).draw();
 	}
 
 	/**
@@ -129,7 +131,7 @@ class aCharty {
 	 * @param {string} font Данные шрифта в строковом виде
 	 */
 	_setStylesToAxisText({ contain, color, x, y, font, }) {
-		const textDatas = [{
+		let textData = {
 			ctx: this.ctx,
 			color,
 			opacity: this.activeGroups.length ? 0.6 : 1,
@@ -137,27 +139,23 @@ class aCharty {
 			y,
 			font,
 			text: contain,
-		}];
+		};
 
-		if (this.activeGroups.map((g) => g.name).concat(this.activeGroups.map((g) => g.value)).includes(contain)) {
-			this.activeGroups.forEach((g) => {
-				const { active: { text: activeText = {}, }, } = g;
+		if (this.activeGroups.length) {
+			if ([this.activeGroups[0].name, this.activeGroups[0].value].includes(contain)) {
+				const { active: { text: activeText = {}, }, } = this.activeGroups[0];
 				const activeParams = { color: activeText.color || color, };
 
-				textDatas.forEach((d) => {
-					textDatas.push({
-						...d,
-						ctx: this.ctx,
-						color: activeParams.color,
-						opacity: 1,
-					});
-				});
-			});
+				textData = {
+					...textData,
+					ctx: this.ctx,
+					color: activeParams.color,
+					opacity: 1,
+				};
+			}
 		}
 
-		textDatas.forEach((d) => {
-			new Text(d).draw();
-		});
+		new Text(textData).draw();
 	}
 
 	/**
@@ -169,35 +167,35 @@ class aCharty {
 	 * @param {array} lineTo Следующие позиции линии
 	 */
 	_setStylesToChartLine({ moveTo, group, width, color, lineTo, }) {
-		const lineDatas = [{
+		const lineData = {
 			moveTo,
 			lineTo,
 			width,
 			color,
 			ctx: this.ctx,
-			opacity: Object.keys(this.activeGroups).length ? 0.5 : 1,
-		}];
+			opacity: this.activeGroups.length ? 0.5 : 1,
+		};
 
 		if (this.activeGroups.map((g) => g.group).includes(group)) {
 			this.activeGroups.forEach((g) => {
-				const { active: { line: activeLine = {}, }, } = g;
-				const activeParams = {
-					width: activeLine.width || width,
-					color: activeLine.color || color,
-				};
+				if (g.group === group) {
+					const { active: { line: activeLine = {}, }, } = g;
+					const activeParams = {
+						width: activeLine.width || width,
+						color: activeLine.color || color,
+					};
 
-				lineDatas.forEach((d) => {
-					lineDatas.push({
-						...d,
+					new Line({
+						...lineData,
 						opacity: 1,
 						width: activeParams.width,
 						color: activeParams.color,
-					});
-				});
+					}).draw();
+				}
 			});
+		} else {
+			new Line(lineData).draw();
 		}
-
-		lineDatas.forEach((data) => new Line(data).draw());
 	}
 
 	// Устанавливает размеры элементу canvas
