@@ -49,7 +49,7 @@ new ACharty({
 		"Group 2": {
 			line: { color: "#CA81B4", },
 			cap: { color: "#CA81B4", },
-			active: { line: { color: "red", }, },
+			active: { line: { color: "red", }, cap: { color: "red" } },
 			data: [
 				{ name: "1", value: 19, },
 				{ name: "2", value: 19.24, },

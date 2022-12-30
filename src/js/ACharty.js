@@ -733,13 +733,7 @@ class aCharty {
 			containPositions,
 			windowBlock,
 			radius,
-			padding: {
-				fromCap: windowPadding.fromCap,
-				horizontal: windowPadding.horizontal,
-				vertical: windowPadding.vertical,
-			},
-			horizontalPadding: windowPadding.horizontal,
-			verticalPadding: windowPadding.vertical,
+			padding: windowPadding,
 			canvasWidth: this._getCanvasSizes().width,
 		});
 
