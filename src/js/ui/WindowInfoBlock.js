@@ -76,14 +76,27 @@ class WindowInfoBlock {
 	 * @param {object} to Объект, содержащий позиции направления линии
 	 */
 	drawGroupLine({ start: { x: startX, y: startY, }, to: { x: toX, y: toY, }, }) {
-		new Line({
-			color: this.colorLine,
-			opacity: 1,
-			width: 2,
-			moveTo: { x: startX, y: startY, },
-			lineTo: [{ x: toX, y: toY, }],
-			ctx: this.ctx,
-		}).draw();
+		if (Array.isArray(this.colorLine)) {
+			this.colorLine.forEach((color, idx) => {
+				new Line({
+					color,
+					opacity: 1,
+					width: 2,
+					moveTo: { x: startX, y: idx !== 0 ? startY + 20 : startY, },
+					lineTo: [{ x: toX, y: idx !== 0 ? toY + 20 : toY, }],
+					ctx: this.ctx,
+				}).draw();
+			});
+		} else if (typeof this.colorLine === "string") {
+			new Line({
+				color: this.colorLine,
+				opacity: 1,
+				width: 2,
+				moveTo: { x: startX, y: startY, },
+				lineTo: [{ x: toX, y: toY, }],
+				ctx: this.ctx,
+			}).draw();
+		}
 	}
 
 	/**
@@ -131,12 +144,12 @@ class WindowInfoBlock {
 			// блок с инфо
 			blockCoords.y = y + padding.vertical;
 
-			cp.top.y = blockCoords.y + blockHeight / 2 - radius;
-			cp.bottom.y = blockCoords.y + blockHeight / 2 + radius + padding.vertical;
+			cp.top.y = blockCoords.y + padding.vertical + padding.fromCap;
+			cp.bottom.y = blockCoords.y + blockHeight / 2 + padding.fromCap + padding.vertical;
 
 			// линия
 			cp.line.start.y = blockCoords.y + padding.vertical;
-			cp.line.to.y = blockCoords.y + blockHeight / 2 + padding.vertical + padding.fromCap - radius;
+			cp.line.to.y = blockCoords.y + blockHeight / 2 + padding.vertical + padding.fromCap + radius * 2;
 		}
 
 		return {
