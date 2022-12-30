@@ -213,8 +213,8 @@ class aCharty {
 			.join(";");
 	}
 
-	// Записывает уникальные данные осей графика
-	_setUniqueValues() {
+	// Определяет данные осей графика
+	_setAxesData() {
 		const values = [];
 		const names = [];
 
@@ -229,7 +229,18 @@ class aCharty {
 		const firstValue = Math.ceil(sortedValues[0]);
 		const lastValue = Math.floor(sortedValues[sortedValues.length - 1]);
 
-		sortedValues.splice(0, 1, this._getMaxAxisYValue(firstValue, lastValue));
+		let maxValue = null;
+		let changedIndex = null;
+
+		if (firstValue > 0) {
+			maxValue = this._getMaxAxisYValue(firstValue, lastValue);
+			changedIndex = 0;
+		} else if (firstValue <= 0) {
+			maxValue = this._getMaxAxisYValue(lastValue, firstValue);
+			changedIndex = sortedValues.length - 1;
+		}
+
+		sortedValues.splice(changedIndex, 1, maxValue);
 
 		this.uniqueValues = sortedValues;
 		this.uniqueNames = [...new Set(names)];
@@ -237,13 +248,13 @@ class aCharty {
 
 	/**
 	 * Определяет максимальное значение для оси ординат
-	 * @param {number} num1 Максимальное значение
-	 * @param {number} num2 Минимальное значение
+	 * @param {number} num1 Первое число
+	 * @param {number} num2 Второе число
 	 * @returns {number} максимальное значение
 	 */
 	_getMaxAxisYValue(num1, num2) {
-		if (num1 % num2 !== 0) {
-			return this._getMaxAxisYValue(num1 + 1, num2);
+		if ((num1 || 1) % (num2 || 1) !== 0 || (num1 || 1) % 4 !== 0) {
+			return this._getMaxAxisYValue(num1 > 0 ? num1 + 1 : num1 - 1, num2);
 		}
 
 		return num1;
@@ -316,8 +327,12 @@ class aCharty {
 	 * @returns {number} Наибольший общий делитель
 	 */
 	_getNOD(num1, num2) {
-		if ([num1, num2].includes(0)) {
-			return 1;
+		if (num1 === 0) {
+			return Math.abs(num2) / 4;
+		}
+
+		if (num2 === 0) {
+			return Math.abs(num1) / 4;
 		}
 
 		if (num1 === num2) {
@@ -807,7 +822,7 @@ class aCharty {
 		this.axisYData = [];
 		this.capsData = [];
 
-		this._setUniqueValues();
+		this._setAxesData();
 		this._setDefaultStylesToCanvas();
 		this._setStylesToCanvas();
 		this._setTitleChart();
@@ -820,7 +835,7 @@ class aCharty {
 
 	// Рисует график
 	init() {
-		this._setUniqueValues();
+		this._setAxesData();
 		this._setDefaultStylesToCanvas();
 		this._setStylesToCanvas();
 		this._setTitleChart();
