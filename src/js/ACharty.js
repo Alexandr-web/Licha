@@ -62,7 +62,7 @@ class aCharty {
 		// Расстояние между графиком и названием диаграммы
 		this.distanceBetweenTitleChartAndChart = 10;
 		// Содержит объект данных, которые будут применяться к активной группе
-		this.activeGroup = {};
+		this.activeGroups = [];
 		// Содержит данные блока информации
 		this.windowInfoBlock = {
 			color: "rgba(34,34,34, .8)",
@@ -89,35 +89,37 @@ class aCharty {
 	 * @param {number} y Позиция по оси ординат
 	 */
 	_setStylesToCap({ group, color, radius, stroke, x, y, }) {
-		let capData = {
+		const capData = {
 			ctx: this.ctx,
 			x,
 			y,
 			radius,
 			stroke,
 			color,
-			opacity: Object.keys(this.activeGroup).length ? 0.5 : 1,
+			opacity: this.activeGroups.length ? 0.5 : 1,
 		};
 
-		if (group === this.activeGroup.group) {
-			// Стили для активного колпачка
-			const { active: { cap: activeCap = {}, }, } = this.activeGroup;
-			const activeParams = {
-				radius: activeCap.radius || radius,
-				color: activeCap.color || color,
-				stroke: activeCap.stroke || stroke,
-			};
+		if (this.activeGroups.find(({ group: activeGroupName, }) => activeGroupName === group)) {
+			this.activeGroups.forEach((g) => {
+				if (g.group === group) {
+					// Стили для активного колпачка
+					const { active: { cap: activeCap = {}, }, } = g;
+					const activeParams = {
+						radius: activeCap.radius || radius,
+						color: activeCap.color || color,
+						stroke: activeCap.stroke || stroke,
+					};
 
-			capData = {
-				...capData,
-				opacity: 1,
-				color: activeParams.color,
-				radius: activeParams.radius,
-				stroke: activeParams.stroke,
-			};
+					new Cap({
+						...capData,
+						...activeParams,
+						opacity: 1,
+					}).draw();
+				}
+			});
+		} else {
+			new Cap(capData).draw();
 		}
-
-		new Cap(capData).draw();
 	}
 
 	/**
@@ -132,23 +134,25 @@ class aCharty {
 		let textData = {
 			ctx: this.ctx,
 			color,
-			opacity: Object.keys(this.activeGroup).length ? 0.6 : 1,
+			opacity: this.activeGroups.length ? 0.6 : 1,
 			x,
 			y,
 			font,
 			text: contain,
 		};
 
-		if ([this.activeGroup.name, this.activeGroup.value].includes(contain)) {
-			const { active: { text: activeText = {}, }, } = this.activeGroup;
-			const activeParams = { color: activeText.color || color, };
+		if (this.activeGroups.length) {
+			if ([this.activeGroups[0].name, this.activeGroups[0].value].includes(contain)) {
+				const { active: { text: activeText = {}, }, } = this.activeGroups[0];
+				const activeParams = { color: activeText.color || color, };
 
-			textData = {
-				...textData,
-				ctx: this.ctx,
-				color: activeParams.color,
-				opacity: 1,
-			};
+				textData = {
+					...textData,
+					ctx: this.ctx,
+					color: activeParams.color,
+					opacity: 1,
+				};
+			}
 		}
 
 		new Text(textData).draw();
@@ -163,31 +167,35 @@ class aCharty {
 	 * @param {array} lineTo Следующие позиции линии
 	 */
 	_setStylesToChartLine({ moveTo, group, width, color, lineTo, }) {
-		let lineData = {
+		const lineData = {
 			moveTo,
 			lineTo,
 			width,
 			color,
 			ctx: this.ctx,
-			opacity: Object.keys(this.activeGroup).length ? 0.5 : 1,
+			opacity: this.activeGroups.length ? 0.5 : 1,
 		};
 
-		if (group === this.activeGroup.group) {
-			const { active: { line: activeLine = {}, }, } = this.activeGroup;
-			const activeParams = {
-				width: activeLine.width || width,
-				color: activeLine.color || color,
-			};
+		if (this.activeGroups.map((g) => g.group).includes(group)) {
+			this.activeGroups.forEach((g) => {
+				if (g.group === group) {
+					const { active: { line: activeLine = {}, }, } = g;
+					const activeParams = {
+						width: activeLine.width || width,
+						color: activeLine.color || color,
+					};
 
-			lineData = {
-				...lineData,
-				opacity: 1,
-				width: activeParams.width,
-				color: activeParams.color,
-			};
+					new Line({
+						...lineData,
+						opacity: 1,
+						width: activeParams.width,
+						color: activeParams.color,
+					}).draw();
+				}
+			});
+		} else {
+			new Line(lineData).draw();
 		}
-
-		new Line(lineData).draw();
 	}
 
 	// Устанавливает размеры элементу canvas
@@ -345,10 +353,36 @@ class aCharty {
 	 * @returns {object} ширина и высота текста
 	 */
 	_getSizesText(text, font) {
+		let sumHeight = 0;
+		let sumWidth = 0;
+		let sumMargin = 0;
+
+		const lengthTexts = text.length;
+
+		if (Array.isArray(text)) {
+			this.ctx.font = font;
+
+			text.map((w) => {
+				const txt = this.ctx.measureText(w);
+				sumHeight += txt.actualBoundingBoxAscent;
+				sumWidth += txt.width;
+				sumMargin += 20;
+			});
+
+			return {
+				margin: sumMargin,
+				height: Math.floor(sumHeight),
+				middleHeight: Math.floor(sumHeight / lengthTexts),
+				width: Math.floor(sumWidth / lengthTexts),
+			};
+		}
+
+		sumMargin += 20;
 		this.ctx.font = font;
 		const txt = this.ctx.measureText(text);
 
 		return {
+			margin: sumMargin,
 			width: txt.width,
 			height: txt.actualBoundingBoxAscent,
 		};
@@ -648,23 +682,26 @@ class aCharty {
 
 	// Рисует окно с информацией активного элемента
 	_drawWindowInfoBlock() {
-		if (!Object.keys(this.activeGroup).length) {
+		if (!this.activeGroups.length) {
 			return;
 		}
 
-		const { group, value, name, x, y, radius, } = this.activeGroup;
-		const colorLineGroup = (this.data[group].line || {}).color || this.line.color;
+		const groupsFromActiveGroups = this.activeGroups.map((g) => g.group);
+		const colorLineGroups = this.activeGroups.map((g) => (this.data[g.group].line || {}).color || this.line.color);
+
+		const { name, x, y, radius, } = this.activeGroups[0];
 		const minWindowBlockWidth = 150;
 		const windowContains = {
 			top: {
-				text: group,
-				...this._getSizesText(group, "400 14px Arial, sans-serif"),
+				text: groupsFromActiveGroups,
+				...this._getSizesText(name, "400 14px Arial, sans-serif"),
 			},
 			bottom: {
-				text: `${name}: ${value}`,
-				...this._getSizesText(`${name}: ${value}`, "400 14px Arial, sans-serif"),
+				text: this.activeGroups.map((g) => `${g.group}: ${g.value}`),
+				...this._getSizesText(this.activeGroups.map((g) => `${g.group}: ${g.value}`), "400 14px Arial, sans-serif"),
 			},
 		};
+
 		const windowPadding = {
 			vertical: 10,
 			horizontal: 10,
@@ -673,9 +710,11 @@ class aCharty {
 		};
 		const maxContainWidth = [windowContains.top.width, windowContains.bottom.width].sort((a, b) => b - a)[0];
 		const windowBlockWidth = (maxContainWidth > minWindowBlockWidth) ? (maxContainWidth + windowPadding.horizontal + windowPadding.fromInnerLine) : minWindowBlockWidth;
+		const { height: textHeight, margin, } = windowContains.bottom;
 		const windowBlock = new WindowInfoBlock({
 			width: windowBlockWidth,
-			colorLine: colorLineGroup,
+			height: margin + textHeight + windowPadding.vertical + radius,
+			colorLine: colorLineGroups,
 			ctx: this.ctx,
 			fontSize: 14,
 			padding: windowPadding,
@@ -689,46 +728,56 @@ class aCharty {
 			},
 			bottom: {
 				x: x + radius + windowPadding.fromCap,
-				y: y + windowBlock.height / 2 - windowPadding.vertical,
+				y: y + windowBlock.height / 2 - windowPadding.vertical - radius,
 			},
 			line: {
 				start: {
 					x: x + radius + windowPadding.fromCap + windowBlock.width - windowPadding.horizontal,
-					y: y - windowBlock.height / 2 + windowPadding.vertical,
+					y: y + windowBlock.height / 2 - windowPadding.vertical - radius,
 				},
 				to: {
 					x: x + radius + windowPadding.fromCap + windowBlock.width - windowPadding.horizontal,
-					y: y - windowBlock.height / 2 + windowBlock.height - windowPadding.vertical,
+					y: y + windowBlock.height / 2 - windowPadding.vertical + radius,
 				},
 			},
 		};
 
-		const windowInfoBlock = new WindowInfoBlock({
-			width: windowBlockWidth,
-			colorLine: colorLineGroup,
-			ctx: this.ctx,
-			fontSize: 14,
-			padding: windowPadding,
-		});
-
-		const { block: blockPos, contain: containPos, } = windowInfoBlock.getWindowPosition({
+		const { block: { x: xBlock, y: yBlock, }, contain: containPos, } = windowBlock.getWindowPosition({
 			x,
 			y,
-			padding: windowPadding,
 			containPositions,
 			windowBlock,
 			radius,
+			padding: windowPadding,
 			canvasWidth: this._getCanvasSizes().width,
 		});
 
 		// Рисуем блок окна
-		windowBlock.drawWindow(...Object.values(blockPos));
+		windowBlock.drawWindow(xBlock, yBlock);
 		// Рисуем название группы
-		windowBlock.drawContains(windowContains.top.text, containPos.top.x, containPos.top.y);
-		// Рисуем значение
-		windowBlock.drawContains(windowContains.bottom.text, containPos.bottom.x, containPos.bottom.y);
-		// Рисуем линию группы
-		windowBlock.drawGroupLine(containPositions.line);
+		windowBlock.drawContains(name, containPos.top.x, containPos.top.y);
+		// Рисуем значения
+		if (windowContains.bottom.text.length === 1) {
+			windowBlock.drawContains(
+				windowContains.bottom.text[0], containPos.bottom.x, containPos.bottom.y + radius * 2
+			);
+			// Рисуем линию группы
+			windowBlock.drawGroupLine({
+				start: { ...containPos.line.start, },
+				to: { ...containPos.line.to, },
+			});
+		} else if (windowContains.bottom.text.length > 1) {
+			windowContains.bottom.text.forEach((txt, idx) => {
+				let mY = containPos.bottom.y + radius;
+				if (idx !== 0) mY -= 20; // внешний отступ
+				windowBlock.drawContains(txt, containPos.bottom.x, mY);
+			});
+			// Рисуем линию группы
+			windowBlock.drawGroupLine({
+				start: { ...containPos.line.start, y: containPos.bottom.y - radius - 20, },
+				to: { ...containPos.line.to, y: containPos.line.to.y - 20, },
+			});
+		}
 	}
 
 	// Показывает окно с информацией активного элемента при клике
@@ -739,9 +788,12 @@ class aCharty {
 		const elemTop = this.canvasElement.offsetTop + this.canvasElement.clientTop;
 
 		this.canvasElement.addEventListener("click", (e) => {
+			this.activeGroups = [];
+
 			const x = e.pageX - elemLeft;
 			const y = e.pageY - elemTop;
-			const findMatchCap = this.capsData.find((cap) => {
+
+			const findMatchCaps = this.capsData.filter((cap) => {
 				const capY = Math.floor(cap.y);
 				const capX = Math.floor(cap.x);
 
@@ -753,11 +805,13 @@ class aCharty {
 				return false;
 			});
 
-			this.activeGroup = findMatchCap ? { ...findMatchCap, x, y, } : {};
+			findMatchCaps.forEach((cap) => cap && this.activeGroups.push({ ...cap, x, y, }));
 			this.update();
 
-			if (findMatchCap) {
+			if (findMatchCaps.length) {
 				this._drawWindowInfoBlock();
+			} else if (!findMatchCaps.length) {
+				this.activeGroups = [];
 			}
 		});
 	}
