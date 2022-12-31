@@ -16,6 +16,7 @@ new ACharty({
 		line: {
 			width: 1,
 			color: "#505F85",
+			dotted: true,
 		},
 		color: "#fefefe",
 		fontSize: 12,
@@ -25,6 +26,7 @@ new ACharty({
 		line: {
 			width: 1,
 			color: "#505F85",
+			dotted: true,
 		},
 		color: "#fefefe",
 		fontSize: 12,

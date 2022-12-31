@@ -536,9 +536,8 @@ class aCharty {
 
 				// Рисуем линию
 				new Line({
+					...this.axisX.line,
 					ctx: this.ctx,
-					color: this.axisX.line.color,
-					width: this.axisX.line.width,
 					moveTo: { x: firstXAxisItem.x, y, },
 					lineTo: [{ x: lastXAxisItem.x, y, }],
 				}).draw();
@@ -557,11 +556,10 @@ class aCharty {
 
 				// Рисуем линию
 				new Line({
+					...this.axisY.line,
 					ctx: this.ctx,
 					moveTo: { x: findAxisXItem.x, y: firstAxisYItem.y, },
 					opacity: 1,
-					color: this.axisY.line.color,
-					width: this.axisY.line.width,
 					lineTo: [{ x: findAxisXItem.x, y: lastAxisYItem.y, }],
 				}).draw();
 			});
