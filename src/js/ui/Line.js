@@ -6,6 +6,7 @@ class Line {
     ctx,
     opacity,
     moveTo = {},
+    dotted = false,
   }) {
     // Ширина фигуры
     this.width = width;
@@ -19,10 +20,14 @@ class Line {
     this.lineTo = lineTo;
     // Начальная позиция линии
     this.moveTo = moveTo;
+    // Пунктирная линия
+    this.dotted = dotted;
   }
 
   // Задает стили линии, но не рисует ее
   setStyles() {
+    this.ctx.setLineDash([this.dotted ? (0, 8) : (0, 0)]);
+
     this.ctx.beginPath();
 
     if (Object.keys(this.moveTo).length) {
