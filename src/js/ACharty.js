@@ -148,8 +148,8 @@ class aCharty {
 
 				textData = {
 					...textData,
+					...activeParams,
 					ctx: this.ctx,
-					color: activeParams.color,
 					opacity: 1,
 				};
 			}
@@ -166,12 +166,13 @@ class aCharty {
 	 * @param {string} color Цвет
 	 * @param {array} lineTo Следующие позиции линии
 	 */
-	_setStylesToChartLine({ moveTo, group, width, color, lineTo, }) {
+	_setStylesToChartLine({ moveTo, group, width, color, lineTo, dotted, }) {
 		const lineData = {
 			moveTo,
 			lineTo,
 			width,
 			color,
+			dotted,
 			ctx: this.ctx,
 			opacity: this.activeGroups.length ? 0.5 : 1,
 		};
@@ -183,13 +184,13 @@ class aCharty {
 					const activeParams = {
 						width: activeLine.width || width,
 						color: activeLine.color || color,
+						dotted: activeLine.dotted !== undefined ? activeLine.dotted : dotted,
 					};
 
 					new Line({
 						...lineData,
+						...activeParams,
 						opacity: 1,
-						width: activeParams.width,
-						color: activeParams.color,
 					}).draw();
 				}
 			});
@@ -585,6 +586,7 @@ class aCharty {
 				const findAxisXItem = this.axisXData.find((axisXItem) => axisXItem.name === name);
 				const width = groupLine.width || this.line.width;
 				const color = groupLine.color || this.line.color;
+				const dotted = groupLine.dotted;
 				const lineToArray = [];
 
 				if (nextDataItem) {
@@ -616,6 +618,7 @@ class aCharty {
 					width,
 					color,
 					lineTo: lineToArray,
+					dotted,
 				});
 
 				// Рисуем колпачок
