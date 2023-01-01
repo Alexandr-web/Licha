@@ -689,12 +689,6 @@ class aCharty {
 
 		const groupsFromActiveGroups = this.activeGroups.map((g) => g.group);
 		const colorLineGroups = this.activeGroups.map((g) => (this.data[g.group].line || {}).color || this.line.color);
-		const groupsWithActiveColors = this.activeGroups.map(({ group, active, }) => {
-			return {
-				group,
-				active,
-			};
-		});
 
 		const { name, x, y, radius, } = this.activeGroups[0];
 		const minWindowBlockWidth = 150;
@@ -718,26 +712,20 @@ class aCharty {
 		const maxContainWidth = [windowContains.top.width, windowContains.bottom.width].sort((a, b) => b - a)[0];
 		const windowBlockWidth = (maxContainWidth > minWindowBlockWidth) ? (maxContainWidth + windowPadding.horizontal + windowPadding.fromInnerLine) : minWindowBlockWidth;
 		const { height: textHeight, margin, } = windowContains.bottom;
-		const colorLines = colorLineGroups;
 
 		for (const group in this.data) {
-			if ({}.propertyIsEnumerable.call(this.data, group)) { // hasOwnProperty
-				if (this.data[group].active) {
-					if (Object.values(this.data[group].active) && groupsFromActiveGroups.includes(group)) {
-						colorLines.splice(
-							colorLines.indexOf(this.data[group].line.color),
-							1,
-							groupsWithActiveColors.filter((g) => g.group === group)[0].active.line.color
-						);
-					}
-				}
+			const { line = {}, } = (this.data[group].active || {});
+			const indexCurrentGroup = Object.keys(this.data).findIndex(({ group: groupName, }) => groupName === group);
+
+			if (line.color) {
+				colorLineGroups.splice(indexCurrentGroup, 1, line.color);
 			}
 		}
 
 		const windowBlock = new WindowInfoBlock({
 			width: windowBlockWidth,
 			height: margin + textHeight + windowPadding.vertical + radius,
-			colorLine: colorLines,
+			colorLine: colorLineGroups,
 			ctx: this.ctx,
 			fontSize: 14,
 			padding: windowPadding,
