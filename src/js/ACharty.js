@@ -712,6 +712,16 @@ class aCharty {
 		const maxContainWidth = [windowContains.top.width, windowContains.bottom.width].sort((a, b) => b - a)[0];
 		const windowBlockWidth = (maxContainWidth > minWindowBlockWidth) ? (maxContainWidth + windowPadding.horizontal + windowPadding.fromInnerLine) : minWindowBlockWidth;
 		const { height: textHeight, margin, } = windowContains.bottom;
+
+		for (const group in this.data) {
+			const { line = {}, } = (this.data[group].active || {});
+			const indexCurrentGroup = Object.keys(this.data).findIndex(({ group: groupName, }) => groupName === group);
+
+			if (line.color) {
+				colorLineGroups.splice(indexCurrentGroup, 1, line.color);
+			}
+		}
+
 		const windowBlock = new WindowInfoBlock({
 			width: windowBlockWidth,
 			height: margin + textHeight + windowPadding.vertical + radius,
@@ -768,11 +778,12 @@ class aCharty {
 				to: { ...containPos.line.to, },
 			});
 		} else if (windowContains.bottom.text.length > 1) {
-			windowContains.bottom.text.forEach((txt, idx) => {
+			windowContains.bottom.text.reverse().forEach((txt, idx) => {
 				let mY = containPos.bottom.y + radius;
 				if (idx !== 0) mY -= 20; // внешний отступ
 				windowBlock.drawContains(txt, containPos.bottom.x, mY);
 			});
+
 			// Рисуем линию группы
 			windowBlock.drawGroupLine({
 				start: { ...containPos.line.start, y: containPos.bottom.y - radius - 20, },

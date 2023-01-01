@@ -1,5 +1,4 @@
 import ACharty from "./ACharty";
-import "../scss/index.scss";
 
 new ACharty({
 	canvasSelector: "canvas",
@@ -41,7 +40,9 @@ new ACharty({
 			},
 			cap: { color: "#4781B4", },
 			breakpoints: {
-				"800": function (groupName, groupData) { },
+				"800": function (groupName, groupData) {
+
+				},
 			},
 			active: { line: { color: "yellow", dotted: false, }, cap: { color: "yellow", }, },
 			data: [
@@ -55,7 +56,7 @@ new ACharty({
 		"Group 2": {
 			line: { color: "#CA81B4", },
 			cap: { color: "#CA81B4", },
-			active: { line: { color: "red", dotted: true, }, cap: { color: "red" } },
+			active: { line: { color: "red", dotted: true, }, cap: { color: "red", }, },
 			data: [
 				{ name: "1", value: 19, },
 				{ name: "2", value: 19.24, },
