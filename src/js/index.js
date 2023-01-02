@@ -40,9 +40,6 @@ new ACharty({
 				dotted: true,
 			},
 			cap: { color: "#4781B4", },
-			breakpoints: {
-				"800": function (groupName, groupData) { },
-			},
 			active: { line: { color: "yellow", dotted: false, }, cap: { color: "yellow", }, },
 			data: [
 				{ name: "1", value: 15, },
@@ -55,7 +52,7 @@ new ACharty({
 		"Group 2": {
 			line: { color: "#CA81B4", },
 			cap: { color: "#CA81B4", },
-			active: { line: { color: "red", dotted: true, }, cap: { color: "red" } },
+			active: { line: { color: "red", dotted: true, }, cap: { color: "red", }, },
 			data: [
 				{ name: "1", value: 19, },
 				{ name: "2", value: 19.24, },
@@ -70,7 +67,7 @@ new ACharty({
 			data: [
 				{ name: "1", value: 4, },
 				{ name: "2", value: 12, },
-				{ name: "3", value: 34, },
+				{ name: "3", value: 32, },
 				{ name: "4", value: 12, },
 				{ name: "5", value: 3, }
 			],
