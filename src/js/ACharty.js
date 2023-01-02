@@ -61,7 +61,7 @@ class aCharty {
 		this.distanceBetweenYAndChart = 10;
 		// Расстояние между графиком и названием диаграммы
 		this.distanceBetweenTitleChartAndChart = 10;
-		// Содержит объект данных, которые будут применяться к активной группе
+		// Содержит объекты данных активных групп
 		this.activeGroups = [];
 		// Содержит данные блока информации
 		this.windowInfoBlock = {
@@ -83,17 +83,19 @@ class aCharty {
 	 * Устанавливает стили для колпачка
 	 * @param {string} group Название группы, в которой находится колпачок
 	 * @param {string} color Цвет
-	 * @param {number} radius Радиус
+	 * @param {number} size Размер колпачка
 	 * @param {object} stroke Обводка
 	 * @param {number} x Позиция по оси абсцисс
 	 * @param {number} y Позиция по оси ординат
+	 * @param {string} format Формат колпачка (круг, квадрат)
 	 */
-	_setStylesToCap({ group, color, radius, stroke, x, y, }) {
+	_setStylesToCap({ group, color, size, stroke, x, y, format, }) {
 		const capData = {
 			ctx: this.ctx,
 			x,
 			y,
-			radius,
+			size,
+			format,
 			stroke,
 			color,
 			opacity: this.activeGroups.length ? 0.5 : 1,
@@ -105,9 +107,10 @@ class aCharty {
 					// Стили для активного колпачка
 					const { active: { cap: activeCap = {}, }, } = g;
 					const activeParams = {
-						radius: activeCap.radius || radius,
+						size: activeCap.size || size,
 						color: activeCap.color || color,
 						stroke: activeCap.stroke || stroke,
+						format: activeCap.format || format,
 					};
 
 					new Cap({
@@ -354,36 +357,10 @@ class aCharty {
 	 * @returns {object} ширина и высота текста
 	 */
 	_getSizesText(text, font) {
-		let sumHeight = 0;
-		let sumWidth = 0;
-		let sumMargin = 0;
-
-		const lengthTexts = text.length;
-
-		if (Array.isArray(text)) {
-			this.ctx.font = font;
-
-			text.map((w) => {
-				const txt = this.ctx.measureText(w);
-				sumHeight += txt.actualBoundingBoxAscent;
-				sumWidth += txt.width;
-				sumMargin += 20;
-			});
-
-			return {
-				margin: sumMargin,
-				height: Math.floor(sumHeight),
-				middleHeight: Math.floor(sumHeight / lengthTexts),
-				width: Math.floor(sumWidth / lengthTexts),
-			};
-		}
-
-		sumMargin += 20;
 		this.ctx.font = font;
 		const txt = this.ctx.measureText(text);
 
 		return {
-			margin: sumMargin,
 			width: txt.width,
 			height: txt.actualBoundingBoxAscent,
 		};
@@ -622,8 +599,9 @@ class aCharty {
 				// Рисуем колпачок
 				this._setLineCap({
 					color: groupCap.color || this.cap.color,
-					radius: groupCap.radius || this.cap.radius,
+					size: groupCap.size || this.cap.size,
 					stroke: groupCap.stroke || this.cap.stroke || {},
+					format: groupCap.format || this.cap.format,
 					x: findAxisXItem.x,
 					y: findAxisYItem.y,
 				}, group, value, name, groupActive);
@@ -644,12 +622,13 @@ class aCharty {
 		this.capsData.push({
 			x: cap.x,
 			y: cap.y,
+			strokeWidth: cap.stroke.width || 0,
+			size: cap.size,
+			format: cap.format,
 			group,
 			value,
 			name,
-			radius: cap.radius,
 			active,
-			strokeWidth: cap.stroke.width || 0,
 		});
 
 		// Рисуем колпачок
@@ -687,121 +666,100 @@ class aCharty {
 			return;
 		}
 
-		const groupsFromActiveGroups = this.activeGroups.map((g) => g.group);
-		const colorLineGroups = this.activeGroups.map((g) => (this.data[g.group].line || {}).color || this.line.color);
-		const groupsWithActiveColors = this.activeGroups.map(({ group, active, }) => {
-			return {
-				group,
-				active,
-			};
-		});
-
-		const { name, x, y, radius, } = this.activeGroups[0];
-		const minWindowBlockWidth = 150;
-		const windowContains = {
-			top: {
-				text: groupsFromActiveGroups,
-				...this._getSizesText(name, "400 14px Arial, sans-serif"),
-			},
-			bottom: {
-				text: this.activeGroups.map((g) => `${g.group}: ${g.value}`),
-				...this._getSizesText(this.activeGroups.map((g) => `${g.group}: ${g.value}`), "400 14px Arial, sans-serif"),
-			},
-		};
-
+		const widthActiveGroupLine = 2;
 		const windowPadding = {
-			vertical: 10,
-			horizontal: 10,
+			vertical: 5,
+			horizontal: 5,
 			fromCap: 10,
 			fromInnerLine: 10,
+			fromTopContent: 10,
+			fromActiveGroup: 8,
 		};
-		const maxContainWidth = [windowContains.top.width, windowContains.bottom.width].sort((a, b) => b - a)[0];
-		const windowBlockWidth = (maxContainWidth > minWindowBlockWidth) ? (maxContainWidth + windowPadding.horizontal + windowPadding.fromInnerLine) : minWindowBlockWidth;
-		const { height: textHeight, margin, } = windowContains.bottom;
+		const windowContains = {
+			top: {},
+			bottom: [],
+		};
 
-		for (const group in this.data) {
-			if ({}.propertyIsEnumerable.call(this.data, group)) { // hasOwnProperty
-				if (this.data[group].active) {
-					if (Object.values(this.data[group].active) && groupsFromActiveGroups.includes(group)) {
-						// находим цвет группы и меняем его на активный
-						colorLineGroups.splice(
-							colorLineGroups.indexOf(this.data[group].line.color),
-							1,
-							groupsWithActiveColors.filter((g) => g.group === group)[0].active.line.color
-						);
-					}
-				}
-			}
-		}
+		// Заполняем данными контент окна
+		this.activeGroups.map(({ group, value, name, x, y, }, index) => {
+			// Верхний контент
+			const nameSizes = this._getSizesText(name, "400 14px Arial, sans-serif");
+			const topContentData = {
+				...nameSizes,
+				text: name,
+				x: x + windowPadding.fromCap + windowPadding.horizontal,
+				y: y + windowPadding.vertical + nameSizes.height,
+			};
+
+			// Нижний контент (список активных групп)
+			const activeGroupSizes = this._getSizesText(`${group}: ${value}`, "400 14px Arial, sans-serif");
+			const prevActiveGroup = windowContains.bottom[index - 1];
+			const activeGroupData = {
+				...activeGroupSizes,
+				group,
+				text: `${group}: ${value}`,
+				x: x + windowPadding.fromCap + windowPadding.horizontal,
+				y: prevActiveGroup ? (prevActiveGroup.y + prevActiveGroup.height + windowPadding.fromActiveGroup) : (topContentData.y + topContentData.height + windowPadding.fromTopContent),
+			};
+
+			windowContains.top = topContentData;
+			windowContains.bottom.push(activeGroupData);
+		});
+
+		// Определяем ширину окна
+		const widthTopContain = windowContains.top.width;
+		const maxWidthBottomContains = windowContains.bottom.map(({ width, }) => width).sort((a, b) => b - a)[0];
+		const maxContainWidth = Math.max(widthTopContain, maxWidthBottomContains);
+		const windowBlockWidth = maxContainWidth + windowPadding.horizontal * 2 + windowPadding.fromInnerLine + widthActiveGroupLine;
+
+		// Определяем высоту окна
+		const totalActiveGroupsHeight = windowContains.bottom.reduce((tHeight, { height, }, index) => {
+			tHeight += height + (index < windowContains.bottom.length - 1 ? windowPadding.fromActiveGroup : 0);
+
+			return tHeight;
+		}, 0);
+		const heightTopContent = windowContains.top.height + windowPadding.vertical + windowPadding.fromTopContent;
+		const windowBlockHeight = totalActiveGroupsHeight + heightTopContent + windowPadding.vertical;
 
 		const windowBlock = new WindowInfoBlock({
 			width: windowBlockWidth,
-			height: margin + textHeight + windowPadding.vertical + radius,
-			colorLine: colorLineGroups,
+			height: windowBlockHeight,
 			ctx: this.ctx,
 			fontSize: 14,
 			padding: windowPadding,
 		});
 
-		// Содержит позиции всего содержимого окна
-		const containPositions = {
-			top: {
-				x: x + radius + windowPadding.fromCap,
-				y: y - windowBlock.height / 2 + windowContains.top.height + windowPadding.vertical,
-			},
-			bottom: {
-				x: x + radius + windowPadding.fromCap,
-				y: y + windowBlock.height / 2 - windowPadding.vertical - radius,
-			},
-			line: {
-				start: {
-					x: x + radius + windowPadding.fromCap + windowBlock.width - windowPadding.horizontal,
-					y: y + windowBlock.height / 2 - windowPadding.vertical - radius,
-				},
-				to: {
-					x: x + radius + windowPadding.fromCap + windowBlock.width - windowPadding.horizontal,
-					y: y + windowBlock.height / 2 - windowPadding.vertical + radius,
-				},
-			},
+		// Определяем позицию окна
+		const windowBlockPosition = {
+			x: this.activeGroups[0].x + windowPadding.fromCap,
+			y: this.activeGroups[0].y,
 		};
 
-		const { block: { x: xBlock, y: yBlock, }, contain: containPos, } = windowBlock.getWindowPosition({
-			x,
-			y,
-			containPositions,
-			windowBlock,
-			radius,
-			padding: windowPadding,
-			canvasWidth: this._getCanvasSizes().width,
+		// Рисуем окно
+		windowBlock.drawWindow(...Object.values(windowBlockPosition));
+		// Рисуем верхний контент
+		windowBlock.drawContains(windowContains.top.text, windowContains.top.x, windowContains.top.y);
+		// Рисуем активные группы
+		windowContains.bottom.map(({ text, x, y, }) => windowBlock.drawContains(text, x, y));
+		// Рисуем линии к активным группам
+		windowContains.bottom.map(({ x, y, group, width, height, }) => {
+			const colorLine = ((this.data[group].active || {}).line || (this.data[group].line || {})).color || this.line.color;
+			const lineData = {
+				start: {
+					x: x + width + windowPadding.fromInnerLine,
+					y,
+				},
+				to: {
+					x: x + width + windowPadding.fromInnerLine,
+					y: y - height,
+				},
+				color: colorLine,
+				width: widthActiveGroupLine,
+			};
+
+			// Рисуем линию
+			windowBlock.drawGroupLine(lineData);
 		});
-
-		// Рисуем блок окна
-		windowBlock.drawWindow(xBlock, yBlock);
-		// Рисуем название группы
-		windowBlock.drawContains(name, containPos.top.x, containPos.top.y);
-		// Рисуем значения
-		if (windowContains.bottom.text.length === 1) {
-			windowBlock.drawContains(
-				windowContains.bottom.text[0], containPos.bottom.x, containPos.bottom.y + radius * 2
-			);
-			// Рисуем линию группы
-			windowBlock.drawGroupLine({
-				start: { ...containPos.line.start, },
-				to: { ...containPos.line.to, },
-			});
-		} else if (windowContains.bottom.text.length > 1) {
-			windowContains.bottom.text.reverse().forEach((txt, idx) => {
-				let mY = containPos.bottom.y + radius;
-				if (idx !== 0) mY -= 20; // внешний отступ
-				windowBlock.drawContains(txt, containPos.bottom.x, mY);
-			});
-
-			// Рисуем линию группы
-			windowBlock.drawGroupLine({
-				start: { ...containPos.line.start, y: containPos.bottom.y - radius - 20, },
-				to: { ...containPos.line.to, y: containPos.line.to.y - 20, },
-			});
-		}
 	}
 
 	// Показывает окно с информацией активного элемента при клике
@@ -821,8 +779,8 @@ class aCharty {
 				const capY = Math.floor(cap.y);
 				const capX = Math.floor(cap.x);
 
-				if (y >= capY - (cap.radius + cap.strokeWidth) && y <= capY + (cap.radius + cap.strokeWidth)
-					&& x >= capX - (cap.radius + cap.strokeWidth) && x <= capX + (cap.radius + cap.strokeWidth)) {
+				if (y >= capY - (cap.size + cap.strokeWidth) && y <= capY + (cap.size + cap.strokeWidth)
+					&& x >= capX - (cap.size + cap.strokeWidth) && x <= capX + (cap.size + cap.strokeWidth)) {
 					return true;
 				}
 

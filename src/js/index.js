@@ -5,11 +5,10 @@ new ACharty({
 	background: "#171C27",
 	updateWhenResizing: true,
 	title: {
-		name: "Моя диаграмма 23434274982374893274982374983274982374923749327493827498237439827498237489239",
+		name: "Моя диаграмма",
 		fontSize: 16,
 		color: "#fefefe",
 	},
-	stepped: true,
 	line: { width: 3, },
 	axisX: {
 		line: {
@@ -31,26 +30,30 @@ new ACharty({
 		fontSize: 12,
 		showText: true,
 	},
-	cap: { radius: 4, },
+	cap: {
+		size: 10,
+		format: "square",
+		stroke: {
+			width: 2,
+			color: "black",
+		},
+	},
 	data: {
 		"Group 1": {
 			line: {
 				color: "#4781B4",
 				dotted: true,
 			},
-			cap: { color: "#4781B4", },
-			breakpoints: {
-				"800": function (groupName, groupData) {
-
-				},
-			},
+      cap: { color: "#4781B4", format: "circle", size: 6, },
 			active: { line: { color: "yellow", dotted: false, }, cap: { color: "yellow", }, },
 			data: [
-				{ name: "1", value: 15, },
-				{ name: "2", value: 16.2, },
-				{ name: "3", value: 41.23, },
-				{ name: "4", value: 44, },
-				{ name: "5", value: 45, }
+				{ name: "Понедельник", value: 15, },
+				{ name: "Вторник", value: 16.2, },
+				{ name: "Среда", value: 32, },
+				{ name: "Четверг", value: 21, },
+				{ name: "Пятница", value: 45, },
+				{ name: "Суббота", value: 45, },
+				{ name: "Воскресенье", value: 45, }
 			],
 		},
 		"Group 2": {
@@ -58,22 +61,26 @@ new ACharty({
 			cap: { color: "#CA81B4", },
 			active: { line: { color: "red", dotted: true, }, cap: { color: "red", }, },
 			data: [
-				{ name: "1", value: 19, },
-				{ name: "2", value: 19.24, },
-				{ name: "3", value: 32, },
-				{ name: "4", value: 31, },
-				{ name: "5", value: 45, }
+				{ name: "Понедельник", value: 19, },
+				{ name: "Вторник", value: 19.24, },
+				{ name: "Среда", value: 32, },
+				{ name: "Четверг", value: 31, },
+				{ name: "Пятница", value: 45, },
+				{ name: "Суббота", value: 45, },
+				{ name: "Воскресенье", value: 45, }
 			],
 		},
 		"Group 3": {
 			line: { color: "#DBBF62", },
 			cap: { color: "#DBBF62", },
 			data: [
-				{ name: "1", value: 4, },
-				{ name: "2", value: 12, },
-				{ name: "3", value: 34, },
-				{ name: "4", value: 12, },
-				{ name: "5", value: 3, }
+				{ name: "Понедельник", value: 13, },
+				{ name: "Вторник", value: 123, },
+				{ name: "Среда", value: 37, },
+				{ name: "Четверг", value: 21, },
+				{ name: "Пятница", value: 65, },
+				{ name: "Суббота", value: 15, },
+				{ name: "Воскресенье", value: 25, }
 			],
 		},
 	},
