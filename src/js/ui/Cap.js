@@ -3,15 +3,18 @@ class Cap {
     color,
     x,
     y,
-    radius,
+    size,
     ctx,
     opacity,
+    format,
     stroke = {},
   }) {
+    // Формат колпачка
+    this.format = format;
     // Обводка колпачка
     this.stroke = stroke;
-    // Радиус колпачка
-    this.radius = radius;
+    // Размер колпачка
+    this.size = size;
     // Прозрачность колпачка
     this.opacity = opacity;
     // Контекст canvas
@@ -29,19 +32,44 @@ class Cap {
     this.ctx.beginPath();
     this.ctx.globalAlpha = this.opacity;
     this.ctx.fillStyle = this.color;
+  }
 
+  // Рисует обводку для круга
+  _setCircleStroke() {
     if (Object.keys(this.stroke).length) {
       this.ctx.lineWidth = this.stroke.width;
       this.ctx.strokeStyle = this.stroke.color;
+      this.ctx.arc(this.x, this.y, this.size, Math.PI * 2, false);
       this.ctx.stroke();
+    }
+  }
+
+  // Рисует обводку для квадрата
+  _setSquareStroke() {
+    if (Object.keys(this.stroke).length) {
+      this.ctx.lineWidth = this.stroke.width;
+      this.ctx.strokeStyle = this.stroke.color;
+      this.ctx.strokeRect(this.x - this.size / 2, this.y - this.size / 2, this.size, this.size);
     }
   }
 
   // Рисует колпачок
   draw() {
     this.setStyles();
-    this.ctx.arc(this.x, this.y, this.radius, Math.PI * 2, false);
-    this.ctx.fill();
+
+    switch (this.format) {
+      case "circle":
+        this.ctx.arc(this.x, this.y, this.size, Math.PI * 2, false);
+        this.ctx.fill();
+
+        this._setCircleStroke();
+        break;
+      case "square":
+        this.ctx.fillRect(this.x - this.size / 2, this.y - this.size / 2, this.size, this.size);
+
+        this._setSquareStroke();
+        break;
+    }
   }
 }
 
