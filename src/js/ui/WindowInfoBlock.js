@@ -73,11 +73,11 @@ class WindowInfoBlock {
 	 * @param {object} to Объект, содержащий позиции направления линии
 	 * @param {string} color Цвет линии
 	 */
-	drawGroupLine({ start: { x: startX, y: startY, }, to: { x: toX, y: toY, }, color, }) {
+	drawGroupLine({ start: { x: startX, y: startY, }, to: { x: toX, y: toY, }, color, width, }) {
 		new Line({
 			color,
 			opacity: 1,
-			width: 2,
+			width,
 			moveTo: { x: startX, y: startY, },
 			lineTo: [{ x: toX, y: toY, }],
 			ctx: this.ctx,

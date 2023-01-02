@@ -666,10 +666,10 @@ class aCharty {
 			return;
 		}
 
-		const minWindowBlockWidth = 150;
+		const widthActiveGroupLine = 2;
 		const windowPadding = {
-			vertical: 10,
-			horizontal: 10,
+			vertical: 5,
+			horizontal: 5,
 			fromCap: 10,
 			fromInnerLine: 10,
 			fromTopContent: 10,
@@ -706,9 +706,9 @@ class aCharty {
 
 		// Определяем ширину окна
 		const widthTopContain = windowContains.top.width;
-		const maxWidthBottomContains = windowContains.bottom.map(({ width, }) => width).sort((a, b) => b - a)[0].width;
+		const maxWidthBottomContains = windowContains.bottom.map(({ width, }) => width).sort((a, b) => b - a)[0];
 		const maxContainWidth = [widthTopContain, maxWidthBottomContains].sort((a, b) => b - a)[0];
-		const windowBlockWidth = Math.max(maxContainWidth, minWindowBlockWidth) + windowPadding.horizontal;
+		const windowBlockWidth = maxContainWidth + windowPadding.horizontal * 2 + windowPadding.fromInnerLine + widthActiveGroupLine;
 
 		// Определяем высоту окна
 		const totalActiveGroupsHeight = windowContains.bottom.reduce((tHeight, { height, }, index) => {
@@ -752,6 +752,7 @@ class aCharty {
 					y: y - height,
 				},
 				color: colorLine,
+				width: widthActiveGroupLine,
 			};
 
 			// Рисуем линию
