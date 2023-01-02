@@ -32,14 +32,21 @@ new ACharty({
 		fontSize: 12,
 		showText: true,
 	},
-	cap: { radius: 4, },
+	cap: {
+		size: 10,
+		format: "square",
+		stroke: {
+			width: 2,
+			color: "black",
+		},
+	},
 	data: {
 		"Group 1": {
 			line: {
 				color: "#4781B4",
 				dotted: true,
 			},
-			cap: { color: "#4781B4", },
+			cap: { color: "#4781B4", format: "circle", size: 4, },
 			active: { line: { color: "yellow", dotted: false, }, cap: { color: "yellow", }, },
 			data: [
 				{ name: "1", value: 15, },

@@ -32,7 +32,7 @@ Creating simple graphs
       fontSize: 12,
       showText: true,
     },
-    cap: { radius: 4, },
+    cap: { size: 4, format: "circle", },
     data: {
       "My group 1": {
         line: { color: "#4781B4", },
@@ -121,7 +121,8 @@ Contains common styles for line caps
 ```js
 new ACharty({
   cap: {
-    radius: 3,
+    size: 10,
+    format: "square",
     color: "green",
     stroke: {
       width: 2,

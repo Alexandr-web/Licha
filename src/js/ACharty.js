@@ -83,17 +83,19 @@ class aCharty {
 	 * Устанавливает стили для колпачка
 	 * @param {string} group Название группы, в которой находится колпачок
 	 * @param {string} color Цвет
-	 * @param {number} radius Радиус
+	 * @param {number} size Размер колпачка
 	 * @param {object} stroke Обводка
 	 * @param {number} x Позиция по оси абсцисс
 	 * @param {number} y Позиция по оси ординат
+	 * @param {string} format Формат колпачка (круг, квадрат)
 	 */
-	_setStylesToCap({ group, color, radius, stroke, x, y, }) {
+	_setStylesToCap({ group, color, size, stroke, x, y, format, }) {
 		const capData = {
 			ctx: this.ctx,
 			x,
 			y,
-			radius,
+			size,
+			format,
 			stroke,
 			color,
 			opacity: this.activeGroups.length ? 0.5 : 1,
@@ -105,9 +107,10 @@ class aCharty {
 					// Стили для активного колпачка
 					const { active: { cap: activeCap = {}, }, } = g;
 					const activeParams = {
-						radius: activeCap.radius || radius,
+						size: activeCap.size || size,
 						color: activeCap.color || color,
 						stroke: activeCap.stroke || stroke,
+						format: activeCap.format || format,
 					};
 
 					new Cap({
@@ -596,8 +599,9 @@ class aCharty {
 				// Рисуем колпачок
 				this._setLineCap({
 					color: groupCap.color || this.cap.color,
-					radius: groupCap.radius || this.cap.radius,
+					size: groupCap.size || this.cap.size,
 					stroke: groupCap.stroke || this.cap.stroke || {},
+					format: groupCap.format || this.cap.format,
 					x: findAxisXItem.x,
 					y: findAxisYItem.y,
 				}, group, value, name, groupActive);
@@ -618,12 +622,13 @@ class aCharty {
 		this.capsData.push({
 			x: cap.x,
 			y: cap.y,
+			strokeWidth: cap.stroke.width || 0,
+			size: cap.size,
+			format: cap.format,
 			group,
 			value,
 			name,
-			radius: cap.radius,
 			active,
-			strokeWidth: cap.stroke.width || 0,
 		});
 
 		// Рисуем колпачок
@@ -668,7 +673,7 @@ class aCharty {
 			fromCap: 10,
 			fromInnerLine: 10,
 			fromTopContent: 10,
-			fromActiveGroup: 10,
+			fromActiveGroup: 5,
 		};
 		const windowContains = {
 			top: {},
@@ -771,8 +776,8 @@ class aCharty {
 				const capY = Math.floor(cap.y);
 				const capX = Math.floor(cap.x);
 
-				if (y >= capY - (cap.radius + cap.strokeWidth) && y <= capY + (cap.radius + cap.strokeWidth)
-					&& x >= capX - (cap.radius + cap.strokeWidth) && x <= capX + (cap.radius + cap.strokeWidth)) {
+				if (y >= capY - (cap.size + cap.strokeWidth) && y <= capY + (cap.size + cap.strokeWidth)
+					&& x >= capX - (cap.size + cap.strokeWidth) && x <= capX + (cap.size + cap.strokeWidth)) {
 					return true;
 				}
 
