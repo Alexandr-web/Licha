@@ -3,7 +3,7 @@ import "../scss/index.scss";
 
 new ACharty({
 	canvasSelector: "canvas",
-	background: "#171C27",
+	background: ["#1E163B", "#3C2C74"],
 	updateWhenResizing: true,
 	title: {
 		name: "Моя диаграмма",
@@ -14,8 +14,7 @@ new ACharty({
 	axisX: {
 		line: {
 			width: 1,
-			color: "#505F85",
-			dotted: true,
+			color: ["#c2c2c2", "grey"],
 		},
 		color: "#fefefe",
 		fontSize: 12,
@@ -24,8 +23,7 @@ new ACharty({
 	axisY: {
 		line: {
 			width: 1,
-			color: "#505F85",
-			dotted: true,
+			color: ["#c2c2c2", "grey"],
 		},
 		color: "#fefefe",
 		fontSize: 12,
@@ -42,11 +40,10 @@ new ACharty({
 	data: {
 		"Group 1": {
 			line: {
-				color: "#4781B4",
+				color: ["#8DA399", "#5DA383"],
 				dotted: true,
 			},
 			cap: { color: "#4781B4", format: "circle", size: 6, },
-			active: { line: { color: "yellow", dotted: false, }, cap: { color: "yellow", }, },
 			data: [
 				{ name: "Понедельник", value: 15, },
 				{ name: "Вторник", value: 16.2, },
@@ -60,7 +57,6 @@ new ACharty({
 		"Group 2": {
 			line: { color: "#CA81B4", },
 			cap: { color: "#CA81B4", },
-			active: { line: { color: "red", dotted: true, }, cap: { color: "red", }, },
 			data: [
 				{ name: "Понедельник", value: 19, },
 				{ name: "Вторник", value: 19.24, },
@@ -72,7 +68,7 @@ new ACharty({
 			],
 		},
 		"Group 3": {
-			line: { color: "#DBBF62", },
+			line: { color: ["#DBBF62", "#DBD3B7"], },
 			cap: { color: "#DBBF62", },
 			data: [
 				{ name: "Понедельник", value: 13, },
