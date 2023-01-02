@@ -673,7 +673,7 @@ class aCharty {
 			fromCap: 10,
 			fromInnerLine: 10,
 			fromTopContent: 10,
-			fromActiveGroup: 5,
+			fromActiveGroup: 8,
 		};
 		const windowContains = {
 			top: {},
@@ -683,17 +683,19 @@ class aCharty {
 		// Заполняем данными контент окна
 		this.activeGroups.map(({ group, value, name, x, y, }, index) => {
 			// Верхний контент
+			const nameSizes = this._getSizesText(name, "400 14px Arial, sans-serif");
 			const topContentData = {
-				...this._getSizesText(name, "400 14px Arial, sans-serif"),
+				...nameSizes,
 				text: name,
 				x: x + windowPadding.fromCap + windowPadding.horizontal,
-				y: y + windowPadding.vertical + this._getSizesText(name, "400 14px Arial, sans-serif").height,
+				y: y + windowPadding.vertical + nameSizes.height,
 			};
 
 			// Нижний контент (список активных групп)
+			const activeGroupSizes = this._getSizesText(`${group}: ${value}`, "400 14px Arial, sans-serif");
 			const prevActiveGroup = windowContains.bottom[index - 1];
 			const activeGroupData = {
-				...this._getSizesText(`${group}: ${value}`, "400 14px Arial, sans-serif"),
+				...activeGroupSizes,
 				group,
 				text: `${group}: ${value}`,
 				x: x + windowPadding.fromCap + windowPadding.horizontal,
@@ -707,7 +709,7 @@ class aCharty {
 		// Определяем ширину окна
 		const widthTopContain = windowContains.top.width;
 		const maxWidthBottomContains = windowContains.bottom.map(({ width, }) => width).sort((a, b) => b - a)[0];
-		const maxContainWidth = [widthTopContain, maxWidthBottomContains].sort((a, b) => b - a)[0];
+		const maxContainWidth = Math.max(widthTopContain, maxWidthBottomContains);
 		const windowBlockWidth = maxContainWidth + windowPadding.horizontal * 2 + windowPadding.fromInnerLine + widthActiveGroupLine;
 
 		// Определяем высоту окна

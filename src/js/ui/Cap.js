@@ -34,14 +34,17 @@ class Cap {
     this.ctx.fillStyle = this.color;
   }
 
+  // Рисует обводку для круга
   _setCircleStroke() {
     if (Object.keys(this.stroke).length) {
       this.ctx.lineWidth = this.stroke.width;
       this.ctx.strokeStyle = this.stroke.color;
+      this.ctx.arc(this.x, this.y, this.size, Math.PI * 2, false);
       this.ctx.stroke();
     }
   }
 
+  // Рисует обводку для квадрата
   _setSquareStroke() {
     if (Object.keys(this.stroke).length) {
       this.ctx.lineWidth = this.stroke.width;
