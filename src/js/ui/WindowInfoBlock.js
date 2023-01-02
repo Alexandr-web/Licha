@@ -4,12 +4,11 @@ import Line from "./Line";
 
 class WindowInfoBlock {
 	constructor({
-		color = "rgba(0, 0, 0, .5)",
+		color = ["#070021", "#150062"],
 		colorText = "white",
 		width = 150,
 		height = 50,
 		ctx,
-		fontSize = 12,
 		padding = {
 			vertical: 10,
 			horizontal: 10,
@@ -28,8 +27,6 @@ class WindowInfoBlock {
 		this.height = height;
 		// Контекст canvas
 		this.padding = padding;
-		// Размер шрифта
-		this.fontSize = fontSize;
 	}
 
 	/**
@@ -54,12 +51,13 @@ class WindowInfoBlock {
 	 * @param {string|number} value значение текста
 	 * @param {number} x позиция по оси абсцисс
 	 * @param {number} y позиция по оси ординат
+	 * @param {number} fontSize размер шрифта
 	 */
-	drawContains(value, x, y) {
+	drawContains(value, x, y, fontSize) {
 		new Text({
 			text: value,
 			color: this.colorText,
-			font: `400 ${this.fontSize}px Arial, sans-serif`,
+			font: `400 ${fontSize}px Arial, sans-serif`,
 			x,
 			y,
 			ctx: this.ctx,

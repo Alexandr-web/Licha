@@ -26,7 +26,7 @@ class Line {
 
   // Задает стили линии, но не рисует ее
   setStyles() {
-    this.ctx.setLineDash([this.dotted ? (0, 8) : (0, 0)]);
+    this.ctx.setLineDash([this.dotted ? (0, 6) : (0, 0)]);
 
     this.ctx.beginPath();
 
@@ -35,16 +35,28 @@ class Line {
     }
 
     this.ctx.globalAlpha = this.opacity;
-    this.ctx.strokeStyle = this.color;
     this.ctx.lineWidth = this.width;
     this.ctx.lineCap = "round";
-    this.lineTo.map(({ x, y, }) => this.ctx.lineTo(x, y));
+    // Устанавливет цвет линии
+    this.lineTo.map(({ x, y, }) => {
+      // Устанавливает градиент, если color передан в качестве массива
+      if (Array.isArray(this.color)) {
+        const grd = this.ctx.createLinearGradient(this.moveTo.x, this.moveTo.y, x, y);
+
+        this.color.map((color, idx) => grd.addColorStop((idx > 0 ? 1 / (this.color.length - 1) : 0) * idx, color));
+
+        this.ctx.strokeStyle = grd;
+      } else if (typeof this.color === "string") {
+        this.ctx.strokeStyle = this.color;
+      }
+
+      this.ctx.lineTo(x, y);
+    });
   }
 
-  // Рисует фигуру
+  // Рисует линию
   draw() {
     this.setStyles();
-
     this.ctx.stroke();
   }
 }

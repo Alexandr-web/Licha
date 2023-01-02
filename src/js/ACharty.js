@@ -725,7 +725,6 @@ class aCharty {
 			width: windowBlockWidth,
 			height: windowBlockHeight,
 			ctx: this.ctx,
-			fontSize: 14,
 			padding: windowPadding,
 		});
 
@@ -738,9 +737,9 @@ class aCharty {
 		// Рисуем окно
 		windowBlock.drawWindow(...Object.values(windowBlockPosition));
 		// Рисуем верхний контент
-		windowBlock.drawContains(windowContains.top.text, windowContains.top.x, windowContains.top.y);
+		windowBlock.drawContains(windowContains.top.text, windowContains.top.x, windowContains.top.y, 12);
 		// Рисуем активные группы
-		windowContains.bottom.map(({ text, x, y, }) => windowBlock.drawContains(text, x, y));
+		windowContains.bottom.map(({ text, x, y, }) => windowBlock.drawContains(text, x, y, 11));
 		// Рисуем линии к активным группам
 		windowContains.bottom.map(({ x, y, group, width, height, }) => {
 			const colorLine = ((this.data[group].active || {}).line || (this.data[group].line || {})).color || this.line.color;
@@ -762,14 +761,14 @@ class aCharty {
 		});
 	}
 
-	// Показывает окно с информацией активного элемента при клике
+	// Показывает окно с информацией активного элемента при движении мыши
 	_showWindowInfoBlock() {
 		this._drawWindowInfoBlock();
 
 		const elemLeft = this.canvasElement.offsetLeft + this.canvasElement.clientLeft;
 		const elemTop = this.canvasElement.offsetTop + this.canvasElement.clientTop;
 
-		this.canvasElement.addEventListener("click", (e) => {
+		this.canvasElement.addEventListener("mousemove", (e) => {
 			this.activeGroups = [];
 
 			const x = e.pageX - elemLeft;
