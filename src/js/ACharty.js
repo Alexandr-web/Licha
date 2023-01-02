@@ -689,6 +689,12 @@ class aCharty {
 
 		const groupsFromActiveGroups = this.activeGroups.map((g) => g.group);
 		const colorLineGroups = this.activeGroups.map((g) => (this.data[g.group].line || {}).color || this.line.color);
+		const groupsWithActiveColors = this.activeGroups.map(({ group, active, }) => {
+			return {
+				group,
+				active,
+			};
+		});
 
 		const { name, x, y, radius, } = this.activeGroups[0];
 		const minWindowBlockWidth = 150;
@@ -714,11 +720,17 @@ class aCharty {
 		const { height: textHeight, margin, } = windowContains.bottom;
 
 		for (const group in this.data) {
-			const { line = {}, } = (this.data[group].active || {});
-			const indexCurrentGroup = Object.keys(this.data).findIndex(({ group: groupName, }) => groupName === group);
-
-			if (line.color) {
-				colorLineGroups.splice(indexCurrentGroup, 1, line.color);
+			if ({}.propertyIsEnumerable.call(this.data, group)) { // hasOwnProperty
+				if (this.data[group].active) {
+					if (Object.values(this.data[group].active) && groupsFromActiveGroups.includes(group)) {
+						// находим цвет группы и меняем его на активный
+						colorLineGroups.splice(
+							colorLineGroups.indexOf(this.data[group].line.color),
+							1,
+							groupsWithActiveColors.filter((g) => g.group === group)[0].active.line.color
+						);
+					}
+				}
 			}
 		}
 
