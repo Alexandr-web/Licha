@@ -1,5 +1,4 @@
 import ACharty from "./ACharty";
-import "../scss/index.scss";
 
 new ACharty({
 	canvasSelector: "canvas",
@@ -45,7 +44,7 @@ new ACharty({
 				color: "#4781B4",
 				dotted: true,
 			},
-			cap: { color: "#4781B4", format: "circle", size: 6, },
+      cap: { color: "#4781B4", format: "circle", size: 6, },
 			active: { line: { color: "yellow", dotted: false, }, cap: { color: "yellow", }, },
 			data: [
 				{ name: "Понедельник", value: 15, },
