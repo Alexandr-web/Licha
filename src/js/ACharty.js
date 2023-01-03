@@ -253,18 +253,15 @@ class aCharty {
 		const lastValue = Math.floor(sortedValues[sortedValues.length - 1]);
 
 		let maxValue = null;
-		let changedIndex = null;
 
 		if (firstValue > 0) {
 			maxValue = this._getMaxAxisYValue(firstValue, lastValue);
-			changedIndex = 0;
 		} else if (firstValue <= 0) {
 			maxValue = this._getMaxAxisYValue(lastValue, firstValue);
-			changedIndex = sortedValues.length - 1;
 		}
 
 		// Заменяем существующее максимальное значение на новое
-		sortedValues.splice(changedIndex, 1, maxValue);
+		sortedValues[maxValue > 0 ? "unshift" : "push"](maxValue);
 
 		this.uniqueValues = sortedValues;
 		this.uniqueNames = [...new Set(names)];
@@ -455,31 +452,27 @@ class aCharty {
 
 			if (findMaxNumIndex !== -1) {
 				const findAxisYItem = this.axisYData[findMaxNumIndex];
-				const findNextAxisYItem = this.axisYData.find(({ value, }) => n >= findAxisYItem.value ? value > findAxisYItem.value : value < findAxisYItem.value);
+				const findNextAxisYItem = this.axisYData.find(({ value, }) => n >= findMaxNum ? value > findMaxNum : value < findMaxNum);
 
 				if (findNextAxisYItem) {
 					const textSizes = this._getSizesText(n, `400 ${fontSize}px Arial, sans-serif`);
-
-					// Находим процент от текущего значения до его максимально приближенного
-					let percent = null;
-
-					if (findMaxNum === 0) {
-						percent = ((n + 1) / (findMaxNum + 1)) * 100;
-					} else {
-						percent = (n / findMaxNum) * 100;
-					}
-
-					// Расстояние между текущим и следующим элементами
+					// Расстояние между максимальным и следующим элементом
 					const area = Math.abs(findAxisYItem.y - findNextAxisYItem.y);
 					// Координаты для значения
-					const y = findNextAxisYItem.y - (percent * area) / 100;
-					const x = this.padding.left;
+					const posYItem = { x: this.padding.left, y: null, };
+					const numAfterDot = parseInt(((n.toString().match(/\.\d+/) || [])[0] || "").replace(/\./, "")) || 0;
+					const percent = Math.abs((numAfterDot / 10 ** numAfterDot.toString().length) * 100);
+
+					if (findNextAxisYItem.value >= 0) {
+						posYItem.y = findNextAxisYItem.y - (percent * area) / 100;
+					} else if (findNextAxisYItem.value < 0) {
+						posYItem.y = findAxisYItem.y + (percent * area) / 100;
+					}
 
 					this.axisYData.push({
-						x,
-						y,
 						value: n,
 						onScreen: false,
+						...posYItem,
 						...textSizes,
 					});
 				}
