@@ -29,6 +29,10 @@ class Rect {
 
   // Задает стили фигуре, но не рисует ее
   setStyles() {
+    if (Object.keys(this.moveTo).length) {
+      this.ctx.moveTo(this.moveTo.x, this.moveTo.y);
+    }
+
     this.ctx.globalAlpha = this.opacity;
 
     // Устанавливает цвет фигуре
@@ -45,10 +49,6 @@ class Rect {
   // Рисует фигуру
   draw() {
     this.setStyles();
-
-    if (Object.keys(this.moveTo).length) {
-      this.ctx.moveTo(this.moveTo.x, this.moveTo.y);
-    }
 
     this.ctx.fillRect(this.x, this.y, this.width, this.height);
   }

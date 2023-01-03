@@ -1,4 +1,5 @@
 node_modules
 src/scss
 src/*.html
+src/js/script.js
 dist

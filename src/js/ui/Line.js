@@ -26,7 +26,7 @@ class Line {
 
   // Задает стили линии, но не рисует ее
   setStyles() {
-    this.ctx.setLineDash([this.dotted ? (0, 6) : (0, 0)]);
+    this.ctx.setLineDash([this.dotted ? (0, 40) : (0, 0)]);
 
     this.ctx.beginPath();
 

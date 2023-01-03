@@ -4,29 +4,19 @@ import Line from "./Line";
 
 class WindowInfoBlock {
 	constructor({
-		color = ["#070021", "#150062"],
-		colorText = "white",
+		color = "black",
 		width = 150,
 		height = 50,
 		ctx,
-		padding = {
-			vertical: 10,
-			horizontal: 10,
-			fromCap: 10,
-		},
 	}) {
 		// Цвет окна
 		this.ctx = ctx;
 		// Цвет содержимого
 		this.color = color;
-		// Цвет линии
-		this.colorText = colorText;
 		// Ширина окна
 		this.width = width;
 		// Высота окна
 		this.height = height;
-		// Контекст canvas
-		this.padding = padding;
 	}
 
 	/**
@@ -48,15 +38,16 @@ class WindowInfoBlock {
 
 	/**
 	 * Рисует текст
-	 * @param {string|number} value значение текста
+	 * @param {string|number} text значение текста
 	 * @param {number} x позиция по оси абсцисс
 	 * @param {number} y позиция по оси ординат
 	 * @param {number} fontSize размер шрифта
+	 * @param {string} color Цвет текста
 	 */
-	drawContains(value, x, y, fontSize) {
+	drawContains({ text, x, y, fontSize, color, }) {
 		new Text({
-			text: value,
-			color: this.colorText,
+			text,
+			color,
 			font: `400 ${fontSize}px Arial, sans-serif`,
 			x,
 			y,
@@ -70,6 +61,7 @@ class WindowInfoBlock {
 	 * @param {object} start Объект, содержащий позиции начала линии
 	 * @param {object} to Объект, содержащий позиции направления линии
 	 * @param {string} color Цвет линии
+	 * @param {number} width Ширина линии
 	 */
 	drawGroupLine({ start: { x: startX, y: startY, }, to: { x: toX, y: toY, }, color, width, }) {
 		new Line({
