@@ -459,9 +459,16 @@ class aCharty {
 
 				if (findNextAxisYItem) {
 					const textSizes = this._getSizesText(n, `400 ${fontSize}px Arial, sans-serif`);
-					// Находим процент от числа n, если он существует
-					const percentStr = ((n.toString().match(/\.\d{1,2}/) || [])[0] || "").replace(/\./, "") || n.toString();
-					const percent = percentStr.length < 2 ? +percentStr * 10 : +percentStr;
+
+					// Находим процент от текущего значения до его максимально приближенного
+					let percent = null;
+
+					if (findMaxNum === 0) {
+						percent = ((n + 1) / (findMaxNum + 1)) * 100;
+					} else {
+						percent = (n / findMaxNum) * 100;
+					}
+
 					// Расстояние между текущим и следующим элементами
 					const area = Math.abs(findAxisYItem.y - findNextAxisYItem.y);
 					// Координаты для значения
