@@ -15,6 +15,7 @@ class aCharty {
 		axisX = {},
 		title = {},
 		blockInfo = {},
+		ignoreNames = [],
 		updateWhenResizing = true,
 		stepped = false,
 		padding = {
@@ -24,6 +25,8 @@ class aCharty {
 			bottom: 10,
 		},
 	}) {
+		// Содержит названия, которые не нужно рисовать
+		this.ignoreNames = ignoreNames;
 		// Объект с данными блока об активной группе
 		this.blockInfo = blockInfo;
 		// Объект с данными названия диаграммы
@@ -416,18 +419,16 @@ class aCharty {
 			// Интервал для отрисовки элементов
 			const step = endPoint / (valuesFromFirstValueToLastValue.length - 1);
 			// Координаты для отрисовки элементов
-			const x = this.padding.left;
-			const y = step * index + startPoint;
+			const posYItem = { x: this.axisY.showText ? this.padding.left : 0, y: step * index + startPoint, };
 
 			this.axisYData.push({
-				y,
-				x,
 				value,
 				// Отрисовываться будет только то значение,
 				// которое делится без остатка на НОД между максимальным и
 				// минимальным значением
 				onScreen: value % nod === 0,
 				...valueSizes,
+				...posYItem,
 			});
 
 			// Отрисовываем значения, которые делятся без остатка на НОД
@@ -438,8 +439,8 @@ class aCharty {
 					color,
 					fontSize,
 					font: `400 ${fontSize}px Arial, sans-serif`,
-					x,
-					y: y + valueSizes.height / 2,
+					x: posYItem.x,
+					y: posYItem.y + valueSizes.height / 2,
 				});
 			}
 		});
@@ -502,9 +503,9 @@ class aCharty {
 			// Содержит размеры второго названия
 			const lastNameSizes = this._getSizesText(lastName, `400 ${fontSize}px Arial, sans-serif`);
 			// Начальная точка для отрисовки элементов
-			const startPoint = firstNameSizes.width / 2 + this.padding.left + (this.axisY.showText ? this._getMaxTextWidthAtYAxis() + this.distanceBetweenYAndChart : 0);
+			const startPoint = this.padding.left + (this.axisY.showText ? firstNameSizes.width / 2 + this._getMaxTextWidthAtYAxis() + this.distanceBetweenYAndChart : 0);
 			// Конечная точка для отрисовки элементов
-			const endPoint = this._getCanvasSizes().width - lastNameSizes.width / 2 - startPoint - this.padding.right;
+			const endPoint = this._getCanvasSizes().width - (this.axisX.showText ? lastNameSizes.width / 2 : 0) - startPoint - this.padding.right;
 			// Шаг, с которым отрисовываем элементы
 			const step = endPoint / (this.uniqueNames.length - 1);
 			// Содержит размеры названия
@@ -534,7 +535,7 @@ class aCharty {
 			}
 
 			// Рисуем текст
-			if (this.axisX.showText) {
+			if (this.axisX.showText && !this.ignoreNames.includes(name)) {
 				this._setStylesToAxisText({
 					contain: name,
 					color,
