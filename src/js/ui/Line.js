@@ -1,6 +1,7 @@
 class Line {
   constructor({
     color,
+    fill,
     lineTo = [],
     width = 1,
     ctx,
@@ -8,6 +9,8 @@ class Line {
     moveTo = {},
     dotted = false,
   }) {
+    // Задний фон линии
+    this.fill = fill;
     // Ширина фигуры
     this.width = width;
     // Прозрачность линии
@@ -24,6 +27,25 @@ class Line {
     this.dotted = dotted;
   }
 
+  /**
+   * Устанавливает цвет линии
+   * @param {string|array} background цвет
+   * @param {boolean} isStroke проверка на обводку
+   * @param {number} endX конечная позиция по оси абсцисс
+   * @param {number} endY конечная позиция по оси ординат
+   */
+  _setColor(background, isStroke, endX, endY) {
+    if (Array.isArray(background)) {
+      const grd = this.ctx.createLinearGradient(0, 0, isStroke ? endX : 0, isStroke ? 0 : endY);
+
+      background.map((color, idx) => grd.addColorStop((idx > 0 ? 1 / (background.length - 1) : 0) * idx, color));
+
+      this.ctx[isStroke ? "strokeStyle" : "fillStyle"] = grd;
+    } else if (typeof background === "string") {
+      this.ctx[isStroke ? "strokeStyle" : "fillStyle"] = background;
+    }
+  }
+
   // Задает стили линии, но не рисует ее
   setStyles() {
     this.ctx.setLineDash([this.dotted ? (0, 40) : (0, 0)]);
@@ -37,17 +59,12 @@ class Line {
     this.ctx.globalAlpha = this.opacity;
     this.ctx.lineWidth = this.width;
     this.ctx.lineCap = "round";
-    // Устанавливет цвет линии
+
     this.lineTo.map(({ x, y, }) => {
-      // Устанавливает градиент, если color передан в качестве массива
-      if (Array.isArray(this.color)) {
-        const grd = this.ctx.createLinearGradient(this.moveTo.x, this.moveTo.y, x, y);
-
-        this.color.map((color, idx) => grd.addColorStop((idx > 0 ? 1 / (this.color.length - 1) : 0) * idx, color));
-
-        this.ctx.strokeStyle = grd;
-      } else if (typeof this.color === "string") {
-        this.ctx.strokeStyle = this.color;
+      if (this.fill !== undefined) {
+        this._setColor(this.fill, !this.fill, x, y);
+      } else {
+        this._setColor(this.color, !this.fill, x, y);
       }
 
       this.ctx.lineTo(x, y);
@@ -57,7 +74,7 @@ class Line {
   // Рисует линию
   draw() {
     this.setStyles();
-    this.ctx.stroke();
+    this.ctx[this.fill === undefined ? "stroke" : "fill"]();
   }
 }
 

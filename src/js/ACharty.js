@@ -594,12 +594,32 @@ class aCharty {
 				active: groupActive = {},
 				cap: groupCap = {},
 			} = this.data[group];
+			const coordinations = groupData.map(({ value, name, }) => {
+				// Элемент для начальной позиции Y линии
+				const findAxisYItem = this.axisYData.find((axisYItem) => axisYItem.value === value);
+				// Элемент для начальной позиции X линии
+				const findAxisXItem = this.axisXData.find((axisXItem) => axisXItem.name === name);
+
+				return {
+					x: findAxisXItem.x,
+					value: findAxisYItem.value,
+					name: findAxisXItem.name,
+					y: findAxisYItem.y,
+				};
+			});
+
+			// Рисуем задний фон линиям
+			if (groupLine.fill) {
+				this._setFillGroupChart(coordinations, groupLine.fill);
+			}
 
 			// Находим координаты для линий
 			groupData.map(({ value, name, }, index) => {
 				const nextDataItem = groupData[index + 1];
-				const findAxisYItem = this.axisYData.find((axisYItem) => axisYItem.value === value); // Элемент для начальной позиции Y линии
-				const findAxisXItem = this.axisXData.find((axisXItem) => axisXItem.name === name); // Элемент для начальной позиции X линии
+				// Элемент для начальной позиции Y линии
+				const findAxisYItem = this.axisYData.find((axisYItem) => axisYItem.value === value);
+				// Элемент для начальной позиции X линии
+				const findAxisXItem = this.axisXData.find((axisXItem) => axisXItem.name === name);
 
 				// Стили линии
 				const width = groupLine.width || this.line.width;
@@ -650,6 +670,62 @@ class aCharty {
 				}, group, value, name, groupActive);
 			});
 		}
+	}
+
+	/**
+	 * Создает задний фон у всей группы
+	 * @param {array} coordinations массив координат линий графика
+	 * @param {string|array} fill содержит данные о цвете заднего фона
+	 */
+	_setFillGroupChart(coordinations, fill) {
+		const firstItem = coordinations[0];
+		const yItemsOnScreen = this.axisYData.filter(({ onScreen, }) => onScreen);
+		const lastYItem = yItemsOnScreen[yItemsOnScreen.length - 1];
+		const lastXItem = this.axisXData[this.axisXData.length - 1];
+		const firstXItem = this.axisXData[0];
+		const lineData = {
+			ctx: this.ctx,
+			opacity: 1,
+			moveTo: { x: firstItem.x, y: firstItem.y, },
+			lineTo: [],
+			fill,
+		};
+
+		// Определяем координаты для будущей фигуры
+		coordinations.map(({ x, y, }, index) => {
+			if (this.stepped) {
+				const nextItem = coordinations[index + 1];
+
+				if (nextItem) {
+					// Элемент для следующей позиции Y линии
+					const findNextAxisYItem = this.axisYData.find((nextAxisYItem) => nextAxisYItem.value === nextItem.value);
+					// Элемент для следующей позиции X линии
+					const findNextAxisXItem = this.axisXData.find((nextAxisXItem) => nextAxisXItem.name === nextItem.name);
+
+					lineData.lineTo.push(
+						{
+							x: findNextAxisXItem.x,
+							y,
+						},
+						{
+							x: findNextAxisXItem.x,
+							y: findNextAxisYItem.y,
+						}
+					);
+				}
+			} else if (index > 0) {
+				lineData.lineTo.push({ x, y, });
+			}
+		});
+
+		// Закрываем фигуру
+		lineData.lineTo.push(
+			{ x: lastXItem.x, y: lastYItem.y, },
+			{ x: firstXItem.x, y: lastYItem.y, },
+			{ ...lineData.moveTo, }
+		);
+
+		new Line(lineData).draw();
 	}
 
 	/**
