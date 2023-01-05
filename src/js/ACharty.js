@@ -423,6 +423,14 @@ class aCharty {
 		};
 	}
 
+	/**
+	 * Возвращает правильное значение для оси ординат
+	 * @param {number} value Значение по умолчанию
+	 */
+	_getValidValueForYAxis(value) {
+		return this.axisY.editValue instanceof Function ? this.axisY.editValue(value) : value;
+	}
+
 	// Устанавливает ординату
 	_setYAxis() {
 		// Стили оси
@@ -431,14 +439,16 @@ class aCharty {
 		// Самое максимальное и минимальное значения
 		const firstValue = Math.ceil(this.uniqueValues[0]);
 		const lastValue = Math.floor(this.uniqueValues[this.uniqueValues.length - 1]);
+		// Первое название на оси абсцисс
+		const firstName = this.uniqueNames[0];
 		// Содержит размеры самого максимального значения
-		const firstValueSizes = this._getSizesText(firstValue, `400 ${fontSize}px Arial, sans-serif`);
+		const firstValueSizes = this._getSizesText(this._getValidValueForYAxis(firstValue), `400 ${fontSize}px Arial, sans-serif`);
 		// НОД самого максимального и минимального значений
 		const nod = this._getNOD(Math.abs(firstValue), Math.abs(lastValue));
 		// Содержит все значения от самого максимального до минимального значений (счет идет с 1)
 		const valuesFromFirstValueToLastValue = [];
 		// Содержит высоту первого названия
-		const heightFirstName = this._getSizesText(this.uniqueNames[0], `400 ${fontSize}px Arial, sans-serif`).height;
+		const heightFirstName = this._getSizesText(this._getValidValueForYAxis(firstName), `400 ${fontSize}px Arial, sans-serif`).height;
 
 		// Добавляем все значения от начального до последнего с интервалом 1
 		for (let i = firstValue; i >= lastValue; i--) {
@@ -448,7 +458,7 @@ class aCharty {
 		// Добавляем целые значения в массив ординат
 		valuesFromFirstValueToLastValue.map((value, index) => {
 			// Содержит размеры значения
-			const valueSizes = this._getSizesText(value, `400 ${fontSize}px Arial, sans-serif`);
+			const valueSizes = this._getSizesText(this._getValidValueForYAxis(value), `400 ${fontSize}px Arial, sans-serif`);
 			// Начальная точка для отрисовки элементов
 			const startPoint = this.padding.top + firstValueSizes.height / 2 + (Object.keys(this.title).length ? this.title.height + this.distanceBetweenTitleChartAndChart : 0);
 			// Конечная точка для отрисовки элементов
@@ -472,7 +482,7 @@ class aCharty {
 			// между максимальным и минимальным значением
 			if (value % nod === 0 && this.axisY.showText) {
 				this._setStylesToAxisText({
-					contain: value,
+					contain: this._getValidValueForYAxis(value),
 					color,
 					fontSize,
 					font: `400 ${fontSize}px Arial, sans-serif`,
@@ -724,9 +734,9 @@ class aCharty {
 	 */
 	_setFillGroupChart(coordinations, fill, stepped, group) {
 		const firstItem = coordinations[0];
+		const lastItem = coordinations[coordinations.length - 1];
 		const yItemsOnScreen = this.axisYData.filter(({ onScreen, }) => onScreen);
 		const lastYItem = yItemsOnScreen[yItemsOnScreen.length - 1];
-		const lastXItem = this.axisXData[this.axisXData.length - 1];
 		const firstXItem = this.axisXData[0];
 		const lineData = {
 			moveTo: { x: firstItem.x, y: firstItem.y, },
@@ -765,7 +775,7 @@ class aCharty {
 
 		// Закрываем фигуру
 		lineData.lineTo.push(
-			{ x: lastXItem.x, y: lastYItem.y, },
+			{ x: lastItem.x, y: lastYItem.y, },
 			{ x: firstXItem.x, y: lastYItem.y, },
 			{ ...lineData.moveTo, }
 		);
@@ -854,14 +864,14 @@ class aCharty {
 
 			// Нижний контент (список активных групп)
 			const { fontSize: bottomFontSize, color: bottomColor, } = this.blockInfo.bottomContent;
-			const activeGroupSizes = this._getSizesText(`${group}: ${value}`, `400 ${bottomFontSize}px Arial, sans-serif`);
+			const activeGroupSizes = this._getSizesText(`${group}: ${this._getValidValueForYAxis(value)}`, `400 ${bottomFontSize}px Arial, sans-serif`);
 			const prevActiveGroup = windowContains.bottom[index - 1];
 			const activeGroupData = {
 				...activeGroupSizes,
 				group,
 				color: bottomColor,
 				fontSize: bottomFontSize,
-				text: `${group}: ${value}`,
+				text: `${group}: ${this._getValidValueForYAxis(value)}`,
 				x: x + windowPadding.fromCap + windowPadding.horizontal,
 				y: prevActiveGroup ? (prevActiveGroup.y + prevActiveGroup.height + windowPadding.fromActiveGroup) : (topContentData.y + topContentData.height + windowPadding.fromTopContent),
 			};

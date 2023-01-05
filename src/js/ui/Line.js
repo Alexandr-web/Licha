@@ -51,7 +51,15 @@ class Line {
       }
 
       // Создает градиент
-      background.map((color, idx) => grd.addColorStop((1 / background.length) * (idx + 1), color));
+      background.map((color, idx) => {
+        if (idx > 0 && idx < background.length - 1) {
+          grd.addColorStop((1 / background.length) * (idx + 1), color);
+        } else if (idx === 0) {
+          grd.addColorStop(0, color);
+        } else if (idx === background.length - 1) {
+          grd.addColorStop(1, color);
+        }
+      });
 
       this.ctx[isStroke ? "strokeStyle" : "fillStyle"] = grd;
     } else if (typeof background === "string") {
