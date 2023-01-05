@@ -15,8 +15,8 @@ class aCharty {
 		axisX = {},
 		title = {},
 		blockInfo = {},
+		ignoreNames = [],
 		updateWhenResizing = true,
-		stepped = false,
 		padding = {
 			top: 10,
 			left: 10,
@@ -24,14 +24,14 @@ class aCharty {
 			bottom: 10,
 		},
 	}) {
+		// Содержит названия, которые не будут нарисованы на графике
+		this.ignoreNames = ignoreNames;
 		// Объект с данными блока об активной группе
 		this.blockInfo = blockInfo;
 		// Объект с данными названия диаграммы
 		this.title = title;
 		// Правило, которое будет обновлять график при изменении экрана
 		this.updateWhenResizing = updateWhenResizing;
-		// Правило, которое будет рисовать линию пошагово
-		this.stepped = stepped;
 		// Объект с данными абсциссы
 		this.axisX = axisX;
 		// Объект с данными ординаты
@@ -115,12 +115,12 @@ class aCharty {
 						color: activeCap.color || color,
 						stroke: activeCap.stroke || stroke,
 						format: activeCap.format || format,
+						opacity: 1,
 					};
 
 					new Cap({
 						...capData,
 						...activeParams,
-						opacity: 1,
 					}).draw();
 				}
 			});
@@ -158,13 +158,12 @@ class aCharty {
 				const activeParams = {
 					color: activeText.color || color,
 					fontSize: activeText.fontSize || fontSize,
+					opacity: 1,
 				};
 
 				textData = {
 					...textData,
 					...activeParams,
-					ctx: this.ctx,
-					opacity: 1,
 				};
 			}
 		}
@@ -202,12 +201,53 @@ class aCharty {
 						width: activeLine.width || width,
 						color: activeLine.color || color,
 						dotted: activeLine.dotted !== undefined ? activeLine.dotted : dotted,
+						opacity: 1,
 					};
 
 					new Line({
 						...lineData,
 						...activeParams,
+					}).draw();
+				}
+			});
+		} else {
+			// Стили, применяемые для линий, чья группа не считается активной
+			new Line(lineData).draw();
+		}
+	}
+
+	/**
+	 * Установка стилей для заднего фона группы
+	 * @param {object} moveTo Объект с начальными координатами линии
+	 * @param {array} lineTo Следующие позиции линии
+	 * @param {string|array} fill Цвет заднего фона
+	 * @param {number} minStartY Минимальная начальная позиция по оси ординат (для начала отрисовки градиента по оси ординат)
+	 * @param {string} group Группа, в которой находится линия
+	 */
+	_setStylesToFillGroupChart({ moveTo, lineTo, fill, minStartY, group, }) {
+		// Начальные стили для линии
+		const lineData = {
+			moveTo,
+			lineTo,
+			ctx: this.ctx,
+			fill,
+			minStartY,
+			opacity: this.activeGroups.length ? 0.5 : 1,
+		};
+
+		if (this.activeGroups.map((g) => g.group).includes(group)) {
+			// Стили, применяемые для линий, чья группа считается активной
+			this.activeGroups.forEach((g) => {
+				if (g.group === group) {
+					const { active: { line: activeLine = {}, }, } = g;
+					const activeParams = {
+						fill: activeLine.fill || fill,
 						opacity: 1,
+					};
+
+					new Line({
+						...lineData,
+						...activeParams,
 					}).draw();
 				}
 			});
@@ -416,18 +456,16 @@ class aCharty {
 			// Интервал для отрисовки элементов
 			const step = endPoint / (valuesFromFirstValueToLastValue.length - 1);
 			// Координаты для отрисовки элементов
-			const x = this.padding.left;
-			const y = step * index + startPoint;
+			const posYItem = { x: this.axisY.showText ? this.padding.left : 0, y: step * index + startPoint, };
 
 			this.axisYData.push({
-				y,
-				x,
-				value,
 				// Отрисовываться будет только то значение,
 				// которое делится без остатка на НОД между максимальным и
 				// минимальным значением
 				onScreen: value % nod === 0,
+				value,
 				...valueSizes,
+				...posYItem,
 			});
 
 			// Отрисовываем значения, которые делятся без остатка на НОД
@@ -438,8 +476,8 @@ class aCharty {
 					color,
 					fontSize,
 					font: `400 ${fontSize}px Arial, sans-serif`,
-					x,
-					y: y + valueSizes.height / 2,
+					x: posYItem.x,
+					y: posYItem.y + valueSizes.height / 2,
 				});
 			}
 		});
@@ -502,9 +540,9 @@ class aCharty {
 			// Содержит размеры второго названия
 			const lastNameSizes = this._getSizesText(lastName, `400 ${fontSize}px Arial, sans-serif`);
 			// Начальная точка для отрисовки элементов
-			const startPoint = firstNameSizes.width / 2 + this.padding.left + (this.axisY.showText ? this._getMaxTextWidthAtYAxis() + this.distanceBetweenYAndChart : 0);
+			const startPoint = this.padding.left + ((this.axisX.showText && !this.ignoreNames.includes(firstName)) ? firstNameSizes.width / 2 : 0) + (this.axisY.showText ? this._getMaxTextWidthAtYAxis() + this.distanceBetweenYAndChart : 0);
 			// Конечная точка для отрисовки элементов
-			const endPoint = this._getCanvasSizes().width - lastNameSizes.width / 2 - startPoint - this.padding.right;
+			const endPoint = this._getCanvasSizes().width - ((this.axisX.showText && !this.ignoreNames.includes(lastName)) ? lastNameSizes.width / 2 : 0) - startPoint - this.padding.right;
 			// Шаг, с которым отрисовываем элементы
 			const step = endPoint / (this.uniqueNames.length - 1);
 			// Содержит размеры названия
@@ -534,7 +572,7 @@ class aCharty {
 			}
 
 			// Рисуем текст
-			if (this.axisX.showText) {
+			if (this.axisX.showText && !this.ignoreNames.includes(name)) {
 				this._setStylesToAxisText({
 					contain: name,
 					color,
@@ -594,26 +632,49 @@ class aCharty {
 				active: groupActive = {},
 				cap: groupCap = {},
 			} = this.data[group];
+			const coordinations = groupData.map(({ value, name, }) => {
+				// Элемент для начальной позиции Y линии
+				const findAxisYItem = this.axisYData.find((axisYItem) => axisYItem.value === value);
+				// Элемент для начальной позиции X линии
+				const findAxisXItem = this.axisXData.find((axisXItem) => axisXItem.name === name);
+
+				return {
+					x: findAxisXItem.x,
+					value: findAxisYItem.value,
+					name: findAxisXItem.name,
+					y: findAxisYItem.y,
+				};
+			});
+
+			// Стили линии
+			const width = groupLine.width || this.line.width;
+			const color = groupLine.color || this.line.color;
+			const dotted = groupLine.dotted || this.line.dotted;
+			const stepped = groupLine.stepped || this.line.stepped;
+			const fill = groupLine.fill || this.line.fill;
+
+			// Рисуем задний фон линиям
+			if (Array.isArray(fill) || typeof fill === "string") {
+				this._setFillGroupChart(coordinations, fill, stepped, group);
+			}
 
 			// Находим координаты для линий
 			groupData.map(({ value, name, }, index) => {
 				const nextDataItem = groupData[index + 1];
-				const findAxisYItem = this.axisYData.find((axisYItem) => axisYItem.value === value); // Элемент для начальной позиции Y линии
-				const findAxisXItem = this.axisXData.find((axisXItem) => axisXItem.name === name); // Элемент для начальной позиции X линии
-
-				// Стили линии
-				const width = groupLine.width || this.line.width;
-				const color = groupLine.color || this.line.color;
-				const dotted = groupLine.dotted || this.line.dotted;
-
+				// Элемент для начальной позиции Y линии
+				const findAxisYItem = this.axisYData.find((axisYItem) => axisYItem.value === value);
+				// Элемент для начальной позиции X линии
+				const findAxisXItem = this.axisXData.find((axisXItem) => axisXItem.name === name);
 				// Содержит следующие позиции линии
 				const lineToArray = [];
 
 				if (nextDataItem) {
-					const findNextAxisYItem = this.axisYData.find((nextAxisYItem) => nextAxisYItem.value === nextDataItem.value); // Элемент для следующей позиции Y линии
-					const findNextAxisXItem = this.axisXData.find((nextAxisXItem) => nextAxisXItem.name === nextDataItem.name); // Элемент для следующей позиции X линии
+					// Элемент для следующей позиции Y линии
+					const findNextAxisYItem = this.axisYData.find((nextAxisYItem) => nextAxisYItem.value === nextDataItem.value);
+					// Элемент для следующей позиции X линии
+					const findNextAxisXItem = this.axisXData.find((nextAxisXItem) => nextAxisXItem.name === nextDataItem.name);
 
-					if (!this.stepped) {
+					if (!stepped) {
 						lineToArray.push({ x: findNextAxisXItem.x, y: findNextAxisYItem.y, });
 					} else {
 						lineToArray.push(
@@ -637,6 +698,8 @@ class aCharty {
 					color,
 					lineTo: lineToArray,
 					dotted,
+					fill,
+					stepped,
 				});
 
 				// Рисуем колпачок
@@ -650,6 +713,65 @@ class aCharty {
 				}, group, value, name, groupActive);
 			});
 		}
+	}
+
+	/**
+	 * Создает задний фон у всей группы
+	 * @param {array} coordinations массив координат линий графика
+	 * @param {string|array} fill содержит данные о цвете заднего фона
+	 * @param {boolean} stepped Правило, которое будет рисовать линию пошагово
+	 * @param {string} group Группа, в которой находится линия
+	 */
+	_setFillGroupChart(coordinations, fill, stepped, group) {
+		const firstItem = coordinations[0];
+		const yItemsOnScreen = this.axisYData.filter(({ onScreen, }) => onScreen);
+		const lastYItem = yItemsOnScreen[yItemsOnScreen.length - 1];
+		const lastXItem = this.axisXData[this.axisXData.length - 1];
+		const firstXItem = this.axisXData[0];
+		const lineData = {
+			moveTo: { x: firstItem.x, y: firstItem.y, },
+			lineTo: [],
+			fill,
+			group,
+			minStartY: Math.min(...coordinations.map(({ y, }) => y)),
+		};
+
+		// Определяем координаты для будущей фигуры
+		coordinations.map(({ x, y, }, index) => {
+			if (stepped) {
+				const nextItem = coordinations[index + 1];
+
+				if (nextItem) {
+					// Элемент для следующей позиции Y линии
+					const findNextAxisYItem = this.axisYData.find((nextAxisYItem) => nextAxisYItem.value === nextItem.value);
+					// Элемент для следующей позиции X линии
+					const findNextAxisXItem = this.axisXData.find((nextAxisXItem) => nextAxisXItem.name === nextItem.name);
+
+					lineData.lineTo.push(
+						{
+							x: findNextAxisXItem.x,
+							y,
+						},
+						{
+							x: findNextAxisXItem.x,
+							y: findNextAxisYItem.y,
+						}
+					);
+				}
+			} else if (index > 0) {
+				lineData.lineTo.push({ x, y, });
+			}
+		});
+
+		// Закрываем фигуру
+		lineData.lineTo.push(
+			{ x: lastXItem.x, y: lastYItem.y, },
+			{ x: firstXItem.x, y: lastYItem.y, },
+			{ ...lineData.moveTo, }
+		);
+
+		// Рисуем задний фон группе
+		this._setStylesToFillGroupChart(lineData);
 	}
 
 	/**
