@@ -8,7 +8,10 @@ class Line {
     opacity,
     moveTo = {},
     dotted = false,
+    minStartY,
   }) {
+    // Начальная минимальная координата Y (для начала отрисовки градиента по оси ординат)
+    this.minStartY = minStartY;
     // Задний фон линии
     this.fill = fill;
     // Ширина фигуры
@@ -36,12 +39,23 @@ class Line {
    */
   _setColor(background, isStroke, endX, endY) {
     if (Array.isArray(background)) {
-      const grd = this.ctx.createLinearGradient(0, 0, isStroke ? endX : 0, isStroke ? 0 : endY);
+      // Для градиента
+      let grd = null;
 
-      background.map((color, idx) => grd.addColorStop((idx > 0 ? 1 / (background.length - 1) : 0) * idx, color));
+      if (isStroke) {
+        // Для обводки
+        grd = this.ctx.createLinearGradient(...Object.values(this.moveTo), endX, endY);
+      } else {
+        // Для заднего фона
+        grd = this.ctx.createLinearGradient(0, this.minStartY, 0, endY);
+      }
+
+      // Создает градиент
+      background.map((color, idx) => grd.addColorStop((1 / background.length) * (idx + 1), color));
 
       this.ctx[isStroke ? "strokeStyle" : "fillStyle"] = grd;
     } else if (typeof background === "string") {
+      // Для одного цвета
       this.ctx[isStroke ? "strokeStyle" : "fillStyle"] = background;
     }
   }
@@ -62,9 +76,9 @@ class Line {
 
     this.lineTo.map(({ x, y, }) => {
       if (this.fill !== undefined) {
-        this._setColor(this.fill, !this.fill, x, y);
+        this._setColor(this.fill, false, x, y);
       } else {
-        this._setColor(this.color, !this.fill, x, y);
+        this._setColor(this.color, true, x, y);
       }
 
       this.ctx.lineTo(x, y);
