@@ -1,19 +1,13 @@
 class Line {
   constructor({
     color,
-    fill,
     lineTo = [],
     width = 1,
     ctx,
     opacity,
     moveTo = {},
     dotted = false,
-    minStartY,
   }) {
-    // Начальная минимальная координата Y (для начала отрисовки градиента по оси ординат)
-    this.minStartY = minStartY;
-    // Задний фон линии
-    this.fill = fill;
     // Ширина фигуры
     this.width = width;
     // Прозрачность линии
@@ -33,22 +27,13 @@ class Line {
   /**
    * Устанавливает цвет линии
    * @param {string|array} background цвет
-   * @param {boolean} isStroke проверка на обводку
-   * @param {number} endX конечная позиция по оси абсцисс
+   * @param {number|undefined} endX конечная позиция по оси абсцисс
    * @param {number} endY конечная позиция по оси ординат
+   * @private
    */
-  _setColor(background, isStroke, endX, endY) {
+  _setColor(background, endX, endY) {
     if (Array.isArray(background)) {
-      // Для градиента
-      let grd = null;
-
-      if (isStroke) {
-        // Для обводки
-        grd = this.ctx.createLinearGradient(...Object.values(this.moveTo), endX, endY);
-      } else {
-        // Для заднего фона
-        grd = this.ctx.createLinearGradient(0, this.minStartY, 0, endY);
-      }
+      const grd = this.ctx.createLinearGradient(...Object.values(this.moveTo), endX, endY);
 
       // Создает градиент
       background.map((color, idx) => {
@@ -61,17 +46,16 @@ class Line {
         }
       });
 
-      this.ctx[isStroke ? "strokeStyle" : "fillStyle"] = grd;
+      this.ctx.strokeStyle = grd;
     } else if (typeof background === "string") {
       // Для одного цвета
-      this.ctx[isStroke ? "strokeStyle" : "fillStyle"] = background;
+      this.ctx.strokeStyle = background;
     }
   }
 
   // Задает стили линии, но не рисует ее
   setStyles() {
     this.ctx.setLineDash([this.dotted ? (0, 40) : (0, 0)]);
-
     this.ctx.beginPath();
 
     if (Object.keys(this.moveTo).length) {
@@ -83,12 +67,7 @@ class Line {
     this.ctx.lineCap = "round";
 
     this.lineTo.map(({ x, y, }) => {
-      if (this.fill !== undefined) {
-        this._setColor(this.fill, false, x, y);
-      } else {
-        this._setColor(this.color, true, x, y);
-      }
-
+      this._setColor(this.color, x, y);
       this.ctx.lineTo(x, y);
     });
   }
@@ -96,7 +75,7 @@ class Line {
   // Рисует линию
   draw() {
     this.setStyles();
-    this.ctx[this.fill === undefined ? "stroke" : "fill"]();
+    this.ctx.stroke();
   }
 }
 

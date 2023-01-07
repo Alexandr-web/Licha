@@ -2,6 +2,7 @@ import Text from "./ui/Text";
 import Rect from "./ui/Rect";
 import Line from "./ui/Line";
 import Cap from "./ui/Cap";
+import CustomFigure from "./ui/CustomFigure";
 import WindowInfoBlock from "./ui/WindowInfoBlock";
 
 class aCharty {
@@ -91,6 +92,7 @@ class aCharty {
 	 * @param {number} x Позиция по оси абсцисс
 	 * @param {number} y Позиция по оси ординат
 	 * @param {string} format Формат колпачка (круг, квадрат)
+	 * @private
 	 */
 	_setStylesToCap({ group, color, size, stroke, x, y, format, }) {
 		// Начальные стили для колпачка
@@ -138,6 +140,7 @@ class aCharty {
 	 * @param {number} y Позиция по оси ординат
 	 * @param {string} font Данные шрифта в строковом виде
 	 * @param {number} fontSize Размер шрифта
+	 * @private
 	 */
 	_setStylesToAxisText({ contain, color, x, y, font, fontSize, }) {
 		// Начальные стили для текста
@@ -179,6 +182,7 @@ class aCharty {
 	 * @param {string} color Цвет
 	 * @param {array} lineTo Следующие позиции линии
 	 * @param {boolean} dotted Пунктирная линия
+	 * @private
 	 */
 	_setStylesToChartLine({ moveTo, group, width, color, lineTo, dotted, }) {
 		// Начальные стили для линии
@@ -221,17 +225,20 @@ class aCharty {
 	 * @param {object} moveTo Объект с начальными координатами линии
 	 * @param {array} lineTo Следующие позиции линии
 	 * @param {string|array} fill Цвет заднего фона
-	 * @param {number} minStartY Минимальная начальная позиция по оси ординат (для начала отрисовки градиента по оси ординат)
+	 * @param {number} startY Начальная позиция по оси ординат (для начала отрисовки градиента по оси ординат)
+	 * @param {number} endY Конечная позиция по оси ординат (для начала отрисовки градиента по оси ординат)
 	 * @param {string} group Группа, в которой находится линия
+	 * @private
 	 */
-	_setStylesToFillGroupChart({ moveTo, lineTo, fill, minStartY, group, }) {
+	_setStylesToFillGroupChart({ moveTo, lineTo, fill, endY, startY, group, }) {
 		// Начальные стили для линии
 		const lineData = {
 			moveTo,
 			lineTo,
 			ctx: this.ctx,
 			fill,
-			minStartY,
+			startY,
+			endY,
 			opacity: this.activeGroups.length ? 0.5 : 1,
 		};
 
@@ -245,7 +252,7 @@ class aCharty {
 						opacity: 1,
 					};
 
-					new Line({
+					new CustomFigure({
 						...lineData,
 						...activeParams,
 					}).draw();
@@ -253,11 +260,14 @@ class aCharty {
 			});
 		} else {
 			// Стили, применяемые для линий, чья группа не считается активной
-			new Line(lineData).draw();
+			new CustomFigure(lineData).draw();
 		}
 	}
 
-	// Устанавливает начальные стили холсту
+	/**
+	 * Устанавливает начальные стили холсту
+	 * @private
+	 */
 	_setDefaultStylesToCanvas() {
 		const { offsetWidth, offsetHeight, } = this.canvasElement;
 		const defaultStyles = {
@@ -272,7 +282,10 @@ class aCharty {
 			.join(";");
 	}
 
-	// Определяет данные осей графика
+	/**
+	 * Определяет данные осей графика
+	 * @private
+	 */
 	_setAxesData() {
 		// Для оси ординат
 		const values = [];
@@ -307,7 +320,10 @@ class aCharty {
 		};
 	}
 
-	// Задает задний фон графику
+	/**
+	 * Задает задний фон графику
+	 * @private
+	 */
 	_setStylesToCanvas() {
 		new Rect({
 			x: 0,
@@ -319,7 +335,10 @@ class aCharty {
 		}).draw();
 	}
 
-	// Устанавливает название диаграммы
+	/**
+	 * Устанавливает название диаграммы
+	 * @private
+	 */
 	_setTitleChart() {
 		if (!Object.keys(this.title).length) {
 			return;
@@ -359,6 +378,7 @@ class aCharty {
 	 * @param {string} text содержимое текста
 	 * @param {string} font данные шрифта (жирность, размер, ...)
 	 * @returns {object} ширина и высота текста
+	 * @private
 	 */
 	_getSizesText(text, font) {
 		this.ctx.font = font;
@@ -370,7 +390,41 @@ class aCharty {
 		};
 	}
 
-	// Устанавливает ординату
+	/**
+	 * Определяет точки, которые будут на оси ординат
+	 * @param {number} from Начальная точка
+	 * @param {number} to Конечная точка
+	 * @param {number} count Шаг
+	 * @returns {array} Массив, состоящий из точек
+	 * @private
+	 */
+	_getYPoints(from, to, count) {
+		/**
+		 * Отдельная благодарность за способ отрисовки элементов на оси Y
+		 * @see http://www.robertpenner.com/easing/
+		 */
+
+		const points = [];
+		const start = from;
+		const end = to;
+
+		let step = 0;
+
+		for (let i = 0; i < count; i++) {
+			step = ((start * i) + (end * (count - i))) / count;
+		}
+
+		for (let j = Math.max(start, end); j >= Math.min(start, end); j -= Math.abs(step)) {
+			points.push(Math.ceil(j));
+		}
+
+		return points;
+	}
+
+	/**
+	 * Устанавливает ординату
+	 * @private
+	 */
 	_setYAxis() {
 		// Стили оси
 		const fontSize = this.axisY.fontSize;
@@ -383,26 +437,7 @@ class aCharty {
 		// Содержит высоту первого названия
 		const heightFirstName = this._getSizesText(this.uniqueNames[0], `400 ${fontSize}px Arial, sans-serif`).height;
 		// Содержит точки на оси ординат
-		const points = [];
-
-		/**
-		 * Отдельная благодарность за способ отрисовки элементов на оси Y
-		 * @see http://www.robertpenner.com/easing/
-		 */
-		let X = 0;
-		const A = Math.min(firstValue, lastValue);
-		const B = Math.max(firstValue, lastValue);
-		const N = 4;
-
-		for (let i = 0; i < N; i++) {
-			X = ((A * i) + (B * (N - i))) / N;
-		}
-
-		for (let j = Math.max(A, B); j >= Math.min(A, B); j -= Math.abs(X)) {
-			points.push(Math.ceil(j));
-		}
-
-		points.push(lastValue);
+		const points = this._getYPoints(Math.min(firstValue, lastValue), Math.max(firstValue, lastValue), this.axisY.step).concat(lastValue);
 
 		points.map((value, index) => {
 			// Содержит размеры значения
@@ -460,12 +495,16 @@ class aCharty {
 	/**
 	 * Возвращает максимальную ширину текста в ординате
 	 * @returns {number} Ширина текста
+	 * @private
 	 */
 	_getMaxTextWidthAtYAxis() {
 		return Math.max(...this.axisYData.filter(({ onScreen, }) => onScreen).map(({ width, }) => width));
 	}
 
-	// Устанавливает абсциссу
+	/**
+	 * Устанавливает абсциссу
+	 * @private
+	 */
 	_setXAxis() {
 		const canvasHeight = this._getCanvasSizes().height;
 		const fontSize = this.axisX.fontSize;
@@ -523,7 +562,10 @@ class aCharty {
 		});
 	}
 
-	// Устанавливает горизонтальные линии
+	/**
+	 * Устанавливает горизонтальные линии
+	 * @private
+	 */
 	_setHorizontalLines() {
 		if (Object.keys(this.axisX.line || {}).length) {
 			this.axisYData.filter(({ onScreen, }) => onScreen).map(({ y, }) => {
@@ -541,7 +583,10 @@ class aCharty {
 		}
 	}
 
-	// Устанавливает вертикальные линии
+	/**
+	 * Устанавливает вертикальные линии
+	 * @private
+	 */
 	_setVerticalLines() {
 		if (Object.keys(this.axisY.line || {}).length) {
 			this.uniqueNames.map((name) => {
@@ -562,7 +607,10 @@ class aCharty {
 		}
 	}
 
-	// Рисует график
+	/**
+	 * Рисует график
+	 * @private
+	 */
 	_setChart() {
 		for (const group in this.data) {
 			const {
@@ -579,9 +627,9 @@ class aCharty {
 
 				return {
 					x: findAxisXItem.x,
+					y: findAxisYItem.y,
 					value: findAxisYItem.value,
 					name: findAxisXItem.name,
-					y: findAxisYItem.y,
 				};
 			});
 
@@ -592,7 +640,7 @@ class aCharty {
 			const stepped = groupLine.stepped || this.line.stepped;
 			const fill = groupLine.fill || this.line.fill;
 
-			// Рисуем задний фон линиям
+			// Рисуем задний фон группе
 			if (Array.isArray(fill) || typeof fill === "string") {
 				this._setFillGroupChart(coordinations, fill, stepped, group);
 			}
@@ -637,19 +685,24 @@ class aCharty {
 					color,
 					lineTo: lineToArray,
 					dotted,
-					fill,
 					stepped,
 				});
 
 				// Рисуем колпачок
-				this._setLineCap({
-					color: groupCap.color || this.cap.color,
-					size: groupCap.size || this.cap.size,
-					stroke: groupCap.stroke || this.cap.stroke || {},
-					format: groupCap.format || this.cap.format,
-					x: findAxisXItem.x,
-					y: findAxisYItem.y,
-				}, group, value, name, groupActive);
+				this._setLineCap(
+					{
+						color: groupCap.color || this.cap.color,
+						size: groupCap.size || this.cap.size,
+						stroke: groupCap.stroke || this.cap.stroke || {},
+						format: groupCap.format || this.cap.format,
+						x: findAxisXItem.x,
+						y: findAxisYItem.y,
+					},
+					group,
+					value,
+					name,
+					groupActive
+				);
 			});
 		}
 	}
@@ -660,6 +713,7 @@ class aCharty {
 	 * @param {string|array} fill содержит данные о цвете заднего фона
 	 * @param {boolean} stepped Правило, которое будет рисовать линию пошагово
 	 * @param {string} group Группа, в которой находится линия
+	 * @private
 	 */
 	_setFillGroupChart(coordinations, fill, stepped, group) {
 		const firstPoint = coordinations[0];
@@ -672,7 +726,8 @@ class aCharty {
 			lineTo: [],
 			fill,
 			group,
-			minStartY: Math.min(...coordinations.map(({ y, }) => y)),
+			startY: Math.min(...coordinations.map(({ y, }) => y)),
+			endY: lastYItem.y,
 		};
 
 		// Определяем координаты для будущей фигуры
@@ -706,7 +761,7 @@ class aCharty {
 		lineData.lineTo.push(
 			{ x: lastPoint.x, y: lastYItem.y, },
 			{ x: firstXItem.x, y: lastYItem.y, },
-			{ ...lineData.moveTo, }
+			lineData.moveTo
 		);
 
 		// Рисуем задний фон группе
@@ -720,6 +775,7 @@ class aCharty {
 	 * @param {string} value Значение, к которому принадлежит этот колпачок
 	 * @param {string} name Название, к которому принадлежит этот колпачок
 	 * @param {object} active Содержит данные для активного колпачка (цвет, размер, ...)
+	 * @private
 	 */
 	_setLineCap(cap, group, value, name, active) {
 		// Добавляем данные колпачка в массив
@@ -739,7 +795,10 @@ class aCharty {
 		this._setStylesToCap({ group, ...cap, });
 	}
 
-	// Действия при изменении размеров экрана
+	/**
+	 * Действия при изменении размеров экрана
+	 * @private
+	 */
 	_resizeScreen() {
 		window.addEventListener("resize", () => {
 			// Перерисовывает график при изменении размеров окна
@@ -764,7 +823,11 @@ class aCharty {
 		});
 	}
 
-	// Рисует окно с информацией активного элемента
+	/**
+	 * Рисует окно с информацией активного элемента
+	 * @returns {undefined}
+	 * @private
+	 */
 	_drawWindowInfoBlock() {
 		if (!this.activeGroups.length) {
 			return;
@@ -864,7 +927,10 @@ class aCharty {
 		});
 	}
 
-	// Показывает окно с информацией активного элемента при движении мыши
+	/**
+	 * Показывает окно с информацией активного элемента при движении мыши
+	 * @private
+	 */
 	_showWindowInfoBlock() {
 		this._drawWindowInfoBlock();
 
