@@ -390,15 +390,15 @@ class aCharty {
 		 * @see http://www.robertpenner.com/easing/
 		 */
 		let X = 0;
-		const A = lastValue;
-		const B = firstValue;
+		const A = Math.min(firstValue, lastValue);
+		const B = Math.max(firstValue, lastValue);
 		const N = 4;
 
 		for (let i = 0; i < N; i++) {
 			X = ((A * i) + (B * (N - i))) / N;
 		}
 
-		for (let j = B; j >= A; j -= X) {
+		for (let j = Math.max(A, B); j >= Math.min(A, B); j -= Math.abs(X)) {
 			points.push(Math.ceil(j));
 		}
 
