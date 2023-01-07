@@ -459,14 +459,16 @@ class aCharty {
 			});
 
 			// Отрисовываем значения
-			this._setStylesToAxisText({
-				contain: value,
-				color,
-				fontSize,
-				font: `400 ${fontSize}px Arial, sans-serif`,
-				x: posYItem.x,
-				y: posYItem.y + valueSizes.height / 2,
-			});
+			if (this.axisY.showText) {
+				this._setStylesToAxisText({
+					contain: value,
+					color,
+					fontSize,
+					font: `400 ${fontSize}px Arial, sans-serif`,
+					x: posYItem.x,
+					y: posYItem.y + valueSizes.height / 2,
+				});
+			}
 		});
 
 		this.uniqueValues.map((uValue) => {
