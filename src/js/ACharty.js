@@ -662,13 +662,13 @@ class aCharty {
 	 * @param {string} group Группа, в которой находится линия
 	 */
 	_setFillGroupChart(coordinations, fill, stepped, group) {
-		const firstItem = coordinations[0];
+		const firstPoint = coordinations[0];
+		const lastPoint = coordinations[coordinations.length - 1];
 		const yItemsOnScreen = this.axisYData.filter(({ onScreen, }) => onScreen);
 		const lastYItem = yItemsOnScreen[yItemsOnScreen.length - 1];
-		const lastXItem = this.axisXData[this.axisXData.length - 1];
 		const firstXItem = this.axisXData[0];
 		const lineData = {
-			moveTo: { x: firstItem.x, y: firstItem.y, },
+			moveTo: { x: firstPoint.x, y: firstPoint.y, },
 			lineTo: [],
 			fill,
 			group,
@@ -704,7 +704,7 @@ class aCharty {
 
 		// Закрываем фигуру
 		lineData.lineTo.push(
-			{ x: lastXItem.x, y: lastYItem.y, },
+			{ x: lastPoint.x, y: lastYItem.y, },
 			{ x: firstXItem.x, y: lastYItem.y, },
 			{ ...lineData.moveTo, }
 		);
