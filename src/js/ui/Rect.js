@@ -29,6 +29,8 @@ class Rect {
 
   // Задает стили фигуре, но не рисует ее
   setStyles() {
+    this.ctx.beginPath();
+
     if (Object.keys(this.moveTo).length) {
       this.ctx.moveTo(this.moveTo.x, this.moveTo.y);
     }
