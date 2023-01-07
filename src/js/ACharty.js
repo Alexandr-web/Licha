@@ -289,36 +289,9 @@ class aCharty {
 
 		// Находим максимальное значение для оси ординат
 		const sortedValues = [...new Set(values)].sort((val1, val2) => val2 - val1);
-		const firstValue = Math.ceil(sortedValues[0]);
-		const lastValue = Math.floor(sortedValues[sortedValues.length - 1]);
-
-		let maxValue = null;
-
-		if (firstValue > 0) {
-			maxValue = this._getMaxAxisYValue(firstValue, lastValue);
-		} else if (firstValue <= 0) {
-			maxValue = this._getMaxAxisYValue(lastValue, firstValue);
-		}
-
-		// Заменяем существующее максимальное значение на новое
-		sortedValues[maxValue > 0 ? "unshift" : "push"](maxValue);
 
 		this.uniqueValues = sortedValues;
 		this.uniqueNames = [...new Set(names)];
-	}
-
-	/**
-	 * Определяет максимальное значение для оси ординат
-	 * @param {number} num1 Первое число
-	 * @param {number} num2 Второе число
-	 * @returns {number} максимальное значение
-	 */
-	_getMaxAxisYValue(num1, num2) {
-		if ((num1 || 1) % (num2 || 1) !== 0 || (num1 || 1) % 4 !== 0) {
-			return this._getMaxAxisYValue(num1 > 0 ? num1 + 1 : num1 - 1, num2);
-		}
-
-		return num1;
 	}
 
 	/**
@@ -382,32 +355,6 @@ class aCharty {
 	}
 
 	/**
-	 * Ищет наибольший общий делитель
-	 * @param {number} num1 Первое число
-	 * @param {number} num2 Второе число
-	 * @returns {number} Наибольший общий делитель
-	 */
-	_getNOD(num1, num2) {
-		if (num1 === 0) {
-			return Math.abs(num2) / 4;
-		}
-
-		if (num2 === 0) {
-			return Math.abs(num1) / 4;
-		}
-
-		if (num1 === num2) {
-			return num1;
-		}
-
-		if (num1 > num2) {
-			return this._getNOD(num1 - num2, num2);
-		}
-
-		return this._getNOD(num1, num2 - num1);
-	}
-
-	/**
 	 * Определяет размеры текста
 	 * @param {string} text содержимое текста
 	 * @param {string} font данные шрифта (жирность, размер, ...)
@@ -423,14 +370,6 @@ class aCharty {
 		};
 	}
 
-	/**
-	 * Возвращает правильное значение для оси ординат
-	 * @param {number} value Значение по умолчанию
-	 */
-	_getValidValueForYAxis(value) {
-		return this.axisY.editValue instanceof Function ? this.axisY.editValue(value) : value;
-	}
-
 	// Устанавливает ординату
 	_setYAxis() {
 		// Стили оси
@@ -439,92 +378,82 @@ class aCharty {
 		// Самое максимальное и минимальное значения
 		const firstValue = Math.ceil(this.uniqueValues[0]);
 		const lastValue = Math.floor(this.uniqueValues[this.uniqueValues.length - 1]);
-		// Первое название на оси абсцисс
-		const firstName = this.uniqueNames[0];
 		// Содержит размеры самого максимального значения
-		const firstValueSizes = this._getSizesText(this._getValidValueForYAxis(firstValue), `400 ${fontSize}px Arial, sans-serif`);
-		// НОД самого максимального и минимального значений
-		const nod = this._getNOD(Math.abs(firstValue), Math.abs(lastValue));
-		// Содержит все значения от самого максимального до минимального значений (счет идет с 1)
-		const valuesFromFirstValueToLastValue = [];
+		const firstValueSizes = this._getSizesText(firstValue, `400 ${fontSize}px Arial, sans-serif`);
 		// Содержит высоту первого названия
-		const heightFirstName = this._getSizesText(this._getValidValueForYAxis(firstName), `400 ${fontSize}px Arial, sans-serif`).height;
+		const heightFirstName = this._getSizesText(this.uniqueNames[0], `400 ${fontSize}px Arial, sans-serif`).height;
+		// Содержит точки на оси ординат
+		const points = [];
 
-		// Добавляем все значения от начального до последнего с интервалом 1
-		for (let i = firstValue; i >= lastValue; i--) {
-			valuesFromFirstValueToLastValue.push(i);
+		/**
+		 * Отдельная благодарность за способ отрисовки элементов на оси Y
+		 * @see http://www.robertpenner.com/easing/
+		 */
+		let X = 0;
+		const A = lastValue;
+		const B = firstValue;
+		const N = 4;
+
+		for (let i = 0; i < N; i++) {
+			X = ((A * i) + (B * (N - i))) / N;
 		}
 
-		// Добавляем целые значения в массив ординат
-		valuesFromFirstValueToLastValue.map((value, index) => {
+		for (let j = B; j >= A; j -= X) {
+			points.push(Math.ceil(j));
+		}
+
+		points.push(lastValue);
+
+		points.map((value, index) => {
 			// Содержит размеры значения
-			const valueSizes = this._getSizesText(this._getValidValueForYAxis(value), `400 ${fontSize}px Arial, sans-serif`);
+			const valueSizes = this._getSizesText(value, `400 ${fontSize}px Arial, sans-serif`);
 			// Начальная точка для отрисовки элементов
 			const startPoint = this.padding.top + firstValueSizes.height / 2 + (Object.keys(this.title).length ? this.title.height + this.distanceBetweenTitleChartAndChart : 0);
 			// Конечная точка для отрисовки элементов
 			const endPoint = this._getCanvasSizes().height - startPoint - this.padding.bottom - (this.axisX.showText ? this.indentFromXAxisToGraph + heightFirstName : 0);
 			// Интервал для отрисовки элементов
-			const step = endPoint / (valuesFromFirstValueToLastValue.length - 1);
+			const step = endPoint / (points.length - 1);
 			// Координаты для отрисовки элементов
 			const posYItem = { x: this.axisY.showText ? this.padding.left : 0, y: step * index + startPoint, };
 
 			this.axisYData.push({
-				// Отрисовываться будет только то значение,
-				// которое делится без остатка на НОД между максимальным и
-				// минимальным значением
-				onScreen: value % nod === 0,
+				onScreen: true,
 				value,
 				...valueSizes,
 				...posYItem,
 			});
 
-			// Отрисовываем значения, которые делятся без остатка на НОД
-			// между максимальным и минимальным значением
-			if (value % nod === 0 && this.axisY.showText) {
-				this._setStylesToAxisText({
-					contain: this._getValidValueForYAxis(value),
-					color,
-					fontSize,
-					font: `400 ${fontSize}px Arial, sans-serif`,
-					x: posYItem.x,
-					y: posYItem.y + valueSizes.height / 2,
-				});
-			}
+			// Отрисовываем значения
+			this._setStylesToAxisText({
+				contain: value,
+				color,
+				fontSize,
+				font: `400 ${fontSize}px Arial, sans-serif`,
+				x: posYItem.x,
+				y: posYItem.y + valueSizes.height / 2,
+			});
 		});
 
-		// Определяем позицию Y у всех значений и добавляем их в массив ординат
-		this.uniqueValues.map((n) => {
-			// Самое приближенное максимальное значение
-			const findMaxNum = valuesFromFirstValueToLastValue.sort((val1, val2) => Math.abs(val1 - Math.ceil(n)) - Math.abs(val2 - Math.ceil(n)))[0];
-			const findMaxNumIndex = this.axisYData.findIndex(({ value, }) => value === findMaxNum);
+		this.uniqueValues.map((uValue) => {
+			const maxValue = [...this.axisYData].sort(({ value: val1, }, { value: val2, }) => val1 - val2).find(({ value, }) => value >= uValue);
+			const minValue = [...this.axisYData].sort(({ value: val1, }, { value: val2, }) => val2 - val1).find(({ value, }) => value <= uValue);
+			const textSizes = this._getSizesText(uValue, `400 ${fontSize}px Arial, sans-serif`);
 
-			if (findMaxNumIndex !== -1) {
-				const findAxisYItem = this.axisYData[findMaxNumIndex];
-				const findNextAxisYItem = this.axisYData.find(({ value, }) => n >= findMaxNum ? value > findMaxNum : value < findMaxNum);
+			const posYItem = {
+				x: this.axisY.showText ? this.padding.left : 0,
+				/**
+				 * Отдельная благодарность за способ нахождения координаты Y
+				 * @see https://ru.stackoverflow.com/users/291659/mbo
+				 */
+				y: minValue.y + (uValue - minValue.value) * ((maxValue.y - minValue.y) / (maxValue.value - minValue.value)),
+			};
 
-				if (findNextAxisYItem) {
-					const textSizes = this._getSizesText(n, `400 ${fontSize}px Arial, sans-serif`);
-					// Расстояние между максимальным и следующим элементом
-					const area = Math.abs(findAxisYItem.y - findNextAxisYItem.y);
-					// Координаты для значения
-					const posYItem = { x: this.padding.left, y: null, };
-					const numAfterDot = parseInt(((n.toString().match(/\.\d+/) || [])[0] || "").replace(/\./, "")) || 0;
-					const percent = Math.abs((numAfterDot / 10 ** numAfterDot.toString().length) * 100);
-
-					if (findNextAxisYItem.value >= 0) {
-						posYItem.y = findNextAxisYItem.y - (percent * area) / 100;
-					} else if (findNextAxisYItem.value < 0) {
-						posYItem.y = findAxisYItem.y + (percent * area) / 100;
-					}
-
-					this.axisYData.push({
-						value: n,
-						onScreen: false,
-						...posYItem,
-						...textSizes,
-					});
-				}
-			}
+			this.axisYData.push({
+				value: uValue,
+				onScreen: false,
+				...posYItem,
+				...textSizes,
+			});
 		});
 	}
 
@@ -734,9 +663,9 @@ class aCharty {
 	 */
 	_setFillGroupChart(coordinations, fill, stepped, group) {
 		const firstItem = coordinations[0];
-		const lastItem = coordinations[coordinations.length - 1];
 		const yItemsOnScreen = this.axisYData.filter(({ onScreen, }) => onScreen);
 		const lastYItem = yItemsOnScreen[yItemsOnScreen.length - 1];
+		const lastXItem = this.axisXData[this.axisXData.length - 1];
 		const firstXItem = this.axisXData[0];
 		const lineData = {
 			moveTo: { x: firstItem.x, y: firstItem.y, },
@@ -775,7 +704,7 @@ class aCharty {
 
 		// Закрываем фигуру
 		lineData.lineTo.push(
-			{ x: lastItem.x, y: lastYItem.y, },
+			{ x: lastXItem.x, y: lastYItem.y, },
 			{ x: firstXItem.x, y: lastYItem.y, },
 			{ ...lineData.moveTo, }
 		);
@@ -864,14 +793,14 @@ class aCharty {
 
 			// Нижний контент (список активных групп)
 			const { fontSize: bottomFontSize, color: bottomColor, } = this.blockInfo.bottomContent;
-			const activeGroupSizes = this._getSizesText(`${group}: ${this._getValidValueForYAxis(value)}`, `400 ${bottomFontSize}px Arial, sans-serif`);
+			const activeGroupSizes = this._getSizesText(`${group}: ${value}`, `400 ${bottomFontSize}px Arial, sans-serif`);
 			const prevActiveGroup = windowContains.bottom[index - 1];
 			const activeGroupData = {
 				...activeGroupSizes,
 				group,
 				color: bottomColor,
 				fontSize: bottomFontSize,
-				text: `${group}: ${this._getValidValueForYAxis(value)}`,
+				text: `${group}: ${value}`,
 				x: x + windowPadding.fromCap + windowPadding.horizontal,
 				y: prevActiveGroup ? (prevActiveGroup.y + prevActiveGroup.height + windowPadding.fromActiveGroup) : (topContentData.y + topContentData.height + windowPadding.fromTopContent),
 			};
