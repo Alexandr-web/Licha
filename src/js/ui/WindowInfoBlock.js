@@ -64,14 +64,16 @@ class WindowInfoBlock {
 	 * @param {number} width Ширина линии
 	 */
 	drawGroupLine({ start: { x: startX, y: startY, }, to: { x: toX, y: toY, }, color, width, }) {
-		new Line({
-			color,
-			opacity: 1,
-			width,
-			moveTo: { x: startX, y: startY, },
-			lineTo: [{ x: toX, y: toY, }],
-			ctx: this.ctx,
-		}).draw();
+		if (color) {
+			new Line({
+				color,
+				opacity: 1,
+				width,
+				moveTo: { x: startX, y: startY, },
+				lineTo: [{ x: toX, y: toY, }],
+				ctx: this.ctx,
+			}).draw();
+		}
 	}
 }
 
