@@ -397,28 +397,42 @@ class aCharty {
 	 * @param {number} count Шаг
 	 * @returns {array} Массив, состоящий из точек
 	 * @private
+	 * 
+	 * Отдельная благодарность
+	 * @see http://www.robertpenner.com/easing/
 	 */
 	_getYPoints(from, to, count) {
-		/**
-		 * Отдельная благодарность за способ отрисовки элементов на оси Y
-		 * @see http://www.robertpenner.com/easing/
-		 */
-
 		const points = [];
-		const start = from;
-		const end = to;
 
-		let step = 0;
+		if (from === 0 && to === 1) {
+			let step = 0;
 
-		for (let i = 0; i < count; i++) {
-			step = ((start * i) + (end * (count - i))) / count;
-		}
+			for (let i = 0; i < count; i++) {
+				step = ((from * i) + (to * (count - i))) / count;
+			}
 
-		for (let j = Math.max(start, end); j >= Math.min(start, end); j -= Math.abs(step)) {
-			points.push(Math.ceil(j));
+			for (let j = from; j <= to; j += step) {
+				points.unshift(Math.ceil(j));
+			}
+		} else {
+			const step = (to - from) / (count - 1);
+
+			for (let i = from; i <= to; i += step) {
+				points.unshift(Math.ceil(i));
+			}
 		}
 
 		return points;
+	}
+
+	/**
+	 * Возвращает валидное значение оси ординат
+	 * @param {number} value Значение точки по умолчанию
+	 * @returns {string|number} Измененное значение точки
+	 * @private
+	 */
+	_getCorrectAxisYValue(value) {
+		return this.axisY.editValue instanceof Function ? this.axisY.editValue(value) : value;
 	}
 
 	/**
@@ -432,20 +446,26 @@ class aCharty {
 		// Самое максимальное и минимальное значения
 		const firstValue = Math.ceil(this.uniqueValues[0]);
 		const lastValue = Math.floor(this.uniqueValues[this.uniqueValues.length - 1]);
+		// Первое название
+		const firstName = this.uniqueNames[0];
 		// Содержит размеры самого максимального значения
-		const firstValueSizes = this._getSizesText(firstValue, `400 ${fontSize}px Arial, sans-serif`);
-		// Содержит высоту первого названия
-		const heightFirstName = this._getSizesText(this.uniqueNames[0], `400 ${fontSize}px Arial, sans-serif`).height;
+		const firstValueSizes = this._getSizesText(this._getCorrectAxisYValue(firstValue), `400 ${fontSize}px Arial, sans-serif`);
+		// Содержит размеры первого названия
+		const firstNameSizes = this._getSizesText(firstName, `400 ${fontSize}px Arial, sans-serif`);
 		// Содержит точки на оси ординат
-		const points = this._getYPoints(Math.min(firstValue, lastValue), Math.max(firstValue, lastValue), this.axisY.step).concat(lastValue);
+		const points = this._getYPoints(Math.min(firstValue, lastValue), Math.max(firstValue, lastValue), this.axisY.step);
+
+		if (!points.includes(lastValue)) {
+			points.push(lastValue);
+		}
 
 		points.map((value, index) => {
 			// Содержит размеры значения
-			const valueSizes = this._getSizesText(value, `400 ${fontSize}px Arial, sans-serif`);
+			const valueSizes = this._getSizesText(this._getCorrectAxisYValue(value), `400 ${fontSize}px Arial, sans-serif`);
 			// Начальная точка для отрисовки элементов
 			const startPoint = this.padding.top + firstValueSizes.height / 2 + (Object.keys(this.title).length ? this.title.height + this.distanceBetweenTitleChartAndChart : 0);
 			// Конечная точка для отрисовки элементов
-			const endPoint = this._getCanvasSizes().height - startPoint - this.padding.bottom - (this.axisX.showText ? this.indentFromXAxisToGraph + heightFirstName : 0);
+			const endPoint = this._getCanvasSizes().height - startPoint - this.padding.bottom - (this.axisX.showText ? this.indentFromXAxisToGraph + firstNameSizes.height : 0);
 			// Интервал для отрисовки элементов
 			const step = endPoint / (points.length - 1);
 			// Координаты для отрисовки элементов
@@ -461,7 +481,7 @@ class aCharty {
 			// Отрисовываем значения
 			if (this.axisY.showText) {
 				this._setStylesToAxisText({
-					contain: value,
+					contain: this._getCorrectAxisYValue(value),
 					color,
 					fontSize,
 					font: `400 ${fontSize}px Arial, sans-serif`,
@@ -478,10 +498,6 @@ class aCharty {
 
 			const posYItem = {
 				x: this.axisY.showText ? this.padding.left : 0,
-				/**
-				 * Отдельная благодарность за способ нахождения координаты Y
-				 * @see https://ru.stackoverflow.com/users/291659/mbo
-				 */
 				y: minValue.y + (uValue - minValue.value) * ((maxValue.y - minValue.y) / (maxValue.value - minValue.value)),
 			};
 
@@ -680,15 +696,17 @@ class aCharty {
 				}
 
 				// Рисуем линию
-				this._setStylesToChartLine({
-					moveTo: { x: findAxisXItem.x, y: findAxisYItem.y, },
-					group,
-					width,
-					color,
-					lineTo: lineToArray,
-					dotted,
-					stepped,
-				});
+				if (color) {
+					this._setStylesToChartLine({
+						moveTo: { x: findAxisXItem.x, y: findAxisYItem.y, },
+						group,
+						width,
+						color,
+						lineTo: lineToArray,
+						dotted,
+						stepped,
+					});
+				}
 
 				// Рисуем колпачок
 				this._setLineCap(
@@ -858,14 +876,14 @@ class aCharty {
 
 			// Нижний контент (список активных групп)
 			const { fontSize: bottomFontSize, color: bottomColor, } = this.blockInfo.bottomContent;
-			const activeGroupSizes = this._getSizesText(`${group}: ${value}`, `400 ${bottomFontSize}px Arial, sans-serif`);
+			const activeGroupSizes = this._getSizesText(`${group}: ${this._getCorrectAxisYValue(value)}`, `400 ${bottomFontSize}px Arial, sans-serif`);
 			const prevActiveGroup = windowContains.bottom[index - 1];
 			const activeGroupData = {
 				...activeGroupSizes,
 				group,
 				color: bottomColor,
 				fontSize: bottomFontSize,
-				text: `${group}: ${value}`,
+				text: `${group}: ${this._getCorrectAxisYValue(value)}`,
 				x: x + windowPadding.fromCap + windowPadding.horizontal,
 				y: prevActiveGroup ? (prevActiveGroup.y + prevActiveGroup.height + windowPadding.fromActiveGroup) : (topContentData.y + topContentData.height + windowPadding.fromTopContent),
 			};
