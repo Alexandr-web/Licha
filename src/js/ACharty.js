@@ -3,7 +3,7 @@ import Chart from "./ui/chart/Chart";
 import AxisY from "./ui/axis/AxisY";
 import LineChart from "./ui/chart/LineChart";
 import Grid from "./ui/Grid";
-import getElementsByCoordinates from "./helpers/getElementsByCoordinates";
+// import getElementsByCoordinates from "./helpers/getElementsByCoordinates";
 import AxisX from "./ui/axis/AxisX";
 import Legend from "./ui/Legend";
 

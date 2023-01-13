@@ -14,11 +14,11 @@ class Legend {
     this.radiusCircle = 4;
     this.margin = {
       text: 20,
-      circle: 10,
+      circle: 0,
     };
   }
 
-  _getGroupsTextSizes(groups) {
+  _getUpdateGroups(groups) {
     const { size, weight, } = this.font;
 
     return groups.map((groupItem) => {
@@ -29,6 +29,14 @@ class Legend {
         ...groupItem,
       };
     });
+  }
+
+  _getDistanceFromPrevGroups(prevGroups) {
+    return prevGroups.reduce((acc, { width, }) => {
+      acc += width + this.radiusCircle + this.margin.text + this.radiusCircle * 2;
+
+      return acc;
+    }, 0);
   }
 
   draw(gaps) {
@@ -48,8 +56,8 @@ class Legend {
     }
 
     const bounds = this.bounds;
-    const updateGroups = this._getGroupsTextSizes(groups);
-    const { size, weight, color, } = this.font;
+    const updateGroups = this._getUpdateGroups(groups);
+    const { size, weight = 400, color, } = this.font;
 
     this.groupsData = updateGroups.map(({ group, color: colorCap, height, width, }, index) => {
       const font = {
@@ -58,13 +66,13 @@ class Legend {
         str: `${weight} ${size}px Arial, sans-serif`,
         text: group,
       };
-      const prevGroup = updateGroups[index - 1];
+      const prevGroups = updateGroups.filter((grp, idx) => idx < index);
       const posCircle = {
-        x: bounds.horizontal.start + (gaps.left || 0) + index * ((prevGroup ? prevGroup.width + this.margin.text : 0) + this.radiusCircle),
+        x: bounds.horizontal.start + (gaps.left || 0) + (prevGroups.length ? this._getDistanceFromPrevGroups(prevGroups) : 0),
         y: bounds.vertical.start + (gaps.top || 0) - height / 2,
       };
       const posGroup = {
-        x: posCircle.x + this.margin.circle,
+        x: posCircle.x + this.margin.circle + this.radiusCircle * 2,
         y: bounds.vertical.start + (gaps.top || 0),
       };
 
