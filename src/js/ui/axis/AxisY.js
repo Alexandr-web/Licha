@@ -35,7 +35,7 @@ class AxisY extends Axis {
 
   drawTitle(align, gaps) {
     if (!Object.keys(this.title).length) {
-      return;
+      return this;
     }
 
     const { size, text, color, weight = 400, } = this.title.font;
@@ -105,6 +105,7 @@ class AxisY extends Axis {
       // Начальная точка для отрисовки элементов
       const startPoint = bounds.vertical.start + firstValueSizes.height / 2 + (gaps.top || 0);
       // Конечная точка для отрисовки элементов
+      console.log(gaps.bottom);
       const endPoint = bounds.vertical.end - startPoint - (gaps.bottom || 0);
       // Интервал для отрисовки элементов
       const step = endPoint / (points.length - 1);

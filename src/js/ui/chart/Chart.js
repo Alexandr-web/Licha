@@ -51,6 +51,10 @@ class Chart {
   }
 
   drawTitle() {
+    if (!Object.keys(this.title).length) {
+      return this;
+    }
+
     const font = { ...this.title.font, str: `600 ${this.title.font.size}px Arial, sans-serif`, };
     const sizes = new Text(font, this.ctx).getSizes();
     const bounds = this.getBounds();
@@ -98,7 +102,7 @@ class Chart {
     return {
       left: ((axisY.title || {}).height || 0) + ((axisY.title || {}).gapRight || 0),
       top: ((chartTitle || {}).y || 0) + ((legendGroupItem || {}).height || 0) + ((legend || {}).gapBottom || 0),
-      bottom: (showTxt ? axisY.distanceFromXAxisToGraph + firstNameSizes.height : 0) + ((axisX.title || {}).height || 0) + ((axisX.title || {}).gapTop),
+      bottom: (showTxt ? axisY.distanceFromXAxisToGraph + firstNameSizes.height : 0) + ((axisX.title || {}).height || 0) + (((axisX.title || {}).gapTop || 0)),
     };
   }
 
@@ -116,7 +120,7 @@ class Chart {
     return {
       left: (firstNameIsNotIgnore ? firstNameSizes.width / 2 : 0) + (showTxt ? axisY.getMaxTextWidthAtYAxis() + axisY.distanceBetweenYAndChart + ((axisY.title || {}).height || 0) + ((axisY.title || {}).gapRight || 0) : 0),
       right: lastNameIsNotIgnore ? lastNameSizes.width / 2 : 0,
-      bottom: ((axisX.title || {}).height || 0) + ((axisX.title || {}).gapTop || 0),
+      bottom: ((axisX.title || {}).height || 0) + (((axisX.title || {}).gapTop || 0)),
     };
   }
 }

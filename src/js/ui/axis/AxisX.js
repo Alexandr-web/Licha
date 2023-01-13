@@ -20,7 +20,7 @@ class AxisX extends Axis {
 
   drawTitle(align, gaps) {
     if (!Object.keys(this.title).length) {
-      return;
+      return this;
     }
 
     const font = {
