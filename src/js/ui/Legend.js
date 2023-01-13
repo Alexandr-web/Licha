@@ -13,8 +13,8 @@ class Legend {
     this.groupsData = [];
     this.radiusCircle = 4;
     this.margin = {
-      text: 20,
-      circle: 0,
+      group: 10,
+      circle: 10,
     };
   }
 
@@ -31,9 +31,13 @@ class Legend {
     });
   }
 
-  _getDistanceFromPrevGroups(prevGroups) {
-    return prevGroups.reduce((acc, { width, }) => {
-      acc += width + this.radiusCircle + this.margin.text + this.radiusCircle * 2;
+  _getDistanceGroups(groups) {
+    if (!groups.length) {
+      return 0;
+    }
+
+    return groups.reduce((acc, { width, }) => {
+      acc += width + this.margin.group + this.radiusCircle * 2 + this.margin.circle;
 
       return acc;
     }, 0);
@@ -55,8 +59,10 @@ class Legend {
       });
     }
 
-    const bounds = this.bounds;
     const updateGroups = this._getUpdateGroups(groups);
+    const bounds = this.bounds;
+    const center = bounds.width / 2;
+    const totalGroupsDistance = this._getDistanceGroups(updateGroups);
     const { size, weight = 400, color, } = this.font;
 
     this.groupsData = updateGroups.map(({ group, color: colorCap, height, width, }, index) => {
@@ -67,13 +73,13 @@ class Legend {
         text: group,
       };
       const prevGroups = updateGroups.filter((grp, idx) => idx < index);
-      const posCircle = {
-        x: bounds.horizontal.start + (gaps.left || 0) + (prevGroups.length ? this._getDistanceFromPrevGroups(prevGroups) : 0),
-        y: bounds.vertical.start + (gaps.top || 0) - height / 2,
-      };
       const posGroup = {
-        x: posCircle.x + this.margin.circle + this.radiusCircle * 2,
+        x: bounds.horizontal.start + (gaps.left || 0) + center - totalGroupsDistance / 2 + this._getDistanceGroups(prevGroups),
         y: bounds.vertical.start + (gaps.top || 0),
+      };
+      const posCircle = {
+        x: posGroup.x - this.radiusCircle - this.margin.circle,
+        y: bounds.vertical.start + (gaps.top || 0) - height / 2,
       };
 
       new Circle(
