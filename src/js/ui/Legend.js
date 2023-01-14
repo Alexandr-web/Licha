@@ -45,7 +45,7 @@ class Legend {
 
   draw(gaps) {
     if (!this.showLegend) {
-      return;
+      return this;
     }
 
     const groups = [];
