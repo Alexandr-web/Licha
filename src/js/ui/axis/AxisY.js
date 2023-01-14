@@ -2,6 +2,7 @@ import Axis from "./Axis";
 import Text from "../elements/Text";
 import getTextSize from "../../helpers/getTextSize";
 import getRange from "../../helpers/getRange";
+import quickSort from "../../helpers/quickSort";
 
 class AxisY extends Axis {
   constructor(
@@ -124,8 +125,8 @@ class AxisY extends Axis {
     });
 
     values.map((uValue) => {
-      const maxValue = [...this.points].sort(({ value: val1, }, { value: val2, }) => val1 - val2).find(({ value, }) => value >= uValue);
-      const minValue = [...this.points].sort(({ value: val1, }, { value: val2, }) => val2 - val1).find(({ value, }) => value <= uValue);
+      const maxValue = quickSort(this.points, "value").find(({ value, }) => value >= uValue);
+      const minValue = quickSort(this.points, "value").reverse().find(({ value, }) => value <= uValue);
       const textSizes = getTextSize(size, 400, uValue, this.ctx);
       const posYItem = {
         x: showText ? bounds.horizontal.start : 0,

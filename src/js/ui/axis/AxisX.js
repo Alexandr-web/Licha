@@ -10,12 +10,14 @@ class AxisX extends Axis {
     title,
     bounds,
     font,
+    editName,
     ignoreNames = []
   ) {
     super(ctx, line, title, bounds, font);
 
     this.ignoreNames = ignoreNames;
     this.data = data;
+    this.editName = editName;
   }
 
   drawTitle(gaps = {}) {
@@ -31,7 +33,7 @@ class AxisX extends Axis {
     const startX = this.bounds.horizontal.start + (gaps.left || 0);
     const endX = this.bounds.horizontal.end;
     const posTitle = {
-      x: (endX - startX) / 2 - sizes.width / 2,
+      x: (endX - startX) / 2 + sizes.width / 2,
       y: this.bounds.vertical.end,
     };
 
@@ -50,6 +52,10 @@ class AxisX extends Axis {
     return this;
   }
 
+  getCorrectName(name) {
+    return this.editName instanceof Function ? this.editName(name) : name;
+  }
+
   drawPoints(gaps) {
     const names = this.getAxesData(this.data).names;
     const bounds = this.bounds;
@@ -63,7 +69,7 @@ class AxisX extends Axis {
       // Шаг, с которым отрисовываем элементы
       const step = endPoint / (names.length - 1);
       // Содержит размеры названия
-      const nameSizes = getTextSize(size, weight, name, this.ctx);
+      const nameSizes = getTextSize(size, weight, this.getCorrectName(name), this.ctx);
       // Координаты элемента для отрисовки
       const posXItem = {
         x: step * index + startPoint,
@@ -71,7 +77,7 @@ class AxisX extends Axis {
       };
 
       // Если это уникальное название присутствует в какой-либо группе,
-      // то мы добавляем его вместе с его значением в массив this.axisXData
+      // то мы добавляем его вместе с его значением
       for (const group in this.data) {
         const groupData = this.data[group].data;
 
@@ -91,7 +97,7 @@ class AxisX extends Axis {
       // Рисуем текст
       if (showText && !this.ignoreNames.includes(name)) {
         new Text(
-          { ...this.font, str: `${weight} ${size}px Arial, sans-serif`, text: name, },
+          { ...this.font, str: `${weight} ${size}px Arial, sans-serif`, text: this.getCorrectName(name), },
           this.ctx,
           posXItem.x - nameSizes.width / 2,
           posXItem.y

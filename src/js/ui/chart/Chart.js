@@ -101,8 +101,8 @@ class Chart {
     const firstName = names[0];
     const { weight = 400, size, showText: showXText = Boolean(Object.keys(axisXFont).length), } = axisXFont;
     const { showText: showYText = Boolean(Object.keys(axisYFont).length), } = axisYFont;
-    const lastNameSizes = getTextSize(size, weight, lastName, this.ctx);
-    const firstNameSizes = getTextSize(size, weight, firstName, this.ctx);
+    const lastNameSizes = getTextSize(size, weight, axisX.getCorrectName(lastName), this.ctx);
+    const firstNameSizes = getTextSize(size, weight, axisX.getCorrectName(firstName), this.ctx);
     const firstNameIsNotIgnore = (showXText && !(axisX.ignoreNames || []).includes(firstName));
     const lastNameIsNotIgnore = (showXText && !(axisX.ignoreNames || []).includes(lastName));
 

@@ -72,6 +72,7 @@ class aCharty {
 			this.axisX.title,
 			chart.getBounds(),
 			this.axisX.font,
+			this.axisX.editName,
 			this.axisX.ignoreNames
 		).drawTitle(chart.getGapsForXTitle(axisY));
 		// Рисовка точек на ординате

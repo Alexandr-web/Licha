@@ -1,3 +1,5 @@
+import quickSort from "../../helpers/quickSort";
+
 class Axis {
   constructor(
     ctx,
@@ -43,7 +45,7 @@ class Axis {
     }
 
     // Находим максимальное значение для оси ординат
-    const sortedValues = [...new Set(values)].sort((val1, val2) => val2 - val1);
+    const sortedValues = quickSort([...new Set(values)]).reverse();
 
     return {
       values: sortedValues,
