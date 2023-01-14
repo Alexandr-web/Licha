@@ -33,7 +33,7 @@ class AxisY extends Axis {
     return this.editValue instanceof Function ? this.editValue(value) : value;
   }
 
-  drawTitle(align, gaps) {
+  drawTitle(gaps) {
     if (!Object.keys(this.title).length) {
       return this;
     }
@@ -46,30 +46,19 @@ class AxisY extends Axis {
       str: `${weight} ${size}px Arial, sans-serif`,
     };
     const sizes = getTextSize(size, 400, text, this.ctx);
+    const startY = (gaps.top || 0) + this.bounds.vertical.start;
+    const endY = this.bounds.vertical.end;
     const posTitle = {
       x: this.bounds.horizontal.start + sizes.height,
-      y: null,
+      y: endY - startY,
     };
-
-    switch (align) {
-      case "left":
-        posTitle.y = this.bounds.vertical.end - sizes.width / 2;
-        break;
-      case "center":
-        posTitle.y = this.bounds.vertical.end - this.bounds.height / 2;
-        break;
-      case "right":
-        posTitle.y = this.bounds.vertical.start + sizes.width / 2 + gaps.title.top;
-        break;
-    }
 
     new Text(
       font,
       this.ctx,
       ...Object.values(posTitle),
       undefined,
-      -90 * (Math.PI / 180),
-      1
+      -90 * (Math.PI / 180)
     ).draw();
 
     this.title = {
@@ -85,8 +74,7 @@ class AxisY extends Axis {
     const values = this.getAxesData(this.data).values;
     const bounds = this.bounds;
     // Стили оси
-    const showText = this.font.showText !== undefined ? this.font.showText : Boolean(Object.keys(this.font).length);
-    const { size, } = this.font;
+    const { size, showText = Boolean(Object.keys(this.font).length), } = this.font;
     // Самое максимальное и минимальное значения
     const firstValue = Math.ceil(values[0]);
     const lastValue = Math.floor(values[values.length - 1]);
@@ -122,7 +110,7 @@ class AxisY extends Axis {
       });
 
       // Отрисовываем значения
-      if (showText !== undefined ? showText : Object.keys(this.font).length) {
+      if (showText) {
         new Text(
           { ...this.font, str: `400 ${size}px Arial, sans-serif`, text: this._getCorrectValue(value), },
           this.ctx,
@@ -141,7 +129,7 @@ class AxisY extends Axis {
       const textSizes = getTextSize(size, 400, uValue, this.ctx);
       const posYItem = {
         x: showText ? bounds.horizontal.start : 0,
-        y: minValue.y + (uValue - minValue.value) * ((maxValue.y - minValue.y) / (maxValue.value - minValue.value)),
+        y: minValue.y + (uValue - minValue.value) * ((maxValue.y - minValue.y) / ((maxValue.value - minValue.value) || 1)),
       };
 
       this.points.push({

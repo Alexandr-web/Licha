@@ -18,7 +18,7 @@ class AxisX extends Axis {
     this.data = data;
   }
 
-  drawTitle(align, gaps) {
+  drawTitle(gaps = {}) {
     if (!Object.keys(this.title).length) {
       return this;
     }
@@ -28,30 +28,17 @@ class AxisX extends Axis {
       str: `400 ${this.title.font.size}px Arial, sans-serif`,
     };
     const sizes = new Text(font, this.ctx).getSizes();
+    const startX = this.bounds.horizontal.start + (gaps.left || 0);
+    const endX = this.bounds.horizontal.end;
     const posTitle = {
-      x: null,
+      x: (endX - startX) / 2 - sizes.width / 2,
       y: this.bounds.vertical.end,
     };
-
-    switch (align) {
-      case "left":
-        posTitle.x = this.bounds.horizontal.start + gaps.left;
-        break;
-      case "center":
-        posTitle.x = this.bounds.horizontal.start + this.bounds.width / 2 - sizes.width / 2;
-        break;
-      case "right":
-        posTitle.x = this.bounds.horizontal.end - sizes.width / 2;
-        break;
-    }
 
     new Text(
       font,
       this.ctx,
-      ...Object.values(posTitle),
-      undefined,
-      0,
-      1
+      ...Object.values(posTitle)
     ).draw();
 
     this.title = {
@@ -66,7 +53,7 @@ class AxisX extends Axis {
   drawPoints(gaps) {
     const names = this.getAxesData(this.data).names;
     const bounds = this.bounds;
-    const { size, weight = 400, showText, } = this.font;
+    const { size, weight = 400, showText = Object.keys(this.font).length, } = this.font;
 
     names.map((name, index) => {
       // Начальная точка для отрисовки элементов
@@ -102,15 +89,12 @@ class AxisX extends Axis {
       }
 
       // Рисуем текст
-      if (showText !== undefined ? showText : Object.keys(this.font).length && !this.ignoreNames.includes(name)) {
+      if (showText && !this.ignoreNames.includes(name)) {
         new Text(
           { ...this.font, str: `${weight} ${size}px Arial, sans-serif`, text: name, },
           this.ctx,
           posXItem.x - nameSizes.width / 2,
-          posXItem.y,
-          undefined,
-          0,
-          1
+          posXItem.y
         ).draw();
       }
     });

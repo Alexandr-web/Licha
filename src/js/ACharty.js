@@ -44,6 +44,15 @@ class aCharty {
 		const canvas = new Canvas(this.selectorCanvas, this.background).init();
 		// Рисовка заголовка диаграммы
 		const chart = new Chart(this.data, canvas.ctx, ...Object.values(canvas.getSizes()), this.title).drawTitle();
+		// Рисовка легенды
+		const legend = new Legend(
+			Boolean(Object.keys(this.legend).length),
+			this.data,
+			this.line,
+			canvas.ctx,
+			chart.getBounds(),
+			this.legend.font
+		).draw(chart.getGapsForLegend(this.axisY, chart.title));
 		// Рисовка заголовка ординаты
 		const axisY = new AxisY(
 			this.axisY.step,
@@ -54,7 +63,7 @@ class aCharty {
 			this.axisY.title,
 			chart.getBounds(),
 			this.axisY.font
-		).drawTitle(((this.axisY.title || {}).align || "center"), { top: ((chart.title || {}).y || 0), });
+		).drawTitle(chart.getGapsForYTitle(chart.title, { ...legend, gapBottom: this.legend.gapBottom, }));
 		// Рисовка заголовка абсциссы
 		const axisX = new AxisX(
 			canvas.ctx,
@@ -64,19 +73,7 @@ class aCharty {
 			chart.getBounds(),
 			this.axisX.font,
 			this.axisX.ignoreNames
-		).drawTitle(((this.axisX.title || {}).align || "center"), { left: ((axisY.title || {}).height || 0), });
-		// Рисовка легенды
-		const legend = new Legend(
-			Boolean(Object.keys(this.legend).length),
-			this.data,
-			this.line,
-			canvas.ctx,
-			chart.getBounds(),
-			this.legend.font
-		).draw({
-			top: ((chart.title || {}).y || 0) + ((chart.title || {}).gapBottom || 0),
-			left: ((axisY.title || {}).height || 0) + ((axisY.title || {}).gapRight || 0),
-		});
+		).drawTitle(chart.getGapsForXTitle(axisY));
 		// Рисовка точек на ординате
 		axisY.drawPoints(chart.getGapsForYPoints(axisY, axisX, chart.title, legend.groupsData[0], this.legend));
 		// Рисовка точек на абсциссе

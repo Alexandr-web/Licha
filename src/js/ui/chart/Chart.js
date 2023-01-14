@@ -8,7 +8,6 @@ class Chart {
     width,
     height,
     title = {},
-    align = "center",
     type = "line",
     padding = {
       top: 10,
@@ -17,7 +16,6 @@ class Chart {
       bottom: 10,
     }
   ) {
-    this.align = align;
     this.data = data;
     this.width = width;
     this.height = height;
@@ -59,21 +57,9 @@ class Chart {
     const sizes = new Text(font, this.ctx).getSizes();
     const bounds = this.getBounds();
     const posText = {
-      x: null,
+      x: bounds.horizontal.start + bounds.width / 2 - sizes.width / 2,
       y: bounds.vertical.start + sizes.height,
     };
-
-    switch (this.align) {
-      case "left":
-        posText.x = bounds.horizontal.start;
-        break;
-      case "center":
-        posText.x = bounds.horizontal.start + bounds.width / 2 - sizes.width / 2;
-        break;
-      case "right":
-        posText.x = bounds.horizontal.end - sizes.width;
-        break;
-    }
 
     new Text(
       font,
@@ -94,33 +80,61 @@ class Chart {
   }
 
   getGapsForYPoints(axisY, axisX, chartTitle, legendGroupItem, legend) {
-    const { size, weight = 400, showText, } = axisY.font;
+    const { size, weight = 400, } = axisY.font;
+    const { showText: showXText = Boolean(Object.keys(axisX.font).length), } = axisX.font;
     const firstName = axisY.getAxesData(this.data).names[0];
     const firstNameSizes = getTextSize(size, weight, firstName, this.ctx);
-    const showTxt = showText !== undefined ? showText : Boolean(Object.keys(axisY.font).length);
 
     return {
       left: ((axisY.title || {}).height || 0) + ((axisY.title || {}).gapRight || 0),
       top: ((chartTitle || {}).y || 0) + ((legendGroupItem || {}).height || 0) + ((legend || {}).gapBottom || 0),
-      bottom: (showTxt ? axisY.distanceFromXAxisToGraph + firstNameSizes.height : 0) + ((axisX.title || {}).height || 0) + (((axisX.title || {}).gapTop || 0)),
+      bottom: (showXText ? axisY.distanceFromXAxisToGraph + firstNameSizes.height : 0) + ((axisX.title || {}).height || 0) + (((axisX.title || {}).gapTop || 0)),
     };
   }
 
-  getGapsForXPoints(axisY, axisX) {
+  getGapsForXPoints(axisY = {}, axisX = {}) {
+    const { font: axisYFont = {}, title: axisYTitle = {}, distanceBetweenYAndChart, } = axisY;
+    const { font: axisXFont = {}, title: axisXTitle = {}, } = axisX;
+
     const names = axisY.getAxesData(this.data).names;
     const lastName = names[names.length - 1];
     const firstName = names[0];
-    const { weight = 400, size, showText, } = axisX.font;
+    const { weight = 400, size, showText: showXText = Boolean(Object.keys(axisXFont).length), } = axisXFont;
+    const { showText: showYText = Boolean(Object.keys(axisYFont).length), } = axisYFont;
     const lastNameSizes = getTextSize(size, weight, lastName, this.ctx);
     const firstNameSizes = getTextSize(size, weight, firstName, this.ctx);
-    const showTxt = showText !== undefined ? showText : Boolean(Object.keys(axisX.font).length);
-    const firstNameIsNotIgnore = (showTxt && !(axisX.ignoreNames || []).includes(firstName));
-    const lastNameIsNotIgnore = (showTxt && !(axisX.ignoreNames || []).includes(lastName));
+    const firstNameIsNotIgnore = (showXText && !(axisX.ignoreNames || []).includes(firstName));
+    const lastNameIsNotIgnore = (showXText && !(axisX.ignoreNames || []).includes(lastName));
 
     return {
-      left: (firstNameIsNotIgnore ? firstNameSizes.width / 2 : 0) + (showTxt ? axisY.getMaxTextWidthAtYAxis() + axisY.distanceBetweenYAndChart + ((axisY.title || {}).height || 0) + ((axisY.title || {}).gapRight || 0) : 0),
+      left: (firstNameIsNotIgnore ? firstNameSizes.width / 2 : 0) + (axisYTitle.height || 0) + (axisYTitle.gapRight || 0) + (showYText ? axisY.getMaxTextWidthAtYAxis() + distanceBetweenYAndChart : 0),
       right: lastNameIsNotIgnore ? lastNameSizes.width / 2 : 0,
-      bottom: ((axisX.title || {}).height || 0) + (((axisX.title || {}).gapTop || 0)),
+      bottom: (axisXTitle.height || 0) + ((axisXTitle.gapTop || 0)),
+    };
+  }
+
+  getGapsForYTitle(chartTitle = {}, legend = {}) {
+    const { y = 0, gapBottom: chartTitleGapBottom = 0, } = chartTitle;
+    const { groupsData, gapBottom: legendGapBottom = 0, } = legend;
+
+    return { top: y + legendGapBottom + chartTitleGapBottom + ((groupsData[0] || {}).y || 0), };
+  }
+
+  getGapsForXTitle(axisY = {}) {
+    const { title = {}, distanceBetweenYAndChart, } = axisY;
+
+    return { left: (title.height || 0) + (title.gapRight || 0) + distanceBetweenYAndChart, };
+  }
+
+  getGapsForLegend(axisY = {}, chartTitle = {}) {
+    const { y = 0, gapBottom = 0, } = chartTitle;
+    const { font = {}, gapRight = 0, } = (axisY.title || {});
+    const { size, weight = 600, text, } = font;
+    const titleAxisYHeight = getTextSize(size, weight, text, this.ctx).height || 0;
+
+    return {
+      top: y + gapBottom,
+      left: titleAxisYHeight + gapRight,
     };
   }
 }
