@@ -34,12 +34,13 @@ class AxisX extends Axis {
       weight,
       str: `${weight} ${size}px Arial, sans-serif`,
     };
+    const bounds = this.bounds;
     const sizes = getTextSize(size, weight, text, this.ctx);
-    const startX = this.bounds.horizontal.start + (gaps.left || 0);
-    const endX = this.bounds.horizontal.end;
+    const startX = bounds.horizontal.start + (gaps.left || 0);
+    const endX = bounds.horizontal.end - sizes.width;
     const posTitle = {
-      x: (endX - startX) / 2 + sizes.width / 2,
-      y: this.bounds.vertical.end,
+      x: startX + (endX - startX) / 2,
+      y: bounds.vertical.end,
     };
 
     new Text(

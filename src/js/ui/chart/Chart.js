@@ -127,8 +127,9 @@ class Chart {
 
   getGapsForXTitle(axisY = {}) {
     const { title = {}, distanceBetweenYAndChart, } = axisY;
+    const { gapRight = 0, height = 0, } = title;
 
-    return { left: (title.height || 0) + (title.gapRight || 0) + distanceBetweenYAndChart, };
+    return { left: height + gapRight + distanceBetweenYAndChart, };
   }
 
   getGapsForLegend(axisY = {}, chartTitle = {}) {
