@@ -156,7 +156,6 @@ class LineChart extends Chart {
     const lastPoint = coordinations[coordinations.length - 1];
     const yItemsOnScreen = this.pointsY.filter(({ onScreen, }) => onScreen);
     const lastYItem = yItemsOnScreen[yItemsOnScreen.length - 1];
-    const firstXItem = this.pointsX[0];
     const lineData = {
       moveTo: { x: firstPoint.x, y: firstPoint.y, },
       lineTo: [],
@@ -196,7 +195,7 @@ class LineChart extends Chart {
     // Закрываем фигуру
     lineData.lineTo.push(
       { x: lastPoint.x, y: lastYItem.y, },
-      { x: firstXItem.x, y: lastYItem.y, },
+      { x: firstPoint.x, y: lastYItem.y, },
       lineData.moveTo
     );
 

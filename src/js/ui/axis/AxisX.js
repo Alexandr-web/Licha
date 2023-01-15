@@ -11,9 +11,10 @@ class AxisX extends Axis {
     bounds,
     font,
     editName,
+    sortNames,
     ignoreNames = []
   ) {
-    super(ctx, line, title, bounds, font);
+    super(ctx, line, title, bounds, sortNames, font);
 
     this.ignoreNames = ignoreNames;
     this.data = data;

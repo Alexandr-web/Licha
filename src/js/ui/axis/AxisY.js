@@ -13,9 +13,10 @@ class AxisY extends Axis {
     line,
     title,
     bounds,
-    font
+    font,
+    sort
   ) {
-    super(ctx, line, title, bounds, font);
+    super(ctx, line, title, bounds, sort, font);
 
     // Шаг, с которым будут рисоваться значения на оси ординат
     this.step = step;
@@ -48,7 +49,7 @@ class AxisY extends Axis {
     };
     const sizes = getTextSize(size, 400, text, this.ctx);
     const startY = (gaps.top || 0) + this.bounds.vertical.start;
-    const endY = this.bounds.vertical.end;
+    const endY = this.bounds.vertical.end - (gaps.bottom || 0);
     const posTitle = {
       x: this.bounds.horizontal.start + sizes.height,
       y: endY - startY,

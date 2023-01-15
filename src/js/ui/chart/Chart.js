@@ -113,11 +113,18 @@ class Chart {
     };
   }
 
-  getGapsForYTitle(chartTitle = {}, legend = {}) {
+  getGapsForYTitle(chartTitle = {}, legend = {}, axisX = {}) {
     const { y = 0, gapBottom: chartTitleGapBottom = 0, } = chartTitle;
     const { groupsData, gapBottom: legendGapBottom = 0, } = legend;
+    const { title: axisXTitle = {}, } = axisX;
+    const { font: axisXTitleFont = {}, gapTop = 0, } = axisXTitle;
+    const { size, weight = 600, text, } = axisXTitleFont;
+    const axisXTitleHeight = getTextSize(size, weight, text, this.ctx).height || 0;
 
-    return { top: y + legendGapBottom + chartTitleGapBottom + ((groupsData[0] || {}).y || 0), };
+    return {
+      top: y + legendGapBottom + chartTitleGapBottom + ((groupsData[0] || {}).y || 0),
+      bottom: axisXTitleHeight + gapTop,
+    };
   }
 
   getGapsForXTitle(axisY = {}) {

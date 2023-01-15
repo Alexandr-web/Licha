@@ -6,6 +6,7 @@ class Axis {
     line = {},
     title = {},
     bounds = {},
+    sortNames = "less-more",
     font = {
       size: 12,
       color: "black",
@@ -23,6 +24,7 @@ class Axis {
     this.bounds = bounds;
     // Содержит данные точек, находящихся на этой оси
     this.points = [];
+    this.sortNames = sortNames;
     // Содержит уникальные названия на оси абсцисс
     this.uniqueNames = [];
     this.uniqueValues = [];
@@ -44,12 +46,26 @@ class Axis {
       values.push(...groupData.map(({ value, }) => value));
     }
 
-    // Находим максимальное значение для оси ординат
-    const sortedValues = quickSort([...new Set(values)]).reverse();
+    const uniqueNames = [...new Set(names)];
+    const uniqueValues = [...new Set(values)];
+    const namesIsNumbers = !uniqueNames.some((name) => isNaN(+name));
+    const sortedValues = quickSort(uniqueValues).reverse();
+    const sortedNames = [];
+
+    if (namesIsNumbers) {
+      switch (this.sortNames) {
+        case "less-more":
+          sortedNames.push(...quickSort(uniqueNames));
+          break;
+        case "more-less":
+          sortedNames.push(...quickSort(uniqueNames).reverse());
+          break;
+      }
+    }
 
     return {
       values: sortedValues,
-      names: [...new Set(names)],
+      names: namesIsNumbers ? sortedNames : uniqueNames,
     };
   }
 }

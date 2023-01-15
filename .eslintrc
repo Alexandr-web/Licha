@@ -80,6 +80,7 @@
     "no-restricted-syntax": "off",
     "quote-props": "off",
     "func-names": "off",
-    "no-case-declarations": "off"
+    "no-case-declarations": "off",
+    "camelcase": "off"
   }
 }

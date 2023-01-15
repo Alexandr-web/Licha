@@ -62,8 +62,9 @@ class aCharty {
 			this.axisY.line,
 			this.axisY.title,
 			chart.getBounds(),
-			this.axisY.font
-		).drawTitle(chart.getGapsForYTitle(chart.title, { ...legend, gapBottom: this.legend.gapBottom, }));
+			this.axisY.font,
+			this.axisX.sort
+		).drawTitle(chart.getGapsForYTitle(chart.title, { ...legend, gapBottom: this.legend.gapBottom, }, this.axisX));
 		// Рисовка заголовка абсциссы
 		const axisX = new AxisX(
 			canvas.ctx,
@@ -73,6 +74,7 @@ class aCharty {
 			chart.getBounds(),
 			this.axisX.font,
 			this.axisX.editName,
+			this.axisX.sort,
 			this.axisX.ignoreNames
 		).drawTitle(chart.getGapsForXTitle(axisY));
 		// Рисовка точек на ординате
