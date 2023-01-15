@@ -64,10 +64,7 @@ class Chart {
     new Text(
       font,
       this.ctx,
-      ...Object.values(posText),
-      undefined,
-      0,
-      1
+      ...Object.values(posText)
     ).draw();
 
     this.title = {
@@ -114,7 +111,7 @@ class Chart {
   }
 
   getGapsForYTitle(chartTitle = {}, legend = {}, axisX = {}) {
-    const { y = 0, gapBottom: chartTitleGapBottom = 0, } = chartTitle;
+    const { height: chartTitleHeight = 0, gapBottom: chartTitleGapBottom = 0, } = chartTitle;
     const { groupsData, gapBottom: legendGapBottom = 0, } = legend;
     const { title: axisXTitle = {}, } = axisX;
     const { font: axisXTitleFont = {}, gapTop = 0, } = axisXTitle;
@@ -122,7 +119,7 @@ class Chart {
     const axisXTitleHeight = getTextSize(size, weight, text, this.ctx).height || 0;
 
     return {
-      top: y + legendGapBottom + chartTitleGapBottom + ((groupsData[0] || {}).y || 0),
+      top: chartTitleHeight + legendGapBottom + chartTitleGapBottom + ((groupsData[0] || {}).height || 0),
       bottom: axisXTitleHeight + gapTop,
     };
   }

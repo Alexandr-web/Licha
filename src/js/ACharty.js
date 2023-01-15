@@ -21,7 +21,9 @@ class aCharty {
 		selectorCanvas,
 		background,
 		title,
+		padding,
 	}) {
+		this.padding = padding;
 		this.activeElements = [];
 		this.cap = cap;
 		this.legend = legend;
@@ -43,7 +45,7 @@ class aCharty {
 		// Установка холста по умолчанию
 		const canvas = new Canvas(this.selectorCanvas, this.background).init();
 		// Рисовка заголовка диаграммы
-		const chart = new Chart(this.data, canvas.ctx, ...Object.values(canvas.getSizes()), this.title).drawTitle();
+		const chart = new Chart(this.data, canvas.ctx, ...Object.values(canvas.getSizes()), this.title, this.type, this.padding).drawTitle();
 		// Рисовка легенды
 		const legend = new Legend(
 			Boolean(Object.keys(this.legend).length),

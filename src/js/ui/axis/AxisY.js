@@ -40,6 +40,7 @@ class AxisY extends Axis {
       return this;
     }
 
+    const bounds = this.bounds;
     const { size, text, color, weight = 400, } = this.title.font;
     const font = {
       size,
@@ -47,12 +48,12 @@ class AxisY extends Axis {
       color,
       str: `${weight} ${size}px Arial, sans-serif`,
     };
-    const sizes = getTextSize(size, 400, text, this.ctx);
-    const startY = (gaps.top || 0) + this.bounds.vertical.start;
-    const endY = this.bounds.vertical.end - (gaps.bottom || 0);
+    const sizes = getTextSize(size, weight, text, this.ctx);
+    const startY = bounds.vertical.start + sizes.width / 2 + (gaps.top || 0);
+    const endY = bounds.vertical.end - (gaps.bottom || 0) - sizes.width / 2;
     const posTitle = {
-      x: this.bounds.horizontal.start + sizes.height,
-      y: endY - startY,
+      x: bounds.horizontal.start + sizes.height,
+      y: startY + (endY - startY) / 2,
     };
 
     new Text(
@@ -100,7 +101,7 @@ class AxisY extends Axis {
       const step = endPoint / (points.length - 1);
       // Координаты для отрисовки элементов
       const posYItem = {
-        x: this.bounds.horizontal.start + (gaps.left || 0),
+        x: bounds.horizontal.start + (gaps.left || 0),
         y: step * index + startPoint,
       };
 

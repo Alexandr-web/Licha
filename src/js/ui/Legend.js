@@ -72,14 +72,15 @@ class Legend {
         str: `${weight} ${size}px Arial, sans-serif`,
         text: group,
       };
+
       const prevGroups = updateGroups.filter((grp, idx) => idx < index);
       const posGroup = {
         x: bounds.horizontal.start + (gaps.left || 0) + center - totalGroupsDistance / 2 + this._getDistanceGroups(prevGroups),
-        y: bounds.vertical.start + (gaps.top || 0),
+        y: bounds.vertical.start + (gaps.top || 0) + height,
       };
       const posCircle = {
         x: posGroup.x - this.radiusCircle - this.margin.circle,
-        y: bounds.vertical.start + (gaps.top || 0) - height / 2,
+        y: posGroup.y - height / 2,
       };
 
       new Circle(
