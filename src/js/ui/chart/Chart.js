@@ -53,8 +53,9 @@ class Chart {
       return this;
     }
 
-    const font = { ...this.title.font, str: `600 ${this.title.font.size}px Arial, sans-serif`, };
-    const sizes = new Text(font, this.ctx).getSizes();
+    const { weight = 600, size, text, } = this.title.font;
+    const font = { ...this.title.font, str: `${weight} ${size}px Arial, sans-serif`, };
+    const sizes = getTextSize(size, weight, text, this.ctx);
     const bounds = this.getBounds();
     const posText = {
       x: bounds.horizontal.start + bounds.width / 2 - sizes.width / 2,

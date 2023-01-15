@@ -26,11 +26,15 @@ class AxisX extends Axis {
       return this;
     }
 
+    const { size, weight = 600, color, text, } = this.title.font;
     const font = {
-      ...this.title.font,
-      str: `400 ${this.title.font.size}px Arial, sans-serif`,
+      size,
+      color,
+      text,
+      weight,
+      str: `${weight} ${size}px Arial, sans-serif`,
     };
-    const sizes = new Text(font, this.ctx).getSizes();
+    const sizes = getTextSize(size, weight, text, this.ctx);
     const startX = this.bounds.horizontal.start + (gaps.left || 0);
     const endX = this.bounds.horizontal.end;
     const posTitle = {
