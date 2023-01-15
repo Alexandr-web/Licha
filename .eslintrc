@@ -79,6 +79,8 @@
     "guard-for-in": "off",
     "no-restricted-syntax": "off",
     "quote-props": "off",
-    "func-names": "off"
+    "func-names": "off",
+    "no-case-declarations": "off",
+    "camelcase": "off"
   }
 }
