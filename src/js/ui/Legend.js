@@ -3,7 +3,7 @@ import Circle from "./elements/Circle";
 import getTextSize from "../helpers/getTextSize";
 
 class Legend {
-  constructor(showLegend, data, line, ctx, bounds, font) {
+  constructor(showLegend, data, line, ctx, bounds, font, circle) {
     this.showLegend = showLegend;
     this.line = line;
     this.font = font;
@@ -11,11 +11,7 @@ class Legend {
     this.ctx = ctx;
     this.bounds = bounds;
     this.groupsData = [];
-    this.radiusCircle = 6;
-    this.margin = {
-      group: 10,
-      circle: 10,
-    };
+    this.circle = circle;
   }
 
   _getUpdateGroups(groups) {
@@ -36,8 +32,11 @@ class Legend {
       return 0;
     }
 
+    const { gapGroup, } = this.font;
+    const { radius, gapRight, } = this.circle;
+
     return groups.reduce((acc, { width, }) => {
-      acc += width + this.margin.group + this.radiusCircle * 2 + this.margin.circle;
+      acc += width + gapGroup + radius * 2 + gapRight;
 
       return acc;
     }, 0);
@@ -86,19 +85,20 @@ class Legend {
   }
 
   _drawCircle(x, y, height, color) {
+    const { radius, gapRight, } = this.circle;
     const posCircle = {
-      x: x - this.radiusCircle - this.margin.circle,
-      y: y - height / 2,
+      x: x - radius - gapRight,
+      y: y - Math.min(radius, height / 2),
     };
 
     new Circle(
-      this.radiusCircle,
+      radius,
       ...Object.values(posCircle),
       color,
       this.ctx,
       1,
-      posCircle.y - this.radiusCircle,
-      posCircle.y + this.radiusCircle
+      posCircle.y - radius,
+      posCircle.y + radius
     ).draw();
   }
 

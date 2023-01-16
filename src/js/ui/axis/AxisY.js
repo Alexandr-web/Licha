@@ -77,12 +77,12 @@ class AxisY extends Axis {
     const values = this.getAxesData(this.data).values;
     const bounds = this.bounds;
     // Стили оси
-    const { size, showText = Boolean(Object.keys(this.font).length), } = this.font;
+    const { size, showText = Boolean(Object.keys(this.font).length), weight = 400, } = this.font;
     // Самое максимальное и минимальное значения
     const firstValue = Math.ceil(values[0]);
     const lastValue = Math.floor(values[values.length - 1]);
     // Содержит размеры самого максимального значения
-    const firstValueSizes = getTextSize(size, 400, firstValue, this.ctx);
+    const firstValueSizes = getTextSize(size, weight, firstValue, this.ctx);
     // Содержит точки на оси ординат
     const points = getRange(Math.min(firstValue, lastValue), Math.max(firstValue, lastValue), this.step).reverse();
 
@@ -92,7 +92,7 @@ class AxisY extends Axis {
 
     points.map((value, index) => {
       // Содержит размеры значения
-      const valueSizes = getTextSize(size, 400, this._getCorrectValue(value), this.ctx);
+      const valueSizes = getTextSize(size, weight, this._getCorrectValue(value), this.ctx);
       // Начальная точка для отрисовки элементов
       const startPoint = bounds.vertical.start + firstValueSizes.height / 2 + (gaps.top || 0);
       // Конечная точка для отрисовки элементов
@@ -115,13 +115,10 @@ class AxisY extends Axis {
       // Отрисовываем значения
       if (showText) {
         new Text(
-          { ...this.font, str: `400 ${size}px Arial, sans-serif`, text: this._getCorrectValue(value), },
+          { ...this.font, str: `${weight} ${size}px Arial, sans-serif`, text: this._getCorrectValue(value), },
           this.ctx,
           posYItem.x,
-          posYItem.y + valueSizes.height / 2,
-          undefined,
-          0,
-          1
+          posYItem.y + valueSizes.height / 2
         ).draw();
       }
     });
@@ -129,7 +126,7 @@ class AxisY extends Axis {
     values.map((uValue) => {
       const maxValue = quickSort(this.points, "value").find(({ value, }) => value >= uValue);
       const minValue = quickSort(this.points, "value").reverse().find(({ value, }) => value <= uValue);
-      const textSizes = getTextSize(size, 400, uValue, this.ctx);
+      const textSizes = getTextSize(size, weight, uValue, this.ctx);
       const posYItem = {
         x: showText ? bounds.horizontal.start : 0,
         y: minValue.y + (uValue - minValue.value) * ((maxValue.y - minValue.y) / ((maxValue.value - minValue.value) || 1)),

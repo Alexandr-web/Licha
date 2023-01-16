@@ -56,7 +56,8 @@ class aCharty {
 			this.line,
 			canvas.ctx,
 			chart.getBounds(),
-			this.legend.font
+			this.legend.font,
+			this.legend.circle
 		).draw(chart.getGapsForLegend(this.axisY, chart.title));
 	}
 
@@ -140,6 +141,12 @@ class aCharty {
 				this._findActiveCaps(lineChart.caps, canvas);
 				break;
 		}
+	}
+
+	update() {
+		this.init();
+
+		return this;
 	}
 
 	init() {
