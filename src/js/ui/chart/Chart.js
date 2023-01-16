@@ -136,13 +136,13 @@ class Chart {
 
   getGapsForLegend(axisY = {}, chartTitle = {}) {
     const { y = 0, gapBottom = 0, } = chartTitle;
-    const { font = {}, gapRight = 0, } = (axisY.title || {});
+    const { font = {}, } = (axisY.title || {});
     const { size, weight = 600, text, } = font;
     const titleAxisYHeight = getTextSize(size, weight, text, this.ctx).height || 0;
 
     return {
       top: y + gapBottom,
-      left: titleAxisYHeight + gapRight,
+      left: titleAxisYHeight,
     };
   }
 }

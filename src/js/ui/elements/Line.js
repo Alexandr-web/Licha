@@ -10,9 +10,9 @@ class Line extends Element {
     this.dotted = dotted;
   }
 
-  _setColor(color, y) {
+  _setColor(color, x, y) {
     if (Array.isArray(color)) {
-      setGradientColor(color, y, this.lineTo[0].y, "strokeStyle", this.ctx);
+      setGradientColor(color, this.y, y, "strokeStyle", this.ctx, this.x, x);
     } else if (typeof color === "string") {
       this.ctx.strokeStyle = color;
     }
@@ -28,7 +28,7 @@ class Line extends Element {
     this.ctx.lineCap = "round";
 
     this.lineTo.map(({ x, y, }) => {
-      this._setColor(this.color, y);
+      this._setColor(this.color, x, y);
       this.ctx.lineTo(x, y);
     });
 
