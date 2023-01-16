@@ -2,7 +2,7 @@ import Element from "./Element";
 import setGradientColor from "../../helpers/setGradientColor";
 
 class Rect extends Element {
-  constructor(x, y, color, ctx, rotateDeg, opacity, width, height, startY, endY, stroke = {}) {
+  constructor(x, y, color, ctx, width, height, startY, endY, rotateDeg, opacity, stroke = {}) {
     super(x, y, color, ctx, rotateDeg, opacity);
 
     this.width = width;

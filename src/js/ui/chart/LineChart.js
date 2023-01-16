@@ -103,8 +103,6 @@ class LineChart extends Chart {
             findAxisYItem.y,
             lineStyle.color,
             this.ctx,
-            0,
-            1,
             lineToArray,
             lineStyle.width,
             lineStyle.dotted

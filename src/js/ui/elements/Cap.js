@@ -34,12 +34,12 @@ class Cap extends Element {
           this.y,
           this.color,
           this.ctx,
-          this.rotateDeg,
-          this.opacity,
           this.size,
           this.size,
           this.startY,
           this.endY,
+          this.rotateDeg,
+          this.opacity,
           this.stroke
         ).draw();
         break;

@@ -21,8 +21,6 @@ class Grid {
         y,
         color,
         this.ctx,
-        0,
-        1,
         [{ x: lastXAxisItem.x, y, }],
         width,
         dotted
@@ -44,8 +42,6 @@ class Grid {
         firstAxisYItem.y,
         color,
         this.ctx,
-        0,
-        1,
         [{ x: findAxisXItem.x, y: lastAxisYItem.y, }],
         width,
         dotted

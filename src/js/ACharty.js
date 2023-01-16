@@ -3,9 +3,9 @@ import Chart from "./ui/chart/Chart";
 import AxisY from "./ui/axis/AxisY";
 import LineChart from "./ui/chart/LineChart";
 import Grid from "./ui/Grid";
-// import getElementsByCoordinates from "./helpers/getElementsByCoordinates";
 import AxisX from "./ui/axis/AxisX";
 import Legend from "./ui/Legend";
+import getElementsByCoordinates from "./helpers/getElementsByCoordinates";
 
 class aCharty {
 	constructor({
@@ -41,13 +41,16 @@ class aCharty {
 		this.data = data;
 	}
 
-	init() {
-		// Установка холста по умолчанию
-		const canvas = new Canvas(this.selectorCanvas, this.background).init();
-		// Рисовка заголовка диаграммы
-		const chart = new Chart(this.data, canvas.ctx, ...Object.values(canvas.getSizes()), this.title, this.type, this.padding).drawTitle();
-		// Рисовка легенды
-		const legend = new Legend(
+	_setCanvas() {
+		return new Canvas(this.selectorCanvas, this.background).init();
+	}
+
+	_setChart(canvas) {
+		return new Chart(this.data, canvas.ctx, ...Object.values(canvas.getSizes()), this.title, this.type, this.padding).drawTitle();
+	}
+
+	_setLegend(canvas, chart) {
+		return new Legend(
 			Boolean(Object.keys(this.legend).length),
 			this.data,
 			this.line,
@@ -55,8 +58,10 @@ class aCharty {
 			chart.getBounds(),
 			this.legend.font
 		).draw(chart.getGapsForLegend(this.axisY, chart.title));
-		// Рисовка заголовка ординаты
-		const axisY = new AxisY(
+	}
+
+	_setAxisY(canvas, chart, legend) {
+		return new AxisY(
 			this.axisY.step,
 			this.axisY.editValue,
 			this.data,
@@ -67,8 +72,10 @@ class aCharty {
 			this.axisY.font,
 			this.axisX.sort
 		).drawTitle(chart.getGapsForYTitle(chart.title, { ...legend, gapBottom: this.legend.gapBottom, }, this.axisX));
-		// Рисовка заголовка абсциссы
-		const axisX = new AxisX(
+	}
+
+	_setAxisX(canvas, chart, axisY) {
+		return new AxisX(
 			canvas.ctx,
 			this.data,
 			this.axisX.line,
@@ -79,12 +86,16 @@ class aCharty {
 			this.axisX.sort,
 			this.axisX.ignoreNames
 		).drawTitle(chart.getGapsForXTitle(axisY));
-		// Рисовка точек на ординате
+	}
+
+	_setPoints(axisY, axisX, legend, chart) {
 		axisY.drawPoints(chart.getGapsForYPoints(axisY, axisX, chart.title, legend.groupsData[0], this.legend));
 		// Рисовка точек на абсциссе
 		axisX.drawPoints(chart.getGapsForXPoints(axisY, axisX));
-		// Рисовка сетки
-		new Grid(
+	}
+
+	_setGrid(canvas, axisX, axisY) {
+		return new Grid(
 			canvas.ctx,
 			axisY.getAxesData(this.data).names,
 			axisY.points,
@@ -92,17 +103,31 @@ class aCharty {
 			this.grid.line,
 			this.grid.format
 		).init();
+	}
 
-		// function findByCoordinates(elements) {
-		// 	canvas.canvasElement.addEventListener("mousemove", (e) => {
-		// 		this.activeElements = getElementsByCoordinates(canvas.canvasElement, elements, e);
-		// 	});
-		// }
+	_mousemoveByCanvas(canvas, elements) {
+		canvas.canvasElement.addEventListener("mousemove", (e) => {
+			this.activeElements = getElementsByCoordinates(canvas.canvasElement, elements, e);
 
-		// Рисовка диаграммы по типу
+			console.log(this.activeElements);
+		});
+	}
+
+	_findActiveCaps(caps, canvas) {
+		const elements = caps.map((cap) => {
+			cap.width = cap.format === "circle" ? cap.size : cap.size / 2;
+			cap.height = cap.format === "circle" ? cap.size : cap.size / 2;
+
+			return cap;
+		});
+
+		this._mousemoveByCanvas(canvas, elements);
+	}
+
+	_drawChartByType(axisY, axisX, canvas) {
 		switch (this.type) {
 			case "line":
-				new LineChart(
+				const lineChart = new LineChart(
 					this.data,
 					this.line,
 					this.cap,
@@ -112,14 +137,21 @@ class aCharty {
 					...Object.values(canvas.getSizes())
 				).draw();
 
-				// findByCoordinates(lineChart.caps.map((cap) => {
-				// 	cap.width = cap.format === "circle" ? cap.size : cap.size / 2;
-				// 	cap.height = cap.format === "circle" ? cap.size : cap.size / 2;
-
-				// 	return cap;
-				// }));
+				this._findActiveCaps(lineChart.caps, canvas);
 				break;
 		}
+	}
+
+	init() {
+		const canvas = this._setCanvas();
+		const chart = this._setChart(canvas);
+		const legend = this._setLegend(canvas, chart);
+		const axisY = this._setAxisY(canvas, chart, legend);
+		const axisX = this._setAxisX(canvas, chart, axisY);
+
+		this._setPoints(axisY, axisX, legend, chart);
+		this._setGrid(canvas, axisX, axisY);
+		this._drawChartByType(axisY, axisX, canvas);
 
 		return this;
 	}
