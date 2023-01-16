@@ -57,8 +57,10 @@ class Chart {
     const font = { ...this.title.font, str: `${weight} ${size}px Arial, sans-serif`, };
     const sizes = getTextSize(size, weight, text, this.ctx);
     const bounds = this.getBounds();
+    const startX = bounds.horizontal.start;
+    const endX = bounds.horizontal.end - sizes.width;
     const posText = {
-      x: bounds.horizontal.start + bounds.width / 2 - sizes.width / 2,
+      x: startX + (endX - startX) / 2,
       y: bounds.vertical.start + sizes.height,
     };
 

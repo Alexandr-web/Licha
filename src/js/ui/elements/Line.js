@@ -1,32 +1,19 @@
 import Element from "./Element";
+import setGradientColor from "../../helpers/setGradientColor";
 
 class Line extends Element {
-  constructor(x, y, color, ctx, rotateDeg, opacity, lineTo = [], width = 1, dotted = false) {
-    super(x, y, color, ctx, rotateDeg, opacity);
+  constructor(x, y, color, ctx, lineTo = [], width = 1, dotted = false) {
+    super(x, y, color, ctx);
 
     this.lineTo = lineTo;
     this.width = width;
     this.dotted = dotted;
   }
 
-  _setColor(color, x, y) {
+  _setColor(color, y) {
     if (Array.isArray(color)) {
-      const grd = this.ctx.createLinearGradient(...Object.values(this.moveTo), x, y);
-
-      // Создает градиент
-      color.map((clr, idx) => {
-        if (idx > 0 && idx < color.length - 1) {
-          grd.addColorStop((1 / color.length) * (idx + 1), clr);
-        } else if (idx === 0) {
-          grd.addColorStop(0, clr);
-        } else if (idx === color.length - 1) {
-          grd.addColorStop(1, clr);
-        }
-      });
-
-      this.ctx.strokeStyle = grd;
+      setGradientColor(color, y, this.lineTo[0].y, "strokeStyle", this.ctx);
     } else if (typeof color === "string") {
-      // Для одного цвета
       this.ctx.strokeStyle = color;
     }
   }
@@ -41,7 +28,7 @@ class Line extends Element {
     this.ctx.lineCap = "round";
 
     this.lineTo.map(({ x, y, }) => {
-      this._setColor(this.color, x, y);
+      this._setColor(this.color, y);
       this.ctx.lineTo(x, y);
     });
 
