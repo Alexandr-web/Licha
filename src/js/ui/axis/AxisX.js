@@ -21,6 +21,16 @@ class AxisX extends Axis {
     this.editName = editName;
   }
 
+  getIgnoreNames() {
+    if (this.ignoreNames instanceof Function) {
+      return this.getAxesData(this.data).names.filter(this.ignoreNames);
+    }
+
+    if (Array.isArray(this.ignoreNames)) {
+      return this.ignoreNames;
+    }
+  }
+
   drawTitle(gaps = {}) {
     if (!Object.keys(this.title).length) {
       return this;
@@ -65,6 +75,7 @@ class AxisX extends Axis {
   drawPoints(gaps) {
     const names = this.getAxesData(this.data).names;
     const bounds = this.bounds;
+    const ignoreNames = this.getIgnoreNames();
     const { size, weight = 400, showText = Object.keys(this.font).length, } = this.font;
 
     names.map((name, index) => {
@@ -101,7 +112,7 @@ class AxisX extends Axis {
       }
 
       // Рисуем текст
-      if (showText && !this.ignoreNames.includes(name)) {
+      if (showText && !ignoreNames.includes(name)) {
         new Text(
           { ...this.font, str: `${weight} ${size}px Arial, sans-serif`, text: this.getCorrectName(name), },
           this.ctx,

@@ -45,7 +45,7 @@ class aCharty {
 		return new Canvas(this.selectorCanvas, this.background).init();
 	}
 
-	_setChart(canvas) {
+	_setChartTitle(canvas) {
 		return new Chart(this.data, canvas.ctx, ...Object.values(canvas.getSizes()), this.title, this.type, this.padding).drawTitle();
 	}
 
@@ -61,7 +61,7 @@ class aCharty {
 		).draw(chart.getGapsForLegend(this.axisY, chart.title));
 	}
 
-	_setAxisY(canvas, chart, legend) {
+	_setAxisYTitle(canvas, chart, legend) {
 		return new AxisY(
 			this.axisY.step,
 			this.axisY.editValue,
@@ -75,7 +75,7 @@ class aCharty {
 		).drawTitle(chart.getGapsForYTitle(chart.title, { ...legend, gapBottom: this.legend.gapBottom, }, this.axisX));
 	}
 
-	_setAxisX(canvas, chart, axisY) {
+	_setAxisXTitle(canvas, chart, axisY) {
 		return new AxisX(
 			canvas.ctx,
 			this.data,
@@ -151,10 +151,10 @@ class aCharty {
 
 	init() {
 		const canvas = this._setCanvas();
-		const chart = this._setChart(canvas);
+		const chart = this._setChartTitle(canvas);
 		const legend = this._setLegend(canvas, chart);
-		const axisY = this._setAxisY(canvas, chart, legend);
-		const axisX = this._setAxisX(canvas, chart, axisY);
+		const axisY = this._setAxisYTitle(canvas, chart, legend);
+		const axisX = this._setAxisXTitle(canvas, chart, axisY);
 
 		this._setPoints(axisY, axisX, legend, chart);
 		this._setGrid(canvas, axisX, axisY);

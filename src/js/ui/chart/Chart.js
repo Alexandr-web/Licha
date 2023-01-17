@@ -95,6 +95,7 @@ class Chart {
   getGapsForXPoints(axisY = {}, axisX = {}) {
     const { font: axisYFont = {}, title: axisYTitle = {}, distanceBetweenYAndChart, } = axisY;
     const { font: axisXFont = {}, title: axisXTitle = {}, } = axisX;
+    const ignoreNames = axisX.getIgnoreNames();
 
     const names = axisY.getAxesData(this.data).names;
     const lastName = names[names.length - 1];
@@ -103,8 +104,8 @@ class Chart {
     const { showText: showYText = Boolean(Object.keys(axisYFont).length), } = axisYFont;
     const lastNameSizes = getTextSize(size, weight, axisX.getCorrectName(lastName), this.ctx);
     const firstNameSizes = getTextSize(size, weight, axisX.getCorrectName(firstName), this.ctx);
-    const firstNameIsNotIgnore = (showXText && !(axisX.ignoreNames || []).includes(firstName));
-    const lastNameIsNotIgnore = (showXText && !(axisX.ignoreNames || []).includes(lastName));
+    const firstNameIsNotIgnore = (showXText && !(ignoreNames || []).includes(firstName));
+    const lastNameIsNotIgnore = (showXText && !(ignoreNames || []).includes(lastName));
 
     return {
       left: (firstNameIsNotIgnore ? firstNameSizes.width / 2 : 0) + (axisYTitle.height || 0) + (axisYTitle.gapRight || 0) + (showYText ? axisY.getMaxTextWidthAtYAxis() + distanceBetweenYAndChart : 0),
