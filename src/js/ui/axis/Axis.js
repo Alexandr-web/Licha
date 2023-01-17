@@ -25,11 +25,10 @@ class Axis {
     // Содержит данные точек, находящихся на этой оси
     this.points = [];
     this.sortNames = sortNames;
-    // Содержит уникальные названия на оси абсцисс
     this.uniqueNames = [];
     this.uniqueValues = [];
-    this.distanceFromXAxisToGraph = 10;
-    this.distanceBetweenYAndChart = 10;
+    this.distanceFromXAxisToGraph = 15;
+    this.distanceBetweenYAndChart = 15;
   }
 
   getAxesData(data) {

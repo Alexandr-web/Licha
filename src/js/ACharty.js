@@ -5,7 +5,8 @@ import LineChart from "./ui/chart/LineChart";
 import Grid from "./ui/Grid";
 import AxisX from "./ui/axis/AxisX";
 import Legend from "./ui/Legend";
-import getElementsByCoordinates from "./helpers/getElementsByCoordinates";
+import quickSort from "./helpers/quickSort";
+// import getElementsByCoordinates from "./helpers/getElementsByCoordinates";
 
 class aCharty {
 	constructor({
@@ -16,6 +17,7 @@ class aCharty {
 		cap = {},
 		grid = {},
 		legend = {},
+		breakpoints = {},
 		type = "line",
 		updateWhenResizing = true,
 		selectorCanvas,
@@ -23,6 +25,7 @@ class aCharty {
 		title,
 		padding,
 	}) {
+		this.breakpoints = breakpoints;
 		this.padding = padding;
 		this.activeElements = [];
 		this.cap = cap;
@@ -108,29 +111,65 @@ class aCharty {
 		).init();
 	}
 
-	_mousemoveByCanvas(canvas, elements) {
-		canvas.canvasElement.addEventListener("mousemove", (e) => {
-			this.activeElements = getElementsByCoordinates(canvas.canvasElement, elements, e);
-
-			console.log(this.activeElements);
+	_windowResize() {
+		window.addEventListener("resize", () => {
+			this.update();
+			this._setBreakpoints();
 		});
 	}
 
-	_findActiveCaps(caps, canvas) {
-		const elements = caps.map((cap) => {
-			cap.width = cap.format === "circle" ? cap.size : cap.size / 2;
-			cap.height = cap.format === "circle" ? cap.size : cap.size / 2;
+	_setBreakpoints() {
+		if (!Object.keys(this.breakpoints)) {
+			return;
+		}
 
-			return cap;
-		});
+		const document = window.document.documentElement;
+		const bPoint = quickSort(Object.keys(this.breakpoints).map((point) => parseInt(point))).find((width) => document.offsetWidth <= width);
 
-		this._mousemoveByCanvas(canvas, elements);
+		if (bPoint) {
+			const func = this.breakpoints[bPoint.toString()];
+			const contextForFunc = {
+				data: this.data,
+				axisY: this.axisY,
+				axisX: this.axisX,
+				line: this.line,
+				cap: this.cap,
+				grid: this.grid,
+				legend: this.legend,
+				type: this.type,
+				background: this.background,
+				title: this.title,
+				padding: this.padding,
+				update: this.update.bind(this),
+			};
+
+			if (func instanceof Function) {
+				func.call(contextForFunc);
+			}
+		}
 	}
+
+	// _mousemoveByCanvas(canvas, elements) {
+	// 	canvas.canvasElement.addEventListener("mousemove", (e) => {
+	// 		this.activeElements = getElementsByCoordinates(canvas.canvasElement, elements, e);
+	// 	});
+	// }
+
+	// _findActiveCaps(caps, canvas) {
+	// 	const elements = caps.map((cap) => {
+	// 		cap.width = cap.format === "circle" ? cap.size : cap.size / 2;
+	// 		cap.height = cap.format === "circle" ? cap.size : cap.size / 2;
+
+	// 		return cap;
+	// 	});
+
+	// 	this._mousemoveByCanvas(canvas, elements);
+	// }
 
 	_drawChartByType(axisY, axisX, canvas) {
 		switch (this.type) {
 			case "line":
-				const lineChart = new LineChart(
+				new LineChart(
 					this.data,
 					this.line,
 					this.cap,
@@ -139,14 +178,20 @@ class aCharty {
 					canvas.ctx,
 					...Object.values(canvas.getSizes())
 				).draw();
-
-				this._findActiveCaps(lineChart.caps, canvas);
 				break;
 		}
 	}
 
 	update() {
-		this.init();
+		const canvas = this._setCanvas();
+		const chart = this._setChartTitle(canvas);
+		const legend = this._setLegend(canvas, chart);
+		const axisY = this._setAxisYTitle(canvas, chart, legend);
+		const axisX = this._setAxisXTitle(canvas, chart, axisY);
+
+		this._setPoints(axisY, axisX, legend, chart);
+		this._setGrid(canvas, axisX, axisY);
+		this._drawChartByType(axisY, axisX, canvas);
 
 		return this;
 	}
@@ -161,6 +206,8 @@ class aCharty {
 		this._setPoints(axisY, axisX, legend, chart);
 		this._setGrid(canvas, axisX, axisY);
 		this._drawChartByType(axisY, axisX, canvas);
+		this._setBreakpoints();
+		this._windowResize();
 
 		return this;
 	}
