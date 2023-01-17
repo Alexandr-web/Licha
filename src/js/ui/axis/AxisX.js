@@ -29,6 +29,8 @@ class AxisX extends Axis {
     if (Array.isArray(this.ignoreNames)) {
       return this.ignoreNames;
     }
+
+    return [];
   }
 
   drawTitle(gaps = {}) {
@@ -72,7 +74,7 @@ class AxisX extends Axis {
     return this.editName instanceof Function ? this.editName(name) : name;
   }
 
-  drawPoints(gaps) {
+  drawPoints(gaps = {}) {
     const names = this.getAxesData(this.data).names;
     const bounds = this.bounds;
     const ignoreNames = this.getIgnoreNames();

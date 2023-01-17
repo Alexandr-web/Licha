@@ -57,7 +57,9 @@ class aCharty {
 			canvas.ctx,
 			chart.getBounds(),
 			this.legend.font,
-			this.legend.circle
+			this.legend.circle,
+			this.legend.gaps,
+			this.legend.maxCount
 		).draw(chart.getGapsForLegend(this.axisY, chart.title));
 	}
 
@@ -72,7 +74,7 @@ class aCharty {
 			chart.getBounds(),
 			this.axisY.font,
 			this.axisX.sort
-		).drawTitle(chart.getGapsForYTitle(chart.title, { ...legend, gapBottom: this.legend.gapBottom, }, this.axisX));
+		).drawTitle(chart.getGapsForYTitle(chart.title, { ...legend, gapBottom: ((this.legend.gaps || {}).legend || {}).bottom, }, this.axisX));
 	}
 
 	_setAxisXTitle(canvas, chart, axisY) {
@@ -90,7 +92,7 @@ class aCharty {
 	}
 
 	_setPoints(axisY, axisX, legend, chart) {
-		axisY.drawPoints(chart.getGapsForYPoints(axisY, axisX, chart.title, legend.groupsData[0], this.legend));
+		axisY.drawPoints(chart.getGapsForYPoints(axisY, axisX, chart.title, { ...this.legend, ...legend, }));
 		// Рисовка точек на абсциссе
 		axisX.drawPoints(chart.getGapsForXPoints(axisY, axisX));
 	}

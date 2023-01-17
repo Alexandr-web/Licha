@@ -73,7 +73,7 @@ class AxisY extends Axis {
     return this;
   }
 
-  drawPoints(gaps) {
+  drawPoints(gaps = {}) {
     const values = this.getAxesData(this.data).values;
     const bounds = this.bounds;
     // Стили оси
