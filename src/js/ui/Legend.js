@@ -119,8 +119,8 @@ class Legend {
       color,
       this.ctx,
       1,
-      posCircle.y,
-      posCircle.y
+      posCircle.y - radius,
+      posCircle.y + radius
     ).draw();
   }
 
