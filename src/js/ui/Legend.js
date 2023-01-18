@@ -64,7 +64,7 @@ class Legend {
         .map((group) => ({ ...this.data[group], group, }))
         .slice(i, i + this.maxCount)
         .map(({ group, line = {}, }) => {
-          const colorLine = (line.color || (this.line || {}).fill || line.fill || (this.line || {}).fill);
+          const colorLine = line.color || (this.line || {}).color || line.fill || (this.line || {}).fill;
 
           return {
             group,
