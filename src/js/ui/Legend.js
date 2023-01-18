@@ -3,18 +3,20 @@ import Circle from "./elements/Circle";
 import getTextSize from "../helpers/getTextSize";
 
 class Legend {
-  constructor(showLegend, data, line, ctx, bounds, font, circle) {
+  constructor(showLegend, data, line, ctx, bounds, font, circle, legendGaps = {}, maxCount = 4) {
     this.showLegend = showLegend;
     this.line = line;
     this.font = font;
     this.data = data;
     this.ctx = ctx;
     this.bounds = bounds;
-    this.groupsData = [];
     this.circle = circle;
+    this.maxCount = maxCount;
+    this.legendGaps = legendGaps;
+    this.totalHeight = 0;
   }
 
-  _getUpdateGroups(groups) {
+  _getSizeGroups(groups) {
     const { size, weight, } = this.font;
 
     return groups.map((groupItem) => {
@@ -32,29 +34,48 @@ class Legend {
       return 0;
     }
 
-    const { gapGroup, } = this.font;
-    const { radius, gapRight, } = this.circle;
+    const { group: gapsGroup = {}, circle: gapsCircle = {}, } = this.legendGaps;
+    const { radius, } = this.circle;
 
     return groups.reduce((acc, { width, }) => {
-      acc += width + gapGroup + radius * 2 + gapRight;
+      acc += width + (gapsGroup.right || 0) + radius * 2 + (gapsCircle.right || 0);
 
       return acc;
     }, 0);
   }
 
-  _getGroups() {
-    const groups = [];
-
-    for (const group in this.data) {
-      const groupLineColor = ((this.data[group].line || {}).color || (this.line || {}).fill || (this.data[group].line || {}).fill || (this.line || {}).fill);
-
-      groups.push({
-        group,
-        color: groupLineColor,
-      });
+  _getTopDistanceGroups(groups) {
+    if (!groups.length) {
+      return 0;
     }
 
-    return groups;
+    const { group: gapsGroup = {}, } = this.legendGaps;
+    const { height, } = groups[0];
+
+    return (gapsGroup.bottom || 0) + height;
+  }
+
+  _getColumns() {
+    const columns = [];
+
+    for (let i = 0; i < Object.keys(this.data).length; i += this.maxCount) {
+      const column = Object
+        .keys(this.data)
+        .map((group) => ({ ...this.data[group], group, }))
+        .slice(i, i + this.maxCount)
+        .map(({ group, line = {}, }) => {
+          const colorLine = line.color || (this.line || {}).color || line.fill || (this.line || {}).fill;
+
+          return {
+            group,
+            color: colorLine,
+          };
+        });
+
+      columns.push(column);
+    }
+
+    return columns;
   }
 
   _drawText(group, height, groups, index, gaps) {
@@ -85,9 +106,10 @@ class Legend {
   }
 
   _drawCircle(x, y, height, color) {
-    const { radius, gapRight, } = this.circle;
+    const { radius, } = this.circle;
+    const { circle = {}, } = this.legendGaps;
     const posCircle = {
-      x: x - radius - gapRight,
+      x: x - radius - (circle.right || 0),
       y: y - Math.min(radius, height / 2),
     };
 
@@ -102,20 +124,34 @@ class Legend {
     ).draw();
   }
 
+  _getDistanceTopFromPrevColumns(columns, index) {
+    const prevColumns = columns.filter((c, i) => i < index);
+
+    return prevColumns.reduce((acc, prevColumn) => {
+      acc += this._getTopDistanceGroups(this._getSizeGroups(prevColumn));
+
+      return acc;
+    }, 0);
+  }
+
   draw(gaps) {
     if (!this.showLegend) {
       return this;
     }
 
-    const groups = this._getGroups();
-    const updateGroups = this._getUpdateGroups(groups);
+    const columns = this._getColumns();
 
-    this.groupsData = updateGroups.map(({ group, color: colorCap, height, width, }, index) => {
-      const posGroup = this._drawText(group, height, updateGroups, index, gaps);
+    columns.map((groups, idx) => {
+      const updateGroups = this._getSizeGroups(groups);
+      const gapFromPrevColumns = this._getDistanceTopFromPrevColumns(columns, idx);
 
-      this._drawCircle(...Object.values(posGroup), height, colorCap);
+      updateGroups.map(({ group, color: colorCap, height, }, index) => {
+        const posGroup = this._drawText(group, height, updateGroups, index, { ...gaps, top: gaps.top + gapFromPrevColumns, });
 
-      return { ...posGroup, height, width, };
+        this._drawCircle(...Object.values(posGroup), height, colorCap);
+      });
+
+      this.totalHeight += this._getTopDistanceGroups(updateGroups);
     });
 
     return this;

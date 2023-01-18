@@ -79,15 +79,17 @@ class Chart {
     return this;
   }
 
-  getGapsForYPoints(axisY, axisX, chartTitle, legendGroupItem, legend) {
+  getGapsForYPoints(axisY, axisX, chartTitle, legend) {
     const { size, weight = 400, } = axisY.font;
+    const { gaps: gapsLegend = {}, totalHeight: legendHeight = 0, } = legend;
     const { showText: showXText = Boolean(Object.keys(axisX.font).length), } = axisX.font;
     const firstName = axisY.getAxesData(this.data).names[0];
     const firstNameSizes = getTextSize(size, weight, firstName, this.ctx);
+    const legendGapBottom = (gapsLegend.legend || {}).bottom || 0;
 
     return {
       left: ((axisY.title || {}).height || 0) + ((axisY.title || {}).gapRight || 0),
-      top: ((chartTitle || {}).y || 0) + ((legendGroupItem || {}).height || 0) + ((legend || {}).gapBottom || 0),
+      top: ((chartTitle || {}).y || 0) + legendHeight + legendGapBottom,
       bottom: (showXText ? axisY.distanceFromXAxisToGraph + firstNameSizes.height : 0) + ((axisX.title || {}).height || 0) + (((axisX.title || {}).gapTop || 0)),
     };
   }
@@ -95,6 +97,7 @@ class Chart {
   getGapsForXPoints(axisY = {}, axisX = {}) {
     const { font: axisYFont = {}, title: axisYTitle = {}, distanceBetweenYAndChart, } = axisY;
     const { font: axisXFont = {}, title: axisXTitle = {}, } = axisX;
+    const ignoreNames = axisX.getIgnoreNames();
 
     const names = axisY.getAxesData(this.data).names;
     const lastName = names[names.length - 1];
@@ -103,8 +106,8 @@ class Chart {
     const { showText: showYText = Boolean(Object.keys(axisYFont).length), } = axisYFont;
     const lastNameSizes = getTextSize(size, weight, axisX.getCorrectName(lastName), this.ctx);
     const firstNameSizes = getTextSize(size, weight, axisX.getCorrectName(firstName), this.ctx);
-    const firstNameIsNotIgnore = (showXText && !(axisX.ignoreNames || []).includes(firstName));
-    const lastNameIsNotIgnore = (showXText && !(axisX.ignoreNames || []).includes(lastName));
+    const firstNameIsNotIgnore = (showXText && !(ignoreNames || []).includes(firstName));
+    const lastNameIsNotIgnore = (showXText && !(ignoreNames || []).includes(lastName));
 
     return {
       left: (firstNameIsNotIgnore ? firstNameSizes.width / 2 : 0) + (axisYTitle.height || 0) + (axisYTitle.gapRight || 0) + (showYText ? axisY.getMaxTextWidthAtYAxis() + distanceBetweenYAndChart : 0),
@@ -115,14 +118,15 @@ class Chart {
 
   getGapsForYTitle(chartTitle = {}, legend = {}, axisX = {}) {
     const { height: chartTitleHeight = 0, gapBottom: chartTitleGapBottom = 0, } = chartTitle;
-    const { groupsData, gapBottom: legendGapBottom = 0, } = legend;
+    const { totalHeight: legendHeight, gaps: gapsLegend = {}, } = legend;
     const { title: axisXTitle = {}, } = axisX;
     const { font: axisXTitleFont = {}, gapTop = 0, } = axisXTitle;
     const { size, weight = 600, text, } = axisXTitleFont;
     const axisXTitleHeight = getTextSize(size, weight, text, this.ctx).height || 0;
+    const legendGapBottom = (gapsLegend.legend || {}).bottom || 0;
 
     return {
-      top: chartTitleHeight + legendGapBottom + chartTitleGapBottom + ((groupsData[0] || {}).height || 0),
+      top: chartTitleHeight + legendGapBottom + chartTitleGapBottom + legendHeight,
       bottom: axisXTitleHeight + gapTop,
     };
   }
@@ -136,13 +140,13 @@ class Chart {
 
   getGapsForLegend(axisY = {}, chartTitle = {}) {
     const { y = 0, gapBottom = 0, } = chartTitle;
-    const { font = {}, gapRight = 0, } = (axisY.title || {});
+    const { font = {}, } = (axisY.title || {});
     const { size, weight = 600, text, } = font;
     const titleAxisYHeight = getTextSize(size, weight, text, this.ctx).height || 0;
 
     return {
       top: y + gapBottom,
-      left: titleAxisYHeight + gapRight,
+      left: titleAxisYHeight,
     };
   }
 }

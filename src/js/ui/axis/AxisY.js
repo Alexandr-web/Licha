@@ -14,9 +14,10 @@ class AxisY extends Axis {
     title,
     bounds,
     font,
-    sort
+    sortValues,
+    sortNames
   ) {
-    super(ctx, line, title, bounds, sort, font);
+    super(ctx, line, title, bounds, sortNames, sortValues, font);
 
     // Шаг, с которым будут рисоваться значения на оси ординат
     this.step = step;
@@ -73,7 +74,7 @@ class AxisY extends Axis {
     return this;
   }
 
-  drawPoints(gaps) {
+  drawPoints(gaps = {}) {
     const values = this.getAxesData(this.data).values;
     const bounds = this.bounds;
     // Стили оси
@@ -83,8 +84,18 @@ class AxisY extends Axis {
     const lastValue = Math.floor(values[values.length - 1]);
     // Содержит размеры самого максимального значения
     const firstValueSizes = getTextSize(size, weight, firstValue, this.ctx);
+    const range = getRange(Math.min(firstValue, lastValue), Math.max(firstValue, lastValue), this.step);
     // Содержит точки на оси ординат
-    const points = getRange(Math.min(firstValue, lastValue), Math.max(firstValue, lastValue), this.step).reverse();
+    const points = [];
+
+    switch (this.sortValues) {
+      case "less-more":
+        points.push(...range.reverse());
+        break;
+      case "more-less":
+        points.push(...range);
+        break;
+    }
 
     if (!points.includes(lastValue)) {
       points.push(lastValue);

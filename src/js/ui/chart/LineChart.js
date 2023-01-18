@@ -14,7 +14,8 @@ class LineChart extends Chart {
     width,
     height,
     title,
-    padding
+    padding,
+    sortValues = "less-more"
   ) {
     super(data, ctx, width, height, "line", title, padding);
 
@@ -22,6 +23,7 @@ class LineChart extends Chart {
     this.pointsY = pointsY;
     this.line = line;
     this.cap = cap;
+    this.sortValues = sortValues;
     this.caps = [];
   }
 
@@ -153,14 +155,15 @@ class LineChart extends Chart {
     const firstPoint = coordinations[0];
     const lastPoint = coordinations[coordinations.length - 1];
     const yItemsOnScreen = this.pointsY.filter(({ onScreen, }) => onScreen);
-    const lastYItem = yItemsOnScreen[yItemsOnScreen.length - 1];
+    const lastYPoint = yItemsOnScreen[yItemsOnScreen.length - 1];
+    const firstYPoint = yItemsOnScreen[0];
     const lineData = {
       moveTo: { x: firstPoint.x, y: firstPoint.y, },
       lineTo: [],
       fill,
       group,
       startY: Math.min(...coordinations.map(({ y, }) => y)),
-      endY: lastYItem.y,
+      endY: lastYPoint.y,
     };
 
     // Определяем координаты для будущей фигуры
@@ -191,11 +194,22 @@ class LineChart extends Chart {
     });
 
     // Закрываем фигуру
-    lineData.lineTo.push(
-      { x: lastPoint.x, y: lastYItem.y, },
-      { x: firstPoint.x, y: lastYItem.y, },
-      lineData.moveTo
-    );
+    switch (this.sortValues) {
+      case "less-more":
+        lineData.lineTo.push(
+          { x: lastPoint.x, y: lastYPoint.y, },
+          { x: firstPoint.x, y: lastYPoint.y, },
+          lineData.moveTo
+        );
+        break;
+      case "more-less":
+        lineData.lineTo.push(
+          { x: lastPoint.x, y: firstYPoint.y, },
+          { x: firstPoint.x, y: firstYPoint.y, },
+          lineData.moveTo
+        );
+        break;
+    }
 
     // Рисуем задний фон группе
     new CustomFigure(
