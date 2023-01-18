@@ -14,7 +14,7 @@ class AxisX extends Axis {
     sortNames,
     ignoreNames = []
   ) {
-    super(ctx, line, title, bounds, sortNames, font);
+    super(ctx, line, title, bounds, sortNames, undefined, font);
 
     this.ignoreNames = ignoreNames;
     this.data = data;

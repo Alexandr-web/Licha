@@ -76,6 +76,7 @@ class aCharty {
 			this.axisY.title,
 			chart.getBounds(),
 			this.axisY.font,
+			this.axisY.sort,
 			this.axisX.sort
 		).drawTitle(chart.getGapsForYTitle(chart.title, { ...legend, gapBottom: ((this.legend.gaps || {}).legend || {}).bottom, }, this.axisX));
 	}
@@ -176,7 +177,10 @@ class aCharty {
 					axisY.points,
 					axisX.points,
 					canvas.ctx,
-					...Object.values(canvas.getSizes())
+					...Object.values(canvas.getSizes()),
+					undefined,
+					undefined,
+					this.axisY.sort
 				).draw();
 				break;
 		}

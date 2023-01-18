@@ -81,7 +81,7 @@ class Chart {
 
   getGapsForYPoints(axisY, axisX, chartTitle, legend) {
     const { size, weight = 400, } = axisY.font;
-    const { gaps: gapsLegend, totalHeight: legendHeight, } = legend;
+    const { gaps: gapsLegend = {}, totalHeight: legendHeight = 0, } = legend;
     const { showText: showXText = Boolean(Object.keys(axisX.font).length), } = axisX.font;
     const firstName = axisY.getAxesData(this.data).names[0];
     const firstNameSizes = getTextSize(size, weight, firstName, this.ctx);

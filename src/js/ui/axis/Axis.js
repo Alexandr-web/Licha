@@ -7,6 +7,7 @@ class Axis {
     title = {},
     bounds = {},
     sortNames = "less-more",
+    sortValues = "less-more",
     font = {
       size: 12,
       color: "black",
@@ -25,6 +26,7 @@ class Axis {
     // Содержит данные точек, находящихся на этой оси
     this.points = [];
     this.sortNames = sortNames;
+    this.sortValues = sortValues;
     this.uniqueNames = [];
     this.uniqueValues = [];
     this.distanceFromXAxisToGraph = 15;
