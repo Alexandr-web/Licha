@@ -17,7 +17,7 @@ class Legend {
   }
 
   _getSizeGroups(groups) {
-    const { size, weight, } = this.font;
+    const { size, weight = 400, } = this.font;
 
     return groups.map((groupItem) => {
       const sizes = getTextSize(size, weight, groupItem.group, this.ctx);

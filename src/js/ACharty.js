@@ -151,6 +151,8 @@ class aCharty {
 	}
 
 	// _mousemoveByCanvas(canvas, elements) {
+	// 	canvas.ctx.save();
+
 	// 	canvas.canvasElement.addEventListener("mousemove", (e) => {
 	// 		this.activeElements = getElementsByCoordinates(canvas.canvasElement, elements, e);
 	// 	});
