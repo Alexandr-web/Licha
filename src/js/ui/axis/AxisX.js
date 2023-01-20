@@ -102,8 +102,11 @@ class AxisX extends Axis {
 
         groupData.map((groupDataItem) => {
           if (groupDataItem.name === name) {
+            const { line, } = this.data[group];
+
             this.points.push({
               name,
+              color: line.color || (this.line || {}).color || line.fill || (this.line || {}).fill,
               value: groupDataItem.value,
               group,
               ...posXItem,
@@ -115,8 +118,14 @@ class AxisX extends Axis {
 
       // Рисуем текст
       if (showText && !ignoreNames.includes(name)) {
+        const font = {
+          ...this.font,
+          str: `${weight} ${size}px Arial, sans-serif`,
+          text: this.getCorrectName(name),
+        };
+
         new Text(
-          { ...this.font, str: `${weight} ${size}px Arial, sans-serif`, text: this.getCorrectName(name), },
+          font,
           this.ctx,
           posXItem.x - nameSizes.width / 2,
           posXItem.y

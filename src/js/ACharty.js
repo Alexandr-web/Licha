@@ -5,8 +5,8 @@ import LineChart from "./ui/chart/LineChart";
 import Grid from "./ui/Grid";
 import AxisX from "./ui/axis/AxisX";
 import Legend from "./ui/Legend";
+import BlockInfo from "./ui/elements/BlockInfo";
 import quickSort from "./helpers/quickSort";
-// import getElementsByCoordinates from "./helpers/getElementsByCoordinates";
 
 class aCharty {
 	constructor({
@@ -18,8 +18,8 @@ class aCharty {
 		grid = {},
 		legend = {},
 		breakpoints = {},
+		blockInfo = {},
 		type = "line",
-		updateWhenResizing = true,
 		selectorCanvas,
 		background,
 		title,
@@ -27,7 +27,6 @@ class aCharty {
 	}) {
 		this.breakpoints = breakpoints;
 		this.padding = padding;
-		this.activeElements = [];
 		this.cap = cap;
 		this.legend = legend;
 		this.type = type;
@@ -38,9 +37,7 @@ class aCharty {
 		this.title = title;
 		this.background = background;
 		this.selectorCanvas = selectorCanvas;
-		// Правило, которое будет обновлять график при изменении экрана
-		this.updateWhenResizing = updateWhenResizing;
-		// Объект с данными графика
+		this.blockInfo = blockInfo;
 		this.data = data;
 	}
 
@@ -96,9 +93,13 @@ class aCharty {
 	}
 
 	_setPoints(axisY, axisX, legend, chart) {
-		axisY.drawPoints(chart.getGapsForYPoints(axisY, axisX, chart.title, { ...this.legend, ...legend, }));
-		// Рисовка точек на абсциссе
-		axisX.drawPoints(chart.getGapsForXPoints(axisY, axisX));
+		const y = axisY.drawPoints(chart.getGapsForYPoints(axisY, axisX, chart.title, { ...this.legend, ...legend, }));
+		const x = axisX.drawPoints(chart.getGapsForXPoints(axisY, axisX));
+
+		return {
+			pointsY: y.points,
+			pointsX: x.points,
+		};
 	}
 
 	_setGrid(canvas, axisX, axisY) {
@@ -150,24 +151,42 @@ class aCharty {
 		}
 	}
 
-	// _mousemoveByCanvas(canvas, elements) {
-	// 	canvas.ctx.save();
+	_mousemoveByCanvas(canvas, { pointsX = [], }) {
+		const canvasLeft = canvas.canvasElement.offsetLeft + canvas.canvasElement.clientLeft;
+		const canvasTop = canvas.canvasElement.offsetTop + canvas.canvasElement.clientTop;
 
-	// 	canvas.canvasElement.addEventListener("mousemove", (e) => {
-	// 		this.activeElements = getElementsByCoordinates(canvas.canvasElement, elements, e);
-	// 	});
-	// }
+		canvas.canvasElement.addEventListener("mousemove", (e) => {
+			this.update();
 
-	// _findActiveCaps(caps, canvas) {
-	// 	const elements = caps.map((cap) => {
-	// 		cap.width = cap.format === "circle" ? cap.size : cap.size / 2;
-	// 		cap.height = cap.format === "circle" ? cap.size : cap.size / 2;
+			const mousePos = { x: e.pageX - canvasLeft, y: e.pageY - canvasTop, };
+			const activeElements = pointsX
+				.map((point) => {
+					if (this.axisX.editName instanceof Function) {
+						return {
+							...point,
+							name: this.axisX.editName(point.name),
+						};
+					}
 
-	// 		return cap;
-	// 	});
+					return point;
+				}).filter(({ x, }) => mousePos.x >= (x - 10) && mousePos.x <= (x + 10));
 
-	// 	this._mousemoveByCanvas(canvas, elements);
-	// }
+			if (activeElements.length) {
+				const [{ x, }] = activeElements;
+
+				new BlockInfo(
+					activeElements,
+					this.blockInfo.title,
+					this.blockInfo.groups,
+					x,
+					mousePos.y,
+					this.blockInfo.background,
+					this.blockInfo.padding,
+					canvas.ctx
+				).init();
+			}
+		});
+	}
 
 	_drawChartByType(axisY, axisX, canvas) {
 		switch (this.type) {
@@ -208,8 +227,9 @@ class aCharty {
 		const legend = this._setLegend(canvas, chart);
 		const axisY = this._setAxisYTitle(canvas, chart, legend);
 		const axisX = this._setAxisXTitle(canvas, chart, axisY);
+		const points = this._setPoints(axisY, axisX, legend, chart);
 
-		this._setPoints(axisY, axisX, legend, chart);
+		this._mousemoveByCanvas(canvas, points);
 		this._setGrid(canvas, axisX, axisY);
 		this._drawChartByType(axisY, axisX, canvas);
 		this._setBreakpoints();
