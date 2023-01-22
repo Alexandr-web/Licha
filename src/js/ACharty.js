@@ -172,11 +172,13 @@ class aCharty {
 				}).filter(({ x, }) => mousePos.x >= (x - 10) && mousePos.x <= (x + 10));
 
 			if (activeElements.length) {
+				const [{ x, }] = activeElements;
+
 				new BlockInfo(
 					activeElements,
 					this.blockInfo.title,
 					this.blockInfo.groups,
-					mousePos.x + 10,
+					x,
 					mousePos.y,
 					this.blockInfo.background,
 					this.blockInfo.padding,

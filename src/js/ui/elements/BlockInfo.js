@@ -14,7 +14,7 @@ class BlockInfo extends Element {
     this.padding = padding;
     this.titleData = titleData;
     this.groupsData = groupsData;
-    this.groupLineWidth = 2;
+    this.groupLineWidth = 4;
     this.triangleHeight = 10;
     this.title = elements[0].name;
   }
