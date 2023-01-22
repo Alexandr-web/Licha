@@ -82,10 +82,8 @@ class AxisY extends Axis {
     // Самое максимальное и минимальное значения
     const firstValue = Math.ceil(values[0]);
     const lastValue = Math.floor(values[values.length - 1]);
-    // Содержит размеры самого максимального значения
     const firstValueSizes = getTextSize(size, weight, firstValue, this.ctx);
     const range = getRange(Math.min(firstValue, lastValue), Math.max(firstValue, lastValue), this.step);
-    // Содержит точки на оси ординат
     const points = [];
 
     switch (this.sortValues) {
@@ -143,12 +141,14 @@ class AxisY extends Axis {
         y: minValue.y + (uValue - minValue.value) * ((maxValue.y - minValue.y) / ((maxValue.value - minValue.value) || 1)),
       };
 
-      this.points.push({
-        value: uValue,
-        onScreen: false,
-        ...posYItem,
-        ...textSizes,
-      });
+      if (!this.points.find(({ value, }) => value === uValue)) {
+        this.points.push({
+          value: uValue,
+          onScreen: false,
+          ...posYItem,
+          ...textSizes,
+        });
+      }
     });
 
     return this;

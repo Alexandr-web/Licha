@@ -151,39 +151,45 @@ class aCharty {
 		}
 	}
 
-	_mousemoveByCanvas(canvas, { pointsX = [], }) {
+	_mousemoveByCanvas(canvas, { pointsX, pointsY, }) {
 		const canvasLeft = canvas.canvasElement.offsetLeft + canvas.canvasElement.clientLeft;
 		const canvasTop = canvas.canvasElement.offsetTop + canvas.canvasElement.clientTop;
-
+		const pointsYOnScreen = pointsY.filter(({ onScreen, }) => onScreen);
+		const [{ y: startY, }] = pointsYOnScreen;
+		const { y: endY, } = pointsYOnScreen[pointsYOnScreen.length - 1];
+		console.log(pointsY);
 		canvas.canvasElement.addEventListener("mousemove", (e) => {
 			this.update();
 
 			const mousePos = { x: e.pageX - canvasLeft, y: e.pageY - canvasTop, };
-			const activeElements = pointsX
-				.map((point) => {
-					if (this.axisX.editName instanceof Function) {
-						return {
-							...point,
-							name: this.axisX.editName(point.name),
-						};
-					}
 
-					return point;
-				}).filter(({ x, }) => mousePos.x >= (x - 10) && mousePos.x <= (x + 10));
+			if (mousePos.y <= endY && mousePos.y >= startY) {
+				const activeElements = pointsX
+					.map((point) => {
+						if (this.axisX.editName instanceof Function) {
+							return {
+								...point,
+								name: this.axisX.editName(point.name),
+							};
+						}
 
-			if (activeElements.length) {
-				const [{ x, }] = activeElements;
+						return point;
+					}).filter(({ x, }) => mousePos.x >= (x - 10) && mousePos.x <= (x + 10));
 
-				new BlockInfo(
-					activeElements,
-					this.blockInfo.title,
-					this.blockInfo.groups,
-					x,
-					mousePos.y,
-					this.blockInfo.background,
-					this.blockInfo.padding,
-					canvas.ctx
-				).init();
+				if (activeElements.length) {
+					const [{ x, }] = activeElements;
+
+					new BlockInfo(
+						activeElements,
+						this.blockInfo.title,
+						this.blockInfo.groups,
+						x,
+						mousePos.y,
+						this.blockInfo.background,
+						this.blockInfo.padding,
+						canvas.ctx
+					).init();
+				}
 			}
 		});
 	}
