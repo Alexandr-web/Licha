@@ -157,7 +157,7 @@ class aCharty {
 		const pointsYOnScreen = pointsY.filter(({ onScreen, }) => onScreen);
 		const [{ y: startY, }] = pointsYOnScreen;
 		const { y: endY, } = pointsYOnScreen[pointsYOnScreen.length - 1];
-		console.log(pointsY);
+
 		canvas.canvasElement.addEventListener("mousemove", (e) => {
 			this.update();
 
