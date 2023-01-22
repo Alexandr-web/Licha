@@ -4,6 +4,7 @@ import Rect from "./Rect";
 import Text from "./Text";
 import quickSort from "../../helpers/quickSort";
 import Line from "./Line";
+import CustomFigure from "./CustomFigure";
 
 class BlockInfo extends Element {
   constructor(elements, titleData, groupsData, x, y, color, padding, ctx) {
@@ -14,6 +15,7 @@ class BlockInfo extends Element {
     this.titleData = titleData;
     this.groupsData = groupsData;
     this.groupLineWidth = 2;
+    this.triangleHeight = 10;
     this.title = elements[0].name;
   }
 
@@ -37,6 +39,13 @@ class BlockInfo extends Element {
     });
   }
 
+  _getCoordinates() {
+    return {
+      x: this.x + this.triangleHeight,
+      y: this.y,
+    };
+  }
+
   _getTopGroupsDistance(groups) {
     const { gaps, } = this.groupsData;
 
@@ -49,19 +58,20 @@ class BlockInfo extends Element {
 
   _drawLines() {
     const padding = this.padding;
+    const { x, } = this._getCoordinates();
 
     for (let i = 0; i < this.elements.length; i++) {
       const { group, } = this._getElementsWithSize()[i];
       const groupPos = this._getGroupsCoordinates(i);
-      const x = this.x + this._getWindowSize().width - padding.right;
+      const posX = x + this._getWindowSize().width - padding.right;
       const linePos = {
         moveTo: {
-          x,
+          x: posX,
           y: groupPos.y,
         },
         lineTo: [
           {
-            x,
+            x: posX,
             y: groupPos.y - group.height,
           }
         ],
@@ -85,6 +95,7 @@ class BlockInfo extends Element {
   }
 
   _drawTitle() {
+    const { x, y, } = this._getCoordinates();
     const padding = this.padding;
     const { font: titleFont, } = this.titleData;
     const { size, color, weight, } = titleFont;
@@ -97,20 +108,21 @@ class BlockInfo extends Element {
     new Text(
       font,
       this.ctx,
-      this.x + padding.left,
-      this.y + padding.top + this._getTitleSize().height
+      x + padding.left,
+      y + padding.top + this._getTitleSize().height
     ).draw();
   }
 
   _getGroupsCoordinates(index) {
+    const { x, y, } = this._getCoordinates();
     const { gaps, } = this.titleData;
     const padding = this.padding;
     const prevGroups = this._getElementsWithSize().filter((element, idx) => idx < index);
     const top = this._getTopGroupsDistance(prevGroups.map(({ group: g, }) => g));
 
     return {
-      x: this.x + padding.left,
-      y: this.y + this._getTitleSize().height + padding.top + top + gaps.bottom,
+      x: x + padding.left,
+      y: y + this._getTitleSize().height + padding.top + top + gaps.bottom,
     };
   }
 
@@ -150,21 +162,48 @@ class BlockInfo extends Element {
     return { width, height, };
   }
 
+  _drawTriangle() {
+    const { x, y, } = this._getCoordinates();
+    const triangleData = {
+      x,
+      y,
+      lineTo: [
+        { x: x - this.triangleHeight, y: y + this.triangleHeight / 2, },
+        { x, y: y + this.triangleHeight, }
+      ],
+      startY: y,
+      endY: y + this.triangleHeight,
+    };
+
+    new CustomFigure(
+      triangleData.x,
+      triangleData.y,
+      this.color,
+      this.ctx,
+      triangleData.lineTo,
+      triangleData.startY,
+      triangleData.endY
+    ).draw();
+  }
+
   _drawWindow(width, height) {
+    const { x, y, } = this._getCoordinates();
+
     new Rect(
-      this.x,
-      this.y,
+      x,
+      y,
       this.color,
       this.ctx,
       width,
       height,
-      this.y,
-      this.y + height
+      y,
+      y + height
     ).draw();
   }
 
   init() {
     this._drawWindow(...Object.values(this._getWindowSize()));
+    this._drawTriangle();
     this._drawTitle();
     this._drawGroups();
     this._drawLines();
