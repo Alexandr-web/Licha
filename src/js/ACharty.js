@@ -194,6 +194,12 @@ class aCharty {
 		});
 	}
 
+	_leavemouseFromCanvasArea(canvas) {
+		canvas.canvasElement.addEventListener("mouseleave", () => {
+			document.documentElement.style = "default";
+		});
+	}
+
 	_drawChartByType(axisY, axisX, canvas) {
 		switch (this.type) {
 			case "line":
@@ -236,6 +242,7 @@ class aCharty {
 		const points = this._setPoints(axisY, axisX, legend, chart);
 
 		this._mousemoveByCanvas(canvas, points);
+		this._leavemouseFromCanvasArea(canvas);
 		this._setGrid(canvas, axisX, axisY);
 		this._drawChartByType(axisY, axisX, canvas);
 		this._setBreakpoints();
