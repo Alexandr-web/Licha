@@ -14,7 +14,7 @@ class BlockInfo extends Element {
     this.padding = padding;
     this.titleData = titleData;
     this.groupsData = groupsData;
-    this.groupLineWidth = 4;
+    this.groupLineWidth = 5;
     this.triangleHeight = 10;
     this.title = elements[0].name;
   }
@@ -63,7 +63,7 @@ class BlockInfo extends Element {
     for (let i = 0; i < this.elements.length; i++) {
       const { group, } = this._getElementsWithSize()[i];
       const groupPos = this._getGroupsCoordinates(i);
-      const posX = x + this._getWindowSize().width - padding.right;
+      const posX = x + this._getWindowSize().width - (padding.right || 0);
       const linePos = {
         moveTo: {
           x: posX,
@@ -108,8 +108,8 @@ class BlockInfo extends Element {
     new Text(
       font,
       this.ctx,
-      x + padding.left,
-      y + padding.top + this._getTitleSize().height
+      x + (padding.left || 0),
+      y + (padding.top || 0) + this._getTitleSize().height
     ).draw();
   }
 
@@ -121,8 +121,8 @@ class BlockInfo extends Element {
     const top = this._getTopGroupsDistance(prevGroups.map(({ group: g, }) => g));
 
     return {
-      x: x + padding.left,
-      y: y + this._getTitleSize().height + padding.top + top + gaps.bottom,
+      x: x + (padding.left || 0),
+      y: y + this._getTitleSize().height + (padding.top || 0) + top + gaps.bottom,
     };
   }
 
@@ -156,8 +156,8 @@ class BlockInfo extends Element {
     const padding = this.padding;
     const { gaps, } = this.groupsData;
     const groups = this._getElementsWithSize().map(({ group, }) => group);
-    const width = this._getMaxContentWidth(this._getElementsWithSize()) + padding.right + padding.left + gaps.right;
-    const height = this._getTitleSize().height + this._getTopGroupsDistance(groups) + padding.bottom + padding.top;
+    const width = this._getMaxContentWidth(this._getElementsWithSize()) + (padding.right || 0) + (padding.left || 0) + (gaps.right || 0);
+    const height = this._getTitleSize().height + this._getTopGroupsDistance(groups) + (padding.bottom || 0) + (padding.top || 0);
 
     return { width, height, };
   }

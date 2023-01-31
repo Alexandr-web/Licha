@@ -152,8 +152,6 @@ class aCharty {
 	}
 
 	_mousemoveByCanvas(canvas, { pointsX, pointsY, }) {
-		const canvasLeft = canvas.canvasElement.offsetLeft + canvas.canvasElement.clientLeft;
-		const canvasTop = canvas.canvasElement.offsetTop + canvas.canvasElement.clientTop;
 		const pointsYOnScreen = pointsY.filter(({ onScreen, }) => onScreen);
 		const [{ y: startY, }] = pointsYOnScreen;
 		const { y: endY, } = pointsYOnScreen[pointsYOnScreen.length - 1];
@@ -161,7 +159,7 @@ class aCharty {
 		canvas.canvasElement.addEventListener("mousemove", (e) => {
 			this.update();
 
-			const mousePos = { x: e.pageX - canvasLeft, y: e.pageY - canvasTop, };
+			const mousePos = { x: e.offsetX, y: e.offsetY, };
 
 			if (mousePos.y <= endY && mousePos.y >= startY) {
 				const activeElements = pointsX
@@ -174,7 +172,9 @@ class aCharty {
 						}
 
 						return point;
-					}).filter(({ x, }) => mousePos.x >= (x - 10) && mousePos.x <= (x + 10));
+					}).filter(({ x, }) => mousePos.x > (x - 10) && mousePos.x < (x + 10));
+
+				document.documentElement.style = `cursor: ${activeElements.length ? "none" : "default"}`;
 
 				if (activeElements.length) {
 					const [{ x, }] = activeElements;
