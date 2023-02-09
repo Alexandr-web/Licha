@@ -152,6 +152,10 @@ class aCharty {
 	}
 
 	_mousemoveByCanvas(canvas, { pointsX, pointsY, }) {
+		if (!Object.keys(this.blockInfo).length) {
+			return;
+		}
+
 		const pointsYOnScreen = pointsY.filter(({ onScreen, }) => onScreen);
 		const [{ y: startY, }] = pointsYOnScreen;
 		const { y: endY, } = pointsYOnScreen[pointsYOnScreen.length - 1];
@@ -191,6 +195,12 @@ class aCharty {
 					).init();
 				}
 			}
+		});
+	}
+
+	_leavemouseFromCanvasArea(canvas) {
+		canvas.canvasElement.addEventListener("mouseleave", () => {
+			document.documentElement.style = "default";
 		});
 	}
 
@@ -236,6 +246,7 @@ class aCharty {
 		const points = this._setPoints(axisY, axisX, legend, chart);
 
 		this._mousemoveByCanvas(canvas, points);
+		this._leavemouseFromCanvasArea(canvas);
 		this._setGrid(canvas, axisX, axisY);
 		this._drawChartByType(axisY, axisX, canvas);
 		this._setBreakpoints();

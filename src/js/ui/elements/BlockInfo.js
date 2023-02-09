@@ -122,7 +122,7 @@ class BlockInfo extends Element {
 
     return {
       x: x + (padding.left || 0),
-      y: y + this._getTitleSize().height + (padding.top || 0) + top + gaps.bottom,
+      y: y + this._getTitleSize().height + (padding.top || 0) + top + (gaps.bottom || 0),
     };
   }
 
