@@ -152,6 +152,10 @@ class aCharty {
 	}
 
 	_mousemoveByCanvas(canvas, { pointsX, pointsY, }) {
+		if (!Object.keys(this.blockInfo).length) {
+			return;
+		}
+
 		const pointsYOnScreen = pointsY.filter(({ onScreen, }) => onScreen);
 		const [{ y: startY, }] = pointsYOnScreen;
 		const { y: endY, } = pointsYOnScreen[pointsYOnScreen.length - 1];

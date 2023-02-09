@@ -78,7 +78,7 @@ class AxisX extends Axis {
     const names = this.getAxesData(this.data).names;
     const bounds = this.bounds;
     const ignoreNames = this.getIgnoreNames();
-    const { size, weight = 400, showText = Object.keys(this.font).length, } = this.font;
+    const { size, weight = 400, showText = Boolean(Object.keys(this.font).length), } = this.font;
 
     names.map((name, index) => {
       // Начальная точка для отрисовки элементов
@@ -102,7 +102,7 @@ class AxisX extends Axis {
 
         groupData.map((groupDataItem) => {
           if (groupDataItem.name === name) {
-            const { line, } = this.data[group];
+            const { line = {}, } = this.data[group];
 
             this.points.push({
               name,
