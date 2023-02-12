@@ -67,7 +67,8 @@ class Chart {
     new Text(
       font,
       this.ctx,
-      ...Object.values(posText)
+      posText.x,
+      posText.y
     ).draw();
 
     this.title = {

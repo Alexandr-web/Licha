@@ -46,7 +46,7 @@ class Canvas {
    * @private
    */
   _setBackground() {
-    new Rect(0, 0, this.background, this.ctx, ...Object.values(this.getSizes())).draw();
+    new Rect(0, 0, this.background, this.ctx, this.getSizes().width, this.getSizes().height).draw();
   }
 
   init() {

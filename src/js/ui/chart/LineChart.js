@@ -213,7 +213,8 @@ class LineChart extends Chart {
 
     // Рисуем задний фон группе
     new CustomFigure(
-      ...Object.values(lineData.moveTo),
+      lineData.moveTo.x,
+      lineData.moveTo.y,
       lineData.fill,
       this.ctx,
       lineData.lineTo,

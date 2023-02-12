@@ -99,7 +99,8 @@ class Legend {
     new Text(
       font,
       this.ctx,
-      ...Object.values(posGroup)
+      posGroup.x,
+      posGroup.y
     ).draw();
 
     return posGroup;
@@ -115,7 +116,8 @@ class Legend {
 
     new Circle(
       radius,
-      ...Object.values(posCircle),
+      posCircle.x,
+      posCircle.y,
       color,
       this.ctx,
       1,
@@ -148,7 +150,7 @@ class Legend {
       updateGroups.map(({ group, color: colorCap, height, }, index) => {
         const posGroup = this._drawText(group, height, updateGroups, index, { ...gaps, top: gaps.top + gapFromPrevColumns, });
 
-        this._drawCircle(...Object.values(posGroup), height, colorCap);
+        this._drawCircle(posGroup.x, posGroup.y, height, colorCap);
       });
 
       this.totalHeight += this._getTopDistanceGroups(updateGroups);

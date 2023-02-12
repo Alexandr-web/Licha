@@ -58,7 +58,8 @@ class AxisX extends Axis {
     new Text(
       font,
       this.ctx,
-      ...Object.values(posTitle)
+      posTitle.x,
+      posTitle.y
     ).draw();
 
     this.title = {
