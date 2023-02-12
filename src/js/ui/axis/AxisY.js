@@ -78,9 +78,7 @@ class AxisY extends Axis {
   drawPoints(gaps = {}) {
     const values = this.getAxesData(this.data).values;
     const bounds = this.bounds;
-    // Стили оси
     const { size, showText = Boolean(Object.keys(this.font).length), weight = 400, } = this.font;
-    // Самое максимальное и минимальное значения
     const firstValue = Math.ceil(values[0]);
     const lastValue = Math.floor(values[values.length - 1]);
     const firstValueSizes = getTextSize(size, weight, firstValue, this.ctx);

@@ -90,7 +90,7 @@ class Chart {
 
     return {
       left: ((axisY.title || {}).height || 0) + ((axisY.title || {}).gapRight || 0),
-      top: ((chartTitle || {}).y || 0) + legendHeight + legendGapBottom,
+      top: ((chartTitle || {}).y || 0) + ((chartTitle || {}).gapBottom || 0) + legendHeight + legendGapBottom,
       bottom: (showXText ? axisY.distanceFromXAxisToGraph + firstNameSizes.height : 0) + ((axisX.title || {}).height || 0) + (((axisX.title || {}).gapTop || 0)),
     };
   }
