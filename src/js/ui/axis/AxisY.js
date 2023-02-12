@@ -60,7 +60,8 @@ class AxisY extends Axis {
     new Text(
       font,
       this.ctx,
-      ...Object.values(posTitle),
+      posTitle.x,
+      posTitle.y,
       undefined,
       -90 * (Math.PI / 180)
     ).draw();

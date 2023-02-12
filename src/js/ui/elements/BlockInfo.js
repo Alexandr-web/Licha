@@ -242,7 +242,8 @@ class BlockInfo extends Element {
     }
 
     new Rect(
-      ...Object.values(coordinates),
+      coordinates.x,
+      coordinates.y,
       this.color,
       this.ctx,
       width,
@@ -253,7 +254,7 @@ class BlockInfo extends Element {
   }
 
   init() {
-    this._drawWindow(...Object.values(this._getWindowSize()));
+    this._drawWindow(this._getWindowSize().width, this._getWindowSize().height);
     this._drawTriangle(this._getWindowSize().width);
     this._drawTitle(this._getWindowSize().width);
     this._drawGroups(this._getWindowSize().width);

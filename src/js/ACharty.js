@@ -46,7 +46,7 @@ class aCharty {
 	}
 
 	_setChartTitle(canvas) {
-		return new Chart(this.data, canvas.ctx, ...Object.values(canvas.getSizes()), this.title, this.type, this.padding).drawTitle();
+		return new Chart(this.data, canvas.ctx, canvas.getSizes().width, canvas.getSizes().height, this.title, this.type, this.padding).drawTitle();
 	}
 
 	_setLegend(canvas, chart) {
@@ -176,7 +176,7 @@ class aCharty {
 						}
 
 						return point;
-					}).filter(({ x, }) => mousePos.x > (x - 2) && mousePos.x < (x + 2));
+					}).filter(({ x, }) => mousePos.x > (x - 5) && mousePos.x < (x + 5));
 
 				document.documentElement.style = `cursor: ${activeElements.length ? "none" : "default"}`;
 
@@ -217,7 +217,8 @@ class aCharty {
 					axisY.points,
 					axisX.points,
 					canvas.ctx,
-					...Object.values(canvas.getSizes()),
+					canvas.getSizes().width,
+					canvas.getSizes().height,
 					undefined,
 					undefined,
 					this.axisY.sort
