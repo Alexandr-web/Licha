@@ -7,9 +7,10 @@ import Line from "./Line";
 import CustomFigure from "./CustomFigure";
 
 class BlockInfo extends Element {
-  constructor(elements, titleData, groupsData, x, y, color, padding, ctx) {
+  constructor(bounds, elements, titleData, groupsData, x, y, color, padding, ctx) {
     super(x, y, color, ctx);
 
+    this.bounds = bounds;
     this.elements = elements;
     this.padding = padding;
     this.titleData = titleData;
@@ -56,14 +57,14 @@ class BlockInfo extends Element {
     }, 0);
   }
 
-  _drawLines() {
+  _drawLines(blockWidth) {
     const padding = this.padding;
     const { x, } = this._getCoordinates();
 
     for (let i = 0; i < this.elements.length; i++) {
       const { group, } = this._getElementsWithSize()[i];
       const groupPos = this._getGroupsCoordinates(i);
-      const posX = x + this._getWindowSize().width - (padding.right || 0);
+      const posX = x + blockWidth - (padding.right || 0);
       const linePos = {
         moveTo: {
           x: posX,
@@ -77,8 +78,24 @@ class BlockInfo extends Element {
         ],
       };
 
+      if (this._outOfBounds(blockWidth)) {
+        Object.assign(linePos, {
+          moveTo: {
+            x: posX - (blockWidth + this.triangleHeight * 2),
+            y: groupPos.y,
+          },
+          lineTo: [
+            {
+              x: posX - (blockWidth + this.triangleHeight * 2),
+              y: groupPos.y - group.height,
+            }
+          ],
+        });
+      }
+
       new Line(
-        ...Object.values(linePos.moveTo),
+        linePos.moveTo.x,
+        linePos.moveTo.y,
         group.color,
         this.ctx,
         linePos.lineTo,
@@ -94,9 +111,18 @@ class BlockInfo extends Element {
     return getTextSize(size, weight, this.title, this.ctx);
   }
 
-  _drawTitle() {
-    const { x, y, } = this._getCoordinates();
+  _drawTitle(blockWidth) {
     const padding = this.padding;
+    const { x, y, } = this._getCoordinates();
+    const coordinates = {
+      x: x + (padding.left || 0),
+      y: y + (padding.top || 0) + this._getTitleSize().height,
+    };
+
+    if (this._outOfBounds(blockWidth)) {
+      coordinates.x -= blockWidth + this.triangleHeight * 2;
+    }
+
     const { font: titleFont, } = this.titleData;
     const { size, color, weight, } = titleFont;
     const font = {
@@ -108,8 +134,8 @@ class BlockInfo extends Element {
     new Text(
       font,
       this.ctx,
-      x + (padding.left || 0),
-      y + (padding.top || 0) + this._getTitleSize().height
+      coordinates.x,
+      coordinates.y
     ).draw();
   }
 
@@ -126,7 +152,7 @@ class BlockInfo extends Element {
     };
   }
 
-  _drawGroups() {
+  _drawGroups(blockWidth) {
     const { font: groupsFont, } = this.groupsData;
     const { size, weight, color, } = groupsFont;
 
@@ -136,11 +162,17 @@ class BlockInfo extends Element {
         color,
         str: `${weight} ${size}px Arial, sans-serif`,
       };
+      const coordinates = this._getGroupsCoordinates(index);
+
+      if (this._outOfBounds(blockWidth)) {
+        coordinates.x -= blockWidth + this.triangleHeight * 2;
+      }
 
       new Text(
         font,
         this.ctx,
-        ...Object.values(this._getGroupsCoordinates(index))
+        coordinates.x,
+        coordinates.y
       ).draw();
     });
   }
@@ -150,6 +182,10 @@ class BlockInfo extends Element {
     const titleWidth = this._getTitleSize().width;
 
     return Math.max(maxGroupWidth, titleWidth);
+  }
+
+  _outOfBounds(blockWidth) {
+    return this._getCoordinates().x + blockWidth > this.bounds.width;
   }
 
   _getWindowSize() {
@@ -162,7 +198,7 @@ class BlockInfo extends Element {
     return { width, height, };
   }
 
-  _drawTriangle() {
+  _drawTriangle(blockWidth) {
     const { x, y, } = this._getCoordinates();
     const triangleData = {
       x,
@@ -174,6 +210,18 @@ class BlockInfo extends Element {
       startY: y,
       endY: y + this.triangleHeight,
     };
+
+    if (this._outOfBounds(blockWidth)) {
+      Object.assign(triangleData, {
+        ...triangleData,
+        x: x - this.triangleHeight * 2,
+        y,
+        lineTo: [
+          { x: x - this.triangleHeight, y: y + this.triangleHeight / 2, },
+          { x: x - this.triangleHeight * 2, y: y + this.triangleHeight, }
+        ],
+      });
+    }
 
     new CustomFigure(
       triangleData.x,
@@ -187,26 +235,29 @@ class BlockInfo extends Element {
   }
 
   _drawWindow(width, height) {
-    const { x, y, } = this._getCoordinates();
+    const coordinates = this._getCoordinates();
+
+    if (this._outOfBounds(width)) {
+      coordinates.x -= (width + this.triangleHeight * 2);
+    }
 
     new Rect(
-      x,
-      y,
+      ...Object.values(coordinates),
       this.color,
       this.ctx,
       width,
       height,
-      y,
-      y + height
+      coordinates.y,
+      coordinates.y + height
     ).draw();
   }
 
   init() {
     this._drawWindow(...Object.values(this._getWindowSize()));
-    this._drawTriangle();
-    this._drawTitle();
-    this._drawGroups();
-    this._drawLines();
+    this._drawTriangle(this._getWindowSize().width);
+    this._drawTitle(this._getWindowSize().width);
+    this._drawGroups(this._getWindowSize().width);
+    this._drawLines(this._getWindowSize().width);
   }
 }
 

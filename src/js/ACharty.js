@@ -151,7 +151,7 @@ class aCharty {
 		}
 	}
 
-	_mousemoveByCanvas(canvas, { pointsX, pointsY, }) {
+	_mousemoveByCanvas(canvas, bounds, { pointsX, pointsY, }) {
 		if (!Object.keys(this.blockInfo).length) {
 			return;
 		}
@@ -176,7 +176,7 @@ class aCharty {
 						}
 
 						return point;
-					}).filter(({ x, }) => mousePos.x > (x - 10) && mousePos.x < (x + 10));
+					}).filter(({ x, }) => mousePos.x > (x - 2) && mousePos.x < (x + 2));
 
 				document.documentElement.style = `cursor: ${activeElements.length ? "none" : "default"}`;
 
@@ -184,6 +184,7 @@ class aCharty {
 					const [{ x, }] = activeElements;
 
 					new BlockInfo(
+						bounds,
 						activeElements,
 						this.blockInfo.title,
 						this.blockInfo.groups,
@@ -194,6 +195,8 @@ class aCharty {
 						canvas.ctx
 					).init();
 				}
+			} else {
+				document.documentElement.style = "cursor: default";
 			}
 		});
 	}
@@ -245,7 +248,7 @@ class aCharty {
 		const axisX = this._setAxisXTitle(canvas, chart, axisY);
 		const points = this._setPoints(axisY, axisX, legend, chart);
 
-		this._mousemoveByCanvas(canvas, points);
+		this._mousemoveByCanvas(canvas, chart.getBounds(), points);
 		this._leavemouseFromCanvasArea(canvas);
 		this._setGrid(canvas, axisX, axisY);
 		this._drawChartByType(axisY, axisX, canvas);
