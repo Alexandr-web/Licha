@@ -8,7 +8,7 @@ import Legend from "./ui/Legend";
 import BlockInfo from "./ui/elements/BlockInfo";
 import quickSort from "./helpers/quickSort";
 
-class aCharty {
+class ACharty {
 	constructor({
 		data = {},
 		axisY = {},
@@ -260,4 +260,4 @@ class aCharty {
 	}
 }
 
-export default aCharty;
+export default ACharty;

@@ -42,7 +42,7 @@ class AxisY extends Axis {
     }
 
     const bounds = this.bounds;
-    const { size, text, color, weight = 400, } = this.title.font;
+    const { size, text, color, weight = 600, } = this.title.font;
     const font = {
       size,
       text,
