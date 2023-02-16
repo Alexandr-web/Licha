@@ -62,7 +62,7 @@ class AxisY extends Axis {
       this.ctx,
       posTitle.x,
       posTitle.y,
-      undefined,
+      null,
       -90 * (Math.PI / 180)
     ).draw();
 

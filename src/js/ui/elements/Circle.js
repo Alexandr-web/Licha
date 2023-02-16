@@ -3,7 +3,7 @@ import setGradientColor from "../../helpers/setGradientColor";
 
 class Circle extends Element {
   constructor(radius, x, y, color, ctx, opacity, startY, endY, stroke = {}) {
-    super(x, y, color, ctx, undefined, opacity);
+    super(x, y, color, ctx, null, opacity);
 
     this.radius = radius;
     this.stroke = stroke;

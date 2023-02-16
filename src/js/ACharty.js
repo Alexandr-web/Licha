@@ -10,6 +10,7 @@ import quickSort from "./helpers/quickSort";
 
 class ACharty {
 	constructor({
+		theme = {},
 		data = {},
 		axisY = {},
 		axisX = {},
@@ -39,6 +40,7 @@ class ACharty {
 		this.selectorCanvas = selectorCanvas;
 		this.blockInfo = blockInfo;
 		this.data = data;
+		this.theme = theme;
 	}
 
 	_setCanvas() {
@@ -46,49 +48,67 @@ class ACharty {
 	}
 
 	_setChartTitle(canvas) {
-		return new Chart(this.data, canvas.ctx, canvas.getSizes().width, canvas.getSizes().height, this.title, this.type, this.padding).drawTitle();
+		const { width, height, } = canvas.getSizes();
+
+		return new Chart(
+			this.data,
+			canvas.ctx,
+			width,
+			height,
+			this.title,
+			this.type,
+			this.padding
+		).drawTitle();
 	}
 
 	_setLegend(canvas, chart) {
+		const { font, circle, gaps, maxCount, } = this.legend;
+		const showLegend = Boolean(Object.keys(this.legend).length);
+
 		return new Legend(
-			Boolean(Object.keys(this.legend).length),
+			showLegend,
 			this.data,
 			this.line,
 			canvas.ctx,
 			chart.getBounds(),
-			this.legend.font,
-			this.legend.circle,
-			this.legend.gaps,
-			this.legend.maxCount
+			font,
+			circle,
+			gaps,
+			maxCount
 		).draw(chart.getGapsForLegend(this.axisY, chart.title));
 	}
 
 	_setAxisYTitle(canvas, chart, legend) {
+		const { step, editValue, line, title, font, sort, } = this.axisY;
+		const { legend: legendGaps = {}, } = (this.legend.gaps || {});
+
 		return new AxisY(
-			this.axisY.step,
-			this.axisY.editValue,
+			step,
+			editValue,
 			this.data,
 			canvas.ctx,
-			this.axisY.line,
-			this.axisY.title,
+			line,
+			title,
 			chart.getBounds(),
-			this.axisY.font,
-			this.axisY.sort,
+			font,
+			sort,
 			this.axisX.sort
-		).drawTitle(chart.getGapsForYTitle(chart.title, { ...legend, gapBottom: ((this.legend.gaps || {}).legend || {}).bottom, }, this.axisX));
+		).drawTitle(chart.getGapsForYTitle(chart.title, { ...legend, gapBottom: (legendGaps.bottom || 0), }, this.axisX));
 	}
 
 	_setAxisXTitle(canvas, chart, axisY) {
+		const { font, editName, sort, ignoreNames, line, title, } = this.axisX;
+
 		return new AxisX(
 			canvas.ctx,
 			this.data,
-			this.axisX.line,
-			this.axisX.title,
+			line,
+			title,
 			chart.getBounds(),
-			this.axisX.font,
-			this.axisX.editName,
-			this.axisX.sort,
-			this.axisX.ignoreNames
+			font,
+			editName,
+			sort,
+			ignoreNames
 		).drawTitle(chart.getGapsForXTitle(axisY));
 	}
 
@@ -103,13 +123,15 @@ class ACharty {
 	}
 
 	_setGrid(canvas, axisX, axisY) {
+		const { line, format, } = this.grid;
+
 		return new Grid(
 			canvas.ctx,
 			axisY.getAxesData(this.data).names,
 			axisY.points,
 			axisX.points,
-			this.grid.line,
-			this.grid.format
+			line,
+			format
 		).init();
 	}
 
@@ -126,7 +148,8 @@ class ACharty {
 		}
 
 		const document = window.document.documentElement;
-		const bPoint = quickSort(Object.keys(this.breakpoints).map((point) => parseInt(point))).find((width) => document.offsetWidth <= width);
+		const points = Object.keys(this.breakpoints).map((point) => parseInt(point));
+		const bPoint = quickSort(points).find((width) => document.offsetWidth <= width);
 
 		if (bPoint) {
 			const func = this.breakpoints[bPoint.toString()];
@@ -166,32 +189,30 @@ class ACharty {
 			const mousePos = { x: e.offsetX, y: e.offsetY, };
 
 			if (mousePos.y <= endY && mousePos.y >= startY) {
-				const activeElements = pointsX
-					.map((point) => {
-						if (this.axisX.editName instanceof Function) {
-							return {
-								...point,
-								name: this.axisX.editName(point.name),
-							};
-						}
+				const activeElements = pointsX.map((point) => {
+					if (this.axisX.editName instanceof Function) {
+						return {
+							...point,
+							name: this.axisX.editName(point.name),
+						};
+					}
 
-						return point;
-					}).filter(({ x, }) => mousePos.x > (x - 5) && mousePos.x < (x + 5));
-
-				document.documentElement.style = `cursor: ${activeElements.length ? "none" : "default"}`;
+					return point;
+				}).filter(({ x, }) => mousePos.x > (x - 5) && mousePos.x < (x + 5));
 
 				if (activeElements.length) {
 					const [{ x, }] = activeElements;
+					const { title, groups, background, padding, } = this.blockInfo;
 
 					new BlockInfo(
 						bounds,
 						activeElements,
-						this.blockInfo.title,
-						this.blockInfo.groups,
+						title,
+						groups,
 						x,
 						mousePos.y,
-						this.blockInfo.background,
-						this.blockInfo.padding,
+						background,
+						padding,
 						canvas.ctx
 					).init();
 				}
@@ -202,12 +223,12 @@ class ACharty {
 	}
 
 	_leavemouseFromCanvasArea(canvas) {
-		canvas.canvasElement.addEventListener("mouseleave", () => {
-			document.documentElement.style = "default";
-		});
+		canvas.canvasElement.addEventListener("mouseleave", () => document.documentElement.style = "default");
 	}
 
 	_drawChartByType(axisY, axisX, canvas) {
+		const { width, height, } = canvas.getSizes();
+
 		switch (this.type) {
 			case "line":
 				new LineChart(
@@ -217,10 +238,10 @@ class ACharty {
 					axisY.points,
 					axisX.points,
 					canvas.ctx,
-					canvas.getSizes().width,
-					canvas.getSizes().height,
-					undefined,
-					undefined,
+					width,
+					height,
+					null,
+					null,
 					this.axisY.sort
 				).draw();
 				break;

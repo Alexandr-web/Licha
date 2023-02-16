@@ -57,10 +57,10 @@ class Legend {
 
   _getColumns() {
     const columns = [];
+    const dataKeys = Object.keys(this.data);
 
-    for (let i = 0; i < Object.keys(this.data).length; i += this.maxCount) {
-      const column = Object
-        .keys(this.data)
+    for (let i = 0; i < dataKeys.length; i += this.maxCount) {
+      const column = dataKeys
         .map((group) => ({ ...this.data[group], group, }))
         .slice(i, i + this.maxCount)
         .map(({ group, line = {}, }) => {
