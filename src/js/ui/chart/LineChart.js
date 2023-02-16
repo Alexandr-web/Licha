@@ -2,6 +2,7 @@ import Chart from "./Chart";
 import Line from "../elements/Line";
 import Cap from "../elements/Cap";
 import CustomFigure from "../elements/CustomFigure";
+import getStyleByIndex from "../../helpers/getStyleByIndex";
 
 class LineChart extends Chart {
   constructor(
@@ -15,9 +16,11 @@ class LineChart extends Chart {
     height,
     title,
     padding,
-    sortValues = "less-more"
+    sortValues = "less-more",
+    themeForLine = {},
+    themeForCaps = {}
   ) {
-    super(data, ctx, width, height, "line", title, padding);
+    super(padding, data, ctx, width, height, "line", title);
 
     this.pointsX = pointsX;
     this.pointsY = pointsY;
@@ -25,10 +28,19 @@ class LineChart extends Chart {
     this.cap = cap;
     this.sortValues = sortValues;
     this.caps = [];
+    this.themeForLine = themeForLine;
+    this.themeForCaps = themeForCaps;
   }
 
   draw() {
     for (const group in this.data) {
+      const dataKeys = Object.keys(this.data);
+      const idx = dataKeys.indexOf(group);
+      const themeColorForLine = getStyleByIndex(idx, dataKeys.length, this.themeForLine.color);
+      const themeFillForLine = getStyleByIndex(idx, dataKeys.length, this.themeForLine.fill);
+      const themeColorForCap = getStyleByIndex(idx, dataKeys.length, this.themeForCaps.color);
+      const themeStrokeColorForCap = getStyleByIndex(idx, dataKeys.length, this.themeForCaps.strokeColor);
+
       const {
         data: groupData,
         line: groupLine = {},
@@ -36,15 +48,15 @@ class LineChart extends Chart {
       } = this.data[group];
       const lineStyle = {
         width: groupLine.width || this.line.width,
-        color: groupLine.color || this.line.color,
+        color: groupLine.color || this.line.color || themeColorForLine,
         dotted: groupLine.dotted || this.line.dotted,
         stepped: groupLine.stepped || this.line.stepped,
-        fill: groupLine.fill || this.line.fill,
+        fill: groupLine.fill || this.line.fill || themeFillForLine,
       };
       const capStyle = {
         size: groupCap.size || this.cap.size,
-        color: groupCap.color || this.cap.color,
-        stroke: groupCap.stroke || this.cap.stroke,
+        color: groupCap.color || this.cap.color || themeColorForCap,
+        stroke: groupCap.stroke || this.cap.stroke || {},
         format: groupCap.format || this.cap.format,
       };
       const coordinations = groupData.map(({ value, name, }) => {
@@ -123,7 +135,10 @@ class LineChart extends Chart {
             capStyle.format === "circle" ? findAxisYItem.y - capStyle.size : findAxisYItem.y - capStyle.size / 2,
             capStyle.format === "circle" ? findAxisYItem.y + capStyle.size : findAxisYItem.y + capStyle.size / 2,
             0,
-            capStyle.stroke
+            {
+              ...capStyle.stroke,
+              color: capStyle.stroke.color || themeStrokeColorForCap,
+            }
           ).draw();
 
           this.caps.push({

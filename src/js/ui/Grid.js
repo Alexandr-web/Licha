@@ -1,13 +1,22 @@
 import Line from "./elements/Line";
 
 class Grid {
-  constructor(ctx, names, pointsY = [], pointsX = [], line = {}, format = "default") {
+  constructor(
+    ctx,
+    names,
+    pointsY = [],
+    pointsX = [],
+    line = {},
+    format = "default",
+    theme = {}
+  ) {
     this.names = names;
     this.ctx = ctx;
     this.pointsY = pointsY;
     this.pointsX = pointsX;
     this.line = line;
     this.format = format;
+    this.theme = theme;
   }
 
   _drawHorizontalLines({ color, width, dotted, }) {
@@ -53,6 +62,8 @@ class Grid {
     if (!Object.keys(this.line).length) {
       return;
     }
+
+    this.line = this.line.color || this.theme.color;
 
     switch (this.format) {
       case "horizontal":

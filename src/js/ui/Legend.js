@@ -1,9 +1,10 @@
 import Text from "./elements/Text";
 import Circle from "./elements/Circle";
 import getTextSize from "../helpers/getTextSize";
+import getStyleByIndex from "../helpers/getStyleByIndex";
 
 class Legend {
-  constructor(showLegend, data, line, ctx, bounds, font, circle, legendGaps = {}, maxCount = 4) {
+  constructor(showLegend, data, line, ctx, bounds, font, circle, legendGaps = {}, maxCount = 4, themeForText = {}, themeForCircle = {}) {
     this.showLegend = showLegend;
     this.line = line;
     this.font = font;
@@ -14,6 +15,8 @@ class Legend {
     this.maxCount = maxCount;
     this.legendGaps = legendGaps;
     this.totalHeight = 0;
+    this.themeForText = themeForText;
+    this.themeForCircle = themeForCircle;
   }
 
   _getSizeGroups(groups) {
@@ -64,7 +67,9 @@ class Legend {
         .map((group) => ({ ...this.data[group], group, }))
         .slice(i, i + this.maxCount)
         .map(({ group, line = {}, }) => {
-          const colorLine = line.color || (this.line || {}).color || line.fill || (this.line || {}).fill;
+          const idx = dataKeys.indexOf(group);
+          const colorByTheme = getStyleByIndex(idx, dataKeys.length, this.themeForCircle.color);
+          const colorLine = (line.color || (this.line || {}).color || line.fill || (this.line || {}).fill) || colorByTheme;
 
           return {
             group,
@@ -82,7 +87,7 @@ class Legend {
     const bounds = this.bounds;
     const center = bounds.width / 2;
     const totalGroupsDistance = this._getDistanceGroups(groups);
-    const { size, weight = 400, color, } = this.font;
+    const { size, weight = 400, color = this.themeForText.color, } = this.font;
     const font = {
       size,
       color,

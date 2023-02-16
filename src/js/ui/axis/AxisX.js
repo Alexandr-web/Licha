@@ -1,6 +1,7 @@
 import Axis from "./Axis";
 import Text from "../elements/Text";
 import getTextSize from "../../helpers/getTextSize";
+import getStyleByIndex from "../../helpers/getStyleByIndex";
 
 class AxisX extends Axis {
   constructor(
@@ -12,13 +13,19 @@ class AxisX extends Axis {
     font,
     editName,
     sortNames,
-    ignoreNames = []
+    ignoreNames = [],
+    themeForTitle = {},
+    themeForPoint = {},
+    themeForLine = {}
   ) {
     super(ctx, line, title, bounds, sortNames, null, font);
 
     this.ignoreNames = ignoreNames;
     this.data = data;
     this.editName = editName;
+    this.themeForTitle = themeForTitle;
+    this.themeForPoint = themeForPoint;
+    this.themeForLine = themeForLine;
   }
 
   getIgnoreNames() {
@@ -38,7 +45,7 @@ class AxisX extends Axis {
       return this;
     }
 
-    const { size, weight = 600, color, text, } = this.title.font;
+    const { size, weight = 600, color = this.themeForTitle.color, text, } = this.title.font;
     const font = {
       size,
       color,
@@ -79,7 +86,7 @@ class AxisX extends Axis {
     const names = this.getAxesData(this.data).names;
     const bounds = this.bounds;
     const ignoreNames = this.getIgnoreNames();
-    const { size, weight = 400, showText = Boolean(Object.keys(this.font).length), } = this.font;
+    const { size, weight = 400, showText = Boolean(Object.keys(this.font).length), color = this.themeForPoint.color, } = this.font;
 
     names.map((name, index) => {
       // Начальная точка для отрисовки элементов
@@ -100,6 +107,9 @@ class AxisX extends Axis {
       // то мы добавляем его вместе с его значением
       for (const group in this.data) {
         const groupData = this.data[group].data;
+        const dataKeys = Object.keys(this.data);
+        const idx = dataKeys.indexOf(group);
+        const colorByTheme = getStyleByIndex(idx, dataKeys.length, this.themeForLine.color);
 
         groupData.map((groupDataItem) => {
           if (groupDataItem.name === name) {
@@ -107,7 +117,7 @@ class AxisX extends Axis {
 
             this.points.push({
               name,
-              color: line.color || (this.line || {}).color || line.fill || (this.line || {}).fill,
+              color: (line.color || (this.line || {}).color || line.fill || (this.line || {}).fill) || colorByTheme,
               value: groupDataItem.value,
               group,
               ...posXItem,
@@ -121,6 +131,7 @@ class AxisX extends Axis {
       if (showText && !ignoreNames.includes(name)) {
         const font = {
           ...this.font,
+          color,
           str: `${weight} ${size}px Arial, sans-serif`,
           text: this.getCorrectName(name),
         };

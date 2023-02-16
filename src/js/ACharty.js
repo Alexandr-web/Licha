@@ -10,6 +10,9 @@ import quickSort from "./helpers/quickSort";
 
 class ACharty {
 	constructor({
+		selectorCanvas,
+		background,
+		title,
 		theme = {},
 		data = {},
 		axisY = {},
@@ -21,10 +24,12 @@ class ACharty {
 		breakpoints = {},
 		blockInfo = {},
 		type = "line",
-		selectorCanvas,
-		background,
-		title,
-		padding,
+		padding = {
+			top: 10,
+			left: 10,
+			right: 10,
+			bottom: 10,
+		},
 	}) {
 		this.breakpoints = breakpoints;
 		this.padding = padding;
@@ -44,20 +49,21 @@ class ACharty {
 	}
 
 	_setCanvas() {
-		return new Canvas(this.selectorCanvas, this.background).init();
+		return new Canvas(this.selectorCanvas, this.background, this.theme.canvas).init();
 	}
 
 	_setChartTitle(canvas) {
 		const { width, height, } = canvas.getSizes();
 
 		return new Chart(
+			this.padding,
 			this.data,
 			canvas.ctx,
 			width,
 			height,
 			this.title,
 			this.type,
-			this.padding
+			this.theme.title
 		).drawTitle();
 	}
 
@@ -74,13 +80,17 @@ class ACharty {
 			font,
 			circle,
 			gaps,
-			maxCount
+			maxCount,
+			this.theme.legend,
+			this.theme.line
 		).draw(chart.getGapsForLegend(this.axisY, chart.title));
 	}
 
 	_setAxisYTitle(canvas, chart, legend) {
 		const { step, editValue, line, title, font, sort, } = this.axisY;
 		const { legend: legendGaps = {}, } = (this.legend.gaps || {});
+		const themeForTitle = (this.theme.axis || {}).title;
+		const themeForPoint = (this.theme.axis || {}).point;
 
 		return new AxisY(
 			step,
@@ -92,23 +102,31 @@ class ACharty {
 			chart.getBounds(),
 			font,
 			sort,
-			this.axisX.sort
+			this.axisX.sort,
+			themeForTitle,
+			themeForPoint
 		).drawTitle(chart.getGapsForYTitle(chart.title, { ...legend, gapBottom: (legendGaps.bottom || 0), }, this.axisX));
 	}
 
 	_setAxisXTitle(canvas, chart, axisY) {
-		const { font, editName, sort, ignoreNames, line, title, } = this.axisX;
+		const { font, editName, sort, ignoreNames, title, } = this.axisX;
+		const themeForTitle = (this.theme.axis || {}).title;
+		const themeForPoint = (this.theme.axis || {}).point;
+		const themeForLine = this.theme.line;
 
 		return new AxisX(
 			canvas.ctx,
 			this.data,
-			line,
+			this.line,
 			title,
 			chart.getBounds(),
 			font,
 			editName,
 			sort,
-			ignoreNames
+			ignoreNames,
+			themeForTitle,
+			themeForPoint,
+			themeForLine
 		).drawTitle(chart.getGapsForXTitle(axisY));
 	}
 
@@ -131,7 +149,8 @@ class ACharty {
 			axisY.points,
 			axisX.points,
 			line,
-			format
+			format,
+			this.theme.grid
 		).init();
 	}
 
@@ -200,11 +219,18 @@ class ACharty {
 					return point;
 				}).filter(({ x, }) => mousePos.x > (x - 5) && mousePos.x < (x + 5));
 
+				document.documentElement.style = `cursor: ${activeElements.length ? "none" : "default"}`;
+
 				if (activeElements.length) {
 					const [{ x, }] = activeElements;
 					const { title, groups, background, padding, } = this.blockInfo;
+					const themeForWindow = (this.theme.blockInfo || {}).window;
+					const themeForLine = this.theme.line;
+					const themeForTitle = (this.theme.blockInfo || {}).title;
+					const themeForGroup = (this.theme.blockInfo || {}).group;
 
 					new BlockInfo(
+						this.data,
 						bounds,
 						activeElements,
 						title,
@@ -213,7 +239,11 @@ class ACharty {
 						mousePos.y,
 						background,
 						padding,
-						canvas.ctx
+						canvas.ctx,
+						themeForWindow,
+						themeForLine,
+						themeForTitle,
+						themeForGroup
 					).init();
 				}
 			} else {
@@ -242,7 +272,9 @@ class ACharty {
 					height,
 					null,
 					null,
-					this.axisY.sort
+					this.axisY.sort,
+					this.theme.line,
+					this.theme.cap
 				).draw();
 				break;
 		}

@@ -1,13 +1,14 @@
 import Rect from "./elements/Rect";
 
 class Canvas {
-  constructor(selector, background = "white") {
+  constructor(selector, background, theme = {}) {
     // HTML элемент canvas
     this.canvasElement = document.querySelector(selector);
     // Задний фон canvas
     this.background = background;
     // Контекст элемента canvas
     this.ctx = this.canvasElement.getContext("2d");
+    this.theme = theme;
   }
 
   /**
@@ -46,7 +47,9 @@ class Canvas {
    * @private
    */
   _setBackground() {
-    new Rect(0, 0, this.background, this.ctx, this.getSizes().width, this.getSizes().height).draw();
+    const background = this.background || this.theme.background;
+
+    new Rect(0, 0, background, this.ctx, this.getSizes().width, this.getSizes().height).draw();
   }
 
   init() {

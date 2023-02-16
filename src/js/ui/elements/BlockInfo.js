@@ -5,11 +5,28 @@ import Text from "./Text";
 import quickSort from "../../helpers/quickSort";
 import Line from "./Line";
 import CustomFigure from "./CustomFigure";
+import getStyleByIndex from "../../helpers/getStyleByIndex";
 
 class BlockInfo extends Element {
-  constructor(bounds, elements, titleData, groupsData, x, y, color, padding, ctx) {
+  constructor(
+    data,
+    bounds,
+    elements,
+    titleData,
+    groupsData,
+    x,
+    y,
+    color,
+    padding,
+    ctx,
+    themeForWindow = {},
+    themeForLine = {},
+    themeForTitle = {},
+    themeForGroup = {}
+  ) {
     super(x, y, color, ctx);
 
+    this.data = data;
     this.bounds = bounds;
     this.elements = elements;
     this.padding = padding;
@@ -18,6 +35,10 @@ class BlockInfo extends Element {
     this.groupLineWidth = 5;
     this.triangleHeight = 10;
     this.title = elements[0].name;
+    this.themeForWindow = themeForWindow;
+    this.themeForLine = themeForLine;
+    this.themeForTitle = themeForTitle;
+    this.themeForGroup = themeForGroup;
   }
 
   _getElementsWithSize() {
@@ -25,11 +46,14 @@ class BlockInfo extends Element {
       const groupName = `${group}: ${value}`;
       const { font: groupsFont, } = this.groupsData;
       const { font: titleFont, } = this.titleData;
+      const dataKeys = Object.keys(this.data);
+      const idx = dataKeys.indexOf(group);
+      const themeColor = getStyleByIndex(idx, dataKeys.length, this.themeForLine.color);
 
       return {
         group: {
           name: groupName,
-          color,
+          color: color || themeColor,
           ...getTextSize(groupsFont.size, groupsFont.weight, groupName, this.ctx),
         },
         value: {
@@ -124,7 +148,7 @@ class BlockInfo extends Element {
     }
 
     const { font: titleFont, } = this.titleData;
-    const { size, color, weight, } = titleFont;
+    const { size, color = this.themeForTitle.color, weight, } = titleFont;
     const font = {
       color,
       text: this.title,
@@ -154,7 +178,7 @@ class BlockInfo extends Element {
 
   _drawGroups(blockWidth) {
     const { font: groupsFont, } = this.groupsData;
-    const { size, weight, color, } = groupsFont;
+    const { size, weight, color = this.themeForGroup.color, } = groupsFont;
 
     this._getElementsWithSize().map(({ group, }, index) => {
       const font = {
@@ -226,7 +250,7 @@ class BlockInfo extends Element {
     new CustomFigure(
       triangleData.x,
       triangleData.y,
-      this.color,
+      this.color || this.themeForWindow.color,
       this.ctx,
       triangleData.lineTo,
       triangleData.startY,
@@ -244,7 +268,7 @@ class BlockInfo extends Element {
     new Rect(
       coordinates.x,
       coordinates.y,
-      this.color,
+      this.color || this.themeForWindow.color,
       this.ctx,
       width,
       height,

@@ -3,19 +3,16 @@ import getTextSize from "../../helpers/getTextSize";
 
 class Chart {
   constructor(
+    padding,
     data,
     ctx,
     width,
     height,
     title = {},
     type = "line",
-    padding = {
-      top: 10,
-      left: 10,
-      right: 10,
-      bottom: 10,
-    }
+    theme = {}
   ) {
+    this.theme = theme;
     this.data = data;
     this.width = width;
     this.height = height;
@@ -53,8 +50,8 @@ class Chart {
       return this;
     }
 
-    const { weight = 600, size, text, } = this.title.font;
-    const font = { ...this.title.font, str: `${weight} ${size}px Arial, sans-serif`, };
+    const { weight = 600, size, text, color = this.theme.color, } = this.title.font;
+    const font = { color, text, str: `${weight} ${size}px Arial, sans-serif`, };
     const sizes = getTextSize(size, weight, text, this.ctx);
     const bounds = this.getBounds();
     const startX = bounds.horizontal.start;
