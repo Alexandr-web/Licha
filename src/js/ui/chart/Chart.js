@@ -3,19 +3,16 @@ import getTextSize from "../../helpers/getTextSize";
 
 class Chart {
   constructor(
+    padding,
     data,
     ctx,
     width,
     height,
     title = {},
     type = "line",
-    padding = {
-      top: 10,
-      left: 10,
-      right: 10,
-      bottom: 10,
-    }
+    theme = {}
   ) {
+    this.theme = theme;
     this.data = data;
     this.width = width;
     this.height = height;
@@ -53,8 +50,8 @@ class Chart {
       return this;
     }
 
-    const { weight = 600, size, text, } = this.title.font;
-    const font = { ...this.title.font, str: `${weight} ${size}px Arial, sans-serif`, };
+    const { weight = 600, size, text, color = this.theme.color, } = this.title.font;
+    const font = { color, text, str: `${weight} ${size}px Arial, sans-serif`, };
     const sizes = getTextSize(size, weight, text, this.ctx);
     const bounds = this.getBounds();
     const startX = bounds.horizontal.start;
@@ -85,13 +82,20 @@ class Chart {
     const { gaps: gapsLegend = {}, totalHeight: legendHeight = 0, } = legend;
     const { showText: showXText = Boolean(Object.keys(axisX.font).length), } = axisX.font;
     const firstName = axisY.getAxesData(this.data).names[0];
-    const firstNameSizes = getTextSize(size, weight, firstName, this.ctx);
+
+    const firstNameHeight = getTextSize(size, weight, firstName, this.ctx).height;
     const legendGapBottom = (gapsLegend.legend || {}).bottom || 0;
+    const axisYTitleHeight = (axisY.title || {}).height || 0;
+    const axisYTitleGapRight = (axisY.title || {}).gapRight || 0;
+    const chartTitleYPos = (chartTitle || {}).y || 0;
+    const chartTitleGapBottom = (chartTitle || {}).gapBottom || 0;
+    const axisXTitleHeight = (axisX.title || {}).height || 0;
+    const axisXTitleGapTop = (axisX.title || {}).gapTop || 0;
 
     return {
-      left: ((axisY.title || {}).height || 0) + ((axisY.title || {}).gapRight || 0),
-      top: ((chartTitle || {}).y || 0) + ((chartTitle || {}).gapBottom || 0) + legendHeight + legendGapBottom,
-      bottom: (showXText ? axisY.distanceFromXAxisToGraph + firstNameSizes.height : 0) + ((axisX.title || {}).height || 0) + (((axisX.title || {}).gapTop || 0)),
+      left: axisYTitleHeight + axisYTitleGapRight,
+      top: chartTitleYPos + chartTitleGapBottom + legendHeight + legendGapBottom,
+      bottom: (showXText ? axisY.distanceFromXAxisToGraph + firstNameHeight : 0) + axisXTitleHeight + axisXTitleGapTop,
     };
   }
 
@@ -99,21 +103,25 @@ class Chart {
     const { font: axisYFont = {}, title: axisYTitle = {}, distanceBetweenYAndChart, } = axisY;
     const { font: axisXFont = {}, title: axisXTitle = {}, } = axisX;
     const ignoreNames = axisX.getIgnoreNames();
-
     const names = axisY.getAxesData(this.data).names;
     const lastName = names[names.length - 1];
     const firstName = names[0];
     const { weight = 400, size, showText: showXText = Boolean(Object.keys(axisXFont).length), } = axisXFont;
     const { showText: showYText = Boolean(Object.keys(axisYFont).length), } = axisYFont;
-    const lastNameSizes = getTextSize(size, weight, axisX.getCorrectName(lastName), this.ctx);
-    const firstNameSizes = getTextSize(size, weight, axisX.getCorrectName(firstName), this.ctx);
-    const firstNameIsNotIgnore = (showXText && !(ignoreNames || []).includes(firstName));
-    const lastNameIsNotIgnore = (showXText && !(ignoreNames || []).includes(lastName));
+
+    const firstNameWidth = getTextSize(size, weight, axisX.getCorrectName(firstName), this.ctx).width;
+    const firstNameIsNotIgnore = showXText && !(ignoreNames || []).includes(firstName);
+    const lastNameWidth = getTextSize(size, weight, axisX.getCorrectName(lastName), this.ctx).width;
+    const lastNameIsNotIgnore = showXText && !(ignoreNames || []).includes(lastName);
+    const axisYTitleHeight = axisYTitle.height || 0;
+    const axisYTitleGapRight = axisYTitle.gapRight || 0;
+    const axisXTitleHeight = axisXTitle.height || 0;
+    const axisXTitleGapTop = axisXTitle.gapTop || 0;
 
     return {
-      left: (firstNameIsNotIgnore ? firstNameSizes.width / 2 : 0) + (axisYTitle.height || 0) + (axisYTitle.gapRight || 0) + (showYText ? axisY.getMaxTextWidthAtYAxis() + distanceBetweenYAndChart : 0),
-      right: lastNameIsNotIgnore ? lastNameSizes.width / 2 : 0,
-      bottom: (axisXTitle.height || 0) + ((axisXTitle.gapTop || 0)),
+      left: (firstNameIsNotIgnore ? firstNameWidth / 2 : 0) + axisYTitleHeight + axisYTitleGapRight + (showYText ? axisY.getMaxTextWidthAtYAxis() + distanceBetweenYAndChart : 0),
+      right: lastNameIsNotIgnore ? lastNameWidth / 2 : 0,
+      bottom: axisXTitleHeight + axisXTitleGapTop,
     };
   }
 

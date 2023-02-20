@@ -15,7 +15,9 @@ class AxisY extends Axis {
     bounds,
     font,
     sortValues,
-    sortNames
+    sortNames,
+    themeForTitle = {},
+    themeForPoint = {}
   ) {
     super(ctx, line, title, bounds, sortNames, sortValues, font);
 
@@ -24,6 +26,8 @@ class AxisY extends Axis {
     // Метод, который позволяет изменить вид значения на оси ординат
     this.editValue = editValue;
     this.data = data;
+    this.themeForTitle = themeForTitle;
+    this.themeForPoint = themeForPoint;
   }
 
   /**
@@ -42,7 +46,7 @@ class AxisY extends Axis {
     }
 
     const bounds = this.bounds;
-    const { size, text, color, weight = 600, } = this.title.font;
+    const { size, text, color = this.themeForTitle.color, weight = 600, } = this.title.font;
     const font = {
       size,
       text,
@@ -62,7 +66,7 @@ class AxisY extends Axis {
       this.ctx,
       posTitle.x,
       posTitle.y,
-      undefined,
+      null,
       -90 * (Math.PI / 180)
     ).draw();
 
@@ -78,7 +82,7 @@ class AxisY extends Axis {
   drawPoints(gaps = {}) {
     const values = this.getAxesData(this.data).values;
     const bounds = this.bounds;
-    const { size, showText = Boolean(Object.keys(this.font).length), weight = 400, } = this.font;
+    const { size, showText = Boolean(Object.keys(this.font).length), weight = 400, color = this.themeForPoint.color, } = this.font;
     const firstValue = Math.ceil(values[0]);
     const lastValue = Math.floor(values[values.length - 1]);
     const firstValueSizes = getTextSize(size, weight, firstValue, this.ctx);
@@ -123,7 +127,12 @@ class AxisY extends Axis {
       // Отрисовываем значения
       if (showText) {
         new Text(
-          { ...this.font, str: `${weight} ${size}px Arial, sans-serif`, text: this._getCorrectValue(value), },
+          {
+            ...this.font,
+            color,
+            str: `${weight} ${size}px Arial, sans-serif`,
+            text: this._getCorrectValue(value),
+          },
           this.ctx,
           posYItem.x,
           posYItem.y + valueSizes.height / 2
