@@ -6,12 +6,12 @@ class Utils {
     this.themes = { dark, light, };
   }
 
-  getTheme(num = 0) {
-    if (!this.themes[num]) {
+  getTheme(num = 0, type = "dark") {
+    if (!this.themes[type] || !this.themes[type][num]) {
       return {};
     }
 
-    return this.themes[num];
+    return this.themes[type][num];
   }
 }
 

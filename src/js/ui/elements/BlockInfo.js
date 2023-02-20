@@ -81,7 +81,7 @@ class BlockInfo extends Element {
     }, 0);
   }
 
-  _drawLines(blockWidth) {
+  _drawLines(windowIsOutOfBounds, blockWidth) {
     const padding = this.padding;
     const { x, } = this._getCoordinates();
 
@@ -135,7 +135,7 @@ class BlockInfo extends Element {
     return getTextSize(size, weight, this.title, this.ctx);
   }
 
-  _drawTitle(blockWidth) {
+  _drawTitle(windowIsOutOfBounds, blockWidth) {
     const padding = this.padding;
     const { x, y, } = this._getCoordinates();
     const coordinates = {
@@ -143,7 +143,7 @@ class BlockInfo extends Element {
       y: y + (padding.top || 0) + this._getTitleSize().height,
     };
 
-    if (this._outOfBounds(blockWidth)) {
+    if (windowIsOutOfBounds) {
       coordinates.x -= blockWidth + this.triangleHeight * 2;
     }
 
@@ -165,18 +165,18 @@ class BlockInfo extends Element {
 
   _getGroupsCoordinates(index) {
     const { x, y, } = this._getCoordinates();
-    const { gaps, } = this.titleData;
+    const { gaps = {}, } = this.titleData;
     const padding = this.padding;
-    const prevGroups = this._getElementsWithSize().filter((element, idx) => idx < index);
+    const prevGroups = this._getElementsWithSize().filter((element, idx) => idx <= index);
     const top = this._getTopGroupsDistance(prevGroups.map(({ group: g, }) => g));
-
+    
     return {
       x: x + (padding.left || 0),
-      y: y + this._getTitleSize().height + (padding.top || 0) + top + (gaps.bottom || 0),
+      y: y + top + this._getTitleSize().height + (gaps.bottom || 0),
     };
   }
 
-  _drawGroups(blockWidth) {
+  _drawGroups(windowIsOutOfBounds, blockWidth) {
     const { font: groupsFont, } = this.groupsData;
     const { size, weight, color = this.themeForGroup.color, } = groupsFont;
 
@@ -188,7 +188,7 @@ class BlockInfo extends Element {
       };
       const coordinates = this._getGroupsCoordinates(index);
 
-      if (this._outOfBounds(blockWidth)) {
+      if (windowIsOutOfBounds) {
         coordinates.x -= blockWidth + this.triangleHeight * 2;
       }
 
@@ -214,15 +214,16 @@ class BlockInfo extends Element {
 
   _getWindowSize() {
     const padding = this.padding;
-    const { gaps, } = this.groupsData;
+    const { gaps: gapsGroups, } = this.groupsData;
+    const { gaps: gapsTitle, } = this.titleData;
     const groups = this._getElementsWithSize().map(({ group, }) => group);
-    const width = this._getMaxContentWidth(this._getElementsWithSize()) + (padding.right || 0) + (padding.left || 0) + (gaps.right || 0);
-    const height = this._getTitleSize().height + this._getTopGroupsDistance(groups) + (padding.bottom || 0) + (padding.top || 0);
+    const width = this._getMaxContentWidth(this._getElementsWithSize()) + (padding.right || 0) + (padding.left || 0) + (gapsGroups.right || 0) + this.groupLineWidth;
+    const height = this._getTitleSize().height + this._getTopGroupsDistance(groups) + (gapsTitle.bottom || 0) + (padding.bottom || 0);
 
     return { width, height, };
   }
 
-  _drawTriangle(blockWidth) {
+  _drawTriangle(windowIsOutOfBounds) {
     const { x, y, } = this._getCoordinates();
     const triangleData = {
       x,
@@ -235,7 +236,7 @@ class BlockInfo extends Element {
       endY: y + this.triangleHeight,
     };
 
-    if (this._outOfBounds(blockWidth)) {
+    if (windowIsOutOfBounds) {
       Object.assign(triangleData, {
         ...triangleData,
         x: x - this.triangleHeight * 2,
@@ -258,10 +259,10 @@ class BlockInfo extends Element {
     ).draw();
   }
 
-  _drawWindow(width, height) {
+  _drawWindow(windowIsOutOfBounds, width, height) {
     const coordinates = this._getCoordinates();
 
-    if (this._outOfBounds(width)) {
+    if (windowIsOutOfBounds) {
       coordinates.x -= (width + this.triangleHeight * 2);
     }
 
@@ -278,11 +279,14 @@ class BlockInfo extends Element {
   }
 
   init() {
-    this._drawWindow(this._getWindowSize().width, this._getWindowSize().height);
-    this._drawTriangle(this._getWindowSize().width);
-    this._drawTitle(this._getWindowSize().width);
-    this._drawGroups(this._getWindowSize().width);
-    this._drawLines(this._getWindowSize().width);
+    const windowIsOutOfBounds = this._outOfBounds(this._getWindowSize().width);
+    const { width, height, } = this._getWindowSize();
+
+    this._drawWindow(windowIsOutOfBounds, width, height);
+    this._drawTriangle(windowIsOutOfBounds);
+    this._drawTitle(windowIsOutOfBounds, width);
+    this._drawGroups(windowIsOutOfBounds, width);
+    this._drawLines(windowIsOutOfBounds, width);
   }
 }
 

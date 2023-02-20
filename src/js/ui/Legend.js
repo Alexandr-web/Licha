@@ -68,7 +68,7 @@ class Legend {
         .slice(i, i + this.maxCount)
         .map(({ group, line = {}, }) => {
           const idx = dataKeys.indexOf(group);
-          const colorByTheme = getStyleByIndex(idx, dataKeys.length, this.themeForCircle.color);
+          const colorByTheme = getStyleByIndex(idx, this.themeForCircle.color);
           const colorLine = (line.color || (this.line || {}).color || line.fill || (this.line || {}).fill) || colorByTheme;
 
           return {
@@ -116,7 +116,7 @@ class Legend {
     const { circle = {}, } = this.legendGaps;
     const posCircle = {
       x: x - radius - (circle.right || 0),
-      y: y - Math.min(radius, height / 2),
+      y: y - Math.max(radius, height / 2),
     };
 
     new Circle(

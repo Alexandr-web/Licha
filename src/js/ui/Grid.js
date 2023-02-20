@@ -63,7 +63,7 @@ class Grid {
       return;
     }
 
-    this.line = this.line.color || this.theme.color;
+    this.line.color = this.line.color || this.theme.color;
 
     switch (this.format) {
       case "horizontal":

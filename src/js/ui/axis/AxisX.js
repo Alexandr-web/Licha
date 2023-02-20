@@ -109,7 +109,7 @@ class AxisX extends Axis {
         const groupData = this.data[group].data;
         const dataKeys = Object.keys(this.data);
         const idx = dataKeys.indexOf(group);
-        const colorByTheme = getStyleByIndex(idx, dataKeys.length, this.themeForLine.color);
+        const colorByTheme = getStyleByIndex(idx, this.themeForLine.color);
 
         groupData.map((groupDataItem) => {
           if (groupDataItem.name === name) {

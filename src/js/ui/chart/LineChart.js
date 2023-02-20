@@ -36,10 +36,10 @@ class LineChart extends Chart {
     for (const group in this.data) {
       const dataKeys = Object.keys(this.data);
       const idx = dataKeys.indexOf(group);
-      const themeColorForLine = getStyleByIndex(idx, dataKeys.length, this.themeForLine.color);
-      const themeFillForLine = getStyleByIndex(idx, dataKeys.length, this.themeForLine.fill);
-      const themeColorForCap = getStyleByIndex(idx, dataKeys.length, this.themeForCaps.color);
-      const themeStrokeColorForCap = getStyleByIndex(idx, dataKeys.length, this.themeForCaps.strokeColor);
+      const themeColorForLine = getStyleByIndex(idx, this.themeForLine.color);
+      const themeFillForLine = getStyleByIndex(idx, this.themeForLine.fill);
+      const themeColorForCap = getStyleByIndex(idx, this.themeForCaps.color);
+      const themeStrokeColorForCap = getStyleByIndex(idx, this.themeForCaps.strokeColor);
 
       const {
         data: groupData,
