@@ -517,5 +517,107 @@ export default [
         title: { color: "#FDFEF8", },
         group: { color: "#D5D6D1", },
       },
+    },
+    {
+      canvas: { background: "#09284B", },
+      title: { color: "#F4F8FD", },
+      legend: { color: "#C3C6CA", },
+      axis: { title: { color: "#F4F8FD", }, point: { color: "#C3C6CA", }, },
+      grid: { color: "#0B3F74", },
+      line: {
+        color: ["#FB917E", "#14C0D3", "#7659E5", "#C64264", "#148B73"],
+        fill: [
+          ["rgba(251,145,126,0.3)", "transparent"],
+          ["rgba(20,192,211,0.3)", "transparent"],
+          ["rgba(118,89,229,0.3)", "transparent"],
+          ["rgba(198,66,100,0.3)", "transparent"],
+          ["rgba(20,139,115,0.3)", "transparent"]
+        ],
+      },
+      cap: {
+        color: ["#FB917E", "#14C0D3", "#7659E5", "#C64264", "#148B73"],
+        strokeColor: ["#09284B", "#09284B", "#09284B", "#09284B", "#09284B"],
+      },
+      blockInfo: {
+        window: { color: "#030F1B", },
+        title: { color: "#F4F8FD", },
+        group: { color: "#C3C6CA", },
+      },
+    },
+    {
+      canvas: { background: "#474A5B", },
+      title: { color: "#CADBFF", },
+      legend: { color: "#94A0BB", },
+      axis: { title: { color: "#CADBFF", }, point: { color: "#94A0BB", }, },
+      grid: { color: "#777B8E", },
+      line: {
+        color: ["#1A78F5", "#74C278", "#CD4560", "#C5F664", "#36DED3"],
+        fill: [
+          ["rgba(26,120,245,0.3)", "transparent"],
+          ["rgba(116,194,120,0.3)", "transparent"],
+          ["rgba(205,69,96,0.3)", "transparent"],
+          ["rgba(197,246,100,0.3)", "transparent"],
+          ["rgba(54,222,211,0.3)", "transparent"]
+        ],
+      },
+      cap: {
+        color: ["#474A5B", "#474A5B", "#474A5B", "#474A5B", "#474A5B"],
+        strokeColor: ["#1A78F5", "#74C278", "#CD4560", "#C5F664", "#36DED3"],
+      },
+      blockInfo: {
+        window: { color: "#292B35", },
+        title: { color: "#CADBFF", },
+        group: { color: "#94A0BB", },
+      },
+    },
+    {
+      canvas: { background: "#201F25", },
+      title: { color: "#F8F9F8", },
+      legend: { color: "#CFD0CF", },
+      axis: { title: { color: "#F8F9F8", }, point: { color: "#CFD0CF", }, },
+      grid: { color: "#36393E", },
+      line: {
+        color: ["#C75770", "#C7002B", "#FF0037", "#710037"],
+        fill: [
+          ["rgba(199,87,112,0.3)", "transparent"],
+          ["rgba(199,0,43,0.3)", "transparent"],
+          ["rgba(255,0,55,0.3)", "transparent"],
+          ["rgba(113,0,55,0.3)", "transparent"]
+        ],
+      },
+      cap: {
+        color: ["#201F25", "#201F25", "#201F25", "#201F25"],
+        strokeColor: ["#C75770", "#C7002B", "#FF0037", "#710037"],
+      },
+      blockInfo: {
+        window: { color: "#080809", },
+        title: { color: "#F8F9F8", },
+        group: { color: "#CFD0CF", },
+      },
+    },
+    {
+      canvas: { background: "#36446B", },
+      title: { color: "#F1F4F8", },
+      legend: { color: "#C7CACD", },
+      axis: { title: { color: "#F1F4F8", }, point: { color: "#C7CACD", }, },
+      grid: { color: "#4E629A", },
+      line: {
+        color: ["#358CBE", "#35B59D", "#5462DD", "#8862DD"],
+        fill: [
+          ["rgba(53,140,190,0.3)", "transparent"],
+          ["rgba(53,181,157,0.3)", "transparent"],
+          ["rgba(84,98,221,0.3)", "transparent"],
+          ["rgba(136,98,221,0.3)", "transparent"]
+        ],
+      },
+      cap: {
+        color: ["#36446B", "#36446B", "#36446B", "#36446B"],
+        strokeColor: ["#358CBE", "#35B59D", "#5462DD", "#8862DD"],
+      },
+      blockInfo: {
+        window: { color: "#1D2438", },
+        title: { color: "#F1F4F8", },
+        group: { color: "#C7CACD", },
+      },
     }
 ];
