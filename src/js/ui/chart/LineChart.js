@@ -74,7 +74,7 @@ class LineChart extends Chart {
       });
 
       // Рисуем задний фон группе
-      if (Array.isArray(lineStyle.fill) || typeof lineStyle.fill === "string") {
+      if (Array.isArray(lineStyle.fill) || (typeof lineStyle.fill === "string" && lineStyle.fill.length)) {
         this._setFillGroupChart(coordinations, lineStyle.fill, lineStyle.stepped, group);
       }
 
