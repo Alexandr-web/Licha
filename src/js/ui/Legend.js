@@ -12,7 +12,7 @@ class Legend {
     this.ctx = ctx;
     this.bounds = bounds;
     this.circle = circle;
-    this.maxCount = maxCount;
+    this.maxCount = maxCount > 0 ? maxCount : 4;
     this.legendGaps = legendGaps;
     this.totalHeight = 0;
     this.themeForText = themeForText;
