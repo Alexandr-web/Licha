@@ -8,10 +8,7 @@ class Axis {
     bounds = {},
     sortNames = "less-more",
     sortValues = "less-more",
-    font = {
-      size: 12,
-      color: "black",
-    }
+    font = {}
   ) {
     // Контекст элемента canvas
     this.ctx = ctx;
