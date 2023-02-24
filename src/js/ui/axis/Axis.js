@@ -3,11 +3,12 @@ import quickSort from "../../helpers/quickSort";
 class Axis {
   constructor(
     ctx,
+    themeForPoint = {},
+    themeForTitle = {},
     line = {},
     title = {},
     bounds = {},
     sortNames = "less-more",
-    sortValues = "less-more",
     font = {}
   ) {
     // Контекст элемента canvas
@@ -22,14 +23,27 @@ class Axis {
     this.bounds = bounds;
     // Содержит данные точек, находящихся на этой оси
     this.points = [];
+    // Тип сортировки точек ("less-more" или "more-less")
     this.sortNames = sortNames;
-    this.sortValues = sortValues;
+    // Содержит уникальные названия точек оси абсцисс
     this.uniqueNames = [];
+    // Содержит уникальные значения точек оси ординат
     this.uniqueValues = [];
+    // Дистанция между осью абсцисс и графиком
     this.distanceFromXAxisToGraph = 15;
+    // Дистанция между осью ординат и графиком
     this.distanceBetweenYAndChart = 15;
+    // Стили для точек от темы
+    this.themeForPoint = themeForPoint;
+    // Стили для заголовка от темы
+    this.themeForTitle = themeForTitle;
   }
 
+  /**
+   * Сортирует значения и названия (если те имеют тип данных число) групп
+   * @param {object} data Содержит данные групп
+   * @returns 
+   */
   getAxesData(data) {
     // Для оси ординат
     const values = [];

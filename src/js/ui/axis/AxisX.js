@@ -13,21 +13,30 @@ class AxisX extends Axis {
     font,
     editName,
     sortNames,
-    ignoreNames = [],
-    themeForTitle = {},
-    themeForPoint = {},
-    themeForLine = {}
+    themeForTitle,
+    themeForPoint,
+    themeForLine = {},
+    ignoreNames = []
   ) {
-    super(ctx, line, title, bounds, sortNames, null, font);
+    super(ctx, themeForPoint, themeForTitle, line, title, bounds, sortNames, font);
 
-    this.ignoreNames = ignoreNames;
-    this.data = data;
-    this.editName = editName;
-    this.themeForTitle = themeForTitle;
-    this.themeForPoint = themeForPoint;
+    // Стили для линии от темы
     this.themeForLine = themeForLine;
+    /**
+     * Содержит названия точек оси абсцисс, которые не будут нарисованы на диаграмме
+     * Может быть функцией или массивом
+     */
+    this.ignoreNames = ignoreNames;
+    // Содержит данные групп
+    this.data = data;
+    // Метод, позволяющий изменить название точки оси абсцисс
+    this.editName = editName;
   }
 
+  /**
+   * Отбирает названия точек оси абсцисс, которые не будут нарисованы на диаграмме
+   * @returns {array} Названия точек
+   */
   getIgnoreNames() {
     if (this.ignoreNames instanceof Function) {
       return this.getAxesData(this.data).names.filter(this.ignoreNames);
@@ -40,11 +49,16 @@ class AxisX extends Axis {
     return [];
   }
 
+  /**
+   * Рисует заголовок на оси абсцисс
+   * @param {object} gaps Отступы заголовка
+   * @returns {AxisX}
+   */
   drawTitle(gaps = {}) {
     if (!Object.keys(this.title).length) {
       return this;
     }
-
+    
     const { size, weight = 600, color = this.themeForTitle.color, text, } = this.title.font;
     const font = {
       size,
@@ -78,10 +92,21 @@ class AxisX extends Axis {
     return this;
   }
 
+  /**
+   * Определяет название точки на оси абсцисс
+   * @param {string} name Название точки
+   * @private
+   * @returns {string} Корректное название точки
+   */
   getCorrectName(name) {
     return this.editName instanceof Function ? this.editName(name) : name;
   }
 
+  /**
+   * Рисует точки на оси абсцисс
+   * @param {object} gaps Отступы оси абсцисс
+   * @returns {AxisX}
+   */
   drawPoints(gaps = {}) {
     const names = this.getAxesData(this.data).names;
     const bounds = this.bounds;

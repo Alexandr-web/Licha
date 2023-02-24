@@ -8,6 +8,7 @@ class Canvas {
     this.background = background;
     // Контекст элемента canvas
     this.ctx = this.canvasElement.getContext("2d");
+    // Содержит данные темы
     this.theme = theme;
   }
 
@@ -52,6 +53,7 @@ class Canvas {
     new Rect(0, 0, background, this.ctx, this.getSizes().width, this.getSizes().height).draw();
   }
 
+  // Рисует начальный холст
   init() {
     this._setDefaultStyles();
     this._setBackground();

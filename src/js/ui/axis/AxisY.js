@@ -14,32 +14,38 @@ class AxisY extends Axis {
     title,
     bounds,
     font,
-    sortValues,
     sortNames,
-    themeForTitle = {},
-    themeForPoint = {}
+    themeForTitle,
+    themeForPoint,
+    sortValues = "less-more"
   ) {
-    super(ctx, line, title, bounds, sortNames, sortValues, font);
+    super(ctx, themeForPoint, themeForTitle, line, title, bounds, sortNames, font);
 
     // Шаг, с которым будут рисоваться значения на оси ординат
     this.step = step;
     // Метод, который позволяет изменить вид значения на оси ординат
     this.editValue = editValue;
+    // Содержит данные групп
     this.data = data;
-    this.themeForTitle = themeForTitle;
-    this.themeForPoint = themeForPoint;
+    // Содержит сортированные значения оси ординат
+    this.sortValues = sortValues;
   }
 
   /**
-   * Возвращает валидное значение оси ординат
-   * @param {number} value Значение точки по умолчанию
-   * @returns {string|number} Измененное значение точки
+   * Определяет корректное значение точки на оси ординат
+   * @param {number} value Значение точки
    * @private
+   * @returns {string|number} Корректное значение точки
    */
   _getCorrectValue(value) {
     return this.editValue instanceof Function ? this.editValue(value) : value;
   }
 
+  /**
+   * Рисует заголовок на оси ординат
+   * @param {object} gaps Отступы заголовка
+   * @returns {AxisY}
+   */
   drawTitle(gaps) {
     if (!Object.keys(this.title).length) {
       return this;
@@ -79,6 +85,11 @@ class AxisY extends Axis {
     return this;
   }
 
+  /**
+   * Рисует точки на оси ординат
+   * @param {object} gaps Отступы оси ординат
+   * @returns {AxisY}
+   */
   drawPoints(gaps = {}) {
     const values = this.getAxesData(this.data).values;
     const bounds = this.bounds;
@@ -162,6 +173,10 @@ class AxisY extends Axis {
     return this;
   }
 
+  /**
+   * Определяет максимальную ширину среди всех значений оси ординат
+   * @returns {number} Максимальная ширина значения точки
+   */
   getMaxTextWidthAtYAxis() {
     return Math.max(...this.points.filter(({ onScreen, }) => onScreen).map(({ width, }) => width));
   }

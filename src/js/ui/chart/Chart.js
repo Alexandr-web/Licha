@@ -12,10 +12,15 @@ class Chart {
     type = "line",
     theme = {}
   ) {
+    // Содержит стили от темы
     this.theme = theme;
+    // Содержит данные групп
     this.data = data;
+    // Ширина элемента canvas
     this.width = width;
+    // Высота элемента canvas
     this.height = height;
+    // Контекст элемента canvas
     this.ctx = ctx;
     // Тип диаграммы
     this.type = type;
@@ -25,6 +30,10 @@ class Chart {
     this.padding = padding;
   }
 
+  /**
+   * Определяет границы диаграммы
+   * @returns {object} Границы ({ width, height, horizontal: { start, end }, vertical: { start, end }, })
+   */
   getBounds() {
     const bounds = {
       width: null,
@@ -45,6 +54,10 @@ class Chart {
     return bounds;
   }
 
+  /**
+   * Рисует заголовок диаграммы
+   * @returns {Chart}
+   */
   drawTitle() {
     if (!Object.keys(this.title).length) {
       return this;
@@ -77,6 +90,14 @@ class Chart {
     return this;
   }
 
+  /**
+   * Определяет отступы для оси ординат
+   * @param {AxisY} axisY Экземпляр класса AxisY
+   * @param {AxisX} axisX Экземпляр класса AxisX
+   * @param {object} chartTitle Содержит данные заголовка диаграммы
+   * @param {object} legend Содержит данные легенды
+   * @returns {object} Отступы ({ left, top, bottom })
+   */
   getGapsForYPoints(axisY, axisX, chartTitle, legend) {
     const { size, weight = 400, } = axisY.font;
     const { gaps: gapsLegend = {}, totalHeight: legendHeight = 0, } = legend;
@@ -99,6 +120,12 @@ class Chart {
     };
   }
 
+  /**
+   * Определяет отступы для оси абсцисс
+   * @param {AxisY} axisY Экземпляр класса AxisY
+   * @param {AxisX} axisX Экземпляр класса AxisX
+   * @returns {object} Отступы ({ left, right, bottom })
+   */
   getGapsForXPoints(axisY = {}, axisX = {}) {
     const { font: axisYFont = {}, title: axisYTitle = {}, distanceBetweenYAndChart, } = axisY;
     const { font: axisXFont = {}, title: axisXTitle = {}, } = axisX;
@@ -125,6 +152,13 @@ class Chart {
     };
   }
 
+  /**
+   * Определяет отступы для заголовка оси ординат
+   * @param {object} chartTitle Содержит данные заголовка диаграммы
+   * @param {object} legend Содержит данные легенды
+   * @param {AxisX} axisX Экземпляр класса AxisX
+   * @returns {object} Отступы ({ top, bottom })
+   */
   getGapsForYTitle(chartTitle = {}, legend = {}, axisX = {}) {
     const { height: chartTitleHeight = 0, gapBottom: chartTitleGapBottom = 0, } = chartTitle;
     const { totalHeight: legendHeight, gaps: gapsLegend = {}, } = legend;
@@ -140,6 +174,11 @@ class Chart {
     };
   }
 
+  /**
+   * Определяет отступы для заголовка оси абсцисс
+   * @param {AxisY} axisY Экземпляр класса AxisY
+   * @returns {object} Отступы ({ top, left })
+   */
   getGapsForXTitle(axisY = {}) {
     const { title = {}, distanceBetweenYAndChart, } = axisY;
     const { gapRight = 0, height = 0, } = title;
@@ -147,6 +186,12 @@ class Chart {
     return { left: height + gapRight + distanceBetweenYAndChart, };
   }
 
+  /**
+   * Определяет отступы для легенды
+   * @param {AxisY} axisY Экземпляр класса AxisY
+   * @param {object} chartTitle Содержит данные заголовка диаграммы
+   * @returns {object} Отступы ({ top, left })
+   */
   getGapsForLegend(axisY = {}, chartTitle = {}) {
     const { y = 0, gapBottom = 0, } = chartTitle;
     const { font = {}, } = (axisY.title || {});

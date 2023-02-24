@@ -4,9 +4,14 @@ class Text extends Element {
   constructor(font, ctx, x, y, color, rotateDeg, opacity) {
     super(x, y, color, ctx, rotateDeg, opacity);
 
+    // Содержит данные шрифта
     this.font = font;
   }
 
+  /**
+   * Определяет размеры текста
+   * @returns {object} Размеры шрифта ({ width, height })
+   */
   getSizes() {
     this.ctx.font = this.font.str;
 
@@ -18,6 +23,7 @@ class Text extends Element {
     };
   }
 
+  // Рисует текст
   draw() {
     const { str, color, text, } = this.font;
     const sizes = this.getSizes(str);

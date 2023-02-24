@@ -5,12 +5,20 @@ class Circle extends Element {
   constructor(radius, x, y, color, ctx, opacity, startY, endY, stroke = {}) {
     super(x, y, color, ctx, null, opacity);
 
+    // Радиус
     this.radius = radius;
+    // Содержит данные обводки
     this.stroke = stroke;
+    // Начальная позиция по оси ординат (для градиента)
     this.startY = startY;
+    // Конечная позиция по оси ординат (для градиента)
     this.endY = endY;
   }
 
+  /**
+   * Устанавливает цвет
+   * @private
+   */
   _setColor() {
     if (Array.isArray(this.color)) {
       setGradientColor(this.color, this.startY, this.endY, "fillStyle", this.ctx);
@@ -19,6 +27,7 @@ class Circle extends Element {
     }
   }
 
+  // Рисует круг
   draw() {
     this.ctx.beginPath();
     this.ctx.globalAlpha = this.opacity;

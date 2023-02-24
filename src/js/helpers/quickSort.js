@@ -1,3 +1,9 @@
+/**
+ * Быстрая сортировка массива
+ * @param {array} arr Содержит значений
+ * @param {string} key Ключ, по значению которого нужно сортировать (необязательный)
+ * @returns {array} Отсортированный массив
+ */
 function quickSort(arr, key) {
   if (arr.length <= 1) {
     return arr;

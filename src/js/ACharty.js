@@ -31,27 +31,52 @@ class ACharty {
 			bottom: 10,
 		},
 	}) {
+		// Точки, которые указывают на ширину окна, чтобы изменить данные диаграммы
 		this.breakpoints = breakpoints;
+		// Внутренние отступы
 		this.padding = padding;
+		// Данные колпачка
 		this.cap = cap;
+		// Данные легенды
 		this.legend = legend;
+		// Тип диаграммы
 		this.type = type;
+		// Данные задней сетки диаграммы
 		this.grid = grid;
+		// Данные линии
 		this.line = line;
+		// Данные оси ординат
 		this.axisY = axisY;
+		// Данные оси абсцисс
 		this.axisX = axisX;
+		// Данные заголовка диаграммы
 		this.title = title;
+		// Задний фон диаграммы
 		this.background = background;
+		// Селектор холста
 		this.selectorCanvas = selectorCanvas;
+		// Данные окна с информацией об активной группе
 		this.blockInfo = blockInfo;
+		// Данные групп
 		this.data = data;
+		// Стили темы
 		this.theme = theme;
 	}
 
+	/**
+	 * Рисует холст
+	 * @private
+	 * @return {Canvas}
+	 */
 	_setCanvas() {
 		return new Canvas(this.selectorCanvas, this.background, this.theme.canvas).init();
 	}
 
+	/**
+	 * Рисует заголовок диагрыммы
+	 * @param {Canvas} canvas Экземпляр класса Canvas
+	 * @private
+	 */
 	_setChartTitle(canvas) {
 		const { width, height, } = canvas.getSizes();
 
@@ -67,9 +92,17 @@ class ACharty {
 		).drawTitle();
 	}
 
+	/**
+	 * Рисует легенду
+	 * @param {Canvas} canvas Экземпляр класса Canvas
+	 * @param {Chart} chart Экземпляр класса Chart
+	 * @private
+	 * @return {Legend}
+	 */
 	_setLegend(canvas, chart) {
-		const { font, circle, gaps, maxCount, } = this.legend;
+		const { font, circle, gaps: legendGaps, maxCount, } = this.legend;
 		const showLegend = Boolean(Object.keys(this.legend).length);
+		const gaps = chart.getGapsForLegend(this.axisY, chart.title);
 
 		return new Legend(
 			showLegend,
@@ -79,18 +112,27 @@ class ACharty {
 			chart.getBounds(),
 			font,
 			circle,
-			gaps,
+			legendGaps,
 			maxCount,
 			this.theme.legend,
 			this.theme.line
-		).draw(chart.getGapsForLegend(this.axisY, chart.title));
+		).draw(gaps);
 	}
 
+	/**
+	 * Рисует заголовок на оси ординат
+	 * @param {Canvas} canvas Экземпляр класса Canvas
+	 * @param {Chart} chart Экземпляр класса Chart
+	 * @param {Legend} legend Экземпляр класса Legend
+	 * @private
+	 * @returns {AxisY}
+	 */
 	_setAxisYTitle(canvas, chart, legend) {
 		const { step, editValue, line, title, font, sort, } = this.axisY;
 		const { legend: legendGaps = {}, } = (this.legend.gaps || {});
 		const themeForTitle = (this.theme.axis || {}).title;
 		const themeForPoint = (this.theme.axis || {}).point;
+		const gaps = chart.getGapsForYTitle(chart.title, { ...legend, gapBottom: (legendGaps.bottom || 0), }, this.axisX);
 
 		return new AxisY(
 			step,
@@ -101,18 +143,27 @@ class ACharty {
 			title,
 			chart.getBounds(),
 			font,
-			sort,
 			this.axisX.sort,
 			themeForTitle,
-			themeForPoint
-		).drawTitle(chart.getGapsForYTitle(chart.title, { ...legend, gapBottom: (legendGaps.bottom || 0), }, this.axisX));
+			themeForPoint,
+			sort
+		).drawTitle(gaps);
 	}
 
+	/**
+	 * Рисует заголовок на оси абсцисс
+	 * @param {Canvas} canvas Экземпляр класса Canvas
+	 * @param {Chart} chart Экземпляр класса Chart
+	 * @param {AxisX} axisX Экземпляр класса AxisX
+	 * @private
+	 * @returns {AxisX}
+	 */
 	_setAxisXTitle(canvas, chart, axisY) {
 		const { font, editName, sort, ignoreNames, title, } = this.axisX;
 		const themeForTitle = (this.theme.axis || {}).title;
 		const themeForPoint = (this.theme.axis || {}).point;
 		const themeForLine = this.theme.line;
+		const gaps = chart.getGapsForXTitle(axisY);
 
 		return new AxisX(
 			canvas.ctx,
@@ -123,13 +174,22 @@ class ACharty {
 			font,
 			editName,
 			sort,
-			ignoreNames,
 			themeForTitle,
 			themeForPoint,
-			themeForLine
-		).drawTitle(chart.getGapsForXTitle(axisY));
+			themeForLine,
+			ignoreNames
+		).drawTitle(gaps);
 	}
 
+	/**
+	 * 
+	 * @param {AxisY} axisY Экземпляр класса AxisY
+	 * @param {AxisX} axisX Экземпляр класса AxisX
+	 * @param {Legend} legend Экземпляр класса Legend
+	 * @param {Chart} chart Экземпляр класса Chart
+	 * @private
+	 * @returns {object} Данные всех осевых точек
+	 */
 	_setPoints(axisY, axisX, legend, chart) {
 		const y = axisY.drawPoints(chart.getGapsForYPoints(axisY, axisX, chart.title, { ...this.legend, ...legend, }));
 		const x = axisX.drawPoints(chart.getGapsForXPoints(axisY, axisX));
@@ -140,6 +200,14 @@ class ACharty {
 		};
 	}
 
+	/**
+	 * Рисует заднюю сетку диаграмме
+	 * @param {Canvas} canvas Экземпляр класса Canvas
+	 * @param {AxisX} axisX Экземпляр класса AxisX
+	 * @param {AxisY} axisY Экземпляр класса AxisY
+	 * @private
+	 * @returns {Grid}
+	 */
 	_setGrid(canvas, axisX, axisY) {
 		const { line, format, } = this.grid;
 
@@ -154,20 +222,36 @@ class ACharty {
 		).init();
 	}
 
-	_windowResize() {
-		window.addEventListener("resize", () => {
-			this.update();
-			this._setBreakpoints();
-		});
+	/**
+	 * Обработчик события resize у window
+	 * @private
+	 */
+	_windowResizeHandler() {
+		this.update();
+		this._setBreakpoints();
 	}
 
+	/**
+	 * Добавление события resize элементу window
+	 * @private
+	 */
+	_windowResize() {
+		window.addEventListener("resize", this._windowResizeHandler.bind(this));
+	}
+
+	/**
+	 * Обновление данных диаграммы в зависимости от разрешения экрана
+	 * @private
+	 */
 	_setBreakpoints() {
 		if (!Object.keys(this.breakpoints)) {
 			return;
 		}
 
 		const document = window.document.documentElement;
+		// Берем все точки
 		const points = Object.keys(this.breakpoints).map((point) => parseInt(point));
+		// Берем подходящую точку, которая совпадает с размером окна
 		const bPoint = quickSort(points).find((width) => document.offsetWidth <= width);
 
 		if (bPoint) {
@@ -193,6 +277,74 @@ class ACharty {
 		}
 	}
 
+	/**
+	 * Обработчик события mousemove у элемента canvas
+	 * @param {Event} e Объект события
+	 * @param {number} endY Конечная область видимости окна с информацией об активной группе
+	 * @param {array} pointsX Содержит данные всех точек на оси абсцисс
+	 * @param {number} startY Начальная область видимости окна с информацией об активной группе
+	 * @param {Canvas} canvas Экземпляр класса Canvas
+	 * @param {object} bounds Содержит границы холста
+	 * @private
+	 */
+	_mousemoveByCanvasHandler(e, endY, pointsX, startY, canvas, bounds) {
+		this.update();
+
+		const mousePos = { x: e.offsetX, y: e.offsetY, };
+
+		if (mousePos.y <= endY && mousePos.y >= startY) {
+			// Отбираем элементы, которые подходят по координатам на холсте
+			const activeElements = pointsX.map((point) => {
+				if (this.axisX.editName instanceof Function) {
+					return {
+						...point,
+						name: this.axisX.editName(point.name),
+					};
+				}
+
+				return point;
+			}).filter(({ x, }) => mousePos.x > (x - 5) && mousePos.x < (x + 5));
+
+			// Меняем курсор в зависимости от кол-ва активных элементов
+			document.documentElement.style = `cursor: ${activeElements.length ? "none" : "default"}`;
+
+			if (activeElements.length) {
+				const [{ x, }] = activeElements;
+				const { title, groups, background, padding, } = this.blockInfo;
+				const themeForWindow = (this.theme.blockInfo || {}).window;
+				const themeForLine = this.theme.line;
+				const themeForTitle = (this.theme.blockInfo || {}).title;
+				const themeForGroup = (this.theme.blockInfo || {}).group;
+
+				new BlockInfo(
+					this.data,
+					bounds,
+					activeElements,
+					title,
+					groups,
+					x,
+					mousePos.y,
+					background,
+					padding,
+					canvas.ctx,
+					themeForWindow,
+					themeForLine,
+					themeForTitle,
+					themeForGroup
+				).init();
+			}
+		} else {
+			document.documentElement.style = "cursor: default";
+		}
+	}
+
+	/**
+	 * Добавление события mousemove элементу canvas
+	 * @param {Canvas} canvas Экземпляр класса Canvas
+	 * @param {object} bounds Содержит границы холста
+	 * @param {{ pointsX: array, pointsY: array }} param2 Содержит данные всех осевых точек
+	 * @private
+	 */
 	_mousemoveByCanvas(canvas, bounds, { pointsX, pointsY, }) {
 		if (!Object.keys(this.blockInfo).length) {
 			return;
@@ -202,60 +354,25 @@ class ACharty {
 		const [{ y: startY, }] = pointsYOnScreen;
 		const { y: endY, } = pointsYOnScreen[pointsYOnScreen.length - 1];
 
-		canvas.canvasElement.addEventListener("mousemove", (e) => {
-			this.update();
-
-			const mousePos = { x: e.offsetX, y: e.offsetY, };
-
-			if (mousePos.y <= endY && mousePos.y >= startY) {
-				const activeElements = pointsX.map((point) => {
-					if (this.axisX.editName instanceof Function) {
-						return {
-							...point,
-							name: this.axisX.editName(point.name),
-						};
-					}
-
-					return point;
-				}).filter(({ x, }) => mousePos.x > (x - 5) && mousePos.x < (x + 5));
-
-				document.documentElement.style = `cursor: ${activeElements.length ? "none" : "default"}`;
-
-				if (activeElements.length) {
-					const [{ x, }] = activeElements;
-					const { title, groups, background, padding, } = this.blockInfo;
-					const themeForWindow = (this.theme.blockInfo || {}).window;
-					const themeForLine = this.theme.line;
-					const themeForTitle = (this.theme.blockInfo || {}).title;
-					const themeForGroup = (this.theme.blockInfo || {}).group;
-
-					new BlockInfo(
-						this.data,
-						bounds,
-						activeElements,
-						title,
-						groups,
-						x,
-						mousePos.y,
-						background,
-						padding,
-						canvas.ctx,
-						themeForWindow,
-						themeForLine,
-						themeForTitle,
-						themeForGroup
-					).init();
-				}
-			} else {
-				document.documentElement.style = "cursor: default";
-			}
-		});
+		canvas.canvasElement.addEventListener("mousemove", (e) => this._mousemoveByCanvasHandler(e, endY, pointsX, startY, canvas, bounds));
 	}
 
+	/**
+	 * Добавление события mouseleave элементу canvas
+	 * @param {Canvas} canvas Экземпляр класса Canvas
+	 * @private
+	 */
 	_leavemouseFromCanvasArea(canvas) {
 		canvas.canvasElement.addEventListener("mouseleave", () => document.documentElement.style = "default");
 	}
 
+	/**
+	 * Рисует диаграмму в зависимости от ее типа
+	 * @param {AxisY} axisY Экземпляр класса AxisY
+	 * @param {AxisX} axisX Экземпляр класса AxisX
+	 * @param {Canvas} canvas Экземпляр класса Canvas
+	 * @private
+	 */
 	_drawChartByType(axisY, axisX, canvas) {
 		const { width, height, } = canvas.getSizes();
 
@@ -280,13 +397,14 @@ class ACharty {
 		}
 	}
 
+	// Обновление данных диаграммы
 	update() {
 		const canvas = this._setCanvas();
 		const chart = this._setChartTitle(canvas);
 		const legend = this._setLegend(canvas, chart);
 		const axisY = this._setAxisYTitle(canvas, chart, legend);
 		const axisX = this._setAxisXTitle(canvas, chart, axisY);
-
+		
 		this._setPoints(axisY, axisX, legend, chart);
 		this._setGrid(canvas, axisX, axisY);
 		this._drawChartByType(axisY, axisX, canvas);
@@ -294,6 +412,7 @@ class ACharty {
 		return this;
 	}
 
+	// Инициализация диаграммы
 	init() {
 		const canvas = this._setCanvas();
 		const chart = this._setChartTitle(canvas);

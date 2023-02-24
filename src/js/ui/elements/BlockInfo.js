@@ -26,21 +26,39 @@ class BlockInfo extends Element {
   ) {
     super(x, y, color, ctx);
 
+    // Содержит данные групп
     this.data = data;
+    // Содержит границы дигараммы
     this.bounds = bounds;
+    // Содержит данные элементов, которые подходят по координатам мыши
     this.elements = elements;
+    // Внутренние отступы
     this.padding = padding;
+    // Содержит данные заголовка
     this.titleData = titleData;
+    // Содержит данные групп
     this.groupsData = groupsData;
+    // Ширина линий
     this.groupLineWidth = 5;
+    // Высота треугольника
     this.triangleHeight = 10;
+    // Текст заголовка
     this.title = elements[0].name;
+    // Стили для окна от темы
     this.themeForWindow = themeForWindow;
+    // Стили для линии от темы
     this.themeForLine = themeForLine;
+    // Стили для заголовка от темы
     this.themeForTitle = themeForTitle;
+    // Стили для группы от темы
     this.themeForGroup = themeForGroup;
   }
 
+  /**
+   * Определяет размеры элементов
+   * @private
+   * @returns {array} Массив, содержащий данные элементов, включая их размеры
+   */
   _getElementsWithSize() {
     return this.elements.map(({ group, value, color, }) => {
       const groupName = `${group}: ${value}`;
@@ -64,6 +82,11 @@ class BlockInfo extends Element {
     });
   }
 
+  /**
+   * Определяет позицию окна
+   * @private
+   * @returns {object} Позиция окна ({ x, y })
+   */
   _getCoordinates() {
     return {
       x: this.x + this.triangleHeight,
@@ -71,16 +94,28 @@ class BlockInfo extends Element {
     };
   }
 
-  _getTopGroupsDistance(groups) {
+  /**
+   * Определяет дистанцию между группами
+   * @param {array} elements Содержит данные элементов
+   * @private
+   * @returns {number} Дистанция
+   */
+  _getTopGroupsDistance(elements) {
     const { gaps, } = this.groupsData;
 
-    return groups.reduce((acc, { height, }) => {
+    return elements.reduce((acc, { height, }) => {
       acc += height + gaps.bottom;
 
       return acc;
     }, 0);
   }
 
+  /**
+   * Рисует линии
+   * @param {boolean} windowIsOutOfBounds Правило, говорящее, что окно вышло за границы диаграммы
+   * @param {number} blockWidth Ширина окна
+   * @private
+   */
   _drawLines(windowIsOutOfBounds, blockWidth) {
     const padding = this.padding;
     const { x, } = this._getCoordinates();
@@ -102,7 +137,7 @@ class BlockInfo extends Element {
         ],
       };
 
-      if (this._outOfBounds(blockWidth)) {
+      if (windowIsOutOfBounds) {
         Object.assign(linePos, {
           moveTo: {
             x: posX - (blockWidth + this.triangleHeight * 2),
@@ -128,6 +163,11 @@ class BlockInfo extends Element {
     }
   }
 
+  /**
+   * Определяет размеры заголовка
+   * @private
+   * @returns {object} Размеры ({ width, height })
+   */
   _getTitleSize() {
     const { font, } = this.titleData;
     const { size, weight, } = font;
@@ -135,6 +175,12 @@ class BlockInfo extends Element {
     return getTextSize(size, weight, this.title, this.ctx);
   }
 
+  /**
+   * Рисует заголовок
+   * @param {boolean} windowIsOutOfBounds Правило, говорящее, что окно вышло за границы диаграммы
+   * @param {number} blockWidth Ширина окна
+   * @private
+   */
   _drawTitle(windowIsOutOfBounds, blockWidth) {
     const padding = this.padding;
     const { x, y, } = this._getCoordinates();
@@ -163,6 +209,12 @@ class BlockInfo extends Element {
     ).draw();
   }
 
+  /**
+   * Определяет позицию группы
+   * @param {number} index Индекс текущей группы
+   * @private
+   * @returns {object} Позиция группы ({ x, y })
+   */
   _getGroupsCoordinates(index) {
     const { x, y, } = this._getCoordinates();
     const { gaps = {}, } = this.titleData;
@@ -176,6 +228,12 @@ class BlockInfo extends Element {
     };
   }
 
+  /**
+   * Рисует группы
+   * @param {boolean} windowIsOutOfBounds Правило, говорящее, что окно вышло за границы диаграммы
+   * @param {number} blockWidth Ширина окна
+   * @private
+   */
   _drawGroups(windowIsOutOfBounds, blockWidth) {
     const { font: groupsFont, } = this.groupsData;
     const { size, weight, color = this.themeForGroup.color, } = groupsFont;
@@ -201,6 +259,12 @@ class BlockInfo extends Element {
     });
   }
 
+  /**
+   * Определяет максимальную ширину среди элементов
+   * @param {array} elements Содержит данные элементов
+   * @private
+   * @returns {number} Максимальная ширина
+   */
   _getMaxContentWidth(elements) {
     const maxGroupWidth = quickSort(elements.map(({ group, }) => group), "width").reverse()[0].width;
     const titleWidth = this._getTitleSize().width;
@@ -208,10 +272,21 @@ class BlockInfo extends Element {
     return Math.max(maxGroupWidth, titleWidth);
   }
 
+  /**
+   * Проверяет на выход окна за границы диаграммы
+   * @param {number} blockWidth Ширина окна
+   * @private
+   * @returns {boolean}
+   */
   _outOfBounds(blockWidth) {
     return this._getCoordinates().x + blockWidth > this.bounds.width;
   }
 
+  /**
+   * Определяет размеры окна
+   * @private
+   * @returns {object} Размеры окна ({ width, height })
+   */
   _getWindowSize() {
     const padding = this.padding;
     const { gaps: gapsGroups, } = this.groupsData;
@@ -223,6 +298,11 @@ class BlockInfo extends Element {
     return { width, height, };
   }
 
+  /**
+   * Рисует треугольник
+   * @private
+   * @param {boolean} windowIsOutOfBounds Правило, говорящее, что окно вышло за границы диаграммы
+   */
   _drawTriangle(windowIsOutOfBounds) {
     const { x, y, } = this._getCoordinates();
     const triangleData = {
@@ -259,6 +339,13 @@ class BlockInfo extends Element {
     ).draw();
   }
 
+  /**
+   * Рисует окно
+   * @param {boolean} windowIsOutOfBounds Правило, говорящее, что окно вышло за границы диаграммы
+   * @param {number} width Ширина окна
+   * @param {number} height Высота окна
+   * @private
+   */
   _drawWindow(windowIsOutOfBounds, width, height) {
     const coordinates = this._getCoordinates();
 
@@ -278,6 +365,7 @@ class BlockInfo extends Element {
     ).draw();
   }
 
+  // Рисует окно об активной группе
   init() {
     const windowIsOutOfBounds = this._outOfBounds(this._getWindowSize().width);
     const { width, height, } = this._getWindowSize();

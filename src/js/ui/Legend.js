@@ -5,20 +5,38 @@ import getStyleByIndex from "../helpers/getStyleByIndex";
 
 class Legend {
   constructor(showLegend, data, line, ctx, bounds, font, circle, legendGaps = {}, maxCount = 4, themeForText = {}, themeForCircle = {}) {
+    // Если включено, то легенда будет нарисована
     this.showLegend = showLegend;
+    // Данные линии
     this.line = line;
+    // Данные шрифта
     this.font = font;
+    // Содержит данные групп
     this.data = data;
+    // Контекст элемента canvas
     this.ctx = ctx;
+    // Содержит объект границ диаграммы
     this.bounds = bounds;
+    // Данные круга
     this.circle = circle;
+    // Максимальное кол-во элементов в одной колонке
     this.maxCount = maxCount > 0 ? maxCount : 4;
+    // Отступы
     this.legendGaps = legendGaps;
+    // Высота легенды
     this.totalHeight = 0;
+    // Стили для текста от темы
     this.themeForText = themeForText;
+    // Стили для круга от темы
     this.themeForCircle = themeForCircle;
   }
 
+  /**
+   * Определяет размеры у текста групп
+   * @param {array} groups Содержит группы
+   * @private
+   * @returns {array} Группы с их размером текста
+   */
   _getSizeGroups(groups) {
     const { size, weight = 400, } = this.font;
 
@@ -32,6 +50,12 @@ class Legend {
     });
   }
 
+  /**
+   * Определяет дистанцию между группами по горизонтали
+   * @param {array} groups Содержит группы
+   * @private
+   * @returns {number} Общая дистанция
+   */
   _getDistanceGroups(groups) {
     if (!groups.length) {
       return 0;
@@ -47,6 +71,12 @@ class Legend {
     }, 0);
   }
 
+  /**
+   * Определяет дистанцию между группами по вертикали
+   * @param {array} groups Содержит группы
+   * @private
+   * @returns {number} Общая дистанция
+   */
   _getTopDistanceGroups(groups) {
     if (!groups.length) {
       return 0;
@@ -58,6 +88,11 @@ class Legend {
     return (gapsGroup.bottom || 0) + height;
   }
 
+  /**
+   * Определяет колонки относительно текущих групп
+   * @private 
+   * @returns {array} Колонки
+   */
   _getColumns() {
     const columns = [];
     const dataKeys = Object.keys(this.data);
@@ -83,6 +118,16 @@ class Legend {
     return columns;
   }
 
+  /**
+   * Рисует текст группы
+   * @param {object} group Содержит текст группы
+   * @param {number} height Высота текста группы
+   * @param {array} groups Содержит группы
+   * @param {number} index Индекс группы
+   * @param {object} gaps Отступы
+   * @private
+   * @returns {object} Позиция текста
+   */
   _drawText(group, height, groups, index, gaps) {
     const bounds = this.bounds;
     const center = bounds.width / 2;
@@ -111,6 +156,14 @@ class Legend {
     return posGroup;
   }
 
+  /**
+   * Рисует круг
+   * @param {number} x Позиция по оси абсцисс
+   * @param {number} y Позиция по оси ординат
+   * @param {number} height Высота
+   * @param {string} color Цвет
+   * @private
+   */
   _drawCircle(x, y, height, color) {
     const { radius, } = this.circle;
     const { circle = {}, } = this.legendGaps;
@@ -131,6 +184,13 @@ class Legend {
     ).draw();
   }
 
+  /**
+   * Получает дистанцию между текущей колонкой и предыдущих
+   * @param {array} columns Содержит данные колонок
+   * @param {number} index Индекс текущей колонки
+   * @private
+   * @returns {number} Дистанция
+   */
   _getDistanceTopFromPrevColumns(columns, index) {
     const prevColumns = columns.filter((c, i) => i < index);
 
@@ -141,6 +201,11 @@ class Legend {
     }, 0);
   }
 
+  /**
+   * Рисует легенду
+   * @param {object} gaps Содержит отступы легенды
+   * @returns 
+   */
   draw(gaps) {
     if (!this.showLegend) {
       return this;
