@@ -5,13 +5,22 @@ class Rect extends Element {
   constructor(x, y, color, ctx, width, height, startY, endY, rotateDeg, opacity, stroke = {}) {
     super(x, y, color, ctx, rotateDeg, opacity);
 
+    // Ширина
     this.width = width;
+    // Высота
     this.height = height;
+    // Начальная позиция по оси ординат (для градиента)
     this.startY = startY;
+    // Конечная позиция по оси ординат (для градиента)
     this.endY = endY;
+    // Содержит данные обводки ({ color, width })
     this.stroke = stroke;
   }
 
+  /**
+   * Устанавливает цвет
+   * @private
+   */
   _setColor() {
     if (Array.isArray(this.color)) {
       setGradientColor(this.color, this.startY, this.endY, "fillStyle", this.ctx);

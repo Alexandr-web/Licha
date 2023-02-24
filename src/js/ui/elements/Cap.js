@@ -6,13 +6,19 @@ class Cap extends Element {
   constructor(size, x, y, color, format, ctx, opacity, startY, endY, rotateDeg, stroke = {}) {
     super(x, y, color, ctx, rotateDeg, opacity);
 
+    // Формат колпачка
     this.format = format;
+    // Размер колпачка
     this.size = size;
+    // Объект, содержащий данные обводки ({ width, color })
     this.stroke = stroke;
+    // Начальная позиция по оси ординат (для градиента)
     this.startY = startY;
+    // Конечная позиция по оси ординат (для градиента)
     this.endY = endY;
   }
 
+  // Рисует колпачок
   draw() {
     switch (this.format) {
       case "circle":

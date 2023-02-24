@@ -10,15 +10,27 @@ class Grid {
     format = "default",
     theme = {}
   ) {
+    // Содержит названия точек оси абсцисс
     this.names = names;
+    // Контекст элемента canvas
     this.ctx = ctx;
+    // Содержит данные точек оси ординат
     this.pointsY = pointsY;
+    // Содержит данные точек оси абсцисс
     this.pointsX = pointsX;
+    // Содержит данные линии
     this.line = line;
+    // Формат сетки (horizontal или vertical)
     this.format = format;
+    // Данные темы
     this.theme = theme;
   }
 
+  /**
+   * Рисует горизонтальные линии
+   * @private
+   * @param {{ color: string, width: number, dotted: boolean, }} param0 Содержит объект данных линии
+   */
   _drawHorizontalLines({ color, width, dotted, }) {
     const firstXAxisItem = this.pointsX[0]; // Элемент для начальной позиции X линии
     const lastXAxisItem = this.pointsX[this.pointsX.length - 1]; // Элемент для конечной позиции X линии
@@ -37,6 +49,11 @@ class Grid {
     });
   }
 
+  /**
+   * Рисует вертикальные линии
+   * @private
+   * @param {{ color: string, width: number, dotted: boolean, }} param0 Содержит объект данных линии
+   */
   _drawVerticalLines({ color, width, dotted, }) {
     const axisYOnScreen = this.pointsY.filter(({ onScreen, }) => onScreen);
     const firstAxisYItem = axisYOnScreen[0]; // Элемент для начальной позиции Y линии
@@ -58,6 +75,7 @@ class Grid {
     });
   }
 
+  // Рисует сетку
   init() {
     if (!Object.keys(this.line).length) {
       return;

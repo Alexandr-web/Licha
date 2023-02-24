@@ -95,7 +95,7 @@ export default [
           strokeColor: ["#212121", "#212121", "#212121", "#212121"],
         },
         blockInfo: {
-          window: { color: "#32373D", },
+          window: { color: "#000000", },
           title: { color: "#E5E5E5", },
           group: { color: "#696969", },
         },
@@ -121,7 +121,7 @@ export default [
           strokeColor: [],
         },
         blockInfo: {
-          window: { color: "#09060F", },
+          window: { color: "#000000", },
           title: { color: "#EDEAEF", },
           group: { color: "#4B4162", },
         },
