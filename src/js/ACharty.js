@@ -412,7 +412,7 @@ class ACharty {
 		return this;
 	}
 
-	// Инициализация диаграммы
+	// Рисует диаграмму
 	init() {
 		const canvas = this._setCanvas();
 		const chart = this._setChartTitle(canvas);
