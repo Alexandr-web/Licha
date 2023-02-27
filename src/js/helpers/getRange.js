@@ -1,10 +1,11 @@
 /**
  * Определяет диапазон значений от меньшего к большему в зависимости от шага
- * Отдельная благодарность
  * @param {number} from Начальное значение (наименьшее)
  * @param {number} to Конечное значение (наибольшее)
  * @param {number} count Шаг
  * @return {array} Диапазон
+ * 
+ * Отдельная благодарность
  * @see http://www.robertpenner.com/easing/
  */
 export default (from, to, count) => {
