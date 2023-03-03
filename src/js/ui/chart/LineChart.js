@@ -16,11 +16,12 @@ class LineChart extends Chart {
     height,
     title,
     padding,
+    hideGroups,
     sortValues = "less-more",
     themeForLine = {},
     themeForCaps = {}
   ) {
-    super(padding, data, ctx, width, height, "line", title);
+    super(padding, data, ctx, width, height, "line", title, null, hideGroups);
 
     // Содержит данные точек оси абсцисс
     this.pointsX = pointsX;
@@ -269,12 +270,22 @@ class LineChart extends Chart {
    * @returns {LineChart}
    */
   draw() {
-    for (const group in this.data) {
+    const visibleGroups = Object
+      .keys(this.data)
+      .filter((group) => !this.hideGroups.includes(group))
+      .reduce((acc, group) => {
+        acc[group] = this.data[group];
+
+        return acc;
+      }, {});
+
+    for (const group in visibleGroups) {
       const {
         data: groupData,
         line: groupLine = {},
         cap: groupCap = {},
-      } = this.data[group];
+      } = visibleGroups[group];
+      
       const { lineStyle, } = this._getStyles(groupLine, groupCap, group);
       const coordinates = this._getGroupsDataCoordinates(groupData);
 

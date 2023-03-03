@@ -61,6 +61,8 @@ class ACharty {
 		this.data = data;
 		// Стили темы
 		this.theme = theme;
+		// Содержит названия скрытых групп
+		this.hideGroups = [];
 	}
 
 	/**
@@ -303,7 +305,7 @@ class ACharty {
 				}
 
 				return point;
-			}).filter(({ x, }) => mousePos.x > (x - 5) && mousePos.x < (x + 5));
+			}).filter(({ x, group, }) => !this.hideGroups.includes(group) && mousePos.x > (x - 5) && mousePos.x < (x + 5));
 
 			// Меняем курсор в зависимости от кол-ва активных элементов
 			document.documentElement.style = `cursor: ${activeElements.length ? "none" : "default"}`;
@@ -367,6 +369,45 @@ class ACharty {
 	}
 
 	/**
+	 * Обработчик события click у элемента canvas
+	 * @param {Event} e Объект event
+	 * @param {array} legendItems Содержит данные элементов легенды
+	 * @private
+	 */
+	_clickByCanvasAreaHandler(e, legendItems) {
+		const mousePos = { x: e.offsetX, y: e.offsetY, };
+		const findMatchLegendItem = legendItems.find(({ x, y, width, height, }) => {
+			const endX = x + width;
+			const startY = y - height;
+
+			return (mousePos.x <= endX && mousePos.x >= x) && (mousePos.y <= y && mousePos.y >= startY);
+		});
+
+		if (findMatchLegendItem) {
+			const { group, } = findMatchLegendItem;
+			const findIdxHideGroup = this.hideGroups.indexOf(group);
+
+			if (findIdxHideGroup !== -1) {
+				this.hideGroups.splice(findIdxHideGroup, 1);
+			} else {
+				this.hideGroups.push(group);
+			}
+
+			this.update();
+		}
+	}
+
+	/**
+	 * Добавление события click элементу canvas
+	 * @param {Canvas} canvas Экземпляр класса Canvas
+	 * @param {*} legendItems 
+	 * @private
+	 */
+	_clickByCanvasArea(canvas, legendItems) {
+		canvas.canvasElement.addEventListener("click", (e) => this._clickByCanvasAreaHandler(e, legendItems));
+	}
+
+	/**
 	 * Рисует диаграмму в зависимости от ее типа
 	 * @param {AxisY} axisY Экземпляр класса AxisY
 	 * @param {AxisX} axisX Экземпляр класса AxisX
@@ -389,6 +430,7 @@ class ACharty {
 					height,
 					null,
 					null,
+					this.hideGroups,
 					this.axisY.sort,
 					this.theme.line,
 					this.theme.cap
@@ -423,6 +465,7 @@ class ACharty {
 
 		this._mousemoveByCanvas(canvas, chart.getBounds(), points);
 		this._leavemouseFromCanvasArea(canvas);
+		this._clickByCanvasArea(canvas, legend.items);
 		this._setGrid(canvas, axisX, axisY);
 		this._drawChartByType(axisY, axisX, canvas);
 		this._setBreakpoints();

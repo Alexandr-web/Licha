@@ -29,6 +29,8 @@ class Legend {
     this.themeForText = themeForText;
     // Стили для круга от темы
     this.themeForCircle = themeForCircle;
+    // Содержит данные элементов легенды
+    this.items = [];
   }
 
   /**
@@ -120,7 +122,7 @@ class Legend {
 
   /**
    * Рисует текст группы
-   * @param {object} group Содержит текст группы
+   * @param {string} group Содержит текст группы
    * @param {number} height Высота текста группы
    * @param {array} groups Содержит группы
    * @param {number} index Индекс группы
@@ -204,7 +206,7 @@ class Legend {
   /**
    * Рисует легенду
    * @param {object} gaps Содержит отступы легенды
-   * @returns 
+   * @returns {Legend}
    */
   draw(gaps) {
     if (!this.showLegend) {
@@ -217,15 +219,16 @@ class Legend {
       const updateGroups = this._getSizeGroups(groups);
       const gapFromPrevColumns = this._getDistanceTopFromPrevColumns(columns, idx);
 
-      updateGroups.map(({ group, color: colorCap, height, }, index) => {
+      updateGroups.map(({ group, color: colorCap, height, width, }, index) => {
         const posGroup = this._drawText(group, height, updateGroups, index, { ...gaps, top: gaps.top + gapFromPrevColumns, });
 
+        this.items.push({ group, ...posGroup, height, width, });
         this._drawCircle(posGroup.x, posGroup.y, height, colorCap);
       });
 
       this.totalHeight += this._getTopDistanceGroups(updateGroups);
     });
-
+    
     return this;
   }
 }
