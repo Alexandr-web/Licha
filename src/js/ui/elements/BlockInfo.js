@@ -40,8 +40,11 @@ class BlockInfo extends Element {
     this.groupsData = groupsData;
     // Ширина линий
     this.groupLineWidth = 5;
-    // Высота треугольника
-    this.triangleHeight = 10;
+    // Размеры треугольника
+    this.triangleSizes = {
+      height: 10,
+      width: 15,
+    };
     // Текст заголовка
     this.title = elements[0].name;
     // Стили для окна от темы
@@ -89,7 +92,7 @@ class BlockInfo extends Element {
    */
   _getCoordinates() {
     return {
-      x: this.x + this.triangleHeight,
+      x: this.x + this.triangleSizes.height,
       y: this.y,
     };
   }
@@ -140,12 +143,12 @@ class BlockInfo extends Element {
       if (windowIsOutOfBounds) {
         Object.assign(linePos, {
           moveTo: {
-            x: posX - (blockWidth + this.triangleHeight * 2),
+            x: posX - (blockWidth + this.triangleSizes.height * 2),
             y: groupPos.y,
           },
           lineTo: [
             {
-              x: posX - (blockWidth + this.triangleHeight * 2),
+              x: posX - (blockWidth + this.triangleSizes.height * 2),
               y: groupPos.y - group.height,
             }
           ],
@@ -190,7 +193,7 @@ class BlockInfo extends Element {
     };
 
     if (windowIsOutOfBounds) {
-      coordinates.x -= blockWidth + this.triangleHeight * 2;
+      coordinates.x -= blockWidth + this.triangleSizes.height * 2;
     }
 
     const { font: titleFont, } = this.titleData;
@@ -247,7 +250,7 @@ class BlockInfo extends Element {
       const coordinates = this._getGroupsCoordinates(index);
 
       if (windowIsOutOfBounds) {
-        coordinates.x -= blockWidth + this.triangleHeight * 2;
+        coordinates.x -= blockWidth + this.triangleSizes.height * 2;
       }
 
       new Text(
@@ -304,26 +307,26 @@ class BlockInfo extends Element {
    * @param {boolean} windowIsOutOfBounds Правило, говорящее, что окно вышло за границы диаграммы
    */
   _drawTriangle(windowIsOutOfBounds) {
-    const { x, y, } = this._getCoordinates();
+    const x = this.x;
+    const y = this.y;
     const triangleData = {
-      x,
+      x: x + this.triangleSizes.height,
       y,
       lineTo: [
-        { x: x - this.triangleHeight, y: y + this.triangleHeight / 2, },
-        { x, y: y + this.triangleHeight, }
+        { x, y: y + this.triangleSizes.width / 2, },
+        { x: x + this.triangleSizes.height, y: y + this.triangleSizes.width, }
       ],
       startY: y,
-      endY: y + this.triangleHeight,
+      endY: y + this.triangleSizes.width,
     };
 
     if (windowIsOutOfBounds) {
       Object.assign(triangleData, {
-        ...triangleData,
-        x: x - this.triangleHeight * 2,
+        x: x - this.triangleSizes.height,
         y,
         lineTo: [
-          { x: x - this.triangleHeight, y: y + this.triangleHeight / 2, },
-          { x: x - this.triangleHeight * 2, y: y + this.triangleHeight, }
+          { x, y: y + this.triangleSizes.width / 2, },
+          { x: x - this.triangleSizes.height, y: y + this.triangleSizes.width, }
         ],
       });
     }
@@ -350,7 +353,7 @@ class BlockInfo extends Element {
     const coordinates = this._getCoordinates();
 
     if (windowIsOutOfBounds) {
-      coordinates.x -= (width + this.triangleHeight * 2);
+      coordinates.x -= (width + this.triangleSizes.height * 2);
     }
 
     new Rect(

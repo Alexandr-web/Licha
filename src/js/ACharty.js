@@ -227,6 +227,7 @@ class ACharty {
 
 	/**
 	 * Обработчик события resize у window
+	 * Обновляет график и проверяет ширину окна с break points
 	 * @private
 	 */
 	_windowResizeHandler() {
@@ -282,6 +283,7 @@ class ACharty {
 
 	/**
 	 * Обработчик события mousemove у элемента canvas
+	 * Рисует окно с информацией об активной группе
 	 * @param {Event} e Объект события
 	 * @param {number} endY Конечная область видимости окна с информацией об активной группе
 	 * @param {array} pointsX Содержит данные всех точек на оси абсцисс
@@ -291,8 +293,6 @@ class ACharty {
 	 * @private
 	 */
 	_mousemoveByCanvasHandler(e, endY, pointsX, startY, canvas, bounds) {
-		this.update();
-
 		const mousePos = { x: e.offsetX, y: e.offsetY, };
 
 		if (mousePos.y <= endY && mousePos.y >= startY) {
@@ -308,10 +308,11 @@ class ACharty {
 				return point;
 			}).filter(({ x, group, }) => !this.hideGroups.includes(group) && mousePos.x > (x - 5) && mousePos.x < (x + 5));
 
-			// Меняем курсор в зависимости от кол-ва активных элементов
 			document.documentElement.style = `cursor: ${activeElements.length ? "none" : "default"}`;
 
 			if (activeElements.length) {
+				this.update();
+				
 				const [{ x, }] = activeElements;
 				const { title, groups, background, padding, } = this.blockInfo;
 				const themeForWindow = (this.theme.blockInfo || {}).window;
@@ -361,16 +362,27 @@ class ACharty {
 	}
 
 	/**
+	 * Обработчик события mouseleave у элемента canvas
+	 * Обновляет график и изменяет тип курсора на обычный
+	 * @private
+	 */
+	_leavemouseFromCanvasAreaHandler() {
+		document.documentElement.style = "default";
+		this.update();
+	}
+
+	/**
 	 * Добавление события mouseleave элементу canvas
 	 * @param {Canvas} canvas Экземпляр класса Canvas
 	 * @private
 	 */
 	_leavemouseFromCanvasArea(canvas) {
-		canvas.canvasElement.addEventListener("mouseleave", () => document.documentElement.style = "default");
+		canvas.canvasElement.addEventListener("mouseleave", this._leavemouseFromCanvasAreaHandler.bind(this));
 	}
 
 	/**
 	 * Обработчик события click у элемента canvas
+	 * Скрывает группы при клике на элементы легенды
 	 * @param {Event} e Объект event
 	 * @param {array} legendItems Содержит данные элементов легенды
 	 * @private
