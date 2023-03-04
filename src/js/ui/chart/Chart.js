@@ -10,8 +10,11 @@ class Chart {
     height,
     title = {},
     type = "line",
-    theme = {}
+    theme = {},
+    hideGroups = []
   ) {
+    // Содержит скрытые группы
+    this.hideGroups = hideGroups;
     // Содержит стили от темы
     this.theme = theme;
     // Содержит данные групп
