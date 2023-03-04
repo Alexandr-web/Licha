@@ -114,6 +114,7 @@ class ACharty {
 			chart.getBounds(),
 			font,
 			circle,
+			this.hideGroups,
 			legendGaps,
 			maxCount,
 			this.theme.legend,

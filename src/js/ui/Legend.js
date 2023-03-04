@@ -2,9 +2,12 @@ import Text from "./elements/Text";
 import Circle from "./elements/Circle";
 import getTextSize from "../helpers/getTextSize";
 import getStyleByIndex from "../helpers/getStyleByIndex";
+import Line from "./elements/Line";
 
 class Legend {
-  constructor(showLegend, data, line, ctx, bounds, font, circle, legendGaps = {}, maxCount = 4, themeForText = {}, themeForCircle = {}) {
+  constructor(showLegend, data, line, ctx, bounds, font, circle, hideGroups, legendGaps = {}, maxCount = 4, themeForText = {}, themeForCircle = {}) {
+    // Содержит названия скрытых групп
+    this.hideGroups = hideGroups;
     // Если включено, то легенда будет нарисована
     this.showLegend = showLegend;
     // Данные линии
@@ -90,6 +93,10 @@ class Legend {
     return (gapsGroup.bottom || 0) + height;
   }
 
+  _overlineHideGroupText(x, endX, y, color) {
+    new Line(x, y, color, this.ctx, [{ x: endX, y, }], 2).draw();
+  }
+
   /**
    * Определяет колонки относительно текущих групп
    * @private 
@@ -123,6 +130,7 @@ class Legend {
   /**
    * Рисует текст группы
    * @param {string} group Содержит текст группы
+   * @param {number} width Ширина текста группы
    * @param {number} height Высота текста группы
    * @param {array} groups Содержит группы
    * @param {number} index Индекс группы
@@ -130,7 +138,7 @@ class Legend {
    * @private
    * @returns {object} Позиция текста
    */
-  _drawText(group, height, groups, index, gaps) {
+  _drawText(group, width, height, groups, index, gaps) {
     const bounds = this.bounds;
     const center = bounds.width / 2;
     const totalGroupsDistance = this._getDistanceGroups(groups);
@@ -154,6 +162,13 @@ class Legend {
       posGroup.x,
       posGroup.y
     ).draw();
+
+    if (this.hideGroups.includes(group)) {
+      const endX = width + posGroup.x;
+      const y = posGroup.y - height / 2;
+
+      this._overlineHideGroupText(posGroup.x, endX, y, color);
+    }
 
     return posGroup;
   }
@@ -220,7 +235,14 @@ class Legend {
       const gapFromPrevColumns = this._getDistanceTopFromPrevColumns(columns, idx);
 
       updateGroups.map(({ group, color: colorCap, height, width, }, index) => {
-        const posGroup = this._drawText(group, height, updateGroups, index, { ...gaps, top: gaps.top + gapFromPrevColumns, });
+        const posGroup = this._drawText(
+          group,
+          width,
+          height,
+          updateGroups,
+          index,
+          { ...gaps, top: gaps.top + gapFromPrevColumns, }
+        );
 
         this.items.push({ group, ...posGroup, height, width, });
         this._drawCircle(posGroup.x, posGroup.y, height, colorCap);
