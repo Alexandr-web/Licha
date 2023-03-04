@@ -93,6 +93,14 @@ class Legend {
     return (gapsGroup.bottom || 0) + height;
   }
 
+  /**
+   * Рисует линию, которая перечеркивает текст группы
+   * @param {number} x Начальная позиция по оси абсцисс
+   * @param {number} endX Конечная позиция по оси абсцисс
+   * @param {number} y Начальная позиция по оси ординат
+   * @param {string} color Цвет
+   * @private
+   */
   _overlineHideGroupText(x, endX, y, color) {
     new Line(x, y, color, this.ctx, [{ x: endX, y, }], 2).draw();
   }
