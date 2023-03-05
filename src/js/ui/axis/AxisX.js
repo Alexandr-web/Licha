@@ -18,7 +18,7 @@ class AxisX extends Axis {
     themeForLine = {},
     ignoreNames = []
   ) {
-    super(ctx, themeForPoint, themeForTitle, line, title, bounds, sortNames, font);
+    super(ctx, themeForPoint, themeForTitle, title, bounds, sortNames, font);
 
     // Стили для линии от темы
     this.themeForLine = themeForLine;
@@ -31,6 +31,8 @@ class AxisX extends Axis {
     this.data = data;
     // Метод, позволяющий изменить название точки оси абсцисс
     this.editName = editName;
+    // Данные линии
+    this.line = line;
   }
 
   /**

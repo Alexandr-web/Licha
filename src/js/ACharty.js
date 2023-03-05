@@ -131,7 +131,7 @@ class ACharty {
 	 * @returns {AxisY}
 	 */
 	_setAxisYTitle(canvas, chart, legend) {
-		const { step, editValue, line, title, font, sort, } = this.axisY;
+		const { step, editValue, title, font, sort, } = this.axisY;
 		const { legend: legendGaps = {}, } = (this.legend.gaps || {});
 		const themeForTitle = (this.theme.axis || {}).title;
 		const themeForPoint = (this.theme.axis || {}).point;
@@ -142,7 +142,6 @@ class ACharty {
 			editValue,
 			this.data,
 			canvas.ctx,
-			line,
 			title,
 			chart.getBounds(),
 			font,

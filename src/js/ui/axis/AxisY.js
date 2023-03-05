@@ -10,7 +10,6 @@ class AxisY extends Axis {
     editValue,
     data,
     ctx,
-    line,
     title,
     bounds,
     font,
@@ -19,7 +18,7 @@ class AxisY extends Axis {
     themeForPoint,
     sortValues = "less-more"
   ) {
-    super(ctx, themeForPoint, themeForTitle, line, title, bounds, sortNames, font);
+    super(ctx, themeForPoint, themeForTitle, title, bounds, sortNames, font);
 
     // Шаг, с которым будут рисоваться значения на оси ординат
     this.step = step;

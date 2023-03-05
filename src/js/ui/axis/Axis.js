@@ -5,7 +5,6 @@ class Axis {
     ctx,
     themeForPoint = {},
     themeForTitle = {},
-    line = {},
     title = {},
     bounds = {},
     sortNames = "less-more",
@@ -15,8 +14,6 @@ class Axis {
     this.ctx = ctx;
     // Название оси
     this.title = title;
-    // Данные линии оси
-    this.line = line;
     // Стили шрифта оси
     this.font = font;
     // Содержит границы холста
