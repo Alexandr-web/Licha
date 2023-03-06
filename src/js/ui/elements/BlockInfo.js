@@ -373,8 +373,8 @@ class BlockInfo extends Element {
     const windowIsOutOfBounds = this._outOfBounds(this._getWindowSize().width);
     const { width, height, } = this._getWindowSize();
 
-    this._drawWindow(windowIsOutOfBounds, width, height);
     this._drawTriangle(windowIsOutOfBounds);
+    this._drawWindow(windowIsOutOfBounds, width, height);
     this._drawTitle(windowIsOutOfBounds, width);
     this._drawGroups(windowIsOutOfBounds, width);
     this._drawLines(windowIsOutOfBounds, width);
