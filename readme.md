@@ -396,7 +396,7 @@ Parameters passed to the ACharty class constructor
 
     | Description  | Example | Type |
     | ------------- | ------------- | ------------- |
-    | Fill line | `line: { fill: ["rgba(255,255,255,0.4)", "transparent"], }`  | `array<string>` |
+    | Fill line | `line: { fill: ["rgba(255,255,255,0.4)", "transparent"], }` or `line: { fill: "white", }`  | `array<string> \| string` |
 
   * #### `stepped`
 
@@ -876,7 +876,7 @@ Parameters passed to the ACharty class constructor
 
           | Description  | Example | Type |
           | ------------- | ------------- | ------------- |
-          | Fill line | `data: { "My group": { line: { fill: ["rgba(255,255,255,0.4)", "transparent"], } }, }`  | `array<string>` |
+          | Fill line | `data: { "My group": { line: { fill: ["rgba(255,255,255,0.4)", "transparent"], } }, }` or `data: { "My group": { line: { fill: "white", } }, }`  | `array<string> \| string` |
 
         * ###### `stepped`
 
