@@ -9,6 +9,8 @@ import getStyleByIndex from "../../helpers/getStyleByIndex";
 
 class BlockInfo extends Element {
   constructor(
+    editValue,
+    editName,
     data,
     bounds,
     elements,
@@ -26,6 +28,10 @@ class BlockInfo extends Element {
   ) {
     super(x, y, color, ctx);
 
+    // Метод, который изменяет вид значения
+    this.editValue = editValue;
+    // Метод, который изменяет вид значения
+    this.editName = editName;
     // Содержит данные групп
     this.data = data;
     // Содержит границы дигараммы
@@ -58,13 +64,35 @@ class BlockInfo extends Element {
   }
 
   /**
+   * Определяет корректное название для точки
+   * @param {string|number} group Название точки
+   * @private
+   * @returns {string}
+   */
+  _getCorrectGroupName(group) {
+    return this.editName instanceof Function ? this.editName(group) : group;
+  }
+
+  /**
+   * Определяет корректное значение для точки
+   * @param {number} value Значение точки
+   * @private
+   * @returns {string}
+   */
+  _getCorrectGroupValue(value) {
+    return this.editValue instanceof Function ? this.editValue(value) : value;
+  }
+
+  /**
    * Определяет размеры элементов
    * @private
    * @returns {array} Массив, содержащий данные элементов, включая их размеры
    */
   _getElementsWithSize() {
     return this.elements.map(({ group, value, color, }) => {
-      const groupName = `${group}: ${value}`;
+      const correctGroupValue = this._getCorrectGroupValue(value);
+      const correctGroupName = this._getCorrectGroupName(group);
+      const groupName = `${correctGroupName}: ${correctGroupValue}`;
       const { font: groupsFont, } = this.groupsData;
       const { font: titleFont, } = this.titleData;
       const dataKeys = Object.keys(this.data);
@@ -78,8 +106,8 @@ class BlockInfo extends Element {
           ...getTextSize(groupsFont.size, groupsFont.weight, groupName, this.ctx),
         },
         value: {
-          name: value,
-          ...getTextSize(titleFont.size, titleFont.weight, value, this.ctx),
+          name: correctGroupValue,
+          ...getTextSize(titleFont.size, titleFont.weight, correctGroupValue, this.ctx),
         },
       };
     });

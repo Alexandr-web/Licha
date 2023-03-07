@@ -7,11 +7,11 @@
   </p>
 </div>
 
-[Usage](https://github.com/Alexandr-web/aCharty/tree/documentation#usage)
-[Params](https://github.com/Alexandr-web/aCharty/tree/documentation#params)
-[Utils](https://github.com/Alexandr-web/aCharty/tree/documentation#utils)
+* [Usage](https://github.com/Alexandr-web/aCharty/tree/documentation#usage)
+* [Params](https://github.com/Alexandr-web/aCharty/tree/documentation#params)
+* [Utils](https://github.com/Alexandr-web/aCharty/tree/documentation#utils)
 
-<h2>Usage</h2>
+## Usage
 
 How to use this tool?
 
@@ -57,11 +57,11 @@ const chart = new ACharty({
 }).init();
 ```
 
-<h3>Result<h3>
+### Result
 
 <img src="./.github/e1.PNG" />
 
-<h2>Params</h2>
+## Params
 
 Parameters passed to the ACharty class constructor
 
@@ -73,11 +73,13 @@ Parameters passed to the ACharty class constructor
 * [axisY](https://github.com/Alexandr-web/aCharty/tree/documentation#axisy)
 * [axisX](https://github.com/Alexandr-web/aCharty/tree/documentation#axisx)
 * [line](https://github.com/Alexandr-web/aCharty/tree/documentation#line)
-* [line](https://github.com/Alexandr-web/aCharty/tree/documentation#line)
 * [cap](https://github.com/Alexandr-web/aCharty/tree/documentation#cap)
 * [grid](https://github.com/Alexandr-web/aCharty/tree/documentation#grid)
 * [legend](https://github.com/Alexandr-web/aCharty/tree/documentation#legend)
 * [blockInfo](https://github.com/Alexandr-web/aCharty/tree/documentation#blockinfo)
+* [breakpoints](https://github.com/Alexandr-web/aCharty/tree/documentation#breakpoints)
+* [data](https://github.com/Alexandr-web/aCharty/tree/documentation#data)
+* [theme](https://github.com/Alexandr-web/aCharty/tree/documentation#theme)
 
 ### `selectorCanvas`
 
@@ -239,7 +241,9 @@ Parameters passed to the ACharty class constructor
     | ------------- | ------------- | ------------- |
     | Receives data related to the title | `axisY: { title: { font: { ... }, ... } }`  | `object` |
 
-    * #### `font`
+    ##### Accepted parameters
+
+    * ##### `font`
 
       | Description  | Example | Type |
       | ------------- | ------------- | ------------- |
@@ -340,7 +344,9 @@ Parameters passed to the ACharty class constructor
     | ------------- | ------------- | ------------- |
     | Receives data related to the title | `axisX: { title: { font: { ... }, ... } }`  | `object` |
 
-    * #### `font`
+    ##### Accepted parameters
+
+    * ##### `font`
 
       | Description  | Example | Type |
       | ------------- | ------------- | ------------- |
@@ -747,3 +753,168 @@ Parameters passed to the ACharty class constructor
       | Description  | Example | Type |
       | ------------- | ------------- | ------------- |
       | Left padding size | `blockInfo: { padding: { left: 25, } }`  | `number` |
+
+### `breakpoints`
+
+| Description  | Example | Type |
+| ------------- | ------------- | ------------- |
+| Points that change chart data if they match the screen | ```breakpoints: { "800": function() { ... }, }```  | `object` |
+
+#### Accepted parameters
+
+  * #### Point
+
+    | Description  | Example | Type |
+    | ------------- | ------------- | ------------- |
+    | A key whose name will mean the width of the screen, and the value is a function that will work when the screen width is equal to the name of the key | `breakpoints: { "1000": function () { this.background = "white"; this.update(); } }`  | `function` |
+
+### `data`
+
+| Description  | Example | Type |
+| ------------- | ------------- | ------------- |
+| Accepts group data to be displayed on the chart | `data: { "My group": { ... }, }`  | `object` |
+
+  #### Accepted parameters
+
+  * #### Group
+
+    | Description  | Example | Type |
+    | ------------- | ------------- | ------------- |
+    | A key whose name will mean a separate data group to which you can apply different styles | `data: { "My group": { line: { ... }, }, }`  | `object` |
+
+    ##### Accepted parameters
+
+    * ##### `data`
+
+      | Description  | Example | Type |
+      | ------------- | ------------- | ------------- |
+      | Group data to be displayed on the chart | `data: { "My group": { data: [ ... ], }, }`  | `array<object>` |
+
+      ###### Accepted parameters
+
+      * ###### Group data object
+
+        | Description  | Example | Type |
+        | ------------- | ------------- | ------------- |
+        | Contains the name and value of the group data | `data: { "My group": { data: [{ ... }], }, }`  | `object` |
+
+        ###### Accepted parameters
+
+        * ###### `name`
+
+        | Description  | Example | Type |
+        | ------------- | ------------- | ------------- |
+        | Data name | `data: { "My group": { data: [{ name: "Tuesday", ... }], }, }`  | `string \| number` |
+
+        * ###### `value`
+
+        | Description  | Example | Type |
+        | ------------- | ------------- | ------------- |
+        | Data value | `data: { "My group": { data: [{ name: "Tuesday", value: 10, }], }, }`  | `number` |
+
+    * ##### `cap`
+
+      | Description  | Example | Type |
+      | ------------- | ------------- | ------------- |
+      | Gets the data owned by this group's cap | `data: { "My group": { cap: { ... }, }, }`  | `object` |
+
+      ###### Accepted parameters
+
+      * ###### `format`
+
+        | Description  | Example | Type |
+        | ------------- | ------------- | ------------- |
+        | Cap format ("square" or "circle" (default "circle")) | `data: { "My group": { cap: { format: "sqaure" }, }, }`  | `string` |
+
+      * ###### `color`
+        
+        | Description  | Example | Type |
+        | ------------- | ------------- | ------------- |
+        | Line cap | `data: { "My group": { cap: { color: "red" }, }, }`  | `string` |
+        
+      * ###### `size`
+        
+        | Description  | Example | Type |
+        | ------------- | ------------- | ------------- |
+        | Cap size | `data: { "My group": { cap: { size: 6 }, }, }`  | `number` |
+
+      * ###### `stroke`
+        
+        | Description  | Example | Type |
+        | ------------- | ------------- | ------------- |
+        | Accepts data related to cap stroke | `data: { "My group": { cap: { stroke: { ... }, }, }, }`  | `object` |
+
+        ###### Accepted parameters
+
+        * ##### `width`
+
+          | Description  | Example | Type |
+          | ------------- | ------------- | ------------- |
+          | Stroke width | `data: { "My group": { cap: { stroke: { width: 2 }, }, }, }`  | `number` |
+
+        * ##### `color`
+        
+          | Description  | Example | Type |
+          | ------------- | ------------- | ------------- |
+          | Stroke color | `data: { "My group": { cap: { stroke: { color: "red", }, }, }, }`  | `string` |
+
+      * ##### `line`
+
+        | Description  | Example | Type |
+        | ------------- | ------------- | ------------- |
+        | Receives data that belongs to the line of this group | `data: { "My group": { line: { ... }, }, }`  | `object` |
+
+        ###### Accepted parameters
+
+        * ###### `stepped`
+
+          | Description  | Example | Type |
+          | ------------- | ------------- | ------------- |
+          | Rule that will draw the line step by step (default false) | `data: { "My group": { line: { stepped: true, }, }, }`  | `boolean` |
+
+        * ###### `color`
+        
+          | Description  | Example | Type |
+          | ------------- | ------------- | ------------- |
+          | Line color | `data: { "My group": { line: { color: "white", }, }, }`  | `string` |
+        
+        * ###### `dotted`
+        
+          | Description  | Example | Type |
+          | ------------- | ------------- | ------------- |
+          | Rule that says the line will be made up of dots | `data: { "My group": { line: { dotted: true, }, }, }`  | `boolean` |
+
+        * ###### `width`
+        
+          | Description  | Example | Type |
+          | ------------- | ------------- | ------------- |
+          | Line width (default 1) | `data: { "My group": { line: { width: 2, }, }, }`  | `number` |
+
+### `theme`
+
+| Description  | Example | Type |
+| ------------- | ------------- | ------------- |
+| Accepts a data object belonging to the same theme. [More](https://github.com/Alexandr-web/aCharty/tree/documentation#utils) | `theme: new Utils(0, "light")`  | `object` |
+
+## Utils
+
+The Utils class contains helper resources such as themes and various colors
+
+### How to choose and apply a theme?
+
+```js
+const utils = new Utils();
+
+// Accepts index and topic theme
+// The default index is 0 and the theme is dark
+new ACharty({ theme: utils.getTheme(2, "light") }).init();
+```
+
+### How to apply any color?
+
+```js
+const utils = new Utils();
+
+// Accepts the name of the color and its transparency (default 1)
+new ACharty({ background: utils.getColor("jet", 0.6) }).init();
+```

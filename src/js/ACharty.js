@@ -31,7 +31,7 @@ class ACharty {
 			bottom: 10,
 		},
 	}) {
-		// Точки, которые указывают на ширину окна, чтобы изменить данные диаграммы
+		// Точки, которые изменяют данные диаграмммы, если совпадают с шириной экрана
 		this.breakpoints = breakpoints;
 		// Внутренние отступы
 		this.padding = padding;
@@ -259,23 +259,9 @@ class ACharty {
 
 		if (bPoint) {
 			const func = this.breakpoints[bPoint.toString()];
-			const contextForFunc = {
-				data: this.data,
-				axisY: this.axisY,
-				axisX: this.axisX,
-				line: this.line,
-				cap: this.cap,
-				grid: this.grid,
-				legend: this.legend,
-				type: this.type,
-				background: this.background,
-				title: this.title,
-				padding: this.padding,
-				update: this.update.bind(this),
-			};
 
 			if (func instanceof Function) {
-				func.call(contextForFunc);
+				func.call(this);
 			}
 		}
 	}
@@ -320,6 +306,8 @@ class ACharty {
 				const themeForGroup = (this.theme.blockInfo || {}).group;
 
 				new BlockInfo(
+					this.axisY.editValue,
+					this.axisX.editName,
 					this.data,
 					bounds,
 					activeElements,
