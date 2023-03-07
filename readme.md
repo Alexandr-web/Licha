@@ -392,6 +392,12 @@ Parameters passed to the ACharty class constructor
 
 #### Accepted parameters
   
+  * #### `fill`
+
+    | Description  | Example | Type |
+    | ------------- | ------------- | ------------- |
+    | Fill line | `line: { fill: ["rgba(255,255,255,0.4)", "transparent"], }`  | `array<string>` |
+
   * #### `stepped`
 
     | Description  | Example | Type |
@@ -865,6 +871,12 @@ Parameters passed to the ACharty class constructor
         | Receives data that belongs to the line of this group | `data: { "My group": { line: { ... }, }, }`  | `object` |
 
         ###### Accepted parameters
+
+        * ###### `fill`
+
+          | Description  | Example | Type |
+          | ------------- | ------------- | ------------- |
+          | Fill line | `data: { "My group": { line: { fill: ["rgba(255,255,255,0.4)", "transparent"], } }, }`  | `array<string>` |
 
         * ###### `stepped`
 
