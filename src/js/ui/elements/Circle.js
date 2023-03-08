@@ -30,6 +30,7 @@ class Circle extends Element {
   // Рисует круг
   draw() {
     this.ctx.beginPath();
+    this.ctx.setLineDash([0, 0]);
     this.ctx.globalAlpha = this.opacity;
 
     this._setColor();

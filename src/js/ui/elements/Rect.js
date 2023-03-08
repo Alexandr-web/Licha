@@ -32,6 +32,7 @@ class Rect extends Element {
   // Рисует прямоугольник
   draw() {
     this.ctx.beginPath();
+    this.ctx.setLineDash([0, 0]);
     this.ctx.globalAlpha = this.opacity;
 
     this._setColor();

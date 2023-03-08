@@ -31,6 +31,8 @@ class Chart {
     this.title = title;
     // Внутренние отступы диаграммы
     this.padding = padding;
+    // Внутренний отступ по умолчанию
+    this.defaultPadding = 10;
   }
 
   /**
@@ -42,12 +44,12 @@ class Chart {
       width: null,
       height: null,
       horizontal: {
-        start: this.padding.left,
-        end: this.width - this.padding.right,
+        start: this.padding.left || this.defaultPadding,
+        end: this.width - (this.padding.right || this.defaultPadding),
       },
       vertical: {
-        start: this.padding.top,
-        end: this.height - this.padding.bottom,
+        start: this.padding.top || this.defaultPadding,
+        end: this.height - (this.padding.bottom || this.defaultPadding),
       },
     };
 

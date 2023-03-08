@@ -9,7 +9,7 @@ class Line extends Element {
     this.lineTo = lineTo;
     // Ширина линии
     this.width = width;
-    // Правило, говорящее, что линия будет нарисована пошагово
+    // Правило, говорящее, что линия будет состоять из точек
     this.dotted = dotted;
   }
 
@@ -29,7 +29,12 @@ class Line extends Element {
 
   // Рисует линию
   draw() {
-    this.ctx.setLineDash([this.dotted ? (0, 10) : (0, 0)]);
+    if (this.dotted) {
+      this.ctx.setLineDash([10, 20]);
+    } else {
+      this.ctx.setLineDash([0, 0]);
+    }
+
     this.ctx.beginPath();
     this.ctx.moveTo(this.x, this.y);
 
