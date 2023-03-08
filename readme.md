@@ -912,12 +912,12 @@ Parameters passed to the ACharty class constructor
 
 The Utils class contains helper resources such as themes and various colors
 
-### How to choose and apply a theme?
+### How to choose and apply a theme? [View all themes](https://github.com/Alexandr-web/aCharty/tree/documentation/.github/themes)
 
 ```js
 const utils = new Utils();
 
-// Accepts index and topic theme
+// Accepts index and theme
 // The default index is 0 and the theme is dark
 new ACharty({ theme: utils.getTheme(2, "light") }).init();
 ```
