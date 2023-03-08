@@ -922,7 +922,7 @@ const utils = new Utils();
 new ACharty({ theme: utils.getTheme(2, "light") }).init();
 ```
 
-### How to apply any color?
+### How to apply any color? [View all colors](https://github.com/Alexandr-web/aCharty/tree/documentation/.github/colors)
 
 ```js
 const utils = new Utils();
