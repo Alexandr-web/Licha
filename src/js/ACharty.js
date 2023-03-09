@@ -211,11 +211,12 @@ class ACharty {
 	 * @returns {Grid}
 	 */
 	_setGrid(canvas, axisX, axisY) {
-		const { line, format, } = this.grid;
+		const { line, format, background, } = this.grid;
 
 		return new Grid(
 			canvas.ctx,
 			axisY.getAxesData(this.data).names,
+			background,
 			axisY.points,
 			axisX.points,
 			line,

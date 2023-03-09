@@ -13,25 +13,16 @@
     <img src="./color-2.PNG" />
     <img src="./color-3.PNG" />
     <img src="./color-4.PNG" />
-</div>
-
-<div align="center">
     <img src="./color-5.PNG" />
     <img src="./color-6.PNG" />
     <img src="./color-7.PNG" />
     <img src="./color-8.PNG" />
     <img src="./color-9.PNG" />
-</div>
-
-<div align="center">
     <img src="./color-10.PNG" />
     <img src="./color-11.PNG" />
     <img src="./color-12.PNG" />
     <img src="./color-13.PNG" />
     <img src="./color-14.PNG" />
-</div>
-
-<div align="center">
     <img src="./color-15.PNG" />
     <img src="./color-16.PNG" />
 </div>

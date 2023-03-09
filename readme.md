@@ -476,6 +476,12 @@ Parameters passed to the ACharty class constructor
 
 #### Accepted parameters
   
+  * #### `background`
+
+    | Description  | Example | Type |
+    | ------------- | ------------- | ------------- |
+    | Accepts background grid | `grid: { background: "#c2c2c2", }`  | `string` |
+
   * #### `format`
 
     | Description  | Example | Type |
