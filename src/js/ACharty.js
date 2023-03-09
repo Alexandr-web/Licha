@@ -216,6 +216,7 @@ class ACharty {
 		return new Grid(
 			canvas.ctx,
 			axisY.getAxesData(this.data).names,
+			axisY.getMaxTextWidthAtYAxis(),
 			background,
 			axisY.points,
 			axisX.points,

@@ -496,6 +496,12 @@ Parameters passed to the ACharty class constructor
 
     ##### Accepted parameters
 
+      * ##### `stretch`
+
+        | Description  | Example | Type |
+        | ------------- | ------------- | ------------- |
+        | Rule that says grid lines will extend to axis points | `grid: { line: { stretch: true, }, }`  | `boolean` |
+
       * ##### `width`
 
         | Description  | Example | Type |
