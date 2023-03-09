@@ -7,8 +7,8 @@
   </p>
 </div>
 
-* [Dark](https://github.com/Alexandr-web/aCharty/tree/documentation/.github/themes#dark)
-* [Light](https://github.com/Alexandr-web/aCharty/tree/documentation/.github/themes#light)
+* [Dark](https://github.com/Alexandr-web/aCharty/blob/master/.github/themes/readme.md#dark)
+* [Light](https://github.com/Alexandr-web/aCharty/blob/master/.github/themes/readme.md#light)
 
 
 We will take this piece of code as a basis, we will only change the parameters of the getTheme method

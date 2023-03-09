@@ -7,9 +7,9 @@
   </p>
 </div>
 
-* [Usage](https://github.com/Alexandr-web/aCharty/tree/documentation#usage)
-* [Params](https://github.com/Alexandr-web/aCharty/tree/documentation#params)
-* [Utils](https://github.com/Alexandr-web/aCharty/tree/documentation#utils)
+* [Usage](https://github.com/Alexandr-web/aCharty#usage)
+* [Params](https://github.com/Alexandr-web/aCharty#params)
+* [Utils](https://github.com/Alexandr-web/aCharty#utils)
 
 ## Usage
 
