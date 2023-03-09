@@ -65,21 +65,21 @@ const chart = new ACharty({
 
 Parameters passed to the ACharty class constructor
 
-* [selectorCanvas](https://github.com/Alexandr-web/aCharty/tree/documentation#selectorcanvas)
-* [background](https://github.com/Alexandr-web/aCharty/tree/documentation#background)
-* [padding](https://github.com/Alexandr-web/aCharty/tree/documentation#padding)
-* [type](https://github.com/Alexandr-web/aCharty/tree/documentation#type)
-* [title](https://github.com/Alexandr-web/aCharty/tree/documentation#title)
-* [axisY](https://github.com/Alexandr-web/aCharty/tree/documentation#axisy)
-* [axisX](https://github.com/Alexandr-web/aCharty/tree/documentation#axisx)
-* [line](https://github.com/Alexandr-web/aCharty/tree/documentation#line)
-* [cap](https://github.com/Alexandr-web/aCharty/tree/documentation#cap)
-* [grid](https://github.com/Alexandr-web/aCharty/tree/documentation#grid)
-* [legend](https://github.com/Alexandr-web/aCharty/tree/documentation#legend)
-* [blockInfo](https://github.com/Alexandr-web/aCharty/tree/documentation#blockinfo)
-* [breakpoints](https://github.com/Alexandr-web/aCharty/tree/documentation#breakpoints)
-* [data](https://github.com/Alexandr-web/aCharty/tree/documentation#data)
-* [theme](https://github.com/Alexandr-web/aCharty/tree/documentation#theme)
+* [selectorCanvas](https://github.com/Alexandr-web/aCharty#selectorcanvas)
+* [background](https://github.com/Alexandr-web/aCharty#background)
+* [padding](https://github.com/Alexandr-web/aCharty#padding)
+* [type](https://github.com/Alexandr-web/aCharty#type)
+* [title](https://github.com/Alexandr-web/aCharty#title)
+* [axisY](https://github.com/Alexandr-web/aCharty#axisy)
+* [axisX](https://github.com/Alexandr-web/aCharty#axisx)
+* [line](https://github.com/Alexandr-web/aCharty#line)
+* [cap](https://github.com/Alexandr-web/aCharty#cap)
+* [grid](https://github.com/Alexandr-web/aCharty#grid)
+* [legend](https://github.com/Alexandr-web/aCharty#legend)
+* [blockInfo](https://github.com/Alexandr-web/aCharty#blockinfo)
+* [breakpoints](https://github.com/Alexandr-web/aCharty#breakpoints)
+* [data](https://github.com/Alexandr-web/aCharty#data)
+* [theme](https://github.com/Alexandr-web/aCharty#theme)
 
 ### `selectorCanvas`
 
@@ -906,13 +906,13 @@ Parameters passed to the ACharty class constructor
 
 | Description  | Example | Type |
 | ------------- | ------------- | ------------- |
-| Accepts a data object belonging to the same theme. [More](https://github.com/Alexandr-web/aCharty/tree/documentation#utils) | `theme: new Utils(0, "light")`  | `object` |
+| Accepts a data object belonging to the same theme. [More](https://github.com/Alexandr-web/aCharty#utils) | `theme: new Utils(0, "light")`  | `object` |
 
 ## Utils
 
 The Utils class contains helper resources such as themes and various colors
 
-### How to choose and apply a theme? [View all themes](https://github.com/Alexandr-web/aCharty/tree/documentation/.github/themes)
+### How to choose and apply a theme? [View all themes](https://github.com/Alexandr-web/aCharty/blob/master/.github/themes/readme.md)
 
 ```js
 const utils = new Utils();
@@ -922,7 +922,7 @@ const utils = new Utils();
 new ACharty({ theme: utils.getTheme(2, "light") }).init();
 ```
 
-### How to apply any color? [View all colors](https://github.com/Alexandr-web/aCharty/tree/documentation/.github/colors)
+### How to apply any color? [View all colors](https://github.com/Alexandr-web/aCharty/blob/master/.github/colors/readme.md)
 
 ```js
 const utils = new Utils();
