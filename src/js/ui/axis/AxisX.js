@@ -143,7 +143,7 @@ class AxisX extends Axis {
             const { line = {}, } = this.data[group];
 
             this.points.push({
-              onScreen: !this.ignoreNames.includes(name),
+              onScreen: !ignoreNames.includes(name),
               name,
               color: (line.color || (this.line || {}).color || line.fill || (this.line || {}).fill) || colorByTheme,
               value: groupDataItem.value,
