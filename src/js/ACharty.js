@@ -216,9 +216,10 @@ class ACharty {
 		return new Grid(
 			canvas.ctx,
 			axisY.getAxesData(this.data).names,
+			axisY.getMaxTextWidthAtYAxis(),
 			background,
-			axisY.points,
-			axisX.points,
+			axisY,
+			axisX,
 			line,
 			format,
 			this.theme.grid
@@ -343,8 +344,10 @@ class ACharty {
 		}
 
 		const pointsYOnScreen = pointsY.filter(({ onScreen, }) => onScreen);
-		const [{ y: startY, }] = pointsYOnScreen;
-		const { y: endY, } = pointsYOnScreen[pointsYOnScreen.length - 1];
+		const { y: firstPointYOrdinate, height: firstPointYHeight, } = pointsYOnScreen[0];
+		const { y: lastPointYOrdinate, height: lastPointYHeight, } = pointsYOnScreen[pointsYOnScreen.length - 1];
+		const endY = lastPointYOrdinate - firstPointYHeight / 2;
+		const startY = firstPointYOrdinate - lastPointYHeight / 2;
 
 		canvas.canvasElement.addEventListener("mousemove", (e) => this._mousemoveByCanvasHandler(e, endY, pointsX, startY, canvas, bounds));
 	}

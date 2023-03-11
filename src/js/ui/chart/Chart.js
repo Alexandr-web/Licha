@@ -121,7 +121,7 @@ class Chart {
     return {
       left: axisYTitleHeight + axisYTitleGapRight,
       top: chartTitleYPos + chartTitleGapBottom + legendHeight + legendGapBottom,
-      bottom: (showXText ? axisY.distanceFromXAxisToGraph + firstNameHeight : 0) + axisXTitleHeight + axisXTitleGapTop,
+      bottom: (showXText ? axisY.gapTopAxisX + firstNameHeight : 0) + axisXTitleHeight + axisXTitleGapTop,
     };
   }
 
@@ -132,7 +132,7 @@ class Chart {
    * @returns {object} Отступы ({ left, right, bottom })
    */
   getGapsForXPoints(axisY = {}, axisX = {}) {
-    const { font: axisYFont = {}, title: axisYTitle = {}, distanceBetweenYAndChart, } = axisY;
+    const { font: axisYFont = {}, title: axisYTitle = {}, gapRightAxisY, } = axisY;
     const { font: axisXFont = {}, title: axisXTitle = {}, } = axisX;
     const ignoreNames = axisX.getIgnoreNames();
     const names = axisY.getAxesData(this.data).names;
@@ -151,7 +151,7 @@ class Chart {
     const axisXTitleGapTop = axisXTitle.gapTop || 0;
 
     return {
-      left: (firstNameIsNotIgnore ? firstNameWidth / 2 : 0) + axisYTitleHeight + axisYTitleGapRight + (showYText ? axisY.getMaxTextWidthAtYAxis() + distanceBetweenYAndChart : 0),
+      left: (firstNameIsNotIgnore ? firstNameWidth / 2 : 0) + axisYTitleHeight + axisYTitleGapRight + (showYText ? axisY.getMaxTextWidthAtYAxis() + gapRightAxisY : 0),
       right: lastNameIsNotIgnore ? lastNameWidth / 2 : 0,
       bottom: axisXTitleHeight + axisXTitleGapTop,
     };
@@ -185,10 +185,10 @@ class Chart {
    * @returns {object} Отступы ({ top, left })
    */
   getGapsForXTitle(axisY = {}) {
-    const { title = {}, distanceBetweenYAndChart, } = axisY;
+    const { title = {}, gapRightAxisY, } = axisY;
     const { gapRight = 0, height = 0, } = title;
 
-    return { left: height + gapRight + distanceBetweenYAndChart, };
+    return { left: height + gapRight + gapRightAxisY, };
   }
 
   /**

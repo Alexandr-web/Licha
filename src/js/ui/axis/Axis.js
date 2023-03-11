@@ -27,9 +27,9 @@ class Axis {
     // Содержит уникальные значения точек оси ординат
     this.uniqueValues = [];
     // Дистанция между осью абсцисс и графиком
-    this.distanceFromXAxisToGraph = 15;
+    this.gapTopAxisX = 10;
     // Дистанция между осью ординат и графиком
-    this.distanceBetweenYAndChart = 15;
+    this.gapRightAxisY = 10;
     // Стили для точек от темы
     this.themeForPoint = themeForPoint;
     // Стили для заголовка от темы

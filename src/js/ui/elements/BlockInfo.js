@@ -91,8 +91,7 @@ class BlockInfo extends Element {
   _getElementsWithSize() {
     return this.elements.map(({ group, value, color, }) => {
       const correctGroupValue = this._getCorrectGroupValue(value);
-      const correctGroupName = this._getCorrectGroupName(group);
-      const groupName = `${correctGroupName}: ${correctGroupValue}`;
+      const groupName = `${group}: ${correctGroupValue}`;
       const { font: groupsFont, } = this.groupsData;
       const { font: titleFont, } = this.titleData;
       const dataKeys = Object.keys(this.data);

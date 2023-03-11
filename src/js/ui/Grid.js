@@ -5,21 +5,28 @@ class Grid {
   constructor(
     ctx,
     names,
+    maxPointYWidth,
     background,
-    pointsY = [],
-    pointsX = [],
+    axisY,
+    axisX,
     line = {},
     format = "default",
     theme = {}
   ) {
+    // Содержит максимальную ширину текста точки оси ординат
+    this.maxPointYWidth = maxPointYWidth;
     // Содержит названия точек оси абсцисс
     this.names = names;
     // Контекст элемента canvas
     this.ctx = ctx;
-    // Содержит данные точек оси ординат
-    this.pointsY = pointsY;
-    // Содержит данные точек оси абсцисс
-    this.pointsX = pointsX;
+    // Содержит точки оси ординат
+    this.pointsY = axisY.points;
+    // Содержит точки оси абсцисс
+    this.pointsX = axisX.points;
+    // Правило, говорящее, что точки на оси абсцисс будут отрисованы
+    this.showPointsX = axisX.font.showText === undefined ? true : axisX.font.showText;
+    // Правило, говорящее, что точки на оси ординат будут отрисованы
+    this.showPointsY = axisY.font.showText === undefined ? true : axisY.font.showText;
     // Содержит данные линии
     this.line = line;
     // Формат сетки (horizontal или vertical)
@@ -28,14 +35,18 @@ class Grid {
     this.theme = theme;
     // Задний фон сетки
     this.background = background;
+    // Дистанция между линией сетки и точкой оси
+    this.distanceBetweenLineAndPoint = 5;
   }
 
   /**
    * Определяет точки, которые видны на диаграмме
+   * @param {array} points Содержит точки оси
+   * @private
    * @returns {array}
    */
-  _getPointsYOnScreen() {
-    return this.pointsY.filter(({ onScreen, }) => onScreen);
+  _getPointsOnScreen(points) {
+    return points.filter(({ onScreen, }) => onScreen);
   }
 
   /**
@@ -47,10 +58,11 @@ class Grid {
       return;
     }
 
-    const pointsYOnScreen = this._getPointsYOnScreen();
-    const { x: startX, } = this.pointsX[0];
+    const pointsYOnScreen = this._getPointsOnScreen(this.pointsY);
+    const pointsXOnScreen = this._getPointsOnScreen(this.pointsX);
+    const { x: startX, } = pointsXOnScreen[0];
     const { y: startY, } = pointsYOnScreen[0];
-    const { x: endX, } = this.pointsX[this.pointsX.length - 1];
+    const { x: endX, } = pointsXOnScreen[pointsXOnScreen.length - 1];
     const { y: endY, } = pointsYOnScreen[pointsYOnScreen.length - 1];
 
     new CustomFigure(
@@ -75,18 +87,20 @@ class Grid {
    * @param {string} color Цвет линии
    */
   _drawHorizontalLines(color) {
-    const { width, dotted, } = this.line;
-    const firstXAxisItem = this.pointsX[0]; // Элемент для начальной позиции X линии
-    const lastXAxisItem = this.pointsX[this.pointsX.length - 1]; // Элемент для конечной позиции X линии
+    const { width, dotted, stretch, } = this.line;
+    const pointsYOnScreen = this._getPointsOnScreen(this.pointsY);
+    const { x: startX, } = this.pointsX[0];
+    const { x: endX, } = this.pointsX[this.pointsX.length - 1];
+    const useStretch = stretch && this.showPointsY;
 
     // Рисуем линии
-    this._getPointsYOnScreen().map(({ y, }) => {
+    pointsYOnScreen.map(({ y, x, }) => {
       new Line(
-        firstXAxisItem.x,
+        useStretch ? (x + this.maxPointYWidth + this.distanceBetweenLineAndPoint) : startX,
         y,
         color,
         this.ctx,
-        [{ x: lastXAxisItem.x, y, }],
+        [{ x: endX, y, }],
         width,
         dotted
       ).draw();
@@ -99,21 +113,25 @@ class Grid {
    * @param {string} color Цвет линии
    */
   _drawVerticalLines(color) {
-    const { width, dotted, } = this.line;
-    const axisYOnScreen = this._getPointsYOnScreen();
-    const firstAxisYItem = axisYOnScreen[0]; // Элемент для начальной позиции Y линии
-    const lastAxisYItem = axisYOnScreen[axisYOnScreen.length - 1]; // Элемент для конечной позиции Y линии
+    const { width, dotted, stretch, } = this.line;
+    const axisYOnScreen = this._getPointsOnScreen(this.pointsY);
+    const axisXOnScreen = this._getPointsOnScreen(this.pointsX);
+    const { y: startY, } = axisYOnScreen[0];
+    const { y: endYPointX, } = axisXOnScreen[axisXOnScreen.length - 1];
+    const { y: endYPointY, } = axisYOnScreen[axisYOnScreen.length - 1];
 
     // Рисуем линии
     this.names.map((name) => {
-      const findAxisXItem = this.pointsX.find((axisXDataItem) => axisXDataItem.name === name); // Элемент для начальной и конечной позиции X линии
+      const { x, height, } = this.pointsX.find((axisXDataItem) => axisXDataItem.name === name);
+      const isOnScreen = axisXOnScreen.find((point) => point.name === name);
+      const useStretch = stretch && isOnScreen && this.showPointsX;
 
       new Line(
-        findAxisXItem.x,
-        firstAxisYItem.y,
+        x,
+        startY,
         color,
         this.ctx,
-        [{ x: findAxisXItem.x, y: lastAxisYItem.y, }],
+        [{ x, y: useStretch ? endYPointX - (height + this.distanceBetweenLineAndPoint) : endYPointY, }],
         width,
         dotted
       ).draw();
