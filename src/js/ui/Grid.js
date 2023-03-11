@@ -88,10 +88,9 @@ class Grid {
    */
   _drawHorizontalLines(color) {
     const { width, dotted, stretch, } = this.line;
-    const pointsXOnScreen = this._getPointsOnScreen(this.pointsX);
     const pointsYOnScreen = this._getPointsOnScreen(this.pointsY);
-    const { x: startX, } = pointsXOnScreen[0];
-    const { x: endX, } = pointsXOnScreen[pointsXOnScreen.length - 1];
+    const { x: startX, } = this.pointsX[0];
+    const { x: endX, } = this.pointsX[this.pointsX.length - 1];
     const useStretch = stretch && this.showPointsY;
 
     // Рисуем линии
