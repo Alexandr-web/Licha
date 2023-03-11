@@ -218,8 +218,8 @@ class ACharty {
 			axisY.getAxesData(this.data).names,
 			axisY.getMaxTextWidthAtYAxis(),
 			background,
-			axisY.points,
-			axisX.points,
+			axisY,
+			axisX,
 			line,
 			format,
 			this.theme.grid
