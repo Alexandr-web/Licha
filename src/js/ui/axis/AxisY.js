@@ -6,7 +6,6 @@ import quickSort from "../../helpers/quickSort";
 
 class AxisY extends Axis {
   constructor(
-    step,
     editValue,
     data,
     ctx,
@@ -16,6 +15,7 @@ class AxisY extends Axis {
     sortNames,
     themeForTitle,
     themeForPoint,
+    step = 3,
     sortValues = "less-more"
   ) {
     super(ctx, themeForPoint, themeForTitle, title, bounds, sortNames, font);
@@ -168,6 +168,8 @@ class AxisY extends Axis {
         });
       }
     });
+
+    this.font.showText = showText;
 
     return this;
   }

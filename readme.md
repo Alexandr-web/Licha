@@ -77,7 +77,6 @@ Parameters passed to the ACharty class constructor
 * [grid](https://github.com/Alexandr-web/aCharty#grid)
 * [legend](https://github.com/Alexandr-web/aCharty#legend)
 * [blockInfo](https://github.com/Alexandr-web/aCharty#blockinfo)
-* [breakpoints](https://github.com/Alexandr-web/aCharty#breakpoints)
 * [data](https://github.com/Alexandr-web/aCharty#data)
 * [theme](https://github.com/Alexandr-web/aCharty#theme)
 
@@ -221,7 +220,7 @@ Parameters passed to the ACharty class constructor
 
     | Description  | Example | Type |
     | ------------- | ------------- | ------------- |
-    | Step with which values will be drawn on the y-axis | `axisY: { step: 3, }`  | `number` |
+    | Step with which values will be drawn on the y-axis (Default 3) | `axisY: { step: 4, }`  | `number` |
 
   * #### `editValue`
 
@@ -771,20 +770,6 @@ Parameters passed to the ACharty class constructor
       | Description  | Example | Type |
       | ------------- | ------------- | ------------- |
       | Left padding size | `blockInfo: { padding: { left: 25, } }`  | `number` |
-
-### `breakpoints`
-
-| Description  | Example | Type |
-| ------------- | ------------- | ------------- |
-| Points that change chart data if they match the screen | ```breakpoints: { "800": function() { ... }, }```  | `object` |
-
-#### Accepted parameters
-
-  * #### Point
-
-    | Description  | Example | Type |
-    | ------------- | ------------- | ------------- |
-    | A key whose name will be the width of the screen, and the value is a function that will work when the screen width is equal to the name of the key. For chart data changes, you need to return an object with that data | `breakpoints: { "1000": () => ({ background: white, })`  | `function: object` |
 
 ### `data`
 

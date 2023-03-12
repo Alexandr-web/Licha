@@ -24,9 +24,9 @@ class Grid {
     // Содержит точки оси абсцисс
     this.pointsX = axisX.points;
     // Правило, говорящее, что точки на оси абсцисс будут отрисованы
-    this.showPointsX = axisX.font.showText === undefined ? true : axisX.font.showText;
+    this.showPointsX = axisX.font.showText;
     // Правило, говорящее, что точки на оси ординат будут отрисованы
-    this.showPointsY = axisY.font.showText === undefined ? true : axisY.font.showText;
+    this.showPointsY = axisY.font.showText;
     // Содержит данные линии
     this.line = line;
     // Формат сетки (horizontal или vertical)

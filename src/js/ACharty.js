@@ -21,7 +21,6 @@ class ACharty {
 		cap = {},
 		grid = {},
 		legend = {},
-		breakpoints = {},
 		blockInfo = {},
 		type = "line",
 		padding = {
@@ -31,8 +30,6 @@ class ACharty {
 			bottom: 10,
 		},
 	}) {
-		// Точки, которые изменяют данные диаграмммы, если совпадают с шириной экрана
-		this.breakpoints = breakpoints;
 		// Внутренние отступы
 		this.padding = padding;
 		// Данные колпачка
@@ -138,7 +135,6 @@ class ACharty {
 		const gaps = chart.getGapsForYTitle(chart.title, { ...legend, gapBottom: (legendGaps.bottom || 0), }, this.axisX);
 
 		return new AxisY(
-			step,
 			editValue,
 			this.data,
 			canvas.ctx,
@@ -148,6 +144,7 @@ class ACharty {
 			this.axisX.sort,
 			themeForTitle,
 			themeForPoint,
+			step,
 			sort
 		).drawTitle(gaps);
 	}
@@ -233,7 +230,6 @@ class ACharty {
 	 */
 	_windowResizeHandler() {
 		this.update();
-		this._setBreakpoints();
 	}
 
 	/**
@@ -242,30 +238,6 @@ class ACharty {
 	 */
 	_windowResize() {
 		window.addEventListener("resize", this._windowResizeHandler.bind(this));
-	}
-
-	/**
-	 * Обновление данных диаграммы в зависимости от разрешения экрана
-	 * @private
-	 */
-	_setBreakpoints() {
-		if (!Object.keys(this.breakpoints)) {
-			return;
-		}
-
-		const document = window.document.documentElement;
-		// Берем все точки
-		const points = Object.keys(this.breakpoints).map((point) => parseInt(point));
-		// Берем подходящую точку, которая совпадает с размером окна
-		const bPoint = quickSort(points).find((width) => document.offsetWidth <= width);
-
-		if (bPoint) {
-			const func = this.breakpoints[bPoint.toString()];
-
-			if (func instanceof Function) {
-				func.call(this);
-			}
-		}
 	}
 
 	/**
@@ -472,7 +444,6 @@ class ACharty {
 		this._clickByCanvasArea(canvas, legend.items);
 		this._setGrid(canvas, axisX, axisY);
 		this._drawChartByType(axisY, axisX, canvas);
-		this._setBreakpoints();
 		this._windowResize();
 
 		return this;

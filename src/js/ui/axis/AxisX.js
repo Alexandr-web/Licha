@@ -173,6 +173,8 @@ class AxisX extends Axis {
       }
     });
 
+    this.font.showText = showText;
+
     return this;
   }
 }
