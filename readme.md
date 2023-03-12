@@ -193,12 +193,6 @@ Parameters passed to the ACharty class constructor
 
     ##### Accepted parameters
 
-    * ##### `text`
-
-      | Description  | Example | Type |
-      | ------------- | ------------- | ------------- |
-      | Accepts title text | `axisY: { font: { text: "Title Y", } }`  | `string` |
-
     * ##### `size`
     
       | Description  | Example | Type |
@@ -216,6 +210,12 @@ Parameters passed to the ACharty class constructor
       | Description  | Example | Type |
       | ------------- | ------------- | ------------- |
       | Accepts font weight | `axisY: { font: { weight: 400, }, }`  | `number` |
+
+    * ##### `showText`
+  
+      | Description  | Example | Type |
+      | ------------- | ------------- | ------------- |
+      | The rule under which you can control the state of the text on the axis | `axisY: { font: { showText: false, }, }`  | `boolean` |
   
   * #### `step`
 
@@ -296,11 +296,11 @@ Parameters passed to the ACharty class constructor
 
     ##### Accepted parameters
 
-    * ##### `text`
-
+    * ##### `showText`
+  
       | Description  | Example | Type |
       | ------------- | ------------- | ------------- |
-      | Accepts title text | `axisX: { font: { text: "Title X", } }`  | `string` |
+      | The rule under which you can control the state of the text on the axis | `axisX: { font: { showText: false, }, }`  | `boolean` |
 
     * ##### `size`
     
@@ -784,7 +784,7 @@ Parameters passed to the ACharty class constructor
 
     | Description  | Example | Type |
     | ------------- | ------------- | ------------- |
-    | A key whose name will mean the width of the screen, and the value is a function that will work when the screen width is equal to the name of the key | `breakpoints: { "1000": function () { this.background = "white"; this.update(); } }`  | `function` |
+    | A key whose name will be the width of the screen, and the value is a function that will work when the screen width is equal to the name of the key. For chart data changes, you need to return an object with that data | `breakpoints: { "1000": () => ({ background: white, })`  | `function: object` |
 
 ### `data`
 
