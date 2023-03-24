@@ -325,11 +325,11 @@ Parameters passed to the ACharty class constructor
     | ------------- | ------------- | ------------- |
     | Contains the names of the x-axis points that will not be drawn on the chart | `axisX: { ignoreNames: (name, index) => index % 2 === 0, }` or `axisX: { ignoreNames: ["Monday", "Sunday"], }` | `function: boolean \| array<string>` |
 
-  * #### `editNames`
+  * #### `editName`
 
     | Description  | Example | Type |
     | ------------- | ------------- | ------------- |
-    | A method that allows you to change the appearance of a value along the x-axis | `axisX: { editNames: (name) => new Date(name).toLocaleString(), }`  | `function: string` |
+    | A method that allows you to change the appearance of a value along the x-axis | `axisX: { editName: (name) => new Date(name).toLocaleString(), }`  | `function: string` |
 
   * #### `sort`
 

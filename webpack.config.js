@@ -3,7 +3,7 @@ const MiniCssExtractPlugn = require("mini-css-extract-plugin");
 const path = require("path");
 
 module.exports = {
-  entry: path.resolve(__dirname, "src/js/index.js"),
+  entry: path.resolve(__dirname, "src/ts/index.ts"),
   mode: "development",
   output: { filename: "index.js", libraryTarget: "umd", },
   plugins: [
@@ -31,14 +31,13 @@ module.exports = {
           },
           "sass-loader"
         ],
+      },
+      {
+        test: /\.tsx?$/,
+        use: "ts-loader",
+        exclude: /node_modules/,
       }
     ],
   },
-  devServer: {
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, OPTIONS",
-      "Access-Control-Allow-Headers": "X-Requested-With, content-type, Authorization",
-    },
-  },
+  resolve: { extensions: [".tsx", ".ts", ".js"], },
 };

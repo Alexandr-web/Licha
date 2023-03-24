@@ -1,7 +1,23 @@
 import CustomFigure from "./elements/CustomFigure";
 import Line from "./elements/Line";
 
+import "../interfaces/index";
+import { TGridFormat, } from "../types/index";
+
 class Grid {
+  public maxPointYWidth: number;
+  public names: Array<string>;
+  public ctx: CanvasRenderingContext2D;
+  public pointsY: Array<IPointY>;
+  public pointsX: Array<IPointX>;
+  public showPointsX: boolean;
+  public showPointsY: boolean;
+  public line: ILineGrid;
+  public format: TGridFormat;
+  public theme: IGridTheme;
+  public background: string;
+  public distanceBetweenLineAndPoint: number;
+
   constructor(
     ctx,
     names,
@@ -28,11 +44,11 @@ class Grid {
     // Правило, говорящее, что точки на оси ординат будут отрисованы
     this.showPointsY = axisY.font.showText;
     // Содержит данные линии
-    this.line = line;
+    this.line = line as any;
     // Формат сетки (horizontal или vertical)
     this.format = format;
     // Данные темы
-    this.theme = theme;
+    this.theme = theme as any;
     // Задний фон сетки
     this.background = background;
     // Дистанция между линией сетки и точкой оси
@@ -45,7 +61,7 @@ class Grid {
    * @private
    * @returns {array}
    */
-  _getPointsOnScreen(points) {
+  private _getPointsOnScreen(points: Array<IPointX | IPointY>): Array<IPointX | IPointY> {
     return points.filter(({ onScreen, }) => onScreen);
   }
 
@@ -53,17 +69,17 @@ class Grid {
    * Рисует задний фон сетке
    * @private
    */
-  _drawBackground() {
+  private _drawBackground(): void {
     if (!this.background) {
       return;
     }
 
-    const pointsYOnScreen = this._getPointsOnScreen(this.pointsY);
-    const pointsXOnScreen = this._getPointsOnScreen(this.pointsX);
-    const { x: startX, } = pointsXOnScreen[0];
-    const { y: startY, } = pointsYOnScreen[0];
-    const { x: endX, } = pointsXOnScreen[pointsXOnScreen.length - 1];
-    const { y: endY, } = pointsYOnScreen[pointsYOnScreen.length - 1];
+    const pointsYOnScreen: Array<IPointY> = this._getPointsOnScreen(this.pointsY);
+    const pointsXOnScreen: Array<IPointX> = this._getPointsOnScreen(this.pointsX);
+    const { x: startX, }: IPointX = pointsXOnScreen[0];
+    const { y: startY, }: IPointY = pointsYOnScreen[0];
+    const { x: endX, }: IPointX = pointsXOnScreen[pointsXOnScreen.length - 1];
+    const { y: endY, }: IPointY = pointsYOnScreen[pointsYOnScreen.length - 1];
 
     new CustomFigure(
       startX,
@@ -86,15 +102,15 @@ class Grid {
    * @private
    * @param {string} color Цвет линии
    */
-  _drawHorizontalLines(color) {
-    const { width, dotted, stretch, } = this.line;
-    const pointsYOnScreen = this._getPointsOnScreen(this.pointsY);
-    const { x: startX, } = this.pointsX[0];
-    const { x: endX, } = this.pointsX[this.pointsX.length - 1];
-    const useStretch = stretch && this.showPointsY;
+  private _drawHorizontalLines(color: string): void {
+    const { width, dotted, stretch, }: ILineGrid = this.line;
+    const pointsYOnScreen: Array<IPointY> = this._getPointsOnScreen(this.pointsY);
+    const { x: startX, }: IPointX = this.pointsX[0];
+    const { x: endX, }: IPointX = this.pointsX[this.pointsX.length - 1];
+    const useStretch: boolean = stretch && this.showPointsY;
 
     // Рисуем линии
-    pointsYOnScreen.map(({ y, x, }) => {
+    pointsYOnScreen.map(({ y, x, }: IPointY) => {
       new Line(
         useStretch ? (x + this.maxPointYWidth + this.distanceBetweenLineAndPoint) : startX,
         y,
@@ -112,19 +128,19 @@ class Grid {
    * @private
    * @param {string} color Цвет линии
    */
-  _drawVerticalLines(color) {
-    const { width, dotted, stretch, } = this.line;
-    const axisYOnScreen = this._getPointsOnScreen(this.pointsY);
-    const axisXOnScreen = this._getPointsOnScreen(this.pointsX);
-    const { y: startY, } = axisYOnScreen[0];
-    const { y: endYPointX, } = axisXOnScreen[axisXOnScreen.length - 1];
-    const { y: endYPointY, } = axisYOnScreen[axisYOnScreen.length - 1];
+  private _drawVerticalLines(color: string): void {
+    const { width, dotted, stretch, }: ILineGrid = this.line;
+    const axisYOnScreen: Array<IPointY> = this._getPointsOnScreen(this.pointsY);
+    const axisXOnScreen: Array<IPointX> = this._getPointsOnScreen(this.pointsX);
+    const { y: startY, }: IPointY = axisYOnScreen[0];
+    const { y: endYPointX, }: IPointX = axisXOnScreen[axisXOnScreen.length - 1];
+    const { y: endYPointY, }: IPointY = axisYOnScreen[axisYOnScreen.length - 1];
 
     // Рисуем линии
-    this.names.map((name) => {
-      const { x, height, } = this.pointsX.find((axisXDataItem) => axisXDataItem.name === name);
-      const isOnScreen = axisXOnScreen.find((point) => point.name === name);
-      const useStretch = stretch && isOnScreen && this.showPointsX;
+    this.names.map((name: string) => {
+      const { x, height, } = this.pointsX.find((axisXDataItem) => axisXDataItem.name === name) as IPointX;
+      const isOnScreen: boolean = Boolean(axisXOnScreen.find((point) => point.name === name));
+      const useStretch: boolean = stretch && isOnScreen && this.showPointsX;
 
       new Line(
         x,
@@ -139,14 +155,14 @@ class Grid {
   }
 
   // Рисует сетку
-  init() {
+  public init(): Grid {
     if (!Object.keys(this.line).length) {
       return;
     }
 
     this._drawBackground();
 
-    const colorLine = this.line.color || this.theme.color;
+    const colorLine: string = this.line.color || this.theme.color;
 
     switch (this.format) {
       case "horizontal":
@@ -159,6 +175,8 @@ class Grid {
         this._drawVerticalLines(colorLine);
         this._drawHorizontalLines(colorLine);
     }
+
+    return this;
   }
 }
 

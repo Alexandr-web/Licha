@@ -4,7 +4,24 @@ import getTextSize from "../helpers/getTextSize";
 import getStyleByIndex from "../helpers/getStyleByIndex";
 import Line from "./elements/Line";
 
+import "../interfaces/index";
+
 class Legend {
+  public hideGroups: Array<string>;
+  public showLegend: boolean;
+  public line: ILine;
+  public font: IFont;
+  public data: IData;
+  public ctx: CanvasRenderingContext2D;
+  public bounds: IBounds;
+  public circle: ICircleLegend;
+  public maxCount: number;
+  public legendGaps: ILegendGaps;
+  public totalHeight: number;
+  public themeForText: ILegendTheme;
+  public themeForCircle: ILineTheme;
+  public items: Array<IItemLegend>;
+
   constructor(showLegend, data, line, ctx, bounds, font, circle, hideGroups, legendGaps = {}, maxCount = 4, themeForText = {}, themeForCircle = {}) {
     // Содержит названия скрытых групп
     this.hideGroups = hideGroups;
@@ -15,7 +32,7 @@ class Legend {
     // Данные шрифта
     this.font = font;
     // Содержит данные групп
-    this.data = data;
+    this.data = data as any;
     // Контекст элемента canvas
     this.ctx = ctx;
     // Содержит объект границ диаграммы
@@ -25,13 +42,13 @@ class Legend {
     // Максимальное кол-во элементов в одной колонке
     this.maxCount = maxCount > 0 ? maxCount : 4;
     // Отступы
-    this.legendGaps = legendGaps;
+    this.legendGaps = legendGaps as any;
     // Высота легенды
     this.totalHeight = 0;
     // Стили для текста от темы
-    this.themeForText = themeForText;
+    this.themeForText = themeForText as any;
     // Стили для круга от темы
-    this.themeForCircle = themeForCircle;
+    this.themeForCircle = themeForCircle as any;
     // Содержит данные элементов легенды
     this.items = [];
   }
@@ -42,11 +59,11 @@ class Legend {
    * @private
    * @returns {array} Группы с их размером текста
    */
-  _getSizeGroups(groups) {
-    const { size, weight = 400, } = this.font;
+  private _getSizeGroups(groups: Array<IColumnLegend>): Array<IItemLegend> {
+    const { size, weight = 400, }: IFont = this.font;
 
-    return groups.map((groupItem) => {
-      const sizes = getTextSize(size, weight, groupItem.group, this.ctx);
+    return groups.map((groupItem: IColumnLegend) => {
+      const sizes: ISize = getTextSize(size, weight, groupItem.group, this.ctx);
 
       return {
         ...sizes,
@@ -61,7 +78,7 @@ class Legend {
    * @private
    * @returns {number} Общая дистанция
    */
-  _getDistanceGroups(groups) {
+  private _getDistanceGroups(groups: Array<IItemLegend>): number {
     if (!groups.length) {
       return 0;
     }
@@ -69,8 +86,8 @@ class Legend {
     const { group: gapsGroup = {}, circle: gapsCircle = {}, } = this.legendGaps;
     const { radius, } = this.circle;
 
-    return groups.reduce((acc, { width, }) => {
-      acc += width + (gapsGroup.right || 0) + radius * 2 + (gapsCircle.right || 0);
+    return groups.reduce((acc: number, { width, }: IItemLegend) => {
+      acc += width + ((gapsGroup as any).right || 0) + radius * 2 + ((gapsCircle as any).right || 0);
 
       return acc;
     }, 0);
@@ -82,7 +99,7 @@ class Legend {
    * @private
    * @returns {number} Общая дистанция
    */
-  _getTopDistanceGroups(groups) {
+  private _getTopDistanceGroups(groups: Array<IItemLegend>): number {
     if (!groups.length) {
       return 0;
     }
@@ -90,7 +107,7 @@ class Legend {
     const { group: gapsGroup = {}, } = this.legendGaps;
     const { height, } = groups[0];
 
-    return (gapsGroup.bottom || 0) + height;
+    return ((gapsGroup as any).bottom || 0) + height;
   }
 
   /**
@@ -101,7 +118,7 @@ class Legend {
    * @param {string} color Цвет
    * @private
    */
-  _overlineHideGroupText(x, endX, y, color) {
+  private _overlineHideGroupText(x: number, endX: number, y: number, color: string): void {
     new Line(x, y, color, this.ctx, [{ x: endX, y, }], 2).draw();
   }
 
@@ -110,18 +127,18 @@ class Legend {
    * @private 
    * @returns {array} Колонки
    */
-  _getColumns() {
-    const columns = [];
-    const dataKeys = Object.keys(this.data);
+  private _getColumns(): Array<IColumnLegend[]> {
+    const columns: Array<IColumnLegend[]> = [];
+    const dataKeys: Array<string> = Object.keys(this.data);
 
     for (let i = 0; i < dataKeys.length; i += this.maxCount) {
-      const column = dataKeys
-        .map((group) => ({ ...this.data[group], group, }))
+      const column: Array<IColumnLegend> = dataKeys
+        .map((group: string) => ({ ...this.data[group], group, }))
         .slice(i, i + this.maxCount)
         .map(({ group, line = {}, }) => {
-          const idx = dataKeys.indexOf(group);
-          const colorByTheme = getStyleByIndex(idx, this.themeForCircle.color);
-          const colorLine = (line.color || (this.line || {}).color || line.fill || (this.line || {}).fill) || colorByTheme;
+          const idx: number = dataKeys.indexOf(group);
+          const colorByTheme: string = getStyleByIndex(idx, this.themeForCircle.color);
+          const colorLine: Array<string> | string = (line.color || (this.line || {}).color || line.fill || (this.line || {}).fill) || colorByTheme;
 
           return {
             group,
@@ -146,7 +163,7 @@ class Legend {
    * @private
    * @returns {object} Позиция текста
    */
-  _drawText(group, width, height, groups, index, gaps) {
+  private _drawText(group: string, width: number, height: number, groups: Array<IItemLegend>, index: number, gaps) {
     const bounds = this.bounds;
     const center = bounds.width / 2;
     const totalGroupsDistance = this._getDistanceGroups(groups);
@@ -189,11 +206,11 @@ class Legend {
    * @param {string} color Цвет
    * @private
    */
-  _drawCircle(x, y, height, color) {
+  private _drawCircle(x: number, y: number, height: number, color: Array<string> | string) {
     const { radius, } = this.circle;
     const { circle = {}, } = this.legendGaps;
-    const posCircle = {
-      x: x - radius - (circle.right || 0),
+    const posCircle: IPos = {
+      x: x - radius - ((circle as any).right || 0),
       y: y - Math.max(radius, height / 2),
     };
 
@@ -216,10 +233,10 @@ class Legend {
    * @private
    * @returns {number} Дистанция
    */
-  _getDistanceTopFromPrevColumns(columns, index) {
-    const prevColumns = columns.filter((c, i) => i < index);
+  private _getDistanceTopFromPrevColumns(columns: Array<IColumnLegend[]>, index: number) {
+    const prevColumns: Array<IColumnLegend[]> = columns.filter((c: Array<IColumnLegend>, i: number) => i < index);
 
-    return prevColumns.reduce((acc, prevColumn) => {
+    return prevColumns.reduce((acc: number, prevColumn: Array<IColumnLegend>) => {
       acc += this._getTopDistanceGroups(this._getSizeGroups(prevColumn));
 
       return acc;
@@ -231,19 +248,19 @@ class Legend {
    * @param {object} gaps Содержит отступы легенды
    * @returns {Legend}
    */
-  draw(gaps) {
+  public draw(gaps): Legend {
     if (!this.showLegend) {
       return this;
     }
 
-    const columns = this._getColumns();
+    const columns: Array<IColumnLegend[]> = this._getColumns();
 
-    columns.map((groups, idx) => {
-      const updateGroups = this._getSizeGroups(groups);
-      const gapFromPrevColumns = this._getDistanceTopFromPrevColumns(columns, idx);
+    columns.map((groups: Array<IColumnLegend>, idx: number) => {
+      const updateGroups: Array<IItemLegend> = this._getSizeGroups(groups);
+      const gapFromPrevColumns: number = this._getDistanceTopFromPrevColumns(columns, idx);
 
-      updateGroups.map(({ group, color: colorCap, height, width, }, index) => {
-        const posGroup = this._drawText(
+      updateGroups.map(({ group, color: colorCap, height, width, }: IItemLegend, index: number) => {
+        const posGroup: IPos = this._drawText(
           group,
           width,
           height,
@@ -252,13 +269,13 @@ class Legend {
           { ...gaps, top: gaps.top + gapFromPrevColumns, }
         );
 
-        this.items.push({ group, ...posGroup, height, width, });
+        this.items.push({ group, ...posGroup, height, width, color: colorCap, });
         this._drawCircle(posGroup.x, posGroup.y, height, colorCap);
       });
 
       this.totalHeight += this._getTopDistanceGroups(updateGroups);
     });
-    
+
     return this;
   }
 }

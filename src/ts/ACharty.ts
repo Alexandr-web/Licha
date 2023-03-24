@@ -6,9 +6,27 @@ import Grid from "./ui/Grid";
 import AxisX from "./ui/axis/AxisX";
 import Legend from "./ui/Legend";
 import BlockInfo from "./ui/elements/BlockInfo";
-import quickSort from "./helpers/quickSort";
+
+import "./interfaces/index";
+import { TAxisPoints, } from "./types/index";
 
 class ACharty {
+	public selectorCanvas: string;
+	public background: string | Array<string>;
+	public title: IChartTitle;
+	public theme: ITheme;
+	public data: IData;
+	public axisY: IAxisY;
+	public axisX: IAxisX;
+	public line: ILine;
+	public cap: ICap;
+	public grid: IGrid;
+	public legend: ILegend;
+	public blockInfo: IBlockInfo;
+	public type: string;
+	public padding: IPadding | number;
+	public hideGroups: Array<string>;
+
 	constructor({
 		selectorCanvas,
 		background,
@@ -33,31 +51,31 @@ class ACharty {
 		// Внутренние отступы
 		this.padding = padding;
 		// Данные колпачка
-		this.cap = cap;
+		this.cap = cap as any;
 		// Данные легенды
-		this.legend = legend;
+		this.legend = legend as any;
 		// Тип диаграммы
 		this.type = type;
 		// Данные задней сетки диаграммы
-		this.grid = grid;
+		this.grid = grid as any;
 		// Данные линии
-		this.line = line;
+		this.line = line as any;
 		// Данные оси ординат
-		this.axisY = axisY;
+		this.axisY = axisY as any;
 		// Данные оси абсцисс
-		this.axisX = axisX;
+		this.axisX = axisX as any;
 		// Данные заголовка диаграммы
-		this.title = title;
+		this.title = title as any;
 		// Задний фон диаграммы
 		this.background = background;
 		// Селектор холста
 		this.selectorCanvas = selectorCanvas;
 		// Данные окна с информацией об активной группе
-		this.blockInfo = blockInfo;
+		this.blockInfo = blockInfo as any;
 		// Данные групп
-		this.data = data;
+		this.data = data as any;
 		// Стили темы
-		this.theme = theme;
+		this.theme = theme as any;
 		// Содержит названия скрытых групп
 		this.hideGroups = [];
 	}
@@ -67,7 +85,7 @@ class ACharty {
 	 * @private
 	 * @return {Canvas}
 	 */
-	_setCanvas() {
+	private _setCanvas(): Canvas {
 		return new Canvas(this.selectorCanvas, this.background, this.theme.canvas).init();
 	}
 
@@ -76,7 +94,7 @@ class ACharty {
 	 * @param {Canvas} canvas Экземпляр класса Canvas
 	 * @private
 	 */
-	_setChartTitle(canvas) {
+	private _setChartTitle(canvas: Canvas): Chart {
 		const { width, height, } = canvas.getSizes();
 
 		return new Chart(
@@ -98,7 +116,7 @@ class ACharty {
 	 * @private
 	 * @return {Legend}
 	 */
-	_setLegend(canvas, chart) {
+	private _setLegend(canvas: Canvas, chart: Chart): Legend {
 		const { font, circle, gaps: legendGaps, maxCount, } = this.legend;
 		const showLegend = Boolean(Object.keys(this.legend).length);
 		const gaps = chart.getGapsForLegend(this.axisY, chart.title);
@@ -127,7 +145,7 @@ class ACharty {
 	 * @private
 	 * @returns {AxisY}
 	 */
-	_setAxisYTitle(canvas, chart, legend) {
+	private _setAxisYTitle(canvas: Canvas, chart: Chart, legend: Legend): AxisY {
 		const { step, editValue, title, font, sort, } = this.axisY;
 		const { legend: legendGaps = {}, } = (this.legend.gaps || {});
 		const themeForTitle = (this.theme.axis || {}).title;
@@ -157,7 +175,7 @@ class ACharty {
 	 * @private
 	 * @returns {AxisX}
 	 */
-	_setAxisXTitle(canvas, chart, axisY) {
+	private _setAxisXTitle(canvas: Canvas, chart: Chart, axisY: AxisY): AxisX {
 		const { font, editName, sort, ignoreNames, title, } = this.axisX;
 		const themeForTitle = (this.theme.axis || {}).title;
 		const themeForPoint = (this.theme.axis || {}).point;
@@ -181,7 +199,7 @@ class ACharty {
 	}
 
 	/**
-	 * 
+	 * Рисует точки
 	 * @param {AxisY} axisY Экземпляр класса AxisY
 	 * @param {AxisX} axisX Экземпляр класса AxisX
 	 * @param {Legend} legend Экземпляр класса Legend
@@ -189,7 +207,7 @@ class ACharty {
 	 * @private
 	 * @returns {object} Данные всех осевых точек
 	 */
-	_setPoints(axisY, axisX, legend, chart) {
+	private _setPoints(axisY: AxisY, axisX: AxisX, legend: Legend, chart: Chart): TAxisPoints {
 		const y = axisY.drawPoints(chart.getGapsForYPoints(axisY, axisX, chart.title, { ...this.legend, ...legend, }));
 		const x = axisX.drawPoints(chart.getGapsForXPoints(axisY, axisX));
 
@@ -207,7 +225,7 @@ class ACharty {
 	 * @private
 	 * @returns {Grid}
 	 */
-	_setGrid(canvas, axisX, axisY) {
+	private _setGrid(canvas: Canvas, axisX: AxisX, axisY: AxisY): Grid {
 		const { line, format, background, } = this.grid;
 
 		return new Grid(
@@ -228,7 +246,7 @@ class ACharty {
 	 * Обновляет график и проверяет ширину окна с break points
 	 * @private
 	 */
-	_windowResizeHandler() {
+	private _windowResizeHandler(): void {
 		this.update();
 	}
 
@@ -236,7 +254,7 @@ class ACharty {
 	 * Добавление события resize элементу window
 	 * @private
 	 */
-	_windowResize() {
+	private _windowResize(): void {
 		window.addEventListener("resize", this._windowResizeHandler.bind(this));
 	}
 
@@ -251,7 +269,7 @@ class ACharty {
 	 * @param {object} bounds Содержит границы холста
 	 * @private
 	 */
-	_mousemoveByCanvasHandler(e, endY, pointsX, startY, canvas, bounds) {
+	private _mousemoveByCanvasHandler(e: Event, endY: number, pointsX: Array<IPointX>, startY: number, canvas: Canvas, bounds: IBounds): void {
 		const mousePos = { x: e.offsetX, y: e.offsetY, };
 
 		if (mousePos.y <= endY && mousePos.y >= startY) {
@@ -271,7 +289,7 @@ class ACharty {
 
 			if (activeElements.length) {
 				this.update();
-				
+
 				const [{ x, }] = activeElements;
 				const { title, groups, background, padding, } = this.blockInfo;
 				const themeForWindow = (this.theme.blockInfo || {}).window;
@@ -310,7 +328,7 @@ class ACharty {
 	 * @param {{ pointsX: array, pointsY: array }} param2 Содержит данные всех осевых точек
 	 * @private
 	 */
-	_mousemoveByCanvas(canvas, bounds, { pointsX, pointsY, }) {
+	private _mousemoveByCanvas(canvas: Canvas, bounds: IBounds, { pointsX, pointsY, }: TAxisPoints): void {
 		if (!Object.keys(this.blockInfo).length) {
 			return;
 		}
@@ -329,7 +347,7 @@ class ACharty {
 	 * Обновляет график и изменяет тип курсора на обычный
 	 * @private
 	 */
-	_leavemouseFromCanvasAreaHandler() {
+	private _leavemouseFromCanvasAreaHandler(): void {
 		document.documentElement.style = "default";
 		this.update();
 	}
@@ -339,7 +357,7 @@ class ACharty {
 	 * @param {Canvas} canvas Экземпляр класса Canvas
 	 * @private
 	 */
-	_leavemouseFromCanvasArea(canvas) {
+	private _leavemouseFromCanvasArea(canvas): void {
 		canvas.canvasElement.addEventListener("mouseleave", this._leavemouseFromCanvasAreaHandler.bind(this));
 	}
 
@@ -350,7 +368,7 @@ class ACharty {
 	 * @param {array} legendItems Содержит данные элементов легенды
 	 * @private
 	 */
-	_clickByCanvasAreaHandler(e, legendItems) {
+	private _clickByCanvasAreaHandler(e: Event, legendItems: Array<IItemLegend>): void {
 		const mousePos = { x: e.offsetX, y: e.offsetY, };
 		const findMatchLegendItem = legendItems.find(({ x, y, width, height, }) => {
 			const endX = x + width;
@@ -379,7 +397,7 @@ class ACharty {
 	 * @param {*} legendItems 
 	 * @private
 	 */
-	_clickByCanvasArea(canvas, legendItems) {
+	private _clickByCanvasArea(canvas: Canvas, legendItems: Array<IItemLegend>): void {
 		canvas.canvasElement.addEventListener("click", (e) => this._clickByCanvasAreaHandler(e, legendItems));
 	}
 
@@ -390,7 +408,7 @@ class ACharty {
 	 * @param {Canvas} canvas Экземпляр класса Canvas
 	 * @private
 	 */
-	_drawChartByType(axisY, axisX, canvas) {
+	private _drawChartByType(axisY: AxisY, axisX: AxisX, canvas: Canvas): void {
 		const { width, height, } = canvas.getSizes();
 
 		switch (this.type) {
@@ -416,13 +434,13 @@ class ACharty {
 	}
 
 	// Обновление данных диаграммы
-	update() {
+	public update(): ACharty {
 		const canvas = this._setCanvas();
 		const chart = this._setChartTitle(canvas);
 		const legend = this._setLegend(canvas, chart);
 		const axisY = this._setAxisYTitle(canvas, chart, legend);
 		const axisX = this._setAxisXTitle(canvas, chart, axisY);
-		
+
 		this._setPoints(axisY, axisX, legend, chart);
 		this._setGrid(canvas, axisX, axisY);
 		this._drawChartByType(axisY, axisX, canvas);
@@ -431,7 +449,7 @@ class ACharty {
 	}
 
 	// Рисует диаграмму
-	init() {
+	public init(): ACharty {
 		const canvas = this._setCanvas();
 		const chart = this._setChartTitle(canvas);
 		const legend = this._setLegend(canvas, chart);

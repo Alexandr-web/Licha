@@ -8,8 +8,8 @@
  * Отдельная благодарность
  * @see http://www.robertpenner.com/easing/
  */
-export default (from, to, count) => {
-  const range = [];
+export default (from: number, to: number, count: number): Array<number> => {
+  const range: Array<number> = [];
 
   if (from === 0 && Math.abs(to) === 1) {
     let step = 0;

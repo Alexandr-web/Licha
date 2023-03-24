@@ -2,7 +2,13 @@ import light from "./themes/light";
 import dark from "./themes/dark";
 import colors from "./colors";
 
+import "../interfaces/index";
+import { TThemes, } from "../types/index";
+
 class Utils {
+  public themes: TThemes;
+  public colors: IColors;
+
   constructor() {
     // Содержит светлые и темные темы
     this.themes = { dark, light, };
@@ -16,7 +22,7 @@ class Utils {
    * @param {string} type Тип темы ("dark" или "light")
    * @returns {object} Данные темы
    */
-  getTheme(num = 0, type = "dark") {
+  public getTheme(num: number = 0, type: string = "dark"): ITheme | {} {
     if (!this.themes[type] || !this.themes[type][num]) {
       return {};
     }
@@ -30,7 +36,7 @@ class Utils {
    * @param {number} opacity Прозрачность (от 0 до 1)
    * @returns {string} Цвет
    */
-  getColor(name, opacity = 1) {
+  public getColor(name: string, opacity: number = 1): string {
     if (!(this.colors[name] instanceof Function)) {
       return "";
     }

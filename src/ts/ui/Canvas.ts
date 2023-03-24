@@ -1,6 +1,14 @@
 import Rect from "./elements/Rect";
 
+import "../interfaces/index";
+
 class Canvas {
+  public selector: string;
+  public background: string;
+  public ctx: CanvasRenderingContext2D;
+  public canvasElement: HTMLCanvasElement;
+  public theme: ICanvasTheme;
+
   constructor(selector, background, theme = {}) {
     // HTML элемент canvas
     this.canvasElement = document.querySelector(selector);
@@ -9,14 +17,14 @@ class Canvas {
     // Контекст элемента canvas
     this.ctx = this.canvasElement.getContext("2d");
     // Содержит данные темы
-    this.theme = theme;
+    this.theme = theme as any;
   }
 
   /**
    * Устанавливает начальные стили холсту
    * @private
    */
-  _setDefaultStyles() {
+  private _setDefaultStyles(): void {
     const { offsetWidth, offsetHeight, } = this.canvasElement;
     const defaultStyles = {
       display: "block",
@@ -25,16 +33,16 @@ class Canvas {
 
     this.canvasElement.width = offsetWidth;
     this.canvasElement.height = offsetHeight;
-    this.canvasElement.style = Object.keys(defaultStyles)
+    this.canvasElement.setAttribute("style", Object.keys(defaultStyles)
       .map((key) => `${key}:${defaultStyles[key]}`)
-      .join(";");
+      .join(";"));
   }
 
   /**
    * Получает размеры элемента canvas
    * @returns {object} Ширина и высота элемента canvas
    */
-  getSizes() {
+  public getSizes(): ISize {
     const { width, height, } = this.canvasElement;
 
     return {
@@ -47,14 +55,14 @@ class Canvas {
    * Устанавливает задний фон холсту
    * @private
    */
-  _setBackground() {
-    const background = this.background || this.theme.background;
+  private _setBackground(): void {
+    const background: string = this.background || this.theme.background;
 
     new Rect(0, 0, background, this.ctx, this.getSizes().width, this.getSizes().height).draw();
   }
 
   // Рисует начальный холст
-  init() {
+  public init(): Canvas {
     this._setDefaultStyles();
     this._setBackground();
 
