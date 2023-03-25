@@ -4,7 +4,15 @@ import getTextSize from "../../helpers/getTextSize";
 import getRange from "../../helpers/getRange";
 import quickSort from "../../helpers/quickSort";
 
-class AxisY extends Axis {
+import "../../interfaces/index";
+import { TSort, } from "../../types/index";
+
+class AxisY extends Axis implements IAxisYClass {
+  public step: number;
+  public editValue: (value: number) => string | number;
+  public data: IData;
+  public sortValues: TSort;
+
   constructor(
     editValue,
     data,
@@ -26,7 +34,7 @@ class AxisY extends Axis {
     this.editValue = editValue;
     // Содержит данные групп
     this.data = data;
-    // Содержит сортированные значения оси ординат
+    // Тип сортировки точек оси ординат
     this.sortValues = sortValues;
   }
 
@@ -36,7 +44,7 @@ class AxisY extends Axis {
    * @private
    * @returns {string|number} Корректное значение точки
    */
-  _getCorrectValue(value) {
+  private _getCorrectValue(value: number): string | number {
     return this.editValue instanceof Function ? this.editValue(value) : value;
   }
 
@@ -45,23 +53,24 @@ class AxisY extends Axis {
    * @param {object} gaps Отступы заголовка
    * @returns {AxisY}
    */
-  drawTitle(gaps) {
+  // GAPS!
+  public drawTitle(gaps): AxisY {
     if (!Object.keys(this.title).length) {
       return this;
     }
 
-    const bounds = this.bounds;
+    const bounds: IBounds = this.bounds;
     const { size, text, color = this.themeForTitle.color, weight = 600, } = this.title.font;
-    const font = {
+    const font: ISpecialFontData = {
       size,
       text,
       color,
       str: `${weight} ${size}px Arial, sans-serif`,
     };
-    const sizes = getTextSize(size, weight, text, this.ctx);
-    const startY = bounds.vertical.start + sizes.width / 2 + (gaps.top || 0);
-    const endY = bounds.vertical.end - (gaps.bottom || 0) - sizes.width / 2;
-    const posTitle = {
+    const sizes: ISize = getTextSize(size, weight, text, this.ctx);
+    const startY: number = bounds.vertical.start + sizes.width / 2 + (gaps.top || 0);
+    const endY: number = bounds.vertical.end - (gaps.bottom || 0) - sizes.width / 2;
+    const posTitle: IPos = {
       x: bounds.horizontal.start + sizes.height,
       y: startY + (endY - startY) / 2,
     };
@@ -89,15 +98,16 @@ class AxisY extends Axis {
    * @param {object} gaps Отступы оси ординат
    * @returns {AxisY}
    */
-  drawPoints(gaps = {}) {
-    const values = this.getAxesData(this.data).values;
-    const bounds = this.bounds;
+  // GAPS!
+  public drawPoints(gaps = {}): AxisY {
+    const values: Array<number> = this.getAxesData(this.data).values;
+    const bounds: IBounds = this.bounds;
     const { size, showText = Boolean(Object.keys(this.font).length), weight = 400, color = this.themeForPoint.color, } = this.font;
-    const firstValue = Math.ceil(values[0]);
-    const lastValue = Math.floor(values[values.length - 1]);
-    const firstValueSizes = getTextSize(size, weight, firstValue, this.ctx);
-    const range = getRange(Math.min(firstValue, lastValue), Math.max(firstValue, lastValue), this.step);
-    const points = [];
+    const firstValue: number = Math.ceil(values[0]);
+    const lastValue: number = Math.floor(values[values.length - 1]);
+    const firstValueSizes: ISize = getTextSize(size, weight, firstValue.toString(), this.ctx);
+    const range: Array<number> = getRange(Math.min(firstValue, lastValue), Math.max(firstValue, lastValue), this.step);
+    const points: Array<number> = [];
 
     switch (this.sortValues) {
       case "less-more":
@@ -112,19 +122,25 @@ class AxisY extends Axis {
       points.push(lastValue);
     }
 
-    points.map((value, index) => {
+    points.map((value: number, index: number) => {
       // Содержит размеры значения
-      const valueSizes = getTextSize(size, weight, this._getCorrectValue(value), this.ctx);
+      const valueSizes: ISize = getTextSize(size, weight, this._getCorrectValue(value).toString(), this.ctx);
       // Начальная точка для отрисовки элементов
-      const startPoint = bounds.vertical.start + firstValueSizes.height / 2 + (gaps.top || 0);
+      const startPoint: number = bounds.vertical.start + firstValueSizes.height / 2 + (gaps.top || 0);
       // Конечная точка для отрисовки элементов
-      const endPoint = bounds.vertical.end - startPoint - (gaps.bottom || 0);
+      const endPoint: number = bounds.vertical.end - startPoint - (gaps.bottom || 0);
       // Интервал для отрисовки элементов
-      const step = endPoint / (points.length - 1);
+      const step: number = endPoint / (points.length - 1);
       // Координаты для отрисовки элементов
-      const posYItem = {
+      const posYItem: IPos = {
         x: bounds.horizontal.start + (gaps.left || 0),
         y: step * index + startPoint,
+      };
+      const font: ISpecialFontData = {
+        ...this.font,
+        color,
+        str: `${weight} ${size}px Arial, sans-serif`,
+        text: this._getCorrectValue(value).toString(),
       };
 
       this.points.push({
@@ -137,12 +153,7 @@ class AxisY extends Axis {
       // Отрисовываем значения
       if (showText) {
         new Text(
-          {
-            ...this.font,
-            color,
-            str: `${weight} ${size}px Arial, sans-serif`,
-            text: this._getCorrectValue(value),
-          },
+          font,
           this.ctx,
           posYItem.x,
           posYItem.y + valueSizes.height / 2
@@ -150,11 +161,11 @@ class AxisY extends Axis {
       }
     });
 
-    values.map((uValue) => {
-      const maxValue = quickSort(this.points, "value").find(({ value, }) => value >= uValue);
-      const minValue = quickSort(this.points, "value").reverse().find(({ value, }) => value <= uValue);
-      const textSizes = getTextSize(size, weight, uValue, this.ctx);
-      const posYItem = {
+    values.map((uValue: number) => {
+      const maxValue: IPointY = (quickSort(this.points, "value") as any).find(({ value, }) => value >= uValue);
+      const minValue: IPointY = (quickSort(this.points, "value").reverse() as any).find(({ value, }) => value <= uValue);
+      const textSizes: ISize = getTextSize(size, weight, uValue.toString(), this.ctx);
+      const posYItem: IPos = {
         x: showText ? bounds.horizontal.start : 0,
         y: minValue.y + (uValue - minValue.value) * ((maxValue.y - minValue.y) / ((maxValue.value - minValue.value) || 1)),
       };
@@ -178,7 +189,7 @@ class AxisY extends Axis {
    * Определяет максимальную ширину среди всех значений оси ординат
    * @returns {number} Максимальная ширина значения точки
    */
-  getMaxTextWidthAtYAxis() {
+  public getMaxTextWidthAtYAxis(): number {
     return Math.max(...this.points.filter(({ onScreen, }) => onScreen).map(({ width, }) => width));
   }
 }

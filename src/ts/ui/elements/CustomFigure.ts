@@ -1,8 +1,14 @@
 import Element from "./Element";
 import setGradientColor from "../../helpers/setGradientColor";
 
-class CustomFigure extends Element {
-  constructor(x, y, color, ctx, lineTo, startY, endY, opacity) {
+import "../../interfaces/index";
+
+class CustomFigure extends Element implements ICustomFigureClass {
+  public lineTo: Array<ILineTo>;
+  public startY?: number;
+  public endY?: number;
+
+  constructor(x, y, color, ctx, lineTo, startY?: number, endY?: number, opacity?: number) {
     super(x, y, color, ctx, opacity);
 
     // Массив, содержащий данные позиций линии
@@ -17,7 +23,7 @@ class CustomFigure extends Element {
    * Устанавливает цвет
    * @private
    */
-  _setColor() {
+  private _setColor(): void {
     if (Array.isArray(this.color)) {
       setGradientColor(this.color, this.startY, this.endY, "fillStyle", this.ctx);
     } else if (typeof this.color === "string") {
@@ -26,7 +32,7 @@ class CustomFigure extends Element {
   }
 
   // Рисует фигуру
-  draw() {
+  public draw(): void {
     this.ctx.beginPath();
     this.ctx.moveTo(this.x, this.y);
     this.ctx.globalAlpha = this.opacity;

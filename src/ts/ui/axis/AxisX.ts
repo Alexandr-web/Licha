@@ -3,7 +3,13 @@ import Text from "../elements/Text";
 import getTextSize from "../../helpers/getTextSize";
 import getStyleByIndex from "../../helpers/getStyleByIndex";
 
-class AxisX extends Axis {
+class AxisX extends Axis implements IAxisXClass {
+  public themeForLine: ILineTheme;
+  public ignoreNames: Array<string> | ((name: string, index: number) => boolean);
+  public data: IData;
+  public editName: (name: string | number) => string;
+  public line: ILine;
+
   constructor(
     ctx,
     data,
@@ -39,7 +45,7 @@ class AxisX extends Axis {
    * Отбирает названия точек оси абсцисс, которые не будут нарисованы на диаграмме
    * @returns {array} Названия точек
    */
-  getIgnoreNames() {
+  public getIgnoreNames(): Array<string | number> {
     if (this.ignoreNames instanceof Function) {
       return this.getAxesData(this.data).names.filter(this.ignoreNames);
     }
@@ -56,24 +62,24 @@ class AxisX extends Axis {
    * @param {object} gaps Отступы заголовка
    * @returns {AxisX}
    */
-  drawTitle(gaps = {}) {
+  public drawTitle(gaps = {}): AxisX {
     if (!Object.keys(this.title).length) {
       return this;
     }
-    
+
     const { size, weight = 600, color = this.themeForTitle.color, text, } = this.title.font;
-    const font = {
+    const font: ISpecialFontData = {
       size,
       color,
       text,
       weight,
       str: `${weight} ${size}px Arial, sans-serif`,
     };
-    const bounds = this.bounds;
-    const sizes = getTextSize(size, weight, text, this.ctx);
-    const startX = bounds.horizontal.start + (gaps.left || 0);
-    const endX = bounds.horizontal.end - sizes.width;
-    const posTitle = {
+    const bounds: IBounds = this.bounds;
+    const sizes: ISize = getTextSize(size, weight, text, this.ctx);
+    const startX: number = bounds.horizontal.start + (gaps.left || 0);
+    const endX: number = bounds.horizontal.end - sizes.width;
+    const posTitle: IPos = {
       x: startX + (endX - startX) / 2,
       y: bounds.vertical.end,
     };
@@ -96,11 +102,12 @@ class AxisX extends Axis {
 
   /**
    * Определяет название точки на оси абсцисс
-   * @param {string} name Название точки
+   * @param {string | number} name Название точки
    * @private
-   * @returns {string} Корректное название точки
+   * @returns {string | number} Корректное название точки
    */
-  getCorrectName(name) {
+  // GAPS!
+  public getCorrectName(name: string | number): string | number {
     return this.editName instanceof Function ? this.editName(name) : name;
   }
 
@@ -109,23 +116,24 @@ class AxisX extends Axis {
    * @param {object} gaps Отступы оси абсцисс
    * @returns {AxisX}
    */
-  drawPoints(gaps = {}) {
-    const names = this.getAxesData(this.data).names;
-    const bounds = this.bounds;
-    const ignoreNames = this.getIgnoreNames();
+  // GAPS!
+  public drawPoints(gaps = {}): AxisX {
+    const names: Array<string | number> = this.getAxesData(this.data).names;
+    const bounds: IBounds = this.bounds;
+    const ignoreNames: Array<string | number> = this.getIgnoreNames();
     const { size, weight = 400, showText = Boolean(Object.keys(this.font).length), color = this.themeForPoint.color, } = this.font;
 
-    names.map((name, index) => {
+    names.map((name: string | number, index: number) => {
       // Начальная точка для отрисовки элементов
-      const startPoint = bounds.horizontal.start + (gaps.left || 0);
+      const startPoint: number = bounds.horizontal.start + (gaps.left || 0);
       // Конечная точка для отрисовки элементов
-      const endPoint = bounds.horizontal.end - (gaps.right || 0) - startPoint;
+      const endPoint: number = bounds.horizontal.end - (gaps.right || 0) - startPoint;
       // Шаг, с которым отрисовываем элементы
-      const step = endPoint / (names.length - 1);
+      const step: number = endPoint / (names.length - 1);
       // Содержит размеры названия
-      const nameSizes = getTextSize(size, weight, this.getCorrectName(name), this.ctx);
+      const nameSizes: ISize = getTextSize(size, weight, `${this.getCorrectName(name)}`, this.ctx);
       // Координаты элемента для отрисовки
-      const posXItem = {
+      const posXItem: IPos = {
         x: step * index + startPoint,
         y: bounds.vertical.end - (gaps.bottom || 0),
       };
@@ -133,12 +141,12 @@ class AxisX extends Axis {
       // Если это уникальное название присутствует в какой-либо группе,
       // то мы добавляем его вместе с его значением
       for (const group in this.data) {
-        const groupData = this.data[group].data;
-        const dataKeys = Object.keys(this.data);
-        const idx = dataKeys.indexOf(group);
-        const colorByTheme = getStyleByIndex(idx, this.themeForLine.color);
+        const groupData: Array<IDataAtItemData> = this.data[group].data;
+        const dataKeys: Array<string> = Object.keys(this.data);
+        const idx: number = dataKeys.indexOf(group);
+        const colorByTheme: string = getStyleByIndex(idx, this.themeForLine.color);
 
-        groupData.map((groupDataItem) => {
+        groupData.map((groupDataItem: IDataAtItemData) => {
           if (groupDataItem.name === name) {
             const { line = {}, } = this.data[group];
 
@@ -157,11 +165,11 @@ class AxisX extends Axis {
 
       // Рисуем текст
       if (showText && !ignoreNames.includes(name)) {
-        const font = {
+        const font: ISpecialFontData = {
           ...this.font,
           color,
           str: `${weight} ${size}px Arial, sans-serif`,
-          text: this.getCorrectName(name),
+          text: this.getCorrectName(name).toString(),
         };
 
         new Text(

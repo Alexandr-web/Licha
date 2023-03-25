@@ -60,7 +60,7 @@ class Legend {
    * @returns {array} Группы с их размером текста
    */
   private _getSizeGroups(groups: Array<IColumnLegend>): Array<IItemLegend> {
-    const { size, weight = 400, }: IFont = this.font;
+    const { size, weight = 400, } = this.font;
 
     return groups.map((groupItem: IColumnLegend) => {
       const sizes: ISize = getTextSize(size, weight, groupItem.group, this.ctx);
@@ -68,6 +68,8 @@ class Legend {
       return {
         ...sizes,
         ...groupItem,
+        x: null,
+        y: null,
       };
     });
   }
@@ -86,7 +88,7 @@ class Legend {
     const { group: gapsGroup = {}, circle: gapsCircle = {}, } = this.legendGaps;
     const { radius, } = this.circle;
 
-    return groups.reduce((acc: number, { width, }: IItemLegend) => {
+    return groups.reduce((acc: number, { width, }) => {
       acc += width + ((gapsGroup as any).right || 0) + radius * 2 + ((gapsCircle as any).right || 0);
 
       return acc;
@@ -163,20 +165,20 @@ class Legend {
    * @private
    * @returns {object} Позиция текста
    */
-  private _drawText(group: string, width: number, height: number, groups: Array<IItemLegend>, index: number, gaps) {
-    const bounds = this.bounds;
-    const center = bounds.width / 2;
-    const totalGroupsDistance = this._getDistanceGroups(groups);
+  private _drawText(group: string, width: number, height: number, groups: Array<IItemLegend>, index: number, gaps): IPos {
+    const bounds: IBounds = this.bounds;
+    const center: number = bounds.width / 2;
+    const totalGroupsDistance: number = this._getDistanceGroups(groups);
     const { size, weight = 400, color = this.themeForText.color, } = this.font;
-    const font = {
+    const font: ISpecialFontData = {
       size,
       color,
       str: `${weight} ${size}px Arial, sans-serif`,
       text: group,
     };
 
-    const prevGroups = groups.filter((grp, idx) => idx < index);
-    const posGroup = {
+    const prevGroups: Array<IItemLegend> = groups.filter((grp, idx) => idx < index);
+    const posGroup: IPos = {
       x: bounds.horizontal.start + (gaps.left || 0) + center - totalGroupsDistance / 2 + this._getDistanceGroups(prevGroups),
       y: bounds.vertical.start + (gaps.top || 0) + height,
     };
@@ -189,8 +191,8 @@ class Legend {
     ).draw();
 
     if (this.hideGroups.includes(group)) {
-      const endX = width + posGroup.x;
-      const y = posGroup.y - height / 2;
+      const endX: number = width + posGroup.x;
+      const y: number = posGroup.y - height / 2;
 
       this._overlineHideGroupText(posGroup.x, endX, y, color);
     }
@@ -206,7 +208,7 @@ class Legend {
    * @param {string} color Цвет
    * @private
    */
-  private _drawCircle(x: number, y: number, height: number, color: Array<string> | string) {
+  private _drawCircle(x: number, y: number, height: number, color: Array<string> | string): void {
     const { radius, } = this.circle;
     const { circle = {}, } = this.legendGaps;
     const posCircle: IPos = {
@@ -233,7 +235,7 @@ class Legend {
    * @private
    * @returns {number} Дистанция
    */
-  private _getDistanceTopFromPrevColumns(columns: Array<IColumnLegend[]>, index: number) {
+  private _getDistanceTopFromPrevColumns(columns: Array<IColumnLegend[]>, index: number): number {
     const prevColumns: Array<IColumnLegend[]> = columns.filter((c: Array<IColumnLegend>, i: number) => i < index);
 
     return prevColumns.reduce((acc: number, prevColumn: Array<IColumnLegend>) => {
@@ -259,7 +261,7 @@ class Legend {
       const updateGroups: Array<IItemLegend> = this._getSizeGroups(groups);
       const gapFromPrevColumns: number = this._getDistanceTopFromPrevColumns(columns, idx);
 
-      updateGroups.map(({ group, color: colorCap, height, width, }: IItemLegend, index: number) => {
+      updateGroups.map(({ group, color: colorCap, height, width, }, index: number) => {
         const posGroup: IPos = this._drawText(
           group,
           width,

@@ -8,9 +8,9 @@ import Legend from "./ui/Legend";
 import BlockInfo from "./ui/elements/BlockInfo";
 
 import "./interfaces/index";
-import { TAxisPoints, } from "./types/index";
+import { TTypeChart, } from "./types/index";
 
-class ACharty {
+class ACharty implements IAchartyClass {
 	public selectorCanvas: string;
 	public background: string | Array<string>;
 	public title: IChartTitle;
@@ -23,7 +23,7 @@ class ACharty {
 	public grid: IGrid;
 	public legend: ILegend;
 	public blockInfo: IBlockInfo;
-	public type: string;
+	public type: TTypeChart;
 	public padding: IPadding | number;
 	public hideGroups: Array<string>;
 
@@ -85,7 +85,7 @@ class ACharty {
 	 * @private
 	 * @return {Canvas}
 	 */
-	private _setCanvas(): Canvas {
+	private _setCanvas(): ICanvasClass {
 		return new Canvas(this.selectorCanvas, this.background, this.theme.canvas).init();
 	}
 
@@ -103,8 +103,8 @@ class ACharty {
 			canvas.ctx,
 			width,
 			height,
-			this.title,
 			this.type,
+			this.title,
 			this.theme.title
 		).drawTitle();
 	}
@@ -207,7 +207,7 @@ class ACharty {
 	 * @private
 	 * @returns {object} Данные всех осевых точек
 	 */
-	private _setPoints(axisY: AxisY, axisX: AxisX, legend: Legend, chart: Chart): TAxisPoints {
+	private _setPoints(axisY: AxisY, axisX: AxisX, legend: Legend, chart: Chart): IAxisPoints {
 		const y = axisY.drawPoints(chart.getGapsForYPoints(axisY, axisX, chart.title, { ...this.legend, ...legend, }));
 		const x = axisX.drawPoints(chart.getGapsForXPoints(axisY, axisX));
 
@@ -261,7 +261,7 @@ class ACharty {
 	/**
 	 * Обработчик события mousemove у элемента canvas
 	 * Рисует окно с информацией об активной группе
-	 * @param {Event} e Объект события
+	 * @param {MouseEvent} e Объект события
 	 * @param {number} endY Конечная область видимости окна с информацией об активной группе
 	 * @param {array} pointsX Содержит данные всех точек на оси абсцисс
 	 * @param {number} startY Начальная область видимости окна с информацией об активной группе
@@ -269,12 +269,12 @@ class ACharty {
 	 * @param {object} bounds Содержит границы холста
 	 * @private
 	 */
-	private _mousemoveByCanvasHandler(e: Event, endY: number, pointsX: Array<IPointX>, startY: number, canvas: Canvas, bounds: IBounds): void {
-		const mousePos = { x: e.offsetX, y: e.offsetY, };
+	private _mousemoveByCanvasHandler(e: MouseEvent, endY: number, pointsX: Array<IPointX>, startY: number, canvas: Canvas, bounds: IBounds): void {
+		const mousePos: IPos = { x: e.offsetX, y: e.offsetY, };
 
 		if (mousePos.y <= endY && mousePos.y >= startY) {
 			// Отбираем элементы, которые подходят по координатам на холсте
-			const activeElements = pointsX.map((point) => {
+			const activeElements: Array<IPointX> = pointsX.map((point) => {
 				if (this.axisX.editName instanceof Function) {
 					return {
 						...point,
@@ -285,17 +285,17 @@ class ACharty {
 				return point;
 			}).filter(({ x, group, }) => !this.hideGroups.includes(group) && mousePos.x > (x - 5) && mousePos.x < (x + 5));
 
-			document.documentElement.style = `cursor: ${activeElements.length ? "none" : "default"}`;
+			document.documentElement.setAttribute("style", `cursor: ${activeElements.length ? "none" : "default"}`);
 
 			if (activeElements.length) {
 				this.update();
 
-				const [{ x, }] = activeElements;
+				const [{ x, }]: Array<IPointX> = activeElements;
 				const { title, groups, background, padding, } = this.blockInfo;
-				const themeForWindow = (this.theme.blockInfo || {}).window;
-				const themeForLine = this.theme.line;
-				const themeForTitle = (this.theme.blockInfo || {}).title;
-				const themeForGroup = (this.theme.blockInfo || {}).group;
+				const themeForWindow: IBlockInfoThemeWindow = (this.theme.blockInfo || {}).window;
+				const themeForLine: ILineTheme = this.theme.line;
+				const themeForTitle: IBlockInfoThemeTitle = (this.theme.blockInfo || {}).title;
+				const themeForGroup: IBlockInfoThemeGroup = (this.theme.blockInfo || {}).group;
 
 				new BlockInfo(
 					this.axisY.editValue,
@@ -317,7 +317,7 @@ class ACharty {
 				).init();
 			}
 		} else {
-			document.documentElement.style = "cursor: default";
+			document.documentElement.setAttribute("style", "cursor: default");
 		}
 	}
 
@@ -328,18 +328,18 @@ class ACharty {
 	 * @param {{ pointsX: array, pointsY: array }} param2 Содержит данные всех осевых точек
 	 * @private
 	 */
-	private _mousemoveByCanvas(canvas: Canvas, bounds: IBounds, { pointsX, pointsY, }: TAxisPoints): void {
+	private _mousemoveByCanvas(canvas: Canvas, bounds: IBounds, { pointsX, pointsY, }): void {
 		if (!Object.keys(this.blockInfo).length) {
 			return;
 		}
 
-		const pointsYOnScreen = pointsY.filter(({ onScreen, }) => onScreen);
+		const pointsYOnScreen: Array<IPointY> = pointsY.filter(({ onScreen, }) => onScreen);
 		const { y: firstPointYOrdinate, height: firstPointYHeight, } = pointsYOnScreen[0];
 		const { y: lastPointYOrdinate, height: lastPointYHeight, } = pointsYOnScreen[pointsYOnScreen.length - 1];
-		const endY = lastPointYOrdinate - firstPointYHeight / 2;
-		const startY = firstPointYOrdinate - lastPointYHeight / 2;
+		const endY: number = lastPointYOrdinate - firstPointYHeight / 2;
+		const startY: number = firstPointYOrdinate - lastPointYHeight / 2;
 
-		canvas.canvasElement.addEventListener("mousemove", (e) => this._mousemoveByCanvasHandler(e, endY, pointsX, startY, canvas, bounds));
+		canvas.canvasElement.addEventListener("mousemove", (e: MouseEvent) => this._mousemoveByCanvasHandler(e, endY, pointsX, startY, canvas, bounds));
 	}
 
 	/**
@@ -348,7 +348,7 @@ class ACharty {
 	 * @private
 	 */
 	private _leavemouseFromCanvasAreaHandler(): void {
-		document.documentElement.style = "default";
+		document.documentElement.setAttribute("style", "default");
 		this.update();
 	}
 
@@ -364,11 +364,11 @@ class ACharty {
 	/**
 	 * Обработчик события click у элемента canvas
 	 * Скрывает группы при клике на элементы легенды
-	 * @param {Event} e Объект event
+	 * @param {MouseEvent} e Объект event
 	 * @param {array} legendItems Содержит данные элементов легенды
 	 * @private
 	 */
-	private _clickByCanvasAreaHandler(e: Event, legendItems: Array<IItemLegend>): void {
+	private _clickByCanvasAreaHandler(e: MouseEvent, legendItems: Array<IItemLegend>): void {
 		const mousePos = { x: e.offsetX, y: e.offsetY, };
 		const findMatchLegendItem = legendItems.find(({ x, y, width, height, }) => {
 			const endX = x + width;
@@ -394,11 +394,11 @@ class ACharty {
 	/**
 	 * Добавление события click элементу canvas
 	 * @param {Canvas} canvas Экземпляр класса Canvas
-	 * @param {*} legendItems 
+	 * @param {array} legendItems Содержит данные элементов легенды
 	 * @private
 	 */
 	private _clickByCanvasArea(canvas: Canvas, legendItems: Array<IItemLegend>): void {
-		canvas.canvasElement.addEventListener("click", (e) => this._clickByCanvasAreaHandler(e, legendItems));
+		canvas.canvasElement.addEventListener("click", (e: MouseEvent) => this._clickByCanvasAreaHandler(e, legendItems));
 	}
 
 	/**
@@ -450,12 +450,12 @@ class ACharty {
 
 	// Рисует диаграмму
 	public init(): ACharty {
-		const canvas = this._setCanvas();
-		const chart = this._setChartTitle(canvas);
-		const legend = this._setLegend(canvas, chart);
-		const axisY = this._setAxisYTitle(canvas, chart, legend);
-		const axisX = this._setAxisXTitle(canvas, chart, axisY);
-		const points = this._setPoints(axisY, axisX, legend, chart);
+		const canvas: Canvas = this._setCanvas();
+		const chart: Chart = this._setChartTitle(canvas);
+		const legend: Legend = this._setLegend(canvas, chart);
+		const axisY: AxisY = this._setAxisYTitle(canvas, chart, legend);
+		const axisX: AxisX = this._setAxisXTitle(canvas, chart, axisY);
+		const points: IAxisPoints = this._setPoints(axisY, axisX, legend, chart);
 
 		this._mousemoveByCanvas(canvas, chart.getBounds(), points);
 		this._leavemouseFromCanvasArea(canvas);

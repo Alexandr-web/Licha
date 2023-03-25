@@ -3,10 +3,9 @@ import dark from "./themes/dark";
 import colors from "./colors";
 
 import "../interfaces/index";
-import { TThemes, } from "../types/index";
 
 class Utils {
-  public themes: TThemes;
+  public themes: IThemes;
   public colors: IColors;
 
   constructor() {

@@ -1,14 +1,20 @@
 import Element from "./Element";
 import setGradientColor from "../../helpers/setGradientColor";
 
-class Line extends Element {
-  constructor(x, y, color, ctx, lineTo = [], width = 1, dotted = false) {
+import "../../interfaces/index";
+
+class Line extends Element implements ILineClass {
+  public lineTo: Array<ILineTo>;
+  public width?: number;
+  public dotted?: boolean;
+
+  constructor(x, y, color, ctx, lineTo = [], width?: number, dotted?: boolean) {
     super(x, y, color, ctx);
 
     // Массив, содержащий данные позиций линии
     this.lineTo = lineTo;
     // Ширина линии
-    this.width = width;
+    this.width = width || 1;
     // Правило, говорящее, что линия будет состоять из точек
     this.dotted = dotted;
   }
@@ -19,7 +25,7 @@ class Line extends Element {
    * @param {number} y Позиция по оси ординат
    * @private
    */
-  _setColor(x, y) {
+  private _setColor(x: number, y: number): void {
     if (Array.isArray(this.color)) {
       setGradientColor(this.color, this.y, y, "strokeStyle", this.ctx, this.x, x);
     } else if (typeof this.color === "string") {
@@ -28,7 +34,7 @@ class Line extends Element {
   }
 
   // Рисует линию
-  draw() {
+  public draw(): void {
     if (this.dotted) {
       this.ctx.setLineDash([10, 20]);
     } else {

@@ -1,6 +1,22 @@
 import quickSort from "../../helpers/quickSort";
 
-class Axis {
+import "../../interfaces/index";
+import { TSort, } from "../../types/index";
+
+class Axis implements IAxisClass {
+  public ctx: CanvasRenderingContext2D;
+  public title: IAxisYTitle | IAxisXTitle;
+  public font: IFontAxis;
+  public bounds: IBounds;
+  public points: Array<IPointX | IPointY>;
+  public sortNames: TSort;
+  public uniqueNames: Array<string | number>;
+  public uniqueValues: Array<number>;
+  public readonly gapTopAxisX: number;
+  public readonly gapRightAxisY: number;
+  public themeForPoint: IAxisThemePoint;
+  public themeForTitle: IAxisThemeTitle;
+
   constructor(
     ctx,
     themeForPoint = {},
@@ -12,12 +28,12 @@ class Axis {
   ) {
     // Контекст элемента canvas
     this.ctx = ctx;
-    // Название оси
-    this.title = title;
+    // Содержит данные заголовка оси
+    this.title = title as any;
     // Стили шрифта оси
-    this.font = font;
+    this.font = font as any;
     // Содержит границы холста
-    this.bounds = bounds;
+    this.bounds = bounds as any;
     // Содержит данные точек, находящихся на этой оси
     this.points = [];
     // Тип сортировки точек ("less-more" или "more-less")
@@ -31,49 +47,49 @@ class Axis {
     // Дистанция между осью ординат и графиком
     this.gapRightAxisY = 10;
     // Стили для точек от темы
-    this.themeForPoint = themeForPoint;
+    this.themeForPoint = themeForPoint as any;
     // Стили для заголовка от темы
-    this.themeForTitle = themeForTitle;
+    this.themeForTitle = themeForTitle as any;
   }
 
   /**
    * Сортирует значения и названия (если те имеют тип данных число) групп
    * @param {object} data Содержит данные групп
-   * @returns 
+   * @returns {object}
    */
-  getAxesData(data) {
+  public getAxesData(data: IData): IAxesData {
     // Для оси ординат
-    const values = [];
+    const values: Array<number> = [];
     // Для оси абсцисс
-    const names = [];
+    const names: Array<string | number> = [];
 
     // Добавляем значения и названия в массивы данных осей
     for (const group in data) {
-      const groupData = data[group].data;
+      const groupData: Array<IDataAtItemData> = data[group].data;
 
       names.push(...groupData.map(({ name, }) => name));
       values.push(...groupData.map(({ value, }) => value));
     }
 
-    const uniqueNames = [...new Set(names)];
-    const uniqueValues = [...new Set(values)];
-    const namesIsNumbers = !uniqueNames.some((name) => isNaN(+name));
-    const sortedValues = quickSort(uniqueValues).reverse();
-    const sortedNames = [];
+    const uniqueNames: Array<number | string> = [...new Set(names)];
+    const uniqueValues: Array<number> = [...new Set(values)];
+    const namesIsNumbers: boolean = !uniqueNames.some((name) => isNaN(+name));
+    const sortedValues: Array<number | object> = quickSort(uniqueValues).reverse();
+    const sortedNames: Array<string | number | object> = [];
 
     if (namesIsNumbers) {
       switch (this.sortNames) {
         case "less-more":
-          sortedNames.push(...quickSort(uniqueNames));
+          sortedNames.push(...quickSort(uniqueNames as Array<number | object>));
           break;
         case "more-less":
-          sortedNames.push(...quickSort(uniqueNames).reverse());
+          sortedNames.push(...quickSort(uniqueNames as Array<number | object>).reverse());
           break;
       }
     }
 
     return {
-      values: sortedValues,
+      values: sortedValues as Array<number>,
       names: namesIsNumbers ? sortedNames : uniqueNames,
     };
   }

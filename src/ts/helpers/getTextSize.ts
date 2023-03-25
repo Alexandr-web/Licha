@@ -1,5 +1,4 @@
 import Text from "../ui/elements/Text";
-import { TTextData, } from "../types/index";
 
 /**
  * Определяет размеры текста
@@ -10,7 +9,7 @@ import { TTextData, } from "../types/index";
  * @return {object} Размеры текста ({ width, height })
  */
 export default (size: number, weight: number, text: string, ctx: CanvasRenderingContext2D) => {
-  const font: TTextData = {
+  const font: ITextData = {
     size,
     str: `${weight} ${size}px Arial, sans-serif`,
     text,

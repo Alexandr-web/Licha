@@ -4,7 +4,19 @@ import Cap from "../elements/Cap";
 import CustomFigure from "../elements/CustomFigure";
 import getStyleByIndex from "../../helpers/getStyleByIndex";
 
-class LineChart extends Chart {
+import "../../interfaces/index";
+import { TSort, } from "../../types/index";
+
+class LineChart extends Chart implements ILineChartClass {
+  public pointsX: Array<IPointX>;
+  public pointsY: Array<IPointY>;
+  public line: ILine;
+  public cap: ICap;
+  public sortValues: TSort;
+  public caps: Array<ICapData>;
+  public themeForLine: ILineTheme;
+  public themeForCaps: ICapTheme;
+
   constructor(
     data,
     line,
@@ -49,21 +61,21 @@ class LineChart extends Chart {
    * @private
    * @returns {object} Стили
    */
-  _getStyles(gLine, gCap, group) {
-    const dataKeys = Object.keys(this.data);
-    const idx = dataKeys.indexOf(group);
-    const themeColorForLine = getStyleByIndex(idx, this.themeForLine.color);
-    const themeFillForLine = getStyleByIndex(idx, this.themeForLine.fill);
-    const themeColorForCap = getStyleByIndex(idx, this.themeForCaps.color);
-    const themeStrokeColorForCap = getStyleByIndex(idx, this.themeForCaps.strokeColor);
-    const lineStyle = {
+  private _getStyles(gLine: ILine, gCap: ICap, group: string): IChartStyle {
+    const dataKeys: Array<string> = Object.keys(this.data);
+    const idx: number = dataKeys.indexOf(group);
+    const themeColorForLine: string = getStyleByIndex(idx, this.themeForLine.color);
+    const themeFillForLine: string = getStyleByIndex(idx, this.themeForLine.fill);
+    const themeColorForCap: string = getStyleByIndex(idx, this.themeForCaps.color);
+    const themeStrokeColorForCap: string = getStyleByIndex(idx, this.themeForCaps.strokeColor);
+    const lineStyle: IChartLineStyle = {
       width: gLine.width || this.line.width,
       color: gLine.color || this.line.color || themeColorForLine,
       dotted: gLine.dotted || this.line.dotted,
       stepped: gLine.stepped || this.line.stepped,
       fill: gLine.fill || this.line.fill || themeFillForLine,
     };
-    const capStyle = {
+    const capStyle: IChartCapStyle = {
       size: gCap.size || this.cap.size,
       color: gCap.color || this.cap.color || themeColorForCap,
       stroke: gCap.stroke || this.cap.stroke || {},
@@ -83,12 +95,12 @@ class LineChart extends Chart {
    * @private
    * @returns {array} Массив координат у данных группы
    */
-  _getGroupsDataCoordinates(gData) {
+  private _getGroupsDataCoordinates(gData: Array<IDataAtItemData>): Array<IGroupDataCoordinates> {
     return gData.map(({ value, name, }) => {
       // Элемент для начальной позиции Y линии
-      const findAxisYItem = this.pointsY.find((axisYItem) => axisYItem.value === value);
+      const findAxisYItem = this.pointsY.find((axisYItem) => axisYItem.value === value) as IPointY;
       // Элемент для начальной позиции X линии
-      const findAxisXItem = this.pointsX.find((axisXItem) => axisXItem.name === name);
+      const findAxisXItem = this.pointsX.find((axisXItem) => axisXItem.name === name) as IPointX;
 
       return {
         x: findAxisXItem.x,
@@ -99,20 +111,20 @@ class LineChart extends Chart {
     });
   }
 
-    /**
-   * Создает задний фон у всей группы
+  /**
+   * Создает задний фон всей группе
    * @param {array} coordinates массив координат линий графика
    * @param {string|array} fill содержит данные о цвете заднего фона
    * @param {boolean} stepped Правило, которое будет рисовать линию пошагово
    * @param {string} group Группа, в которой находится линия
    * @private
    */
-  _setFillGroupChart(coordinates, fill, stepped, group) {
-    const firstPoint = coordinates[0];
-    const lastPoint = coordinates[coordinates.length - 1];
-    const yItemsOnScreen = this.pointsY.filter(({ onScreen, }) => onScreen);
-    const lastYPoint = yItemsOnScreen[yItemsOnScreen.length - 1];
-    const firstYPoint = yItemsOnScreen[0];
+  private _setFillGroupChart(coordinates: Array<IGroupDataCoordinates>, fill: string | Array<string>, stepped: boolean, group: string): void {
+    const firstPoint: IGroupDataCoordinates = coordinates[0];
+    const lastPoint: IGroupDataCoordinates = coordinates[coordinates.length - 1];
+    const yItemsOnScreen: Array<IPointY> = this.pointsY.filter(({ onScreen, }) => onScreen);
+    const lastYPoint: IPointY = yItemsOnScreen[yItemsOnScreen.length - 1];
+    const firstYPoint: IPointY = yItemsOnScreen[0];
     const lineData = {
       moveTo: { x: firstPoint.x, y: firstPoint.y, },
       lineTo: [],
@@ -123,15 +135,15 @@ class LineChart extends Chart {
     };
 
     // Определяем координаты для будущей фигуры
-    coordinates.map(({ x, y, }, index) => {
+    coordinates.map(({ x, y, }, index: number) => {
       if (stepped) {
-        const nextItem = coordinates[index + 1];
+        const nextItem: IGroupDataCoordinates | undefined = coordinates[index + 1];
 
         if (nextItem) {
           // Элемент для следующей позиции Y линии
-          const findNextAxisYItem = this.pointsY.find((nextAxisYItem) => nextAxisYItem.value === nextItem.value);
+          const findNextAxisYItem: IPointY = this.pointsY.find((nextAxisYItem: IPointY) => nextAxisYItem.value === nextItem.value);
           // Элемент для следующей позиции X линии
-          const findNextAxisXItem = this.pointsX.find((nextAxisXItem) => nextAxisXItem.name === nextItem.name);
+          const findNextAxisXItem: IPointX = this.pointsX.find((nextAxisXItem: IPointX) => nextAxisXItem.name === nextItem.name);
 
           lineData.lineTo.push(
             {
@@ -188,20 +200,20 @@ class LineChart extends Chart {
    * @param {string} group Название группы (ключ объекта data)
    * @private
    */
-  _drawLinesAndCaps(coordinates, gData, gLine, gCap, group) {
+  private _drawLinesAndCaps(coordinates: Array<IGroupDataCoordinates>, gData: Array<IDataAtItemData>, gLine: ILine, gCap: ICap, group: string): void {
     const { lineStyle, capStyle, themeStrokeColorForCap, } = this._getStyles(gLine, gCap, group);
 
     // Находим координаты для линий
-    coordinates.map(({ value, name, x, y, }, index) => {
-      const nextDataItem = gData[index + 1];
+    coordinates.map(({ value, name, x, y, }, index: number) => {
+      const nextDataItem: IDataAtItemData | undefined = gData[index + 1];
       // Содержит следующие позиции линии
-      const lineToArray = [];
+      const lineToArray: Array<IPos> = [];
 
       if (nextDataItem) {
         // Элемент для следующей позиции Y линии
-        const findNextAxisYItem = this.pointsY.find((nextAxisYItem) => nextAxisYItem.value === nextDataItem.value);
+        const findNextAxisYItem: IPointY = this.pointsY.find((nextAxisYItem: IPointY) => nextAxisYItem.value === nextDataItem.value);
         // Элемент для следующей позиции X линии
-        const findNextAxisXItem = this.pointsX.find((nextAxisXItem) => nextAxisXItem.name === nextDataItem.name);
+        const findNextAxisXItem: IPointX = this.pointsX.find((nextAxisXItem: IPointX) => nextAxisXItem.name === nextDataItem.name);
 
         if (!lineStyle.stepped) {
           lineToArray.push({ x: findNextAxisXItem.x, y: findNextAxisYItem.y, });
@@ -269,11 +281,11 @@ class LineChart extends Chart {
    * Рисует график
    * @returns {LineChart}
    */
-  draw() {
-    const visibleGroups = Object
+  public draw(): LineChart {
+    const visibleGroups: IData = Object
       .keys(this.data)
-      .filter((group) => !this.hideGroups.includes(group))
-      .reduce((acc, group) => {
+      .filter((group: string) => !this.hideGroups.includes(group))
+      .reduce((acc: object, group: string) => {
         acc[group] = this.data[group];
 
         return acc;
@@ -285,16 +297,16 @@ class LineChart extends Chart {
         line: groupLine = {},
         cap: groupCap = {},
       } = visibleGroups[group];
-      
-      const { lineStyle, } = this._getStyles(groupLine, groupCap, group);
-      const coordinates = this._getGroupsDataCoordinates(groupData);
+
+      const { lineStyle, } = this._getStyles(groupLine as any, groupCap as any, group);
+      const coordinates: Array<IGroupDataCoordinates> = this._getGroupsDataCoordinates(groupData);
 
       // Рисуем задний фон группе
       if (Array.isArray(lineStyle.fill) || (typeof lineStyle.fill === "string" && lineStyle.fill.length)) {
         this._setFillGroupChart(coordinates, lineStyle.fill, lineStyle.stepped, group);
       }
 
-      this._drawLinesAndCaps(coordinates, groupData, groupLine, groupCap, group);
+      this._drawLinesAndCaps(coordinates, groupData, groupLine as any, groupCap as any, group);
     }
 
     return this;

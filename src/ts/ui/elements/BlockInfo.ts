@@ -7,7 +7,25 @@ import Line from "./Line";
 import CustomFigure from "./CustomFigure";
 import getStyleByIndex from "../../helpers/getStyleByIndex";
 
-class BlockInfo extends Element {
+import "../../interfaces/index";
+
+class BlockInfo extends Element implements IBlockInfoClass {
+  public editValue: (value: number) => string;
+  public editName: (name: number | string) => string;
+  public data: IData;
+  public bounds: IBounds;
+  public elements: Array<IActiveElement>;
+  public padding: IPadding;
+  public titleData: ITitleBlockInfo;
+  public groupsData: IGroupsBlockInfo;
+  public groupLineWidth: number;
+  public triangleSizes: ISize;
+  public title: string;
+  public themeForWindow: IBlockInfoThemeWindow;
+  public themeForLine: ILineTheme;
+  public themeForTitle: IBlockInfoThemeTitle;
+  public themeForGroup: IBlockInfoThemeGroup;
+
   constructor(
     editValue,
     editName,
@@ -54,23 +72,13 @@ class BlockInfo extends Element {
     // Текст заголовка
     this.title = elements[0].name;
     // Стили для окна от темы
-    this.themeForWindow = themeForWindow;
+    this.themeForWindow = themeForWindow as any;
     // Стили для линии от темы
     this.themeForLine = themeForLine;
     // Стили для заголовка от темы
-    this.themeForTitle = themeForTitle;
+    this.themeForTitle = themeForTitle as any;
     // Стили для группы от темы
-    this.themeForGroup = themeForGroup;
-  }
-
-  /**
-   * Определяет корректное название для точки
-   * @param {string|number} group Название точки
-   * @private
-   * @returns {string}
-   */
-  _getCorrectGroupName(group) {
-    return this.editName instanceof Function ? this.editName(group) : group;
+    this.themeForGroup = themeForGroup as any;
   }
 
   /**
@@ -79,7 +87,7 @@ class BlockInfo extends Element {
    * @private
    * @returns {string}
    */
-  _getCorrectGroupValue(value) {
+  private _getCorrectGroupValue(value): string {
     return this.editValue instanceof Function ? this.editValue(value) : value;
   }
 
@@ -88,15 +96,15 @@ class BlockInfo extends Element {
    * @private
    * @returns {array} Массив, содержащий данные элементов, включая их размеры
    */
-  _getElementsWithSize() {
+  private _getElementsWithSize(): Array<IBlockInfoElementWithSize> {
     return this.elements.map(({ group, value, color, }) => {
-      const correctGroupValue = this._getCorrectGroupValue(value);
-      const groupName = `${group}: ${correctGroupValue}`;
+      const correctGroupValue: string | number = this._getCorrectGroupValue(value);
+      const groupName: string = `${group}: ${correctGroupValue}`;
       const { font: groupsFont, } = this.groupsData;
       const { font: titleFont, } = this.titleData;
-      const dataKeys = Object.keys(this.data);
-      const idx = dataKeys.indexOf(group);
-      const themeColor = getStyleByIndex(idx, dataKeys.length, this.themeForLine.color);
+      const dataKeys: Array<string> = Object.keys(this.data);
+      const idx: number = dataKeys.indexOf(group);
+      const themeColor: string = getStyleByIndex(idx, this.themeForLine.color);
 
       return {
         group: {
@@ -117,7 +125,7 @@ class BlockInfo extends Element {
    * @private
    * @returns {object} Позиция окна ({ x, y })
    */
-  _getCoordinates() {
+  private _getCoordinates(): IPos {
     return {
       x: this.x + this.triangleSizes.height,
       y: this.y,
@@ -130,10 +138,10 @@ class BlockInfo extends Element {
    * @private
    * @returns {number} Дистанция
    */
-  _getTopGroupsDistance(elements) {
+  private _getTopGroupsDistance(elements: Array<IBlockInfoElementWithSizeGroup>): number {
     const { gaps, } = this.groupsData;
 
-    return elements.reduce((acc, { height, }) => {
+    return elements.reduce((acc: number, { height, }) => {
       acc += height + gaps.bottom;
 
       return acc;
@@ -146,8 +154,8 @@ class BlockInfo extends Element {
    * @param {number} blockWidth Ширина окна
    * @private
    */
-  _drawLines(windowIsOutOfBounds, blockWidth) {
-    const padding = this.padding;
+  private _drawLines(windowIsOutOfBounds: boolean, blockWidth: number): void {
+    const padding: IPadding = this.padding;
     const { x, } = this._getCoordinates();
 
     for (let i = 0; i < this.elements.length; i++) {
@@ -198,7 +206,7 @@ class BlockInfo extends Element {
    * @private
    * @returns {object} Размеры ({ width, height })
    */
-  _getTitleSize() {
+  private _getTitleSize(): ISize {
     const { font, } = this.titleData;
     const { size, weight, } = font;
 
@@ -211,10 +219,10 @@ class BlockInfo extends Element {
    * @param {number} blockWidth Ширина окна
    * @private
    */
-  _drawTitle(windowIsOutOfBounds, blockWidth) {
-    const padding = this.padding;
+  private _drawTitle(windowIsOutOfBounds: boolean, blockWidth: number): void {
+    const padding: IPadding = this.padding;
     const { x, y, } = this._getCoordinates();
-    const coordinates = {
+    const coordinates: IPos = {
       x: x + (padding.left || 0),
       y: y + (padding.top || 0) + this._getTitleSize().height,
     };
@@ -225,7 +233,7 @@ class BlockInfo extends Element {
 
     const { font: titleFont, } = this.titleData;
     const { size, color = this.themeForTitle.color, weight, } = titleFont;
-    const font = {
+    const font: ISpecialFontData = {
       color,
       text: this.title,
       str: `${weight} ${size}px Arial, sans-serif`,
@@ -245,16 +253,16 @@ class BlockInfo extends Element {
    * @private
    * @returns {object} Позиция группы ({ x, y })
    */
-  _getGroupsCoordinates(index) {
+  private _getGroupsCoordinates(index: number): IPos {
     const { x, y, } = this._getCoordinates();
     const { gaps = {}, } = this.titleData;
-    const padding = this.padding;
-    const prevGroups = this._getElementsWithSize().filter((element, idx) => idx <= index);
-    const top = this._getTopGroupsDistance(prevGroups.map(({ group: g, }) => g));
-    
+    const padding: IPadding = this.padding;
+    const prevGroups: Array<IBlockInfoElementWithSize> = this._getElementsWithSize().filter((element: IBlockInfoElementWithSize, idx: number) => idx <= index);
+    const top: number = this._getTopGroupsDistance(prevGroups.map(({ group: g, }) => g));
+
     return {
       x: x + (padding.left || 0),
-      y: y + top + this._getTitleSize().height + (gaps.bottom || 0),
+      y: y + top + this._getTitleSize().height + ((gaps as any).bottom || 0),
     };
   }
 
@@ -264,17 +272,17 @@ class BlockInfo extends Element {
    * @param {number} blockWidth Ширина окна
    * @private
    */
-  _drawGroups(windowIsOutOfBounds, blockWidth) {
+  private _drawGroups(windowIsOutOfBounds: boolean, blockWidth: number): void {
     const { font: groupsFont, } = this.groupsData;
     const { size, weight, color = this.themeForGroup.color, } = groupsFont;
 
-    this._getElementsWithSize().map(({ group, }, index) => {
-      const font = {
+    this._getElementsWithSize().map(({ group, }, index: number) => {
+      const font: ISpecialFontData = {
         text: group.name,
         color,
         str: `${weight} ${size}px Arial, sans-serif`,
       };
-      const coordinates = this._getGroupsCoordinates(index);
+      const coordinates: IPos = this._getGroupsCoordinates(index);
 
       if (windowIsOutOfBounds) {
         coordinates.x -= blockWidth + this.triangleSizes.height * 2;
@@ -295,9 +303,9 @@ class BlockInfo extends Element {
    * @private
    * @returns {number} Максимальная ширина
    */
-  _getMaxContentWidth(elements) {
-    const maxGroupWidth = quickSort(elements.map(({ group, }) => group), "width").reverse()[0].width;
-    const titleWidth = this._getTitleSize().width;
+  private _getMaxContentWidth(elements: Array<IBlockInfoElementWithSize>): number {
+    const maxGroupWidth: number = (quickSort(elements.map(({ group, }) => group), "width").reverse()[0] as any).width;
+    const titleWidth: number = this._getTitleSize().width;
 
     return Math.max(maxGroupWidth, titleWidth);
   }
@@ -308,7 +316,7 @@ class BlockInfo extends Element {
    * @private
    * @returns {boolean}
    */
-  _outOfBounds(blockWidth) {
+  private _outOfBounds(blockWidth): boolean {
     return this._getCoordinates().x + blockWidth > this.bounds.width;
   }
 
@@ -317,13 +325,13 @@ class BlockInfo extends Element {
    * @private
    * @returns {object} Размеры окна ({ width, height })
    */
-  _getWindowSize() {
-    const padding = this.padding;
+  private _getWindowSize(): ISize {
+    const padding: IPadding = this.padding;
     const { gaps: gapsGroups, } = this.groupsData;
     const { gaps: gapsTitle, } = this.titleData;
-    const groups = this._getElementsWithSize().map(({ group, }) => group);
-    const width = this._getMaxContentWidth(this._getElementsWithSize()) + (padding.right || 0) + (padding.left || 0) + (gapsGroups.right || 0) + this.groupLineWidth;
-    const height = this._getTitleSize().height + this._getTopGroupsDistance(groups) + (gapsTitle.bottom || 0) + (padding.bottom || 0);
+    const groups: Array<IBlockInfoElementWithSizeGroup> = this._getElementsWithSize().map(({ group, }) => group);
+    const width: number = this._getMaxContentWidth(this._getElementsWithSize()) + (padding.right || 0) + (padding.left || 0) + (gapsGroups.right || 0) + this.groupLineWidth;
+    const height: number = this._getTitleSize().height + this._getTopGroupsDistance(groups) + (gapsTitle.bottom || 0) + (padding.bottom || 0);
 
     return { width, height, };
   }
@@ -333,10 +341,10 @@ class BlockInfo extends Element {
    * @private
    * @param {boolean} windowIsOutOfBounds Правило, говорящее, что окно вышло за границы диаграммы
    */
-  _drawTriangle(windowIsOutOfBounds) {
-    const x = this.x;
-    const y = this.y;
-    const triangleData = {
+  private _drawTriangle(windowIsOutOfBounds: boolean): void {
+    const x: number = this.x;
+    const y: number = this.y;
+    const triangleData: ITriangleData = {
       x: x + this.triangleSizes.height,
       y,
       lineTo: [
@@ -376,8 +384,8 @@ class BlockInfo extends Element {
    * @param {number} height Высота окна
    * @private
    */
-  _drawWindow(windowIsOutOfBounds, width, height) {
-    const coordinates = this._getCoordinates();
+  private _drawWindow(windowIsOutOfBounds: boolean, width: number, height: number): void {
+    const coordinates: IPos = this._getCoordinates();
 
     if (windowIsOutOfBounds) {
       coordinates.x -= (width + this.triangleSizes.height * 2);
@@ -396,8 +404,8 @@ class BlockInfo extends Element {
   }
 
   // Рисует окно об активной группе
-  init() {
-    const windowIsOutOfBounds = this._outOfBounds(this._getWindowSize().width);
+  public init(): void {
+    const windowIsOutOfBounds: boolean = this._outOfBounds(this._getWindowSize().width);
     const { width, height, } = this._getWindowSize();
 
     this._drawTriangle(windowIsOutOfBounds);

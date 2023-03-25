@@ -1,8 +1,16 @@
 import Element from "./Element";
 import setGradientColor from "../../helpers/setGradientColor";
 
-class Rect extends Element {
-  constructor(x, y, color, ctx, width, height, startY, endY, rotateDeg, opacity, stroke = {}) {
+import "../../interfaces/index";
+
+class Rect extends Element implements IRectClass {
+  public width: number;
+  public height: number;
+  public startY: number;
+  public endY: number;
+  public stroke?: IStroke;
+
+  constructor(x, y, color, ctx, width, height, startY?: number, endY?: number, rotateDeg?: number, opacity?: number, stroke?: IStroke) {
     super(x, y, color, ctx, rotateDeg, opacity);
 
     // Ширина
@@ -14,14 +22,14 @@ class Rect extends Element {
     // Конечная позиция по оси ординат (для градиента)
     this.endY = endY;
     // Содержит данные обводки ({ color, width })
-    this.stroke = stroke;
+    this.stroke = stroke as any;
   }
 
   /**
    * Устанавливает цвет
    * @private
    */
-  _setColor() {
+  private _setColor(): void {
     if (Array.isArray(this.color)) {
       setGradientColor(this.color, this.startY, this.endY, "fillStyle", this.ctx);
     } else if (typeof this.color === "string") {
@@ -30,7 +38,7 @@ class Rect extends Element {
   }
 
   // Рисует прямоугольник
-  draw() {
+  public draw(): void {
     this.ctx.beginPath();
     this.ctx.setLineDash([0, 0]);
     this.ctx.globalAlpha = this.opacity;

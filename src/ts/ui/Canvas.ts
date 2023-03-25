@@ -2,7 +2,7 @@ import Rect from "./elements/Rect";
 
 import "../interfaces/index";
 
-class Canvas {
+class Canvas implements ICanvasClass {
   public selector: string;
   public background: string;
   public ctx: CanvasRenderingContext2D;
@@ -26,7 +26,7 @@ class Canvas {
    */
   private _setDefaultStyles(): void {
     const { offsetWidth, offsetHeight, } = this.canvasElement;
-    const defaultStyles = {
+    const defaultStyles: IDefaultStylesForCanvasElement = {
       display: "block",
       boxSizing: "border-box",
     };
@@ -62,7 +62,7 @@ class Canvas {
   }
 
   // Рисует начальный холст
-  public init(): Canvas {
+  public init(): ICanvasClass {
     this._setDefaultStyles();
     this._setBackground();
 

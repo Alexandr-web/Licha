@@ -1,22 +1,36 @@
 import Text from "../elements/Text";
 import getTextSize from "../../helpers/getTextSize";
 
-class Chart {
+import "../../interfaces/index";
+import { TTypeChart, } from "../../types/index";
+
+class Chart implements IChartClass {
+  public padding: IPadding;
+  public data: IData;
+  public ctx: CanvasRenderingContext2D;
+  public width: number;
+  public height: number;
+  public title: IChartTitle;
+  public type: TTypeChart;
+  public defaultPadding: number;
+  public hideGroups: Array<string>;
+  public theme: ITitleTheme;
+
   constructor(
     padding,
     data,
     ctx,
     width,
     height,
+    type,
     title = {},
-    type = "line",
     theme = {},
     hideGroups = []
   ) {
     // Содержит скрытые группы
-    this.hideGroups = hideGroups;
+    this.hideGroups = hideGroups as any;
     // Содержит стили от темы
-    this.theme = theme;
+    this.theme = theme as any;
     // Содержит данные групп
     this.data = data;
     // Ширина элемента canvas
@@ -28,7 +42,7 @@ class Chart {
     // Тип диаграммы
     this.type = type;
     // Заголовок диаграммы
-    this.title = title;
+    this.title = title as any;
     // Внутренние отступы диаграммы
     this.padding = padding;
     // Внутренний отступ по умолчанию
@@ -39,8 +53,8 @@ class Chart {
    * Определяет границы диаграммы
    * @returns {object} Границы ({ width, height, horizontal: { start, end }, vertical: { start, end }, })
    */
-  getBounds() {
-    const bounds = {
+  public getBounds(): IBounds {
+    const bounds: IBounds = {
       width: null,
       height: null,
       horizontal: {
@@ -63,18 +77,18 @@ class Chart {
    * Рисует заголовок диаграммы
    * @returns {Chart}
    */
-  drawTitle() {
+  public drawTitle(): Chart {
     if (!Object.keys(this.title).length) {
       return this;
     }
 
     const { weight = 600, size, text, color = this.theme.color, } = this.title.font;
-    const font = { color, text, str: `${weight} ${size}px Arial, sans-serif`, };
-    const sizes = getTextSize(size, weight, text, this.ctx);
-    const bounds = this.getBounds();
-    const startX = bounds.horizontal.start;
-    const endX = bounds.horizontal.end - sizes.width;
-    const posText = {
+    const font: ISpecialFontData = { color, text, str: `${weight} ${size}px Arial, sans-serif`, };
+    const sizes: ISize = getTextSize(size, weight, text, this.ctx);
+    const bounds: IBounds = this.getBounds();
+    const startX: number = bounds.horizontal.start;
+    const endX: number = bounds.horizontal.end - sizes.width;
+    const posText: IPos = {
       x: startX + (endX - startX) / 2,
       y: bounds.vertical.start + sizes.height,
     };
@@ -103,20 +117,20 @@ class Chart {
    * @param {object} legend Содержит данные легенды
    * @returns {object} Отступы ({ left, top, bottom })
    */
-  getGapsForYPoints(axisY, axisX, chartTitle, legend) {
+  public getGapsForYPoints(axisY: IAxisYClass, axisX: IAxisXClass, chartTitle: IChartTitle, legend: ILegendData): IGapsForYPoints {
     const { size, weight = 400, } = axisY.font;
-    const { gaps: gapsLegend = {}, totalHeight: legendHeight = 0, } = legend;
+    const { gaps: gapsLegend = {}, totalHeight: legendHeight = 0, } = legend as any;
     const { showText: showXText = Boolean(Object.keys(axisX.font).length), } = axisX.font;
-    const firstName = axisY.getAxesData(this.data).names[0];
+    const firstName: string | number = axisY.getAxesData(this.data).names[0];
 
-    const firstNameHeight = getTextSize(size, weight, firstName, this.ctx).height;
-    const legendGapBottom = (gapsLegend.legend || {}).bottom || 0;
-    const axisYTitleHeight = (axisY.title || {}).height || 0;
-    const axisYTitleGapRight = (axisY.title || {}).gapRight || 0;
-    const chartTitleYPos = (chartTitle || {}).y || 0;
-    const chartTitleGapBottom = (chartTitle || {}).gapBottom || 0;
-    const axisXTitleHeight = (axisX.title || {}).height || 0;
-    const axisXTitleGapTop = (axisX.title || {}).gapTop || 0;
+    const firstNameHeight: number = getTextSize(size, weight, firstName.toString(), this.ctx).height;
+    const legendGapBottom: number = (gapsLegend.legend || {}).bottom || 0;
+    const axisYTitleHeight: number = ((axisY.title || {}) as any).height || 0;
+    const axisYTitleGapRight: number = ((axisY.title || {}) as any).gapRight || 0;
+    const chartTitleYPos: number = ((chartTitle || {}) as any).y || 0;
+    const chartTitleGapBottom: number = (chartTitle || {}).gapBottom || 0;
+    const axisXTitleHeight: number = ((axisX.title || {}) as any).height || 0;
+    const axisXTitleGapTop: number = ((axisX.title || {}) as any).gapTop || 0;
 
     return {
       left: axisYTitleHeight + axisYTitleGapRight,
@@ -131,24 +145,24 @@ class Chart {
    * @param {AxisX} axisX Экземпляр класса AxisX
    * @returns {object} Отступы ({ left, right, bottom })
    */
-  getGapsForXPoints(axisY = {}, axisX = {}) {
-    const { font: axisYFont = {}, title: axisYTitle = {}, gapRightAxisY, } = axisY;
-    const { font: axisXFont = {}, title: axisXTitle = {}, } = axisX;
-    const ignoreNames = axisX.getIgnoreNames();
-    const names = axisY.getAxesData(this.data).names;
-    const lastName = names[names.length - 1];
-    const firstName = names[0];
+  public getGapsForXPoints(axisY: IAxisYClass, axisX: IAxisXClass): IGapsForXPoints {
+    const { font: axisYFont = {}, title: axisYTitle = {}, gapRightAxisY, } = axisY as any;
+    const { font: axisXFont = {}, title: axisXTitle = {}, } = axisX as any;
+    const ignoreNames: Array<string | number> = axisX.getIgnoreNames();
+    const names: Array<string | number> = axisY.getAxesData(this.data).names;
+    const lastName: string | number = names[names.length - 1];
+    const firstName: string | number = names[0];
     const { weight = 400, size, showText: showXText = Boolean(Object.keys(axisXFont).length), } = axisXFont;
     const { showText: showYText = Boolean(Object.keys(axisYFont).length), } = axisYFont;
 
-    const firstNameWidth = getTextSize(size, weight, axisX.getCorrectName(firstName), this.ctx).width;
-    const firstNameIsNotIgnore = showXText && !(ignoreNames || []).includes(firstName);
-    const lastNameWidth = getTextSize(size, weight, axisX.getCorrectName(lastName), this.ctx).width;
-    const lastNameIsNotIgnore = showXText && !(ignoreNames || []).includes(lastName);
-    const axisYTitleHeight = axisYTitle.height || 0;
-    const axisYTitleGapRight = axisYTitle.gapRight || 0;
-    const axisXTitleHeight = axisXTitle.height || 0;
-    const axisXTitleGapTop = axisXTitle.gapTop || 0;
+    const firstNameWidth: number = getTextSize(size, weight, axisX.getCorrectName(firstName).toString(), this.ctx).width;
+    const firstNameIsNotIgnore: boolean = showXText && !(ignoreNames || []).includes(firstName);
+    const lastNameWidth: number = getTextSize(size, weight, axisX.getCorrectName(lastName).toString(), this.ctx).width;
+    const lastNameIsNotIgnore: boolean = showXText && !(ignoreNames || []).includes(lastName);
+    const axisYTitleHeight: number = axisYTitle.height || 0;
+    const axisYTitleGapRight: number = axisYTitle.gapRight || 0;
+    const axisXTitleHeight: number = axisXTitle.height || 0;
+    const axisXTitleGapTop: number = axisXTitle.gapTop || 0;
 
     return {
       left: (firstNameIsNotIgnore ? firstNameWidth / 2 : 0) + axisYTitleHeight + axisYTitleGapRight + (showYText ? axisY.getMaxTextWidthAtYAxis() + gapRightAxisY : 0),
@@ -164,14 +178,14 @@ class Chart {
    * @param {AxisX} axisX Экземпляр класса AxisX
    * @returns {object} Отступы ({ top, bottom })
    */
-  getGapsForYTitle(chartTitle = {}, legend = {}, axisX = {}) {
+  public getGapsForYTitle(chartTitle: IChartTitleWithSizeAndPos, legend: ILegendData, axisX: IAxisXClass): IGapsForYTitle {
     const { height: chartTitleHeight = 0, gapBottom: chartTitleGapBottom = 0, } = chartTitle;
-    const { totalHeight: legendHeight, gaps: gapsLegend = {}, } = legend;
-    const { title: axisXTitle = {}, } = axisX;
+    const { totalHeight: legendHeight, gaps: gapsLegend = {}, } = legend as any;
+    const { title: axisXTitle = {}, } = axisX as any;
     const { font: axisXTitleFont = {}, gapTop = 0, } = axisXTitle;
     const { size, weight = 600, text, } = axisXTitleFont;
-    const axisXTitleHeight = getTextSize(size, weight, text, this.ctx).height || 0;
-    const legendGapBottom = (gapsLegend.legend || {}).bottom || 0;
+    const axisXTitleHeight: number = getTextSize(size, weight, text, this.ctx).height || 0;
+    const legendGapBottom: number = (gapsLegend.legend || {}).bottom || 0;
 
     return {
       top: chartTitleHeight + legendGapBottom + chartTitleGapBottom + legendHeight,
@@ -184,8 +198,8 @@ class Chart {
    * @param {AxisY} axisY Экземпляр класса AxisY
    * @returns {object} Отступы ({ top, left })
    */
-  getGapsForXTitle(axisY = {}) {
-    const { title = {}, gapRightAxisY, } = axisY;
+  public getGapsForXTitle(axisY: IAxisYClass): IGapsForXTitle {
+    const { title = {}, gapRightAxisY, } = axisY as any;
     const { gapRight = 0, height = 0, } = title;
 
     return { left: height + gapRight + gapRightAxisY, };
@@ -197,11 +211,11 @@ class Chart {
    * @param {object} chartTitle Содержит данные заголовка диаграммы
    * @returns {object} Отступы ({ top, left })
    */
-  getGapsForLegend(axisY = {}, chartTitle = {}) {
+  public getGapsForLegend(axisY: IAxisYClass, chartTitle: IChartTitleWithSizeAndPos): IGapsForLegend {
     const { y = 0, gapBottom = 0, } = chartTitle;
     const { font = {}, } = (axisY.title || {});
-    const { size, weight = 600, text, } = font;
-    const titleAxisYHeight = getTextSize(size, weight, text, this.ctx).height || 0;
+    const { size, weight = 600, text, } = font as IFontWithText;
+    const titleAxisYHeight: number = getTextSize(size, weight, text, this.ctx).height || 0;
 
     return {
       top: y + gapBottom,

@@ -2,8 +2,17 @@ import Element from "./Element";
 import Rect from "./Rect";
 import Circle from "./Circle";
 
-class Cap extends Element {
-  constructor(size, x, y, color, format, ctx, opacity, startY, endY, rotateDeg, stroke = {}) {
+import "../../interfaces/index";
+import { TCapType, } from "../../types/index";
+
+class Cap extends Element implements ICapClass {
+  public format: TCapType;
+  public size: number;
+  public stroke?: IStroke;
+  public startY?: number;
+  public endY?: number;
+
+  constructor(size, x, y, color, format, ctx, opacity?: number, startY?: number, endY?: number, rotateDeg?: number, stroke?: IStroke) {
     super(x, y, color, ctx, rotateDeg, opacity);
 
     // Формат колпачка
@@ -11,7 +20,7 @@ class Cap extends Element {
     // Размер колпачка
     this.size = size;
     // Объект, содержащий данные обводки ({ width, color })
-    this.stroke = stroke;
+    this.stroke = stroke as any;
     // Начальная позиция по оси ординат (для градиента)
     this.startY = startY;
     // Конечная позиция по оси ординат (для градиента)
@@ -19,7 +28,7 @@ class Cap extends Element {
   }
 
   // Рисует колпачок
-  draw() {
+  public draw(): void {
     switch (this.format) {
       case "circle":
         new Circle(

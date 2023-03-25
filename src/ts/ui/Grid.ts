@@ -76,10 +76,10 @@ class Grid {
 
     const pointsYOnScreen: Array<IPointY> = this._getPointsOnScreen(this.pointsY);
     const pointsXOnScreen: Array<IPointX> = this._getPointsOnScreen(this.pointsX);
-    const { x: startX, }: IPointX = pointsXOnScreen[0];
-    const { y: startY, }: IPointY = pointsYOnScreen[0];
-    const { x: endX, }: IPointX = pointsXOnScreen[pointsXOnScreen.length - 1];
-    const { y: endY, }: IPointY = pointsYOnScreen[pointsYOnScreen.length - 1];
+    const { x: startX, } = pointsXOnScreen[0];
+    const { y: startY, } = pointsYOnScreen[0];
+    const { x: endX, } = pointsXOnScreen[pointsXOnScreen.length - 1];
+    const { y: endY, } = pointsYOnScreen[pointsYOnScreen.length - 1];
 
     new CustomFigure(
       startX,
@@ -103,14 +103,14 @@ class Grid {
    * @param {string} color Цвет линии
    */
   private _drawHorizontalLines(color: string): void {
-    const { width, dotted, stretch, }: ILineGrid = this.line;
+    const { width, dotted, stretch, } = this.line;
     const pointsYOnScreen: Array<IPointY> = this._getPointsOnScreen(this.pointsY);
-    const { x: startX, }: IPointX = this.pointsX[0];
-    const { x: endX, }: IPointX = this.pointsX[this.pointsX.length - 1];
+    const { x: startX, } = this.pointsX[0];
+    const { x: endX, } = this.pointsX[this.pointsX.length - 1];
     const useStretch: boolean = stretch && this.showPointsY;
 
     // Рисуем линии
-    pointsYOnScreen.map(({ y, x, }: IPointY) => {
+    pointsYOnScreen.map(({ y, x, }) => {
       new Line(
         useStretch ? (x + this.maxPointYWidth + this.distanceBetweenLineAndPoint) : startX,
         y,
@@ -129,12 +129,12 @@ class Grid {
    * @param {string} color Цвет линии
    */
   private _drawVerticalLines(color: string): void {
-    const { width, dotted, stretch, }: ILineGrid = this.line;
+    const { width, dotted, stretch, } = this.line;
     const axisYOnScreen: Array<IPointY> = this._getPointsOnScreen(this.pointsY);
     const axisXOnScreen: Array<IPointX> = this._getPointsOnScreen(this.pointsX);
-    const { y: startY, }: IPointY = axisYOnScreen[0];
-    const { y: endYPointX, }: IPointX = axisXOnScreen[axisXOnScreen.length - 1];
-    const { y: endYPointY, }: IPointY = axisYOnScreen[axisYOnScreen.length - 1];
+    const { y: startY, } = axisYOnScreen[0];
+    const { y: endYPointX, } = axisXOnScreen[axisXOnScreen.length - 1];
+    const { y: endYPointY, } = axisYOnScreen[axisYOnScreen.length - 1];
 
     // Рисуем линии
     this.names.map((name: string) => {

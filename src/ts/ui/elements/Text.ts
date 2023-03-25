@@ -1,7 +1,11 @@
 import Element from "./Element";
 
-class Text extends Element {
-  constructor(font, ctx, x, y, color, rotateDeg, opacity) {
+import "../../interfaces/index";
+
+class Text extends Element implements ITextClass {
+  public font: ISpecialFontData;
+
+  constructor(font, ctx, x, y, color?: string, rotateDeg?: number, opacity?: number) {
     super(x, y, color, ctx, rotateDeg, opacity);
 
     // Содержит данные шрифта
@@ -10,12 +14,13 @@ class Text extends Element {
 
   /**
    * Определяет размеры текста
+   * @param {string} str Строка, содержащая данные шрифта
    * @returns {object} Размеры шрифта ({ width, height })
    */
-  getSizes() {
-    this.ctx.font = this.font.str;
+  public getSizes(str: string): ISize {
+    this.ctx.font = str;
 
-    const text = this.ctx.measureText(this.font.text);
+    const text: TextMetrics = this.ctx.measureText(this.font.text);
 
     return {
       width: text.width,
@@ -24,9 +29,9 @@ class Text extends Element {
   }
 
   // Рисует текст
-  draw() {
+  public draw(): void {
     const { str, color, text, } = this.font;
-    const sizes = this.getSizes(str);
+    const sizes: ISize = this.getSizes(str);
 
     this.ctx.save();
 
