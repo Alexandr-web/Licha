@@ -4,7 +4,7 @@
  * @param {array} styles Содержит элементы, содержащие стили
  * @return {string} 
  */
-export default (idx: number, styles: Array<string> = []): string => {
+export default (idx: number, styles: Array<string | string[]> = []): Array<string> | string => {
   if (!styles.length) {
     return "";
   }

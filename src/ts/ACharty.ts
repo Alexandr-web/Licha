@@ -12,25 +12,26 @@ import { TTypeChart, } from "./types/index";
 
 class ACharty implements IAchartyClass {
 	public selectorCanvas: string;
-	public background: string | Array<string>;
-	public title: IChartTitle;
-	public theme: ITheme;
+	public background?: string | Array<string>;
+	public title?: IChartTitle;
+	public theme?: ITheme;
 	public data: IData;
-	public axisY: IAxisY;
-	public axisX: IAxisX;
-	public line: ILine;
-	public cap: ICap;
-	public grid: IGrid;
-	public legend: ILegend;
-	public blockInfo: IBlockInfo;
-	public type: TTypeChart;
-	public padding: IPadding | number;
-	public hideGroups: Array<string>;
+	public axisY?: IAxisY;
+	public axisX?: IAxisX;
+	public line?: ILine;
+	public cap?: ICap;
+	public grid?: IGrid;
+	public legend?: ILegend;
+	public blockInfo?: IBlockInfo;
+	public type?: TTypeChart;
+	public padding?: IPadding | number;
+	public hideGroups?: Array<string>;
 
 	constructor({
 		selectorCanvas,
 		background,
 		title,
+		type,
 		theme = {},
 		data = {},
 		axisY = {},
@@ -40,14 +41,13 @@ class ACharty implements IAchartyClass {
 		grid = {},
 		legend = {},
 		blockInfo = {},
-		type = "line",
 		padding = {
 			top: 10,
 			left: 10,
 			right: 10,
 			bottom: 10,
 		},
-	}) {
+	}: IAchartyConstructor) {
 		// Внутренние отступы
 		this.padding = padding;
 		// Данные колпачка
@@ -55,7 +55,7 @@ class ACharty implements IAchartyClass {
 		// Данные легенды
 		this.legend = legend as any;
 		// Тип диаграммы
-		this.type = type;
+		this.type = type || "line";
 		// Данные задней сетки диаграммы
 		this.grid = grid as any;
 		// Данные линии
@@ -83,7 +83,7 @@ class ACharty implements IAchartyClass {
 	/**
 	 * Рисует холст
 	 * @private
-	 * @return {Canvas}
+	 * @return {ICanvasClass}
 	 */
 	private _setCanvas(): ICanvasClass {
 		return new Canvas(this.selectorCanvas, this.background, this.theme.canvas).init();
@@ -91,10 +91,10 @@ class ACharty implements IAchartyClass {
 
 	/**
 	 * Рисует заголовок диагрыммы
-	 * @param {Canvas} canvas Экземпляр класса Canvas
+	 * @param {IChartClass} canvas Экземпляр класса Canvas
 	 * @private
 	 */
-	private _setChartTitle(canvas: Canvas): Chart {
+	private _setChartTitle(canvas: ICanvasClass): IChartClass {
 		const { width, height, } = canvas.getSizes();
 
 		return new Chart(
@@ -111,15 +111,15 @@ class ACharty implements IAchartyClass {
 
 	/**
 	 * Рисует легенду
-	 * @param {Canvas} canvas Экземпляр класса Canvas
-	 * @param {Chart} chart Экземпляр класса Chart
+	 * @param {ICanvasClass} canvas Экземпляр класса Canvas
+	 * @param {IChartClass} chart Экземпляр класса Chart
 	 * @private
-	 * @return {Legend}
+	 * @return {ILegendClass}
 	 */
-	private _setLegend(canvas: Canvas, chart: Chart): Legend {
+	private _setLegend(canvas: ICanvasClass, chart: IChartClass): ILegendClass {
 		const { font, circle, gaps: legendGaps, maxCount, } = this.legend;
 		const showLegend = Boolean(Object.keys(this.legend).length);
-		const gaps = chart.getGapsForLegend(this.axisY, chart.title);
+		const gaps: IGapsForLegend = chart.getGapsForLegend(this.axisY, chart.title as IChartTitleWithSizeAndPos);
 
 		return new Legend(
 			showLegend,
@@ -139,18 +139,18 @@ class ACharty implements IAchartyClass {
 
 	/**
 	 * Рисует заголовок на оси ординат
-	 * @param {Canvas} canvas Экземпляр класса Canvas
-	 * @param {Chart} chart Экземпляр класса Chart
-	 * @param {Legend} legend Экземпляр класса Legend
+	 * @param {ICanvasClass} canvas Экземпляр класса Canvas
+	 * @param {IChartClass} chart Экземпляр класса Chart
+	 * @param {ILegendClass} legend Экземпляр класса Legend
 	 * @private
-	 * @returns {AxisY}
+	 * @returns {IAxisYClass}
 	 */
-	private _setAxisYTitle(canvas: Canvas, chart: Chart, legend: Legend): AxisY {
+	private _setAxisYTitle(canvas: ICanvasClass, chart: IChartClass, legend: ILegendClass): IAxisYClass {
 		const { step, editValue, title, font, sort, } = this.axisY;
-		const { legend: legendGaps = {}, } = (this.legend.gaps || {});
-		const themeForTitle = (this.theme.axis || {}).title;
-		const themeForPoint = (this.theme.axis || {}).point;
-		const gaps = chart.getGapsForYTitle(chart.title, { ...legend, gapBottom: (legendGaps.bottom || 0), }, this.axisX);
+		const { legend: legendGaps = {}, } = (this.legend.gaps || {}) as any;
+		const themeForTitle: IAxisThemeTitle = (this.theme.axis || {}).title;
+		const themeForPoint: IAxisThemePoint = (this.theme.axis || {}).point;
+		const gaps: IGapsForYTitle = chart.getGapsForYTitle(chart.title as IChartTitleWithSizeAndPos, { ...legend, gapBottom: (legendGaps.bottom || 0), }, this.axisX);
 
 		return new AxisY(
 			editValue,
@@ -162,25 +162,25 @@ class ACharty implements IAchartyClass {
 			this.axisX.sort,
 			themeForTitle,
 			themeForPoint,
-			step,
-			sort
+			sort,
+			step
 		).drawTitle(gaps);
 	}
 
 	/**
 	 * Рисует заголовок на оси абсцисс
-	 * @param {Canvas} canvas Экземпляр класса Canvas
-	 * @param {Chart} chart Экземпляр класса Chart
-	 * @param {AxisX} axisX Экземпляр класса AxisX
+	 * @param {ICanvasClass} canvas Экземпляр класса Canvas
+	 * @param {IChartClass} chart Экземпляр класса Chart
+	 * @param {IAxisYClass} axisX Экземпляр класса AxisX
 	 * @private
-	 * @returns {AxisX}
+	 * @returns {IAxisXClass}
 	 */
-	private _setAxisXTitle(canvas: Canvas, chart: Chart, axisY: AxisY): AxisX {
+	private _setAxisXTitle(canvas: ICanvasClass, chart: IChartClass, axisY: IAxisYClass): IAxisXClass {
 		const { font, editName, sort, ignoreNames, title, } = this.axisX;
-		const themeForTitle = (this.theme.axis || {}).title;
-		const themeForPoint = (this.theme.axis || {}).point;
-		const themeForLine = this.theme.line;
-		const gaps = chart.getGapsForXTitle(axisY);
+		const themeForTitle: IAxisThemeTitle = (this.theme.axis || {}).title;
+		const themeForPoint: IAxisThemePoint = (this.theme.axis || {}).point;
+		const themeForLine: ILineTheme = this.theme.line;
+		const gaps: IGapsForXTitle = chart.getGapsForXTitle(axisY);
 
 		return new AxisX(
 			canvas.ctx,
@@ -193,39 +193,39 @@ class ACharty implements IAchartyClass {
 			sort,
 			themeForTitle,
 			themeForPoint,
-			themeForLine,
-			ignoreNames
+			ignoreNames,
+			themeForLine
 		).drawTitle(gaps);
 	}
 
 	/**
 	 * Рисует точки
-	 * @param {AxisY} axisY Экземпляр класса AxisY
-	 * @param {AxisX} axisX Экземпляр класса AxisX
-	 * @param {Legend} legend Экземпляр класса Legend
-	 * @param {Chart} chart Экземпляр класса Chart
+	 * @param {IAxisYClass} axisY Экземпляр класса AxisY
+	 * @param {IAxisXClass} axisX Экземпляр класса AxisX
+	 * @param {ILegendClass} legend Экземпляр класса Legend
+	 * @param {IChartClass} chart Экземпляр класса Chart
 	 * @private
-	 * @returns {object} Данные всех осевых точек
+	 * @returns {IAxisPoints} Данные всех осевых точек
 	 */
-	private _setPoints(axisY: AxisY, axisX: AxisX, legend: Legend, chart: Chart): IAxisPoints {
-		const y = axisY.drawPoints(chart.getGapsForYPoints(axisY, axisX, chart.title, { ...this.legend, ...legend, }));
-		const x = axisX.drawPoints(chart.getGapsForXPoints(axisY, axisX));
+	private _setPoints(axisY: IAxisYClass, axisX: IAxisXClass, legend: ILegendClass, chart: IChartClass): IAxisPoints {
+		const y: IAxisYClass = axisY.drawPoints(chart.getGapsForYPoints(axisY, axisX, chart.title, { ...this.legend, ...legend, }));
+		const x: IAxisXClass = axisX.drawPoints(chart.getGapsForXPoints(axisY, axisX));
 
 		return {
-			pointsY: y.points,
-			pointsX: x.points,
+			pointsY: y.points as Array<IPointY>,
+			pointsX: x.points as Array<IPointX>,
 		};
 	}
 
 	/**
 	 * Рисует заднюю сетку диаграмме
-	 * @param {Canvas} canvas Экземпляр класса Canvas
-	 * @param {AxisX} axisX Экземпляр класса AxisX
-	 * @param {AxisY} axisY Экземпляр класса AxisY
+	 * @param {ICanvasClass} canvas Экземпляр класса Canvas
+	 * @param {IAxisXClass} axisX Экземпляр класса AxisX
+	 * @param {IAxisYClass} axisY Экземпляр класса AxisY
 	 * @private
-	 * @returns {Grid}
+	 * @returns {IGridClass}
 	 */
-	private _setGrid(canvas: Canvas, axisX: AxisX, axisY: AxisY): Grid {
+	private _setGrid(canvas: ICanvasClass, axisX: IAxisXClass, axisY: IAxisYClass): IGridClass {
 		const { line, format, background, } = this.grid;
 
 		return new Grid(
@@ -235,8 +235,8 @@ class ACharty implements IAchartyClass {
 			background,
 			axisY,
 			axisX,
-			line,
 			format,
+			line,
 			this.theme.grid
 		).init();
 	}
@@ -263,13 +263,13 @@ class ACharty implements IAchartyClass {
 	 * Рисует окно с информацией об активной группе
 	 * @param {MouseEvent} e Объект события
 	 * @param {number} endY Конечная область видимости окна с информацией об активной группе
-	 * @param {array} pointsX Содержит данные всех точек на оси абсцисс
+	 * @param {Array<IPointX>} pointsX Содержит данные всех точек на оси абсцисс
 	 * @param {number} startY Начальная область видимости окна с информацией об активной группе
-	 * @param {Canvas} canvas Экземпляр класса Canvas
-	 * @param {object} bounds Содержит границы холста
+	 * @param {ICanvasClass} canvas Экземпляр класса Canvas
+	 * @param {IBounds} bounds Содержит границы холста
 	 * @private
 	 */
-	private _mousemoveByCanvasHandler(e: MouseEvent, endY: number, pointsX: Array<IPointX>, startY: number, canvas: Canvas, bounds: IBounds): void {
+	private _mousemoveByCanvasHandler(e: MouseEvent, endY: number, pointsX: Array<IPointX>, startY: number, canvas: ICanvasClass, bounds: IBounds): void {
 		const mousePos: IPos = { x: e.offsetX, y: e.offsetY, };
 
 		if (mousePos.y <= endY && mousePos.y >= startY) {
@@ -323,12 +323,12 @@ class ACharty implements IAchartyClass {
 
 	/**
 	 * Добавление события mousemove элементу canvas
-	 * @param {Canvas} canvas Экземпляр класса Canvas
-	 * @param {object} bounds Содержит границы холста
-	 * @param {{ pointsX: array, pointsY: array }} param2 Содержит данные всех осевых точек
+	 * @param {ICanvasClass} canvas Экземпляр класса Canvas
+	 * @param {IBounds} bounds Содержит границы холста
+	 * @param {{ pointsX: Array<IPointX>, pointsY: Array<IPointY> }} param2 Содержит данные всех осевых точек
 	 * @private
 	 */
-	private _mousemoveByCanvas(canvas: Canvas, bounds: IBounds, { pointsX, pointsY, }): void {
+	private _mousemoveByCanvas(canvas: ICanvasClass, bounds: IBounds, { pointsX, pointsY, }): void {
 		if (!Object.keys(this.blockInfo).length) {
 			return;
 		}
@@ -354,7 +354,7 @@ class ACharty implements IAchartyClass {
 
 	/**
 	 * Добавление события mouseleave элементу canvas
-	 * @param {Canvas} canvas Экземпляр класса Canvas
+	 * @param {ICanvasClass} canvas Экземпляр класса Canvas
 	 * @private
 	 */
 	private _leavemouseFromCanvasArea(canvas): void {
@@ -365,21 +365,21 @@ class ACharty implements IAchartyClass {
 	 * Обработчик события click у элемента canvas
 	 * Скрывает группы при клике на элементы легенды
 	 * @param {MouseEvent} e Объект event
-	 * @param {array} legendItems Содержит данные элементов легенды
+	 * @param {Array<IItemLegend>} legendItems Содержит данные элементов легенды
 	 * @private
 	 */
 	private _clickByCanvasAreaHandler(e: MouseEvent, legendItems: Array<IItemLegend>): void {
-		const mousePos = { x: e.offsetX, y: e.offsetY, };
-		const findMatchLegendItem = legendItems.find(({ x, y, width, height, }) => {
-			const endX = x + width;
-			const startY = y - height;
+		const mousePos: IPos = { x: e.offsetX, y: e.offsetY, };
+		const findMatchLegendItem: IItemLegend | null = legendItems.find(({ x, y, width, height, }) => {
+			const endX: number = x + width;
+			const startY: number = y - height;
 
 			return (mousePos.x <= endX && mousePos.x >= x) && (mousePos.y <= y && mousePos.y >= startY);
 		});
 
 		if (findMatchLegendItem) {
 			const { group, } = findMatchLegendItem;
-			const findIdxHideGroup = this.hideGroups.indexOf(group);
+			const findIdxHideGroup: number = this.hideGroups.indexOf(group);
 
 			if (findIdxHideGroup !== -1) {
 				this.hideGroups.splice(findIdxHideGroup, 1);
@@ -393,22 +393,22 @@ class ACharty implements IAchartyClass {
 
 	/**
 	 * Добавление события click элементу canvas
-	 * @param {Canvas} canvas Экземпляр класса Canvas
-	 * @param {array} legendItems Содержит данные элементов легенды
+	 * @param {ICanvasClass} canvas Экземпляр класса Canvas
+	 * @param {Array<IItemLegend>} legendItems Содержит данные элементов легенды
 	 * @private
 	 */
-	private _clickByCanvasArea(canvas: Canvas, legendItems: Array<IItemLegend>): void {
+	private _clickByCanvasArea(canvas: ICanvasClass, legendItems: Array<IItemLegend>): void {
 		canvas.canvasElement.addEventListener("click", (e: MouseEvent) => this._clickByCanvasAreaHandler(e, legendItems));
 	}
 
 	/**
 	 * Рисует диаграмму в зависимости от ее типа
-	 * @param {AxisY} axisY Экземпляр класса AxisY
-	 * @param {AxisX} axisX Экземпляр класса AxisX
-	 * @param {Canvas} canvas Экземпляр класса Canvas
+	 * @param {IAxisYClass} axisY Экземпляр класса AxisY
+	 * @param {IAxisXClass} axisX Экземпляр класса AxisX
+	 * @param {ICanvasClass} canvas Экземпляр класса Canvas
 	 * @private
 	 */
-	private _drawChartByType(axisY: AxisY, axisX: AxisX, canvas: Canvas): void {
+	private _drawChartByType(axisY: IAxisYClass, axisX: IAxisXClass, canvas: ICanvasClass): void {
 		const { width, height, } = canvas.getSizes();
 
 		switch (this.type) {
@@ -434,12 +434,12 @@ class ACharty implements IAchartyClass {
 	}
 
 	// Обновление данных диаграммы
-	public update(): ACharty {
-		const canvas = this._setCanvas();
-		const chart = this._setChartTitle(canvas);
-		const legend = this._setLegend(canvas, chart);
-		const axisY = this._setAxisYTitle(canvas, chart, legend);
-		const axisX = this._setAxisXTitle(canvas, chart, axisY);
+	public update(): IAchartyClass {
+		const canvas: ICanvasClass = this._setCanvas();
+		const chart: IChartClass = this._setChartTitle(canvas);
+		const legend: ILegendClass = this._setLegend(canvas, chart);
+		const axisY: IAxisYClass = this._setAxisYTitle(canvas, chart, legend);
+		const axisX: IAxisXClass = this._setAxisXTitle(canvas, chart, axisY);
 
 		this._setPoints(axisY, axisX, legend, chart);
 		this._setGrid(canvas, axisX, axisY);
@@ -449,12 +449,12 @@ class ACharty implements IAchartyClass {
 	}
 
 	// Рисует диаграмму
-	public init(): ACharty {
-		const canvas: Canvas = this._setCanvas();
-		const chart: Chart = this._setChartTitle(canvas);
-		const legend: Legend = this._setLegend(canvas, chart);
-		const axisY: AxisY = this._setAxisYTitle(canvas, chart, legend);
-		const axisX: AxisX = this._setAxisXTitle(canvas, chart, axisY);
+	public init(): IAchartyClass {
+		const canvas: ICanvasClass = this._setCanvas();
+		const chart: IChartClass = this._setChartTitle(canvas);
+		const legend: ILegendClass = this._setLegend(canvas, chart);
+		const axisY: IAxisYClass = this._setAxisYTitle(canvas, chart, legend);
+		const axisX: IAxisXClass = this._setAxisXTitle(canvas, chart, axisY);
 		const points: IAxisPoints = this._setPoints(axisY, axisX, legend, chart);
 
 		this._mousemoveByCanvas(canvas, chart.getBounds(), points);

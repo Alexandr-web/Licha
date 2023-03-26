@@ -4,4 +4,4 @@
  * @param {number} opacity Прозрачность цвета (от 0 до 1)
  * @return {string} rgba строка
  */
-export default (rgb: string, opacity: number = 1): string => `rgba(${rgb},${opacity})`;
+export default (rgb: string, opacity = 1): string => `rgba(${rgb},${opacity})`;

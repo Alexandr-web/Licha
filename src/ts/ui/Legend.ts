@@ -6,7 +6,7 @@ import Line from "./elements/Line";
 
 import "../interfaces/index";
 
-class Legend {
+class Legend implements ILegendClass {
   public hideGroups: Array<string>;
   public showLegend: boolean;
   public line: ILine;
@@ -55,9 +55,9 @@ class Legend {
 
   /**
    * Определяет размеры у текста групп
-   * @param {array} groups Содержит группы
+   * @param {Array<IColumnLegend>} groups Содержит группы
    * @private
-   * @returns {array} Группы с их размером текста
+   * @returns {Array<IItemLegend>} Группы с их размером текста
    */
   private _getSizeGroups(groups: Array<IColumnLegend>): Array<IItemLegend> {
     const { size, weight = 400, } = this.font;
@@ -76,7 +76,7 @@ class Legend {
 
   /**
    * Определяет дистанцию между группами по горизонтали
-   * @param {array} groups Содержит группы
+   * @param {Array<IItemLegend>} groups Содержит группы
    * @private
    * @returns {number} Общая дистанция
    */
@@ -97,7 +97,7 @@ class Legend {
 
   /**
    * Определяет дистанцию между группами по вертикали
-   * @param {array} groups Содержит группы
+   * @param {Array<IItemLegend>} groups Содержит группы
    * @private
    * @returns {number} Общая дистанция
    */
@@ -106,28 +106,16 @@ class Legend {
       return 0;
     }
 
-    const { group: gapsGroup = {}, } = this.legendGaps;
+    const { group: gapsGroup = {}, } = this.legendGaps as any;
     const { height, } = groups[0];
 
-    return ((gapsGroup as any).bottom || 0) + height;
-  }
-
-  /**
-   * Рисует линию, которая перечеркивает текст группы
-   * @param {number} x Начальная позиция по оси абсцисс
-   * @param {number} endX Конечная позиция по оси абсцисс
-   * @param {number} y Начальная позиция по оси ординат
-   * @param {string} color Цвет
-   * @private
-   */
-  private _overlineHideGroupText(x: number, endX: number, y: number, color: string): void {
-    new Line(x, y, color, this.ctx, [{ x: endX, y, }], 2).draw();
+    return (gapsGroup.bottom || 0) + height;
   }
 
   /**
    * Определяет колонки относительно текущих групп
    * @private 
-   * @returns {array} Колонки
+   * @returns {Array<IColumnLegend[]>} Колонки
    */
   private _getColumns(): Array<IColumnLegend[]> {
     const columns: Array<IColumnLegend[]> = [];
@@ -139,7 +127,7 @@ class Legend {
         .slice(i, i + this.maxCount)
         .map(({ group, line = {}, }) => {
           const idx: number = dataKeys.indexOf(group);
-          const colorByTheme: string = getStyleByIndex(idx, this.themeForCircle.color);
+          const colorByTheme = getStyleByIndex(idx, this.themeForCircle.color) as string;
           const colorLine: Array<string> | string = (line.color || (this.line || {}).color || line.fill || (this.line || {}).fill) || colorByTheme;
 
           return {
@@ -159,13 +147,13 @@ class Legend {
    * @param {string} group Содержит текст группы
    * @param {number} width Ширина текста группы
    * @param {number} height Высота текста группы
-   * @param {array} groups Содержит группы
+   * @param {Array<IItemLegend>} groups Содержит группы
    * @param {number} index Индекс группы
-   * @param {object} gaps Отступы
+   * @param {IGapsForTextLegend} gaps Отступы
    * @private
-   * @returns {object} Позиция текста
+   * @returns {IPos} Позиция текста
    */
-  private _drawText(group: string, width: number, height: number, groups: Array<IItemLegend>, index: number, gaps): IPos {
+  private _drawText(group: string, width: number, height: number, groups: Array<IItemLegend>, index: number, gaps: IGapsForTextLegend): IPos {
     const bounds: IBounds = this.bounds;
     const center: number = bounds.width / 2;
     const totalGroupsDistance: number = this._getDistanceGroups(groups);
@@ -177,7 +165,7 @@ class Legend {
       text: group,
     };
 
-    const prevGroups: Array<IItemLegend> = groups.filter((grp, idx) => idx < index);
+    const prevGroups: Array<IItemLegend> = groups.filter((grp: IItemLegend, idx: number) => idx < index);
     const posGroup: IPos = {
       x: bounds.horizontal.start + (gaps.left || 0) + center - totalGroupsDistance / 2 + this._getDistanceGroups(prevGroups),
       y: bounds.vertical.start + (gaps.top || 0) + height,
@@ -194,7 +182,7 @@ class Legend {
       const endX: number = width + posGroup.x;
       const y: number = posGroup.y - height / 2;
 
-      this._overlineHideGroupText(posGroup.x, endX, y, color);
+      new Line(posGroup.x, y, color, this.ctx, [{ x: endX, y, }], 2).draw();
     }
 
     return posGroup;
@@ -229,8 +217,8 @@ class Legend {
   }
 
   /**
-   * Получает дистанцию между текущей колонкой и предыдущих
-   * @param {array} columns Содержит данные колонок
+   * Получает дистанцию между предыдущих колонок и текущей колонкой
+   * @param {Array<IColumnLegend[]>} columns Содержит данные колонок
    * @param {number} index Индекс текущей колонки
    * @private
    * @returns {number} Дистанция
@@ -247,10 +235,10 @@ class Legend {
 
   /**
    * Рисует легенду
-   * @param {object} gaps Содержит отступы легенды
-   * @returns {Legend}
+   * @param {IGapsForLegend} gaps Содержит отступы легенды
+   * @returns {ILegendClass}
    */
-  public draw(gaps): Legend {
+  public draw(gaps: IGapsForLegend): ILegendClass {
     if (!this.showLegend) {
       return this;
     }

@@ -3,39 +3,25 @@ interface IDefaultStylesForCanvasElement {
     boxSizing: "border-box";
 }
 
-interface IAchartyClass {
+interface IAchartyConstructor {
     selectorCanvas: string;
-    background: string | Array<string>;
-    title: IChartTitle;
-    theme: ITheme;
+    background?: string | Array<string>;
+    title?: IChartTitle | object;
+    theme?: ITheme | object;
     data: IData;
-    axisY: IAxisY;
-    axisX: IAxisX;
-    line: ILine;
-    cap: ICap;
-    grid: IGrid;
-    legend: ILegend;
-    blockInfo: IBlockInfo;
-    type: "line";
-    padding: IPadding | number;
-    hideGroups: Array<string>;
+    axisY?: IAxisY | object;
+    axisX?: IAxisX | object;
+    line?: ILine | object;
+    cap?: ICap | object;
+    grid?: IGrid | object;
+    legend?: ILegend | object;
+    blockInfo?: IBlockInfo | object;
+    type?: "line";
+    padding?: IPadding | number;
+    hideGroups?: Array<string>;
+}
 
-    _setCanvas(): ICanvasClass;
-    _setChartTitle(canvas: ICanvasClass): IChartClass;
-    _setLegend(canvas: ICanvasClass, chart: IChartClass): ILegendClass;
-    _setAxisYTitle(canvas: ICanvasClass, chart: IChartClass, legend: ILegendClass): IAxisYClass;
-    _setAxisXTitle(canvas: ICanvasClass, chart: IChartClass, axisY: IAxisYClass): IAxisXClass;
-    _setPoints(axisY: IAxisYClass, axisX: IAxisXClass, legend: ILegendClass, chart: IChartClass): IAxisPoints;
-    _setGrid(canvas: ICanvasClass, axisX: IAxisXClass, axisY: IAxisYClass): IGridClass;
-    _windowResizeHandler(): void;
-    _windowResize(): void;
-    _mousemoveByCanvasHandler(e: MouseEvent, endY: number, pointsX: Array<IPointX>, startY: number, canvas: ICanvasClass, bounds: IBounds): void;
-    _mousemoveByCanvas(canvas: ICanvasClass, bounds: IBounds, IAxisPoints): void;
-    _leavemouseFromCanvasAreaHandler(): void;
-    _leavemouseFromCanvasArea(canvas): void;
-    _clickByCanvasAreaHandler(e: MouseEvent, legendItems: Array<IItemLegend>): void;
-    _clickByCanvasArea(canvas: ICanvasClass, legendItems: Array<IItemLegend>): void;
-    _drawChartByType(axisY: IAxisYClass, axisX: IAxisXClass, canvas: ICanvasClass): void;
+interface IAchartyClass extends IAchartyConstructor {
     update(): IAchartyClass;
     init(): IAchartyClass;
 }
@@ -44,7 +30,7 @@ interface IUtilsClass {
     themes: IThemes;
     colors: IColors;
 
-    getTheme(num: number, type: string): ITheme | {};
+    getTheme(num: number, type: string): ITheme | object;
     getColor(name: string, opacity: number): string;
 }
 
@@ -64,15 +50,7 @@ interface ILegendClass {
     themeForCircle: ILineTheme;
     items: Array<IItemLegend>;
 
-    _getSizeGroups(groups: Array<IColumnLegend>): Array<IItemLegend>;
-    _getDistanceGroups(groups: Array<IItemLegend>): number;
-    _getTopDistanceGroups(groups: Array<IItemLegend>): number;
-    _overlineHideGroupText(x: number, endX: number, y: number, color: string): void;
-    _getColumns(): Array<IColumnLegend[]>;
-    _drawText(group: string, width: number, height: number, groups: Array<IItemLegend>, index: number, gaps): IPos;
-    _drawCircle(x: number, y: number, height: number, color: Array<string> | string): void;
-    _getDistanceTopFromPrevColumns(columns: Array<IColumnLegend[]>, index: number): number;
-    draw(gaps): ILegendClass;
+    draw(gaps: IGapsForLegend): ILegendClass;
 }
 
 interface IGridClass {
@@ -89,10 +67,6 @@ interface IGridClass {
     background: string;
     distanceBetweenLineAndPoint: number;
 
-    _getPointsOnScreen(points: Array<IPointX | IPointY>): Array<IPointX | IPointY>;
-    _drawBackground(): void;
-    _drawHorizontalLines(color: string): void;
-    _drawVerticalLines(color: string): void;
     init(): IGridClass;
 }
 
@@ -103,9 +77,7 @@ interface ICanvasClass {
     canvasElement: HTMLCanvasElement;
     theme: ICanvasTheme;
 
-    _setDefaultStyles(): void;
     getSizes(): ISize;
-    _setBackground(): void;
     init(): ICanvasClass;
 }
 
@@ -121,9 +93,8 @@ interface IRectClass {
     height: number;
     startY: number;
     endY: number;
-    stroke?: IStroke;
+    stroke?: IStroke | object;
 
-    _setColor(): void;
     draw(): void;
 }
 
@@ -132,7 +103,6 @@ interface ILineClass {
     width?: number;
     dotted?: boolean;
 
-    _setColor(x: number, y: number): void;
     draw(): void;
 }
 
@@ -150,17 +120,15 @@ interface ICustomFigureClass {
     startY?: number;
     endY?: number;
 
-    _setColor(): void;
     draw(): void;
 }
 
 interface ICircleClass {
     radius: number;
-    stroke: IStroke;
-    startY: number;
-    endY: number;
+    stroke?: IStroke;
+    startY?: number;
+    endY?: number;
 
-    _setColor(): void;
     draw(): void;
 }
 
@@ -191,20 +159,6 @@ interface IBlockInfoClass {
     themeForTitle: IBlockInfoThemeTitle;
     themeForGroup: IBlockInfoThemeGroup;
 
-    _getCorrectGroupValue(value): string;
-    _getElementsWithSize(): Array<IBlockInfoElementWithSize>;
-    _getCoordinates(): IPos;
-    _getTopGroupsDistance(elements: Array<IBlockInfoElementWithSizeGroup>): number;
-    _drawLines(windowIsOutOfBounds: boolean, blockWidth: number): void;
-    _getTitleSize(): ISize;
-    _drawTitle(windowIsOutOfBounds: boolean, blockWidth: number): void;
-    _getGroupsCoordinates(index: number): IPos;
-    _drawGroups(windowIsOutOfBounds: boolean, blockWidth: number): void;
-    _getMaxContentWidth(elements: Array<IBlockInfoElementWithSize>): number;
-    _outOfBounds(blockWidth): boolean;
-    _getWindowSize(): ISize;
-    _drawTriangle(windowIsOutOfBounds: boolean): void;
-    _drawWindow(windowIsOutOfBounds: boolean, width: number, height: number): void;
     init(): void;
 }
 
@@ -218,10 +172,6 @@ interface ILineChartClass {
     themeForLine: ILineTheme;
     themeForCaps: ICapTheme;
 
-    _getStyles(gLine: ILine, gCap: ICap, group: string): IChartStyle;
-    _getGroupsDataCoordinates(gData: Array<IDataAtItemData>): Array<IGroupDataCoordinates>;
-    _setFillGroupChart(coordinates: Array<IGroupDataCoordinates>, fill: string | Array<string>, stepped: boolean, group: string): void;
-    _drawLinesAndCaps(coordinates: Array<IGroupDataCoordinates>, gData: Array<IDataAtItemData>, gLine: ILine, gCap: ICap, group: string): void;
     draw(): ILineChartClass;
 }
 
@@ -241,9 +191,9 @@ interface IChartClass {
     drawTitle(): IChartClass;
     getGapsForYPoints(axisY: IAxisYClass, axisX: IAxisXClass, chartTitle: IChartTitle, legend: ILegendData): IGapsForYPoints;
     getGapsForXPoints(axisY: IAxisYClass, axisX: IAxisXClass): IGapsForXPoints;
-    getGapsForYTitle(chartTitle: IChartTitleWithSizeAndPos, legend: ILegendData, axisX: IAxisXClass): IGapsForYTitle;
+    getGapsForYTitle(chartTitle: IChartTitleWithSizeAndPos, legend: ILegendDataGaps, axisX: IAxisX): IGapsForYTitle;
     getGapsForXTitle(axisY: IAxisYClass): IGapsForXTitle;
-    getGapsForLegend(axisY: IAxisYClass, chartTitle: IChartTitleWithSizeAndPos): IGapsForLegend;
+    getGapsForLegend(axisY: IAxisY, chartTitle: IChartTitleWithSizeAndPos): IGapsForLegend;
 }
 
 interface IAxisClass {
@@ -271,10 +221,8 @@ interface IAxisXClass extends IAxisClass {
     line: ILine;
 
     getIgnoreNames(): Array<string | number>;
-    // GAPS!
-    drawTitle(gaps): IAxisXClass;
-    // GAPS!
-    drawPoints(gaps): IAxisXClass;
+    drawTitle(gaps: IGapsForXTitle): IAxisXClass;
+    drawPoints(gaps: IGapsForXPoints): IAxisXClass;
     getCorrectName(name: string | number): string | number;
 }
 
@@ -284,11 +232,8 @@ interface IAxisYClass extends IAxisClass {
     data: IData;
     sortValues: "more-less" | "less-more";
 
-    _getCorrectValue(value: number): string | number;
-    // GAPS!
-    drawTitle(gaps): IAxisYClass;
-    // GAPS!
-    drawPoints(gaps): IAxisYClass;
+    drawTitle(gaps: IGapsForYTitle): IAxisYClass;
+    drawPoints(gaps: IGapsForYPoints): IAxisYClass;
     getMaxTextWidthAtYAxis(): number;
 }
 
@@ -303,7 +248,7 @@ interface IChartLineStyle {
 interface IChartCapStyle {
     size: number;
     color: string;
-    stroke: IStroke | {};
+    stroke: IStroke | object;
     format: "square" | "circle";
 }
 
@@ -389,8 +334,8 @@ interface ILineTheme {
 }
 
 interface ICapTheme {
-    color?: Array<string> | string;
-    strokeColor?: Array<string> | string;
+    color?: Array<string>;
+    strokeColor?: Array<string>;
 }
 
 interface IBlockInfoThemeWindow {
@@ -432,24 +377,21 @@ interface IData {
 }
 
 interface ICap {
-    format: "square" | "circle";
-    color: string;
-    size: number;
-    stroke: {
-        width: number,
-        color: string,
-    };
+    format?: "square" | "circle";
+    color?: string;
+    size?: number;
+    stroke?: IStroke;
 }
 
 interface ICapData extends IPos {
     group: string;
     value: number;
-    name: string;
+    name: string | number;
     format: "square" | "circle";
     size: number;
     stroke: {
-        width: number,
-        color: string,
+        width?: number,
+        color?: string,
     };
 }
 
@@ -463,8 +405,8 @@ interface ILine {
 
 interface IItemData {
     data: Array<IDataAtItemData>;
-    cap: ICap;
-    line: ILine;
+    cap?: ICap;
+    line?: ILine;
 }
 
 interface IFontAxis extends IFont {
@@ -533,10 +475,10 @@ interface ILegend {
 }
 
 interface IPadding {
-    top: number;
-    right: number;
-    bottom: number;
-    left: number;
+    top?: number;
+    right?: number;
+    bottom?: number;
+    left?: number;
 }
 
 interface IGroupsBlockInfo {
@@ -572,14 +514,14 @@ interface ISize {
 interface IPoint extends IPos, ISize {
     onScreen: boolean;
     value: number;
-    group: string;
 }
 
-interface IPointY extends IPoint { }
+type IPointY = IPoint
 
 interface IPointX extends IPoint {
     name: number | string;
-    color: string;
+    color: string | Array<string>;
+    group: string;
 }
 
 interface IBounds {
@@ -604,14 +546,14 @@ interface IColors {
     [key: string]: (opacity?: number) => string;
 }
 
-interface IItemLegend extends ISize, IPos, IColumnLegend { };
+interface IItemLegend extends ISize, IPos, IColumnLegend { }
 
 interface IStroke {
-    width: number;
-    color: string;
+    width?: number;
+    color?: string;
 }
 
-interface ILineTo extends IPos { }
+type ILineTo = IPos
 
 interface IGroupsBlockInfoGaps {
     bottom: number;
@@ -641,7 +583,7 @@ interface IBlockInfo {
 
 interface IBlockInfoElementWithSizeGroup extends ISize {
     name: string;
-    color: string;
+    color: string | Array<string>;
 }
 
 interface IBlockInfoElementWithSizeValue extends ISize {
@@ -665,6 +607,10 @@ interface ITriangleData extends IPos {
 }
 
 interface ILegendData extends ILegendClass, ILegend { }
+
+interface ILegendDataGaps extends ILegendClass {
+    gapBottom: number;
+}
 
 interface IGapsForYPoints {
     left: number;
@@ -692,6 +638,10 @@ interface IChartTitleWithSizeAndPos extends IPos, ISize, IChartTitle { }
 interface IGapsForLegend {
     top: number;
     left: number;
+}
+
+interface IGapsForTextLegend extends IGapsForLegend {
+    top: number;
 }
 
 interface ISpecialFontData {

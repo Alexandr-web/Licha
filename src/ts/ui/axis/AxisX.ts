@@ -21,10 +21,10 @@ class AxisX extends Axis implements IAxisXClass {
     sortNames,
     themeForTitle,
     themeForPoint,
-    themeForLine = {},
-    ignoreNames = []
+    ignoreNames,
+    themeForLine = {}
   ) {
-    super(ctx, themeForPoint, themeForTitle, title, bounds, sortNames, font);
+    super(ctx, sortNames, themeForPoint, themeForTitle, title, bounds, font);
 
     // Стили для линии от темы
     this.themeForLine = themeForLine;
@@ -32,7 +32,7 @@ class AxisX extends Axis implements IAxisXClass {
      * Содержит названия точек оси абсцисс, которые не будут нарисованы на диаграмме
      * Может быть функцией или массивом
      */
-    this.ignoreNames = ignoreNames;
+    this.ignoreNames = ignoreNames || [];
     // Содержит данные групп
     this.data = data;
     // Метод, позволяющий изменить название точки оси абсцисс
@@ -43,7 +43,7 @@ class AxisX extends Axis implements IAxisXClass {
 
   /**
    * Отбирает названия точек оси абсцисс, которые не будут нарисованы на диаграмме
-   * @returns {array} Названия точек
+   * @returns {Array<string | number>} Названия точек
    */
   public getIgnoreNames(): Array<string | number> {
     if (this.ignoreNames instanceof Function) {
@@ -59,10 +59,10 @@ class AxisX extends Axis implements IAxisXClass {
 
   /**
    * Рисует заголовок на оси абсцисс
-   * @param {object} gaps Отступы заголовка
-   * @returns {AxisX}
+   * @param {IGapsForXTitle} gaps Отступы заголовка
+   * @returns {IAxisXClassAxisX}
    */
-  public drawTitle(gaps = {}): AxisX {
+  public drawTitle(gaps: IGapsForXTitle): IAxisXClass {
     if (!Object.keys(this.title).length) {
       return this;
     }
@@ -77,7 +77,7 @@ class AxisX extends Axis implements IAxisXClass {
     };
     const bounds: IBounds = this.bounds;
     const sizes: ISize = getTextSize(size, weight, text, this.ctx);
-    const startX: number = bounds.horizontal.start + (gaps.left || 0);
+    const startX: number = bounds.horizontal.start + ((gaps || {}).left || 0);
     const endX: number = bounds.horizontal.end - sizes.width;
     const posTitle: IPos = {
       x: startX + (endX - startX) / 2,
@@ -106,18 +106,16 @@ class AxisX extends Axis implements IAxisXClass {
    * @private
    * @returns {string | number} Корректное название точки
    */
-  // GAPS!
   public getCorrectName(name: string | number): string | number {
     return this.editName instanceof Function ? this.editName(name) : name;
   }
 
   /**
    * Рисует точки на оси абсцисс
-   * @param {object} gaps Отступы оси абсцисс
-   * @returns {AxisX}
+   * @param {IGapsForXPointsobject} gaps Отступы оси абсцисс
+   * @returns {IAxisXClass}
    */
-  // GAPS!
-  public drawPoints(gaps = {}): AxisX {
+  public drawPoints(gaps: IGapsForXPoints): IAxisXClass {
     const names: Array<string | number> = this.getAxesData(this.data).names;
     const bounds: IBounds = this.bounds;
     const ignoreNames: Array<string | number> = this.getIgnoreNames();
@@ -130,7 +128,7 @@ class AxisX extends Axis implements IAxisXClass {
       const endPoint: number = bounds.horizontal.end - (gaps.right || 0) - startPoint;
       // Шаг, с которым отрисовываем элементы
       const step: number = endPoint / (names.length - 1);
-      // Содержит размеры названия
+      // Содержит размеры названия точки
       const nameSizes: ISize = getTextSize(size, weight, `${this.getCorrectName(name)}`, this.ctx);
       // Координаты элемента для отрисовки
       const posXItem: IPos = {
@@ -144,16 +142,16 @@ class AxisX extends Axis implements IAxisXClass {
         const groupData: Array<IDataAtItemData> = this.data[group].data;
         const dataKeys: Array<string> = Object.keys(this.data);
         const idx: number = dataKeys.indexOf(group);
-        const colorByTheme: string = getStyleByIndex(idx, this.themeForLine.color);
+        const colorByTheme = getStyleByIndex(idx, this.themeForLine.color) as string;
 
         groupData.map((groupDataItem: IDataAtItemData) => {
           if (groupDataItem.name === name) {
-            const { line = {}, } = this.data[group];
+            const groupLine: ILine = (this.data[group].line || {}) as any;
 
             this.points.push({
               onScreen: !ignoreNames.includes(name),
               name,
-              color: (line.color || (this.line || {}).color || line.fill || (this.line || {}).fill) || colorByTheme,
+              color: (groupLine.color || (this.line || {}).color || groupLine.fill || (this.line || {}).fill) || colorByTheme,
               value: groupDataItem.value,
               group,
               ...posXItem,

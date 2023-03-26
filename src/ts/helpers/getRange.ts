@@ -3,7 +3,7 @@
  * @param {number} from Начальное значение (наименьшее)
  * @param {number} to Конечное значение (наибольшее)
  * @param {number} count Шаг
- * @return {array} Диапазон
+ * @return {Array<number>} Диапазон
  * 
  * Отдельная благодарность
  * @see http://www.robertpenner.com/easing/

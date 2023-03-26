@@ -1,4 +1,5 @@
 {
+  "root": true,
   "env": {
     "browser": true,
     "commonjs": true,
@@ -7,7 +8,13 @@
   },
   "extends": [
     "airbnb-base",
-    "eslint:recommended"
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
+    "@typescript-eslint"
   ],
   "parserOptions": {
     "ecmaVersion": 12
@@ -81,6 +88,9 @@
     "quote-props": "off",
     "func-names": "off",
     "no-case-declarations": "off",
-    "camelcase": "off"
+    "camelcase": "off",
+    "lines-between-class-members": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "no-loop-func": "off"
   }
 }

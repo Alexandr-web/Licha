@@ -42,13 +42,13 @@ class Circle extends Element implements ICircleClass {
 
     this._setColor();
 
-    this.ctx.arc(this.x, this.y, this.radius, Math.PI * 2, Math.PI * 2);
+    this.ctx.arc(this.x, this.y, this.radius, Math.PI * 2, 0);
     this.ctx.fill();
 
     if (Object.keys(this.stroke).length) {
       this.ctx.lineWidth = this.stroke.width;
       this.ctx.strokeStyle = this.stroke.color;
-      this.ctx.arc(this.x, this.y, this.radius, Math.PI * 2, Math.PI * 2);
+      this.ctx.arc(this.x, this.y, this.radius, Math.PI * 2, 0);
       this.ctx.stroke();
     }
   }

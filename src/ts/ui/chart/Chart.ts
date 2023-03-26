@@ -51,7 +51,7 @@ class Chart implements IChartClass {
 
   /**
    * Определяет границы диаграммы
-   * @returns {object} Границы ({ width, height, horizontal: { start, end }, vertical: { start, end }, })
+   * @returns {IBounds} Границы ({ width, height, horizontal: { start, end }, vertical: { start, end }, })
    */
   public getBounds(): IBounds {
     const bounds: IBounds = {
@@ -75,9 +75,9 @@ class Chart implements IChartClass {
 
   /**
    * Рисует заголовок диаграммы
-   * @returns {Chart}
+   * @returns {IChartClass}
    */
-  public drawTitle(): Chart {
+  public drawTitle(): IChartClass {
     if (!Object.keys(this.title).length) {
       return this;
     }
@@ -111,11 +111,11 @@ class Chart implements IChartClass {
 
   /**
    * Определяет отступы для оси ординат
-   * @param {AxisY} axisY Экземпляр класса AxisY
-   * @param {AxisX} axisX Экземпляр класса AxisX
-   * @param {object} chartTitle Содержит данные заголовка диаграммы
-   * @param {object} legend Содержит данные легенды
-   * @returns {object} Отступы ({ left, top, bottom })
+   * @param {IAxisYClass} axisY Экземпляр класса AxisY
+   * @param {IAxisXClass} axisX Экземпляр класса AxisX
+   * @param {IChartTitle} chartTitle Содержит данные заголовка диаграммы
+   * @param {ILegendData} legend Содержит данные легенды
+   * @returns {IGapsForYPoints} Отступы ({ left, top, bottom })
    */
   public getGapsForYPoints(axisY: IAxisYClass, axisX: IAxisXClass, chartTitle: IChartTitle, legend: ILegendData): IGapsForYPoints {
     const { size, weight = 400, } = axisY.font;
@@ -141,9 +141,9 @@ class Chart implements IChartClass {
 
   /**
    * Определяет отступы для оси абсцисс
-   * @param {AxisY} axisY Экземпляр класса AxisY
-   * @param {AxisX} axisX Экземпляр класса AxisX
-   * @returns {object} Отступы ({ left, right, bottom })
+   * @param {IAxisYClass} axisY Экземпляр класса AxisY
+   * @param {IAxisXClass} axisX Экземпляр класса AxisX
+   * @returns {IGapsForXPoints} Отступы ({ left, right, bottom })
    */
   public getGapsForXPoints(axisY: IAxisYClass, axisX: IAxisXClass): IGapsForXPoints {
     const { font: axisYFont = {}, title: axisYTitle = {}, gapRightAxisY, } = axisY as any;
@@ -173,12 +173,12 @@ class Chart implements IChartClass {
 
   /**
    * Определяет отступы для заголовка оси ординат
-   * @param {object} chartTitle Содержит данные заголовка диаграммы
-   * @param {object} legend Содержит данные легенды
-   * @param {AxisX} axisX Экземпляр класса AxisX
-   * @returns {object} Отступы ({ top, bottom })
+   * @param {IChartTitleWithSizeAndPos} chartTitle Содержит данные заголовка диаграммы
+   * @param {ILegendDataGaps} legend Содержит данные легенды
+   * @param {IAxisX} axisX Содержит данные оси абсцисс
+   * @returns {IGapsForYTitle} Отступы ({ top, bottom })
    */
-  public getGapsForYTitle(chartTitle: IChartTitleWithSizeAndPos, legend: ILegendData, axisX: IAxisXClass): IGapsForYTitle {
+  public getGapsForYTitle(chartTitle: IChartTitleWithSizeAndPos, legend: ILegendDataGaps, axisX: IAxisX): IGapsForYTitle {
     const { height: chartTitleHeight = 0, gapBottom: chartTitleGapBottom = 0, } = chartTitle;
     const { totalHeight: legendHeight, gaps: gapsLegend = {}, } = legend as any;
     const { title: axisXTitle = {}, } = axisX as any;
@@ -195,8 +195,8 @@ class Chart implements IChartClass {
 
   /**
    * Определяет отступы для заголовка оси абсцисс
-   * @param {AxisY} axisY Экземпляр класса AxisY
-   * @returns {object} Отступы ({ top, left })
+   * @param {IAxisYClass} axisY Экземпляр класса AxisY
+   * @returns {IGapsForXTitle} Отступы ({ top, left })
    */
   public getGapsForXTitle(axisY: IAxisYClass): IGapsForXTitle {
     const { title = {}, gapRightAxisY, } = axisY as any;
@@ -207,11 +207,11 @@ class Chart implements IChartClass {
 
   /**
    * Определяет отступы для легенды
-   * @param {AxisY} axisY Экземпляр класса AxisY
-   * @param {object} chartTitle Содержит данные заголовка диаграммы
-   * @returns {object} Отступы ({ top, left })
+   * @param {IAxisY} axisY Содержит данные оси ординат
+   * @param {IChartTitleWithSizeAndPos} chartTitle Содержит данные заголовка диаграммы
+   * @returns {IGapsForLegend} Отступы ({ top, left })
    */
-  public getGapsForLegend(axisY: IAxisYClass, chartTitle: IChartTitleWithSizeAndPos): IGapsForLegend {
+  public getGapsForLegend(axisY: IAxisY, chartTitle: IChartTitleWithSizeAndPos): IGapsForLegend {
     const { y = 0, gapBottom = 0, } = chartTitle;
     const { font = {}, } = (axisY.title || {});
     const { size, weight = 600, text, } = font as IFontWithText;

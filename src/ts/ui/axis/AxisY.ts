@@ -23,10 +23,10 @@ class AxisY extends Axis implements IAxisYClass {
     sortNames,
     themeForTitle,
     themeForPoint,
-    step = 3,
-    sortValues = "less-more"
+    sortValues,
+    step = 3
   ) {
-    super(ctx, themeForPoint, themeForTitle, title, bounds, sortNames, font);
+    super(ctx, sortNames, themeForPoint, themeForTitle, title, bounds, font);
 
     // Шаг, с которым будут рисоваться значения на оси ординат
     this.step = step;
@@ -35,14 +35,14 @@ class AxisY extends Axis implements IAxisYClass {
     // Содержит данные групп
     this.data = data;
     // Тип сортировки точек оси ординат
-    this.sortValues = sortValues;
+    this.sortValues = sortValues || "less-more";
   }
 
   /**
    * Определяет корректное значение точки на оси ординат
    * @param {number} value Значение точки
    * @private
-   * @returns {string|number} Корректное значение точки
+   * @returns {string | number} Корректное значение точки
    */
   private _getCorrectValue(value: number): string | number {
     return this.editValue instanceof Function ? this.editValue(value) : value;
@@ -50,11 +50,10 @@ class AxisY extends Axis implements IAxisYClass {
 
   /**
    * Рисует заголовок на оси ординат
-   * @param {object} gaps Отступы заголовка
-   * @returns {AxisY}
+   * @param {IGapsForYTitle} gaps Отступы заголовка
+   * @returns {IAxisYClass}
    */
-  // GAPS!
-  public drawTitle(gaps): AxisY {
+  public drawTitle(gaps: IGapsForYTitle): IAxisYClass {
     if (!Object.keys(this.title).length) {
       return this;
     }
@@ -95,11 +94,10 @@ class AxisY extends Axis implements IAxisYClass {
 
   /**
    * Рисует точки на оси ординат
-   * @param {object} gaps Отступы оси ординат
-   * @returns {AxisY}
+   * @param {IGapsForYPoints} gaps Отступы оси ординат
+   * @returns {IAxisYClass}
    */
-  // GAPS!
-  public drawPoints(gaps = {}): AxisY {
+  public drawPoints(gaps: IGapsForYPoints): IAxisYClass {
     const values: Array<number> = this.getAxesData(this.data).values;
     const bounds: IBounds = this.bounds;
     const { size, showText = Boolean(Object.keys(this.font).length), weight = 400, color = this.themeForPoint.color, } = this.font;
@@ -162,8 +160,8 @@ class AxisY extends Axis implements IAxisYClass {
     });
 
     values.map((uValue: number) => {
-      const maxValue: IPointY = (quickSort(this.points, "value") as any).find(({ value, }) => value >= uValue);
-      const minValue: IPointY = (quickSort(this.points, "value").reverse() as any).find(({ value, }) => value <= uValue);
+      const maxValue: IPointY = (quickSort(this.points, "value") as Array<IPointY>).find(({ value, }) => value >= uValue);
+      const minValue: IPointY = (quickSort(this.points, "value").reverse() as Array<IPointY>).find(({ value, }) => value <= uValue);
       const textSizes: ISize = getTextSize(size, weight, uValue.toString(), this.ctx);
       const posYItem: IPos = {
         x: showText ? bounds.horizontal.start : 0,

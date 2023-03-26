@@ -3,8 +3,9 @@ import dark from "./themes/dark";
 import colors from "./colors";
 
 import "../interfaces/index";
+import { TTypeTheme, } from "../types/index";
 
-class Utils {
+class Utils implements IUtilsClass {
   public themes: IThemes;
   public colors: IColors;
 
@@ -18,10 +19,10 @@ class Utils {
   /**
    * Определяет тему
    * @param {number} num Индекс темы
-   * @param {string} type Тип темы ("dark" или "light")
-   * @returns {object} Данные темы
+   * @param {TTypeTheme} type Тип темы ("dark" или "light")
+   * @returns {ITheme | {}} Данные темы
    */
-  public getTheme(num: number = 0, type: string = "dark"): ITheme | {} {
+  public getTheme(num = 0, type = "dark"): ITheme | object {
     if (!this.themes[type] || !this.themes[type][num]) {
       return {};
     }
@@ -35,7 +36,7 @@ class Utils {
    * @param {number} opacity Прозрачность (от 0 до 1)
    * @returns {string} Цвет
    */
-  public getColor(name: string, opacity: number = 1): string {
+  public getColor(name: string, opacity = 1): string {
     if (!(this.colors[name] instanceof Function)) {
       return "";
     }

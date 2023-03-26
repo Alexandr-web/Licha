@@ -4,7 +4,7 @@ import Line from "./elements/Line";
 import "../interfaces/index";
 import { TGridFormat, } from "../types/index";
 
-class Grid {
+class Grid implements IGridClass {
   public maxPointYWidth: number;
   public names: Array<string>;
   public ctx: CanvasRenderingContext2D;
@@ -25,8 +25,8 @@ class Grid {
     background,
     axisY,
     axisX,
+    format,
     line = {},
-    format = "default",
     theme = {}
   ) {
     // Содержит максимальную ширину текста точки оси ординат
@@ -46,7 +46,7 @@ class Grid {
     // Содержит данные линии
     this.line = line as any;
     // Формат сетки (horizontal или vertical)
-    this.format = format;
+    this.format = format || "default";
     // Данные темы
     this.theme = theme as any;
     // Задний фон сетки
@@ -57,9 +57,9 @@ class Grid {
 
   /**
    * Определяет точки, которые видны на диаграмме
-   * @param {array} points Содержит точки оси
+   * @param {Array<IPointX | IPointY>} points Содержит точки оси
    * @private
-   * @returns {array}
+   * @returns {Array<IPointX | IPointY>}
    */
   private _getPointsOnScreen(points: Array<IPointX | IPointY>): Array<IPointX | IPointY> {
     return points.filter(({ onScreen, }) => onScreen);
@@ -74,8 +74,8 @@ class Grid {
       return;
     }
 
-    const pointsYOnScreen: Array<IPointY> = this._getPointsOnScreen(this.pointsY);
-    const pointsXOnScreen: Array<IPointX> = this._getPointsOnScreen(this.pointsX);
+    const pointsYOnScreen = this._getPointsOnScreen(this.pointsY) as Array<IPointY>;
+    const pointsXOnScreen = this._getPointsOnScreen(this.pointsX) as Array<IPointX>;
     const { x: startX, } = pointsXOnScreen[0];
     const { y: startY, } = pointsYOnScreen[0];
     const { x: endX, } = pointsXOnScreen[pointsXOnScreen.length - 1];
@@ -130,8 +130,8 @@ class Grid {
    */
   private _drawVerticalLines(color: string): void {
     const { width, dotted, stretch, } = this.line;
-    const axisYOnScreen: Array<IPointY> = this._getPointsOnScreen(this.pointsY);
-    const axisXOnScreen: Array<IPointX> = this._getPointsOnScreen(this.pointsX);
+    const axisYOnScreen = this._getPointsOnScreen(this.pointsY) as Array<IPointY>;
+    const axisXOnScreen = this._getPointsOnScreen(this.pointsX) as Array<IPointX>;
     const { y: startY, } = axisYOnScreen[0];
     const { y: endYPointX, } = axisXOnScreen[axisXOnScreen.length - 1];
     const { y: endYPointY, } = axisYOnScreen[axisYOnScreen.length - 1];
@@ -139,7 +139,7 @@ class Grid {
     // Рисуем линии
     this.names.map((name: string) => {
       const { x, height, } = this.pointsX.find((axisXDataItem) => axisXDataItem.name === name) as IPointX;
-      const isOnScreen: boolean = Boolean(axisXOnScreen.find((point) => point.name === name));
+      const isOnScreen = Boolean(axisXOnScreen.find((point) => point.name === name));
       const useStretch: boolean = stretch && isOnScreen && this.showPointsX;
 
       new Line(
@@ -155,7 +155,7 @@ class Grid {
   }
 
   // Рисует сетку
-  public init(): Grid {
+  public init(): IGridClass {
     if (!Object.keys(this.line).length) {
       return;
     }

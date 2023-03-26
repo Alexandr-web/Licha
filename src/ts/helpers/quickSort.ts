@@ -1,8 +1,8 @@
 /**
  * Быстрая сортировка массива
- * @param {array} arr Содержит значений
+ * @param {Array<number | object>} arr Содержит значений
  * @param {string} key Ключ, по значению которого нужно сортировать
- * @returns {array} Отсортированный массив
+ * @returns {Array<number | object>} Отсортированный массив
  */
 function quickSort(arr: Array<number | object>, key?: string): Array<number | object> {
   if (arr.length <= 1) {

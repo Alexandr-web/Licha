@@ -19,11 +19,11 @@ class Axis implements IAxisClass {
 
   constructor(
     ctx,
+    sortNames,
     themeForPoint = {},
     themeForTitle = {},
     title = {},
     bounds = {},
-    sortNames = "less-more",
     font = {}
   ) {
     // Контекст элемента canvas
@@ -37,7 +37,7 @@ class Axis implements IAxisClass {
     // Содержит данные точек, находящихся на этой оси
     this.points = [];
     // Тип сортировки точек ("less-more" или "more-less")
-    this.sortNames = sortNames;
+    this.sortNames = sortNames || "less-more";
     // Содержит уникальные названия точек оси абсцисс
     this.uniqueNames = [];
     // Содержит уникальные значения точек оси ординат
@@ -54,8 +54,8 @@ class Axis implements IAxisClass {
 
   /**
    * Сортирует значения и названия (если те имеют тип данных число) групп
-   * @param {object} data Содержит данные групп
-   * @returns {object}
+   * @param {IData} data Содержит данные групп
+   * @returns {IAxesData}
    */
   public getAxesData(data: IData): IAxesData {
     // Для оси ординат
@@ -73,17 +73,17 @@ class Axis implements IAxisClass {
 
     const uniqueNames: Array<number | string> = [...new Set(names)];
     const uniqueValues: Array<number> = [...new Set(values)];
-    const namesIsNumbers: boolean = !uniqueNames.some((name) => isNaN(+name));
+    const namesIsNumbers = !uniqueNames.some((name) => isNaN(+name));
     const sortedValues: Array<number | object> = quickSort(uniqueValues).reverse();
-    const sortedNames: Array<string | number | object> = [];
+    const sortedNames: Array<string | number> = [];
 
     if (namesIsNumbers) {
       switch (this.sortNames) {
         case "less-more":
-          sortedNames.push(...quickSort(uniqueNames as Array<number | object>));
+          sortedNames.push(...quickSort(uniqueNames as Array<number>) as Array<number>);
           break;
         case "more-less":
-          sortedNames.push(...quickSort(uniqueNames as Array<number | object>).reverse());
+          sortedNames.push(...quickSort(uniqueNames as Array<number>).reverse() as Array<number>);
           break;
       }
     }

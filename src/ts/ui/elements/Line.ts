@@ -8,7 +8,7 @@ class Line extends Element implements ILineClass {
   public width?: number;
   public dotted?: boolean;
 
-  constructor(x, y, color, ctx, lineTo = [], width?: number, dotted?: boolean) {
+  constructor(x, y, color, ctx, lineTo: Array<ILineTo>, width?: number, dotted?: boolean) {
     super(x, y, color, ctx);
 
     // Массив, содержащий данные позиций линии
@@ -35,11 +35,7 @@ class Line extends Element implements ILineClass {
 
   // Рисует линию
   public draw(): void {
-    if (this.dotted) {
-      this.ctx.setLineDash([10, 20]);
-    } else {
-      this.ctx.setLineDash([0, 0]);
-    }
+    this.ctx.setLineDash(this.dotted ? [10, 20] : [0, 0]);
 
     this.ctx.beginPath();
     this.ctx.moveTo(this.x, this.y);

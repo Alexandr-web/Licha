@@ -4,7 +4,9 @@
   "description": "Creating simple graphs",
   "main": "./src/js/Chart.js",
   "scripts": {
-    "start": "webpack serve --open"
+    "start": "webpack serve --open",
+    "check-lint": "eslint src/ts/",
+    "fix-lint": "eslint --fix src/ts/"
   },
   "repository": {
     "type": "git",
@@ -17,8 +19,10 @@
   },
   "homepage": "https://github.com/Alexandr-web/myChart#readme",
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.56.0",
+    "@typescript-eslint/parser": "^5.56.0",
     "css-loader": "^6.7.3",
-    "eslint": "^8.30.0",
+    "eslint": "^8.36.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-plugin-import": "^2.26.0",
     "html-webpack-plugin": "^5.5.0",

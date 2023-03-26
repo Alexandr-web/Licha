@@ -94,17 +94,17 @@ class BlockInfo extends Element implements IBlockInfoClass {
   /**
    * Определяет размеры элементов
    * @private
-   * @returns {array} Массив, содержащий данные элементов, включая их размеры
+   * @returns {Array<IBlockInfoElementWithSize>} Массив, содержащий данные элементов, включая их размеры
    */
   private _getElementsWithSize(): Array<IBlockInfoElementWithSize> {
     return this.elements.map(({ group, value, color, }) => {
       const correctGroupValue: string | number = this._getCorrectGroupValue(value);
-      const groupName: string = `${group}: ${correctGroupValue}`;
+      const groupName = `${group}: ${correctGroupValue}`;
       const { font: groupsFont, } = this.groupsData;
       const { font: titleFont, } = this.titleData;
       const dataKeys: Array<string> = Object.keys(this.data);
       const idx: number = dataKeys.indexOf(group);
-      const themeColor: string = getStyleByIndex(idx, this.themeForLine.color);
+      const themeColor = getStyleByIndex(idx, this.themeForLine.color) as string;
 
       return {
         group: {
@@ -113,7 +113,7 @@ class BlockInfo extends Element implements IBlockInfoClass {
           ...getTextSize(groupsFont.size, groupsFont.weight, groupName, this.ctx),
         },
         value: {
-          name: correctGroupValue,
+          name: correctGroupValue.toString(),
           ...getTextSize(titleFont.size, titleFont.weight, correctGroupValue, this.ctx),
         },
       };
@@ -123,7 +123,7 @@ class BlockInfo extends Element implements IBlockInfoClass {
   /**
    * Определяет позицию окна
    * @private
-   * @returns {object} Позиция окна ({ x, y })
+   * @returns {IPos} Позиция окна ({ x, y })
    */
   private _getCoordinates(): IPos {
     return {
@@ -134,7 +134,7 @@ class BlockInfo extends Element implements IBlockInfoClass {
 
   /**
    * Определяет дистанцию между группами
-   * @param {array} elements Содержит данные элементов
+   * @param {Array<IBlockInfoElementWithSizeGroup>} elements Содержит данные элементов
    * @private
    * @returns {number} Дистанция
    */
@@ -160,9 +160,9 @@ class BlockInfo extends Element implements IBlockInfoClass {
 
     for (let i = 0; i < this.elements.length; i++) {
       const { group, } = this._getElementsWithSize()[i];
-      const groupPos = this._getGroupsCoordinates(i);
-      const posX = x + blockWidth - (padding.right || 0);
-      const linePos = {
+      const groupPos: IPos = this._getGroupsCoordinates(i);
+      const posX: number = x + blockWidth - (padding.right || 0);
+      const linePos: ILinePos = {
         moveTo: {
           x: posX,
           y: groupPos.y,
@@ -204,7 +204,7 @@ class BlockInfo extends Element implements IBlockInfoClass {
   /**
    * Определяет размеры заголовка
    * @private
-   * @returns {object} Размеры ({ width, height })
+   * @returns {ISize} Размеры ({ width, height })
    */
   private _getTitleSize(): ISize {
     const { font, } = this.titleData;
@@ -251,7 +251,7 @@ class BlockInfo extends Element implements IBlockInfoClass {
    * Определяет позицию группы
    * @param {number} index Индекс текущей группы
    * @private
-   * @returns {object} Позиция группы ({ x, y })
+   * @returns {IPos} Позиция группы ({ x, y })
    */
   private _getGroupsCoordinates(index: number): IPos {
     const { x, y, } = this._getCoordinates();
@@ -299,7 +299,7 @@ class BlockInfo extends Element implements IBlockInfoClass {
 
   /**
    * Определяет максимальную ширину среди элементов
-   * @param {array} elements Содержит данные элементов
+   * @param {Array<IBlockInfoElementWithSize>} elements Содержит данные элементов
    * @private
    * @returns {number} Максимальная ширина
    */
@@ -323,7 +323,7 @@ class BlockInfo extends Element implements IBlockInfoClass {
   /**
    * Определяет размеры окна
    * @private
-   * @returns {object} Размеры окна ({ width, height })
+   * @returns {ISize} Размеры окна ({ width, height })
    */
   private _getWindowSize(): ISize {
     const padding: IPadding = this.padding;

@@ -40,7 +40,7 @@ class Canvas implements ICanvasClass {
 
   /**
    * Получает размеры элемента canvas
-   * @returns {object} Ширина и высота элемента canvas
+   * @returns {ISize} Ширина и высота элемента canvas
    */
   public getSizes(): ISize {
     const { width, height, } = this.canvasElement;
@@ -61,7 +61,10 @@ class Canvas implements ICanvasClass {
     new Rect(0, 0, background, this.ctx, this.getSizes().width, this.getSizes().height).draw();
   }
 
-  // Рисует начальный холст
+  /**
+   * Рисует начальный холст
+   * @returns {ICanvasClass} Экземпляр класса Canvas
+   */
   public init(): ICanvasClass {
     this._setDefaultStyles();
     this._setBackground();

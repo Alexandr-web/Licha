@@ -5,7 +5,7 @@ import "../../interfaces/index";
 class Text extends Element implements ITextClass {
   public font: ISpecialFontData;
 
-  constructor(font, ctx, x, y, color?: string, rotateDeg?: number, opacity?: number) {
+  constructor(font, ctx, x?: number, y?: number, color?: string, rotateDeg?: number, opacity?: number) {
     super(x, y, color, ctx, rotateDeg, opacity);
 
     // Содержит данные шрифта
@@ -14,11 +14,10 @@ class Text extends Element implements ITextClass {
 
   /**
    * Определяет размеры текста
-   * @param {string} str Строка, содержащая данные шрифта
-   * @returns {object} Размеры шрифта ({ width, height })
+   * @returns {ISize} Размеры шрифта ({ width, height })
    */
-  public getSizes(str: string): ISize {
-    this.ctx.font = str;
+  public getSizes(): ISize {
+    this.ctx.font = this.font.str;
 
     const text: TextMetrics = this.ctx.measureText(this.font.text);
 
@@ -31,7 +30,7 @@ class Text extends Element implements ITextClass {
   // Рисует текст
   public draw(): void {
     const { str, color, text, } = this.font;
-    const sizes: ISize = this.getSizes(str);
+    const sizes: ISize = this.getSizes();
 
     this.ctx.save();
 

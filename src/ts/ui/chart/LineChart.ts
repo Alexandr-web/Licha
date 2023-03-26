@@ -29,7 +29,7 @@ class LineChart extends Chart implements ILineChartClass {
     title,
     padding,
     hideGroups,
-    sortValues = "less-more",
+    sortValues,
     themeForLine = {},
     themeForCaps = {}
   ) {
@@ -44,30 +44,30 @@ class LineChart extends Chart implements ILineChartClass {
     // Содержит данные колпачка
     this.cap = cap;
     // Содержит сортированные значения
-    this.sortValues = sortValues;
+    this.sortValues = sortValues || "less-more";
     // Содержит данные нарисованных колпачков
     this.caps = [];
     // Содержит стилия для линии от темы
-    this.themeForLine = themeForLine;
+    this.themeForLine = themeForLine as any;
     // Содержит стилия для колпачка от темы
-    this.themeForCaps = themeForCaps;
+    this.themeForCaps = themeForCaps as any;
   }
 
   /**
    * Определяет стили для графика
-   * @param {object} gLine Данные линии группы
-   * @param {object} gCap Данные колпачка группы
+   * @param {ILine} gLine Данные линии группы
+   * @param {ICap} gCap Данные колпачка группы
    * @param {string} group Название группы (ключ объекта data)
    * @private
-   * @returns {object} Стили
+   * @returns {IChartStyle} Стили
    */
   private _getStyles(gLine: ILine, gCap: ICap, group: string): IChartStyle {
     const dataKeys: Array<string> = Object.keys(this.data);
     const idx: number = dataKeys.indexOf(group);
-    const themeColorForLine: string = getStyleByIndex(idx, this.themeForLine.color);
-    const themeFillForLine: string = getStyleByIndex(idx, this.themeForLine.fill);
-    const themeColorForCap: string = getStyleByIndex(idx, this.themeForCaps.color);
-    const themeStrokeColorForCap: string = getStyleByIndex(idx, this.themeForCaps.strokeColor);
+    const themeColorForLine = getStyleByIndex(idx, this.themeForLine.color) as string;
+    const themeFillForLine: Array<string> | string = getStyleByIndex(idx, this.themeForLine.fill);
+    const themeColorForCap = getStyleByIndex(idx, this.themeForCaps.color) as string;
+    const themeStrokeColorForCap = getStyleByIndex(idx, this.themeForCaps.strokeColor) as string;
     const lineStyle: IChartLineStyle = {
       width: gLine.width || this.line.width,
       color: gLine.color || this.line.color || themeColorForLine,
@@ -91,16 +91,16 @@ class LineChart extends Chart implements ILineChartClass {
 
   /**
    * Определяет координаты данных группы
-   * @param {object} gData Данные группы
+   * @param {Array<IDataAtItemData>} gData Данные группы
    * @private
-   * @returns {array} Массив координат у данных группы
+   * @returns {Array<IGroupDataCoordinates>} Массив координат у данных группы
    */
   private _getGroupsDataCoordinates(gData: Array<IDataAtItemData>): Array<IGroupDataCoordinates> {
     return gData.map(({ value, name, }) => {
       // Элемент для начальной позиции Y линии
-      const findAxisYItem = this.pointsY.find((axisYItem) => axisYItem.value === value) as IPointY;
+      const findAxisYItem = this.pointsY.find((axisYItem: IPointY) => axisYItem.value === value) as IPointY;
       // Элемент для начальной позиции X линии
-      const findAxisXItem = this.pointsX.find((axisXItem) => axisXItem.name === name) as IPointX;
+      const findAxisXItem = this.pointsX.find((axisXItem: IPointX) => axisXItem.name === name) as IPointX;
 
       return {
         x: findAxisXItem.x,
@@ -113,8 +113,8 @@ class LineChart extends Chart implements ILineChartClass {
 
   /**
    * Создает задний фон всей группе
-   * @param {array} coordinates массив координат линий графика
-   * @param {string|array} fill содержит данные о цвете заднего фона
+   * @param {Array<IGroupDataCoordinates>} coordinates массив координат линий графика
+   * @param {string | Array<string>} fill содержит данные о цвете заднего фона
    * @param {boolean} stepped Правило, которое будет рисовать линию пошагово
    * @param {string} group Группа, в которой находится линия
    * @private
@@ -193,10 +193,10 @@ class LineChart extends Chart implements ILineChartClass {
 
   /**
    * Рисует линии и колпачки
-   * @param {array} coordinates Массив координат у данных группы
-   * @param {object} gData Данные группы
-   * @param {object} gLine Данные линии группы
-   * @param {object} gCap Данные колпачка группы
+   * @param {Array<IGroupDataCoordinates>} coordinates Массив координат у данных группы
+   * @param {Array<IDataAtItemData>} gData Данные группы
+   * @param {ILine} gLine Данные линии группы
+   * @param {ICap} gCap Данные колпачка группы
    * @param {string} group Название группы (ключ объекта data)
    * @private
    */
@@ -258,8 +258,8 @@ class LineChart extends Chart implements ILineChartClass {
           capStyle.format === "circle" ? y + capStyle.size : y + capStyle.size / 2,
           0,
           {
-            ...capStyle.stroke,
-            color: capStyle.stroke.color || themeStrokeColorForCap,
+            width: (capStyle.stroke as any).width || 1,
+            color: (capStyle.stroke as any).color || themeStrokeColorForCap,
           }
         ).draw();
 
@@ -279,9 +279,9 @@ class LineChart extends Chart implements ILineChartClass {
 
   /**
    * Рисует график
-   * @returns {LineChart}
+   * @returns {ILineChartClass}
    */
-  public draw(): LineChart {
+  public draw(): ILineChartClass {
     const visibleGroups: IData = Object
       .keys(this.data)
       .filter((group: string) => !this.hideGroups.includes(group))
