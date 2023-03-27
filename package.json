@@ -2,9 +2,10 @@
   "name": "aCharty",
   "version": "1.0.0",
   "description": "Creating simple graphs",
-  "main": "./src/js/Chart.js",
+  "main": "./dist/ACharty.js",
   "scripts": {
     "start": "webpack serve --open",
+    "build": "webpack",
     "check-lint": "eslint src/ts/",
     "fix-lint": "eslint --fix src/ts/"
   },

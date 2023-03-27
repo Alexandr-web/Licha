@@ -5,7 +5,12 @@ const path = require("path");
 module.exports = {
   entry: path.resolve(__dirname, "src/ts/index.ts"),
   mode: "development",
-  output: { filename: "index.js", libraryTarget: "umd", },
+  output: {
+    filename: "ACharty.js",
+    path: path.resolve(__dirname, "dist"),
+    libraryTarget: "umd",
+    library: "ACharty",
+  },
   plugins: [
     new HtmlWebpackPlugin({ template: path.resolve(__dirname, "src/index.html"), }),
     new MiniCssExtractPlugn()

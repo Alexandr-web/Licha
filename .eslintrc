@@ -20,7 +20,7 @@
     "ecmaVersion": 12
   },
   "rules": {
-	"@typescript-eslint/no-empty-interface": "off",
+    "@typescript-eslint/no-empty-interface": "off",
     "no-console": "off",
     "quotes": [
       "error",
@@ -91,6 +91,7 @@
     "no-case-declarations": "off",
     "camelcase": "off",
     "lines-between-class-members": "off",
-    "no-loop-func": "off"
+    "no-loop-func": "off",
+    "@typescript-eslint/no-var-requires": "off"
   }
 }
