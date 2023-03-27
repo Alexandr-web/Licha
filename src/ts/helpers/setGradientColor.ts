@@ -9,12 +9,15 @@ import getRange from "./getRange";
  * @param {number} startX Начальная позиция по оси абсцисс
  * @param {number} endX Конечная позиция по оси абсцисс
  */
-export default (color: Array<string>, startY: number, endY: number, propertyToStyle: string, ctx: CanvasRenderingContext2D, startX = 0, endX = 0): void => {
-  const grd: CanvasGradient = ctx.createLinearGradient(startX, startY, endX, endY);
-  const range: Array<number> = getRange(0, 1, color.length - 1);
+export default (
+	colors: Array<string>, startY: number, endY: number, propertyToStyle: string,
+	ctx: CanvasRenderingContext2D, startX = 0, endX = 0
+): void => {
+	const grd: CanvasGradient = ctx.createLinearGradient(startX, startY, endX, endY);
+	const range: Array<number> = getRange(0, 1, colors.length - 1);
 
-  // Создает градиент
-  color.map((clr, idx) => grd.addColorStop(range[idx], clr));
+	// Создает градиент
+	colors.map((clr, idx) => grd.addColorStop(range[idx], clr));
 
-  ctx[propertyToStyle] = grd;
+	ctx[propertyToStyle] = grd;
 };

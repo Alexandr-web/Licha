@@ -1,21 +1,26 @@
 import quickSort from "../../helpers/quickSort";
 
-import "../../interfaces/index";
-import { TSort, } from "../../types/index";
+import { TSort, TEmptyObject, } from "../../types/index";
+
+import { IAxisClass, IFontAxis, IAxisThemePoint, IAxisThemeTitle, IAxesData, } from "../../interfaces/axis";
+import { IAxisYTitle, IPointY, } from "../../interfaces/axisY";
+import { IAxisXTitle, IPointX, } from "../../interfaces/axisX";
+import { IBounds, } from "../../interfaces/global";
+import { IData, IDataAtItemData, } from "../../interfaces/data";
 
 class Axis implements IAxisClass {
   public ctx: CanvasRenderingContext2D;
-  public title: IAxisYTitle | IAxisXTitle;
-  public font: IFontAxis;
-  public bounds: IBounds;
+  public title: IAxisYTitle | IAxisXTitle | TEmptyObject;
+  public font: IFontAxis | TEmptyObject;
+  public bounds: IBounds | TEmptyObject;
   public points: Array<IPointX | IPointY>;
   public sortNames: TSort;
   public uniqueNames: Array<string | number>;
   public uniqueValues: Array<number>;
   public readonly gapTopAxisX: number;
   public readonly gapRightAxisY: number;
-  public themeForPoint: IAxisThemePoint;
-  public themeForTitle: IAxisThemeTitle;
+  public themeForPoint: IAxisThemePoint | TEmptyObject;
+  public themeForTitle: IAxisThemeTitle | TEmptyObject;
 
   constructor(
     ctx,
@@ -28,12 +33,12 @@ class Axis implements IAxisClass {
   ) {
     // Контекст элемента canvas
     this.ctx = ctx;
-    // Содержит данные заголовка оси
-    this.title = title as any;
+    // Содержит входные данные заголовка оси
+    this.title = title;
     // Стили шрифта оси
-    this.font = font as any;
+    this.font = font;
     // Содержит границы холста
-    this.bounds = bounds as any;
+    this.bounds = bounds;
     // Содержит данные точек, находящихся на этой оси
     this.points = [];
     // Тип сортировки точек ("less-more" или "more-less")
@@ -47,9 +52,9 @@ class Axis implements IAxisClass {
     // Дистанция между осью ординат и графиком
     this.gapRightAxisY = 10;
     // Стили для точек от темы
-    this.themeForPoint = themeForPoint as any;
+    this.themeForPoint = themeForPoint;
     // Стили для заголовка от темы
-    this.themeForTitle = themeForTitle as any;
+    this.themeForTitle = themeForTitle;
   }
 
   /**

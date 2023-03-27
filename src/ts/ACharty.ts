@@ -7,22 +7,36 @@ import AxisX from "./ui/axis/AxisX";
 import Legend from "./ui/Legend";
 import BlockInfo from "./ui/elements/BlockInfo";
 
-import "./interfaces/index";
-import { TTypeChart, } from "./types/index";
+import { TEmptyObject, TTypeChart, } from "./types/index";
+
+import { IAchartyClass, IAchartyConstructor, } from "./interfaces/acharty";
+import { IAxisPoints, IAxisThemePoint, IAxisThemeTitle, } from "./interfaces/axis";
+import { IAxisX, IAxisXClass, IPointX, } from "./interfaces/axisX";
+import { IAxisY, IAxisYClass, IPointY, } from "./interfaces/axisY";
+import { IBlockInfo, IBlockInfoThemeGroup, IBlockInfoThemeTitle, IBlockInfoThemeWindow, } from "./interfaces/blockInfo";
+import { IBounds, IGapsForLegend, IGapsForXTitle, IGapsForYTitle, IPadding, IPos, } from "./interfaces/global";
+import { ICanvasClass, } from "./interfaces/canvas";
+import { ICap, } from "./interfaces/cap";
+import { IChartClass, IChartTitle, IChartTitleWithSizeAndPos, } from "./interfaces/chart";
+import { IData, } from "./interfaces/data";
+import { IGrid, IGridClass, } from "./interfaces/grid";
+import { IItemLegend, ILegend, ILegendClass, ILegendData, ILegendGapsLegend, } from "./interfaces/legend";
+import { ILine, ILineTheme, } from "./interfaces/line";
+import { ITheme, } from "./interfaces/utils";
 
 class ACharty implements IAchartyClass {
 	public selectorCanvas: string;
 	public background?: string | Array<string>;
-	public title?: IChartTitle;
-	public theme?: ITheme;
+	public title?: IChartTitle | TEmptyObject;
+	public theme?: ITheme | TEmptyObject;
 	public data: IData;
-	public axisY?: IAxisY;
-	public axisX?: IAxisX;
-	public line?: ILine;
+	public axisY?: IAxisY | TEmptyObject;
+	public axisX?: IAxisX | TEmptyObject;
+	public line?: ILine | TEmptyObject;
 	public cap?: ICap;
-	public grid?: IGrid;
-	public legend?: ILegend;
-	public blockInfo?: IBlockInfo;
+	public grid?: IGrid | TEmptyObject;
+	public legend?: ILegend | TEmptyObject;
+	public blockInfo?: IBlockInfo | TEmptyObject;
 	public type?: TTypeChart;
 	public padding?: IPadding | number;
 	public hideGroups?: Array<string>;
@@ -51,31 +65,31 @@ class ACharty implements IAchartyClass {
 		// Внутренние отступы
 		this.padding = padding;
 		// Данные колпачка
-		this.cap = cap as any;
+		this.cap = cap;
 		// Данные легенды
-		this.legend = legend as any;
+		this.legend = legend;
 		// Тип диаграммы
 		this.type = type || "line";
 		// Данные задней сетки диаграммы
-		this.grid = grid as any;
+		this.grid = grid;
 		// Данные линии
-		this.line = line as any;
+		this.line = line;
 		// Данные оси ординат
-		this.axisY = axisY as any;
+		this.axisY = axisY;
 		// Данные оси абсцисс
-		this.axisX = axisX as any;
+		this.axisX = axisX;
 		// Данные заголовка диаграммы
-		this.title = title as any;
+		this.title = title;
 		// Задний фон диаграммы
 		this.background = background;
 		// Селектор холста
 		this.selectorCanvas = selectorCanvas;
 		// Данные окна с информацией об активной группе
-		this.blockInfo = blockInfo as any;
+		this.blockInfo = blockInfo;
 		// Данные групп
-		this.data = data as any;
+		this.data = data;
 		// Стили темы
-		this.theme = theme as any;
+		this.theme = theme;
 		// Содержит названия скрытых групп
 		this.hideGroups = [];
 	}
@@ -119,7 +133,7 @@ class ACharty implements IAchartyClass {
 	private _setLegend(canvas: ICanvasClass, chart: IChartClass): ILegendClass {
 		const { font, circle, gaps: legendGaps, maxCount, } = this.legend;
 		const showLegend = Boolean(Object.keys(this.legend).length);
-		const gaps: IGapsForLegend = chart.getGapsForLegend(this.axisY, chart.title as IChartTitleWithSizeAndPos);
+		const gaps: IGapsForLegend = chart.getGapsForLegend(this.axisY, chart.titleData as IChartTitleWithSizeAndPos);
 
 		return new Legend(
 			showLegend,
@@ -147,10 +161,9 @@ class ACharty implements IAchartyClass {
 	 */
 	private _setAxisYTitle(canvas: ICanvasClass, chart: IChartClass, legend: ILegendClass): IAxisYClass {
 		const { step, editValue, title, font, sort, } = this.axisY;
-		const { legend: legendGaps = {}, } = (this.legend.gaps || {}) as any;
 		const themeForTitle: IAxisThemeTitle = (this.theme.axis || {}).title;
 		const themeForPoint: IAxisThemePoint = (this.theme.axis || {}).point;
-		const gaps: IGapsForYTitle = chart.getGapsForYTitle(chart.title as IChartTitleWithSizeAndPos, { ...legend, gapBottom: (legendGaps.bottom || 0), }, this.axisX);
+		const gaps: IGapsForYTitle = chart.getGapsForYTitle(chart.titleData, { ...legend, ...this.legend, } as ILegendData, this.axisX as IAxisX);
 
 		return new AxisY(
 			editValue,
@@ -208,7 +221,7 @@ class ACharty implements IAchartyClass {
 	 * @returns {IAxisPoints} Данные всех осевых точек
 	 */
 	private _setPoints(axisY: IAxisYClass, axisX: IAxisXClass, legend: ILegendClass, chart: IChartClass): IAxisPoints {
-		const y: IAxisYClass = axisY.drawPoints(chart.getGapsForYPoints(axisY, axisX, chart.title, { ...this.legend, ...legend, }));
+		const y: IAxisYClass = axisY.drawPoints(chart.getGapsForYPoints(axisY, axisX, chart.titleData, { ...this.legend, ...legend, } as ILegendData));
 		const x: IAxisXClass = axisX.drawPoints(chart.getGapsForXPoints(axisY, axisX));
 
 		return {
