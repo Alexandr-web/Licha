@@ -193,7 +193,7 @@ export interface IChartClass {
 	titleData: IChartTitleData;
 
 	getBounds(): IBounds;
-	drawTitle(): IChartClass | this;
+	drawTitle(): IChartClass;
 	getGapsForYPoints(axisY: IAxisYClass, axisX: IAxisXClass, chartTitle: IChartTitle, legend: ILegendData): IGapsForYPoints;
 	getGapsForXPoints(axisY: IAxisYClass, axisX: IAxisXClass): IGapsForXPoints;
 	getGapsForYTitle(chartTitle: IChartTitleData, legend: ILegendData, axisX: IAxisX): IGapsForYTitle;
