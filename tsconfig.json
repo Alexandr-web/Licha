@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "lib": [
+      "es6",
+      "dom",
+      "es2020",
+      "dom.iterable"
+    ],
+    "target": "es2015"
+  }
+}

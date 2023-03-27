@@ -77,7 +77,6 @@ Parameters passed to the ACharty class constructor
 * [grid](https://github.com/Alexandr-web/aCharty#grid)
 * [legend](https://github.com/Alexandr-web/aCharty#legend)
 * [blockInfo](https://github.com/Alexandr-web/aCharty#blockinfo)
-* [breakpoints](https://github.com/Alexandr-web/aCharty#breakpoints)
 * [data](https://github.com/Alexandr-web/aCharty#data)
 * [theme](https://github.com/Alexandr-web/aCharty#theme)
 
@@ -193,12 +192,6 @@ Parameters passed to the ACharty class constructor
 
     ##### Accepted parameters
 
-    * ##### `text`
-
-      | Description  | Example | Type |
-      | ------------- | ------------- | ------------- |
-      | Accepts title text | `axisY: { font: { text: "Title Y", } }`  | `string` |
-
     * ##### `size`
     
       | Description  | Example | Type |
@@ -216,12 +209,18 @@ Parameters passed to the ACharty class constructor
       | Description  | Example | Type |
       | ------------- | ------------- | ------------- |
       | Accepts font weight | `axisY: { font: { weight: 400, }, }`  | `number` |
+
+    * ##### `showText`
+  
+      | Description  | Example | Type |
+      | ------------- | ------------- | ------------- |
+      | The rule under which you can control the state of the text on the axis | `axisY: { font: { showText: false, }, }`  | `boolean` |
   
   * #### `step`
 
     | Description  | Example | Type |
     | ------------- | ------------- | ------------- |
-    | Step with which values will be drawn on the y-axis | `axisY: { step: 3, }`  | `number` |
+    | Step with which values will be drawn on the y-axis (Default 3) | `axisY: { step: 4, }`  | `number` |
 
   * #### `editValue`
 
@@ -296,11 +295,11 @@ Parameters passed to the ACharty class constructor
 
     ##### Accepted parameters
 
-    * ##### `text`
-
+    * ##### `showText`
+  
       | Description  | Example | Type |
       | ------------- | ------------- | ------------- |
-      | Accepts title text | `axisX: { font: { text: "Title X", } }`  | `string` |
+      | The rule under which you can control the state of the text on the axis | `axisX: { font: { showText: false, }, }`  | `boolean` |
 
     * ##### `size`
     
@@ -326,11 +325,11 @@ Parameters passed to the ACharty class constructor
     | ------------- | ------------- | ------------- |
     | Contains the names of the x-axis points that will not be drawn on the chart | `axisX: { ignoreNames: (name, index) => index % 2 === 0, }` or `axisX: { ignoreNames: ["Monday", "Sunday"], }` | `function: boolean \| array<string>` |
 
-  * #### `editNames`
+  * #### `editName`
 
     | Description  | Example | Type |
     | ------------- | ------------- | ------------- |
-    | A method that allows you to change the appearance of a value along the x-axis | `axisX: { editNames: (name) => new Date(name).toLocaleString(), }`  | `function: string` |
+    | A method that allows you to change the appearance of a value along the x-axis | `axisX: { editName: (name) => new Date(name).toLocaleString(), }`  | `function: string` |
 
   * #### `sort`
 
@@ -771,20 +770,6 @@ Parameters passed to the ACharty class constructor
       | Description  | Example | Type |
       | ------------- | ------------- | ------------- |
       | Left padding size | `blockInfo: { padding: { left: 25, } }`  | `number` |
-
-### `breakpoints`
-
-| Description  | Example | Type |
-| ------------- | ------------- | ------------- |
-| Points that change chart data if they match the screen | ```breakpoints: { "800": function() { ... }, }```  | `object` |
-
-#### Accepted parameters
-
-  * #### Point
-
-    | Description  | Example | Type |
-    | ------------- | ------------- | ------------- |
-    | A key whose name will mean the width of the screen, and the value is a function that will work when the screen width is equal to the name of the key | `breakpoints: { "1000": function () { this.background = "white"; this.update(); } }`  | `function` |
 
 ### `data`
 
