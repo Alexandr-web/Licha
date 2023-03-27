@@ -2,24 +2,22 @@ import Axis from "./Axis";
 import Text from "../elements/Text";
 import getTextSize from "../../helpers/getTextSize";
 import getStyleByIndex from "../../helpers/getStyleByIndex";
-import {
-	IAxisXClass, IBounds, IAxisXTitleData,
-	IData, IGapsForXTitle, ILine,
-	ILineTheme, IPos, ISize,
-	ISpecialFontData,
-	IAxisXTitle,
-	IGapsForXPoints,
-	IDataAtItemData,
-} from "../../interfaces/index";
+
 import { TEmptyObject, } from "../../types/index";
+
+import { ISpecialFontData, } from "../../interfaces/text";
+import { IAxisXTitle, IAxisXClass, IAxisXTitleData, } from "../../interfaces/axisX";
+import { IBounds, IGapsForXTitle, ISize, IPos, IGapsForXPoints, } from "../../interfaces/global";
+import { IData, IDataAtItemData, } from "../../interfaces/data";
+import { ILine, ILineTheme, } from "../../interfaces/line";
 
 class AxisX extends Axis implements IAxisXClass {
 	public themeForLine: ILineTheme;
-	public ignoreNames: Array<string> | ((name: string, index: number) => boolean);
+	public ignoreNames?: Array<string> | ((name: string, index: number) => boolean);
 	public data: IData;
-	public editName: (name: string | number) => string;
+	public editName?: (name: string | number) => string;
 	public line: ILine;
-	public titleData: IAxisXTitleData;
+	public titleData?: IAxisXTitleData;
 
 	constructor(
 		ctx,

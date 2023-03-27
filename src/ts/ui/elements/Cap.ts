@@ -3,7 +3,9 @@ import Rect from "./Rect";
 import Circle from "./Circle";
 
 import { TCapType, } from "../../types/index";
-import { ICapClass, IStroke, } from "../../interfaces/index";
+
+import { IStroke, } from "../../interfaces/global";
+import { ICapClass, } from "../../interfaces/cap";
 
 class Cap extends Element implements ICapClass {
 	public format: TCapType;

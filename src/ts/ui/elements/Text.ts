@@ -1,6 +1,7 @@
 import Element from "./Element";
 
-import { ISize, ISpecialFontData, ITextClass, } from "../../interfaces/index";
+import { ISize, } from "../../interfaces/global";
+import { ISpecialFontData, ITextClass, } from "../../interfaces/text";
 
 class Text extends Element implements ITextClass {
 	public font: ISpecialFontData;

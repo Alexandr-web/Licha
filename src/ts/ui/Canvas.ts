@@ -1,6 +1,7 @@
 import Rect from "./elements/Rect";
 
-import { ICanvasClass, ICanvasTheme, IDefaultStylesForCanvasElement, ISize, } from "../interfaces/index";
+import { ISize, } from "../interfaces/global";
+import { ICanvasClass, ICanvasTheme, IDefaultStylesForCanvasElement, } from "../interfaces/canvas";
 
 class Canvas implements ICanvasClass {
 	public selector: string;

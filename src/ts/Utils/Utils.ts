@@ -2,7 +2,9 @@ import light from "./themes/light";
 import dark from "./themes/dark";
 import colors from "./colors";
 
-import { IColors, ITheme, IThemes, IUtilsClass, } from "../interfaces/index";
+import { TEmptyObject, } from "../types/index";
+
+import { IColors, ITheme, IThemes, IUtilsClass, } from "../interfaces/utils";
 
 class Utils implements IUtilsClass {
 	public themes: IThemes;
@@ -21,7 +23,7 @@ class Utils implements IUtilsClass {
 	 * @param {TTypeTheme} type Тип темы ("dark" или "light")
 	 * @returns {ITheme | {}} Данные темы
 	 */
-	public getTheme(num = 0, type = "dark"): ITheme | object {
+	public getTheme(num = 0, type = "dark"): ITheme | TEmptyObject {
 		if (!this.themes[type] || !this.themes[type][num]) {
 			return {};
 		}

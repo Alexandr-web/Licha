@@ -1,7 +1,8 @@
 import Element from "./Element";
 import setGradientColor from "../../helpers/setGradientColor";
 
-import { ICustomFigureClass, ILineTo, } from "../../interfaces/index";
+import { ILineTo, } from "../../interfaces/line";
+import { ICustomFigureClass, } from "../../interfaces/customFigure";
 
 class CustomFigure extends Element implements ICustomFigureClass {
 	public lineTo: Array<ILineTo>;

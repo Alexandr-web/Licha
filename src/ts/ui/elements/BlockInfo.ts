@@ -6,15 +6,12 @@ import quickSort from "../../helpers/quickSort";
 import Line from "./Line";
 import CustomFigure from "./CustomFigure";
 import getStyleByIndex from "../../helpers/getStyleByIndex";
-import {
-	IActiveElement, IBlockInfoClass, IBlockInfoElementWithSize,
-	IBlockInfoElementWithSizeGroup, IBlockInfoThemeGroup, IBlockInfoThemeTitle,
-	IBlockInfoThemeWindow, IBounds, IData,
-	IGroupsBlockInfo, ILinePos, ILineTheme,
-	IPadding, IPos, ISize,
-	ISpecialFontData, ITitleBlockInfo, ITitleBlockInfoGaps,
-	ITriangleData,
-} from "../../interfaces/index";
+
+import { ISpecialFontData, } from "../../interfaces/text";
+import { IActiveElement, ITitleBlockInfo, ITitleBlockInfoGaps, ITriangleData, IBlockInfoClass, IBlockInfoElementWithSize, IBlockInfoElementWithSizeGroup, IBlockInfoThemeGroup, IBlockInfoThemeTitle, IBlockInfoThemeWindow, IGroupsBlockInfo, } from "../../interfaces/blockInfo";
+import { ILinePos, ILineTheme, } from "../../interfaces/line";
+import { IPadding, IPos, ISize, IBounds, } from "../../interfaces/global";
+import { IData, } from "../../interfaces/data";
 
 class BlockInfo extends Element implements IBlockInfoClass {
 	public editValue: (value: number) => string;
@@ -22,10 +19,10 @@ class BlockInfo extends Element implements IBlockInfoClass {
 	public data: IData;
 	public bounds: IBounds;
 	public elements: Array<IActiveElement>;
-	public padding: IPadding;
+	public padding?: IPadding;
 	public titleData: ITitleBlockInfo;
 	public groupsData: IGroupsBlockInfo;
-	public groupLineWidth: number;
+	public readonly groupLineWidth: number;
 	public triangleSizes: ISize;
 	public title: string;
 	public themeForWindow: IBlockInfoThemeWindow;

@@ -1,4 +1,4 @@
-import { ITextData, } from "../interfaces/index";
+import { ISpecialFontData, } from "../interfaces/text";
 import Text from "../ui/elements/Text";
 
 /**
@@ -10,7 +10,7 @@ import Text from "../ui/elements/Text";
  * @return {object} Размеры текста ({ width, height })
  */
 export default (size: number, weight: number, text: string, ctx: CanvasRenderingContext2D) => {
-	const font: ITextData = {
+	const font: ISpecialFontData = {
 		size,
 		str: `${weight} ${size}px Arial, sans-serif`,
 		text,

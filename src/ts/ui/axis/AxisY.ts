@@ -5,19 +5,18 @@ import getRange from "../../helpers/getRange";
 import quickSort from "../../helpers/quickSort";
 
 import { TEmptyObject, TSort, } from "../../types/index";
-import {
-	IAxisYClass, IAxisYTitle, IAxisYTitleData,
-	IBounds, IData, IGapsForYPoints,
-	IGapsForYTitle, IPointY, IPos,
-	ISize, ISpecialFontData,
-} from "../../interfaces/index";
+
+import { ISpecialFontData, } from "../../interfaces/text";
+import { IBounds, ISize, IGapsForYPoints, IGapsForYTitle, IPos, } from "../../interfaces/global";
+import { IData, } from "../../interfaces/data";
+import { IAxisYClass, IAxisYTitle, IAxisYTitleData, IPointY, } from "../../interfaces/axisY";
 
 class AxisY extends Axis implements IAxisYClass {
-	public step: number;
-	public editValue: (value: number) => string | number;
+	public step?: number;
+	public editValue?: (value: number) => string | number;
 	public data: IData;
-	public sortValues: TSort;
-	public titleData: IAxisYTitleData;
+	public sortValues?: TSort;
+	public titleData?: IAxisYTitleData;
 
 	constructor(
 		editValue,

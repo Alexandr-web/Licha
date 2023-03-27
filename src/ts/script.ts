@@ -1,11 +1,11 @@
 import ACharty from "./ACharty";
 import Utils from "./Utils/Utils";
 
-import { IAchartyClass, } from "./interfaces/index";
+import { IAchartyClass, } from "./interfaces/acharty";
 
 const utils: Utils = new Utils();
 const chart: IAchartyClass = new ACharty({
-	theme: utils.getTheme(18),
+	theme: utils.getTheme(15),
 	padding: { left: 20, },
 	selectorCanvas: "canvas",
 	title: {

@@ -4,15 +4,11 @@ import getTextSize from "../helpers/getTextSize";
 import getStyleByIndex from "../helpers/getStyleByIndex";
 import Line from "./elements/Line";
 
-import {
-	IBounds, ICircleLegend, IColumnLegend, IData,
-	IFont, IGapsForLegend, IGapsForTextLegend, IItemLegend, ILegendClass,
-	ILegendGaps, ILegendGapsGroup, ILegendTheme, ILine,
-	ILineTheme,
-	IPos,
-	ISize,
-	ISpecialFontData,
-} from "../interfaces/index";
+import { IBounds, ISize, IGapsForLegend, IPos, } from "../interfaces/global";
+import { IData, } from "../interfaces/data";
+import { IColumnLegend, ILegendGaps, ILegendGapsGroup, ILegendTheme, IGapsForTextLegend, ICircleLegend, IItemLegend, ILegendClass, } from "../interfaces/legend";
+import { ILine, ILineTheme, } from "../interfaces/line";
+import { IFont, ISpecialFontData, } from "../interfaces/text";
 
 class Legend implements ILegendClass {
 	public hideGroups: Array<string>;

@@ -5,13 +5,15 @@ import CustomFigure from "../elements/CustomFigure";
 import getStyleByIndex from "../../helpers/getStyleByIndex";
 
 import { TSort, } from "../../types/index";
-import {
-	ICap, ICapData, ICapTheme,
-	IChartCapStyle, IChartLineStyle, IChartStyle,
-	IData, IDataAtItemData, IGroupDataCoordinates,
-	ILine, ILineChartClass, ILineTheme,
-	IPointX, IPointY, IPos,
-} from "../../interfaces/index";
+
+import { IPointX, } from "../../interfaces/axisX";
+import { IPointY, } from "../../interfaces/axisY";
+import { ICap, ICapData, ICapTheme, } from "../../interfaces/cap";
+import { IChartCapStyle, IChartStyle, } from "../../interfaces/chart";
+import { IChartLineStyle, ILineChartClass, } from "../../interfaces/lineChart";
+import { IData, IDataAtItemData, IGroupDataCoordinates, } from "../../interfaces/data";
+import { ILine, ILineTheme, } from "../../interfaces/line";
+import { IPos, } from "../../interfaces/global";
 
 class LineChart extends Chart implements ILineChartClass {
 	public pointsX: Array<IPointX>;

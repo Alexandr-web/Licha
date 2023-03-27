@@ -8,21 +8,21 @@ import Legend from "./ui/Legend";
 import BlockInfo from "./ui/elements/BlockInfo";
 
 import { TEmptyObject, TTypeChart, } from "./types/index";
-import {
-	IAchartyClass, IAchartyConstructor, IAxisPoints, IAxisThemePoint,
-	IAxisThemeTitle, IAxisX, IAxisXClass, IAxisY,
-	IAxisYClass, IBlockInfo, IBlockInfoThemeGroup,
-	IBlockInfoThemeTitle, IBlockInfoThemeWindow, IBounds, ICanvasClass,
-	ICap, IChartClass, IChartTitle,
-	IChartTitleWithSizeAndPos, IData, IGapsForLegend,
-	IGapsForXTitle,
-	IGapsForYTitle, IGrid, IGridClass, IItemLegend, ILegend,
-	ILegendClass, ILegendData, ILegendGapsLegend, ILine, ILineTheme, IPadding,
-	IPointX,
-	IPointY,
-	IPos,
-	ITheme,
-} from "./interfaces/index";
+
+import { IAchartyClass, IAchartyConstructor, } from "./interfaces/acharty";
+import { IAxisPoints, IAxisThemePoint, IAxisThemeTitle, } from "./interfaces/axis";
+import { IAxisX, IAxisXClass, IPointX, } from "./interfaces/axisX";
+import { IAxisY, IAxisYClass, IPointY, } from "./interfaces/axisY";
+import { IBlockInfo, IBlockInfoThemeGroup, IBlockInfoThemeTitle, IBlockInfoThemeWindow, } from "./interfaces/blockInfo";
+import { IBounds, IGapsForLegend, IGapsForXTitle, IGapsForYTitle, IPadding, IPos, } from "./interfaces/global";
+import { ICanvasClass, } from "./interfaces/canvas";
+import { ICap, } from "./interfaces/cap";
+import { IChartClass, IChartTitle, IChartTitleWithSizeAndPos, } from "./interfaces/chart";
+import { IData, } from "./interfaces/data";
+import { IGrid, IGridClass, } from "./interfaces/grid";
+import { IItemLegend, ILegend, ILegendClass, ILegendData, ILegendGapsLegend, } from "./interfaces/legend";
+import { ILine, ILineTheme, } from "./interfaces/line";
+import { ITheme, } from "./interfaces/utils";
 
 class ACharty implements IAchartyClass {
 	public selectorCanvas: string;
@@ -133,7 +133,7 @@ class ACharty implements IAchartyClass {
 	private _setLegend(canvas: ICanvasClass, chart: IChartClass): ILegendClass {
 		const { font, circle, gaps: legendGaps, maxCount, } = this.legend;
 		const showLegend = Boolean(Object.keys(this.legend).length);
-		const gaps: IGapsForLegend = chart.getGapsForLegend(this.axisY, chart.title as IChartTitleWithSizeAndPos);
+		const gaps: IGapsForLegend = chart.getGapsForLegend(this.axisY, chart.titleData as IChartTitleWithSizeAndPos);
 
 		return new Legend(
 			showLegend,
@@ -161,10 +161,9 @@ class ACharty implements IAchartyClass {
 	 */
 	private _setAxisYTitle(canvas: ICanvasClass, chart: IChartClass, legend: ILegendClass): IAxisYClass {
 		const { step, editValue, title, font, sort, } = this.axisY;
-		const { legend: legendGaps = {} as ILegendGapsLegend, } = (this.legend.gaps || {});
 		const themeForTitle: IAxisThemeTitle = (this.theme.axis || {}).title;
 		const themeForPoint: IAxisThemePoint = (this.theme.axis || {}).point;
-		const gaps: IGapsForYTitle = chart.getGapsForYTitle(chart.titleData, { ...legend, gapBottom: (legendGaps.bottom || 0), }, this.axisX as IAxisX);
+		const gaps: IGapsForYTitle = chart.getGapsForYTitle(chart.titleData, { ...legend, ...this.legend, } as ILegendData, this.axisX as IAxisX);
 
 		return new AxisY(
 			editValue,

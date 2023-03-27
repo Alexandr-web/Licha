@@ -1,7 +1,8 @@
 import Element from "./Element";
 import setGradientColor from "../../helpers/setGradientColor";
 
-import { ICircleClass, IStroke, } from "../../interfaces/index";
+import { IStroke, } from "../../interfaces/global";
+import { ICircleClass, } from "../../interfaces/circle";
 
 class Circle extends Element implements ICircleClass {
 	public radius: number;

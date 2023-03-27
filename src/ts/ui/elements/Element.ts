@@ -1,4 +1,4 @@
-import { IElementClass, } from "../../interfaces/index";
+import { IElementClass, } from "../../interfaces/element";
 
 class Element implements IElementClass {
 	public ctx: CanvasRenderingContext2D;

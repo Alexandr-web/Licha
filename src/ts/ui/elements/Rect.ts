@@ -1,7 +1,8 @@
 import Element from "./Element";
 import setGradientColor from "../../helpers/setGradientColor";
 
-import { IRectClass, IStroke, } from "../../interfaces/index";
+import { IStroke, } from "../../interfaces/global";
+import { IRectClass, } from "../../interfaces/rect";
 
 class Rect extends Element implements IRectClass {
 	public width: number;

@@ -2,26 +2,14 @@ import Text from "../elements/Text";
 import getTextSize from "../../helpers/getTextSize";
 
 import { TEmptyObject, TTypeChart, } from "../../types/index";
-import {
-	IAxisX,
-	IAxisXClass,
-	IAxisXTitle,
-	IAxisXTitleData,
-	IAxisY,
-	IAxisYClass,
-	IAxisYTitleData,
-	IBounds,
-	IChartClass, IChartTitle, IChartTitleData, IChartTitleWithSizeAndPos, IData,
-	IFontWithText,
-	IGapsForLegend,
-	IGapsForXPoints,
-	IGapsForXTitle,
-	IGapsForYPoints,
-	IGapsForYTitle,
-	ILegendData,
-	ILegendGaps,
-	IPadding, IPos, ISize, ISpecialFontData, ITitleTheme,
-} from "../../interfaces/index";
+
+import { IAxisX, IAxisXClass, IAxisXTitle, IAxisXTitleData, } from "../../interfaces/axisX";
+import { IAxisY, IAxisYClass, IAxisYTitleData, } from "../../interfaces/axisY";
+import { IBounds, IPadding, IPos, ISize, IGapsForLegend, IGapsForXPoints, IGapsForXTitle, IGapsForYPoints, IGapsForYTitle, } from "../../interfaces/global";
+import { IChartClass, IChartTitle, IChartTitleData, IChartTitleWithSizeAndPos, ITitleTheme, } from "../../interfaces/chart";
+import { IData, } from "../../interfaces/data";
+import { IFontWithText, ISpecialFontData, } from "../../interfaces/text";
+import { ILegendData, ILegendGaps, } from "../../interfaces/legend";
 
 class Chart implements IChartClass {
 	public padding: IPadding;
@@ -208,7 +196,7 @@ class Chart implements IChartClass {
 	/**
 	 * Определяет отступы для заголовка оси ординат
 	 * @param {IChartTitleWithSizeAndPos} chartTitle Содержит данные заголовка диаграммы
-	 * @param {ILegendDataGaps} legend Содержит данные легенды
+	 * @param {ILegendData} legend Содержит данные легенды
 	 * @param {IAxisX} axisX Содержит данные оси абсцисс
 	 * @returns {IGapsForYTitle} Отступы ({ top, bottom })
 	 */

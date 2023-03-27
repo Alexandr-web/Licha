@@ -2,7 +2,10 @@ import CustomFigure from "./elements/CustomFigure";
 import Line from "./elements/Line";
 
 import { TGridFormat, } from "../types/index";
-import { IGridClass, IGridTheme, ILineGrid, IPointX, IPointY, } from "../interfaces/index";
+
+import { IPointX, } from "../interfaces/axisX";
+import { IPointY, } from "../interfaces/axisY";
+import { IGridClass, ILineGrid, IGridTheme, } from "../interfaces/grid";
 
 class Grid implements IGridClass {
 	public maxPointYWidth: number;
@@ -12,10 +15,10 @@ class Grid implements IGridClass {
 	public pointsX: Array<IPointX>;
 	public showPointsX: boolean;
 	public showPointsY: boolean;
-	public line: ILineGrid;
-	public format: TGridFormat;
+	public line?: ILineGrid;
+	public format?: TGridFormat;
 	public theme: IGridTheme;
-	public background: string;
+	public background?: string;
 	public distanceBetweenLineAndPoint: number;
 
 	constructor(

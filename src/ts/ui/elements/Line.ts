@@ -1,7 +1,7 @@
 import Element from "./Element";
 import setGradientColor from "../../helpers/setGradientColor";
 
-import { ILineClass, ILineTo, } from "../../interfaces/index";
+import { ILineClass, ILineTo, } from "../../interfaces/line";
 
 class Line extends Element implements ILineClass {
 	public lineTo: Array<ILineTo>;
