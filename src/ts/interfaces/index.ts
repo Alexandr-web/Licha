@@ -108,7 +108,7 @@ export interface ILineClass {
 	draw(): void;
 }
 
-export interface ILineTo extends IPos { };
+export interface ILineTo extends IPos { }
 
 export interface IElementClass {
 	ctx: CanvasRenderingContext2D;
@@ -193,7 +193,7 @@ export interface IChartClass {
 	titleData: IChartTitleData;
 
 	getBounds(): IBounds;
-	drawTitle(): IChartClass;
+	drawTitle(): IChartClass | this;
 	getGapsForYPoints(axisY: IAxisYClass, axisX: IAxisXClass, chartTitle: IChartTitle, legend: ILegendData): IGapsForYPoints;
 	getGapsForXPoints(axisY: IAxisYClass, axisX: IAxisXClass): IGapsForXPoints;
 	getGapsForYTitle(chartTitle: IChartTitleData, legend: ILegendData, axisX: IAxisX): IGapsForYTitle;
@@ -273,7 +273,7 @@ export interface IGroupDataCoordinates extends IPos {
 	value: number;
 }
 
-interface IAxisPoints {
+export interface IAxisPoints {
 	pointsY: Array<IPointY>;
 	pointsX: Array<IPointX>;
 }
@@ -283,7 +283,7 @@ export interface IThemes {
 	light: Array<ITheme>;
 }
 
-interface ITextData {
+export interface ITextData {
 	size: number;
 	str: string;
 	text: string;
@@ -466,10 +466,23 @@ export interface IGrid {
 	line: ILineGrid;
 }
 
+export interface ILegendGapsCircle {
+	right: number;
+}
+
+export interface ILegendGapsGroup {
+	right: number;
+	bottom: number;
+}
+
+export interface ILegendGapsLegend {
+	bottom: number;
+}
+
 export interface ILegendGaps {
-	circle: { right: number };
-	group: TGroup;
-	legend: { bottom: number, };
+	circle: ILegendGapsCircle;
+	group: ILegendGapsGroup;
+	legend: ILegendGapsLegend;
 }
 
 export interface ICircleLegend {

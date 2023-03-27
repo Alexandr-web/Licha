@@ -111,7 +111,7 @@ class Chart implements IChartClass {
 	 * Рисует заголовок диаграммы
 	 * @returns {IChartClass}
 	 */
-	public drawTitle(): IChartClass {
+	public drawTitle(): IChartClass | this {
 		if (!Object.keys(this.title).length) {
 			return this;
 		}

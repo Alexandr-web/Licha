@@ -1,7 +1,7 @@
 import ACharty from "./ACharty";
 import Utils from "./Utils/Utils";
 
-import "./interfaces/index";
+import { IAchartyClass, } from "./interfaces/index";
 
 const utils: Utils = new Utils();
 const chart: IAchartyClass = new ACharty({

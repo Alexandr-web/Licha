@@ -8,7 +8,21 @@ import Legend from "./ui/Legend";
 import BlockInfo from "./ui/elements/BlockInfo";
 
 import { TEmptyObject, TTypeChart, } from "./types/index";
-import { IAchartyClass, IAchartyConstructor, IChartTitleData, IAxisThemePoint, IAxisThemeTitle, IAxisX, IAxisY, IAxisYClass, IBlockInfo, ICanvasClass, ICap, IChartClass, IChartTitle, IChartTitleWithSizeAndPos, IData, IGapsForLegend, IGapsForYTitle, IGrid, ILegend, ILegendClass, ILine, IPadding, ITheme, } from "./interfaces/index";
+import {
+	IAchartyClass, IAchartyConstructor, IAxisPoints, IAxisThemePoint,
+	IAxisThemeTitle, IAxisX, IAxisXClass, IAxisY,
+	IAxisYClass, IBlockInfo, IBlockInfoThemeGroup,
+	IBlockInfoThemeTitle, IBlockInfoThemeWindow, IBounds, ICanvasClass,
+	ICap, IChartClass, IChartTitle,
+	IChartTitleWithSizeAndPos, IData, IGapsForLegend,
+	IGapsForXTitle,
+	IGapsForYTitle, IGrid, IGridClass, IItemLegend, ILegend,
+	ILegendClass, ILegendData, ILegendGapsLegend, ILine, ILineTheme, IPadding,
+	IPointX,
+	IPointY,
+	IPos,
+	ITheme,
+} from "./interfaces/index";
 
 class ACharty implements IAchartyClass {
 	public selectorCanvas: string;
@@ -147,10 +161,10 @@ class ACharty implements IAchartyClass {
 	 */
 	private _setAxisYTitle(canvas: ICanvasClass, chart: IChartClass, legend: ILegendClass): IAxisYClass {
 		const { step, editValue, title, font, sort, } = this.axisY;
-		const { legend: legendGaps = {}, } = (this.legend.gaps || {}) as any;
+		const { legend: legendGaps = {} as ILegendGapsLegend, } = (this.legend.gaps || {});
 		const themeForTitle: IAxisThemeTitle = (this.theme.axis || {}).title;
 		const themeForPoint: IAxisThemePoint = (this.theme.axis || {}).point;
-		const gaps: IGapsForYTitle = chart.getGapsForYTitle(chart.titleData, { ...legend, gapBottom: (legendGaps.bottom || 0), }, this.axisX);
+		const gaps: IGapsForYTitle = chart.getGapsForYTitle(chart.titleData, { ...legend, gapBottom: (legendGaps.bottom || 0), }, this.axisX as IAxisX);
 
 		return new AxisY(
 			editValue,
@@ -208,7 +222,7 @@ class ACharty implements IAchartyClass {
 	 * @returns {IAxisPoints} Данные всех осевых точек
 	 */
 	private _setPoints(axisY: IAxisYClass, axisX: IAxisXClass, legend: ILegendClass, chart: IChartClass): IAxisPoints {
-		const y: IAxisYClass = axisY.drawPoints(chart.getGapsForYPoints(axisY, axisX, chart.titleData, { ...this.legend, ...legend, }));
+		const y: IAxisYClass = axisY.drawPoints(chart.getGapsForYPoints(axisY, axisX, chart.titleData, { ...this.legend, ...legend, } as ILegendData));
 		const x: IAxisXClass = axisX.drawPoints(chart.getGapsForXPoints(axisY, axisX));
 
 		return {

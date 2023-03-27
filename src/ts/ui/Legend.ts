@@ -7,14 +7,12 @@ import Line from "./elements/Line";
 import {
 	IBounds, ICircleLegend, IColumnLegend, IData,
 	IFont, IGapsForLegend, IGapsForTextLegend, IItemLegend, ILegendClass,
-	ILegendGaps, ILegendTheme, ILine,
+	ILegendGaps, ILegendGapsGroup, ILegendTheme, ILine,
 	ILineTheme,
 	IPos,
 	ISize,
 	ISpecialFontData,
-}
-	from "../interfaces/index";
-import { TGroup } from "../types/index";
+} from "../interfaces/index";
 
 class Legend implements ILegendClass {
 	public hideGroups: Array<string>;
@@ -108,7 +106,7 @@ class Legend implements ILegendClass {
 			return 0;
 		}
 
-		const { group: gapsGroup = {} as TGroup, circle: gapsCircle = { right: null, }, } = this.legendGaps;
+		const { group: gapsGroup = {} as ILegendGapsGroup, circle: gapsCircle = { right: null, }, } = this.legendGaps;
 		const { radius, } = this.circle;
 
 		return groups.reduce((acc: number, { width, }) => {
@@ -129,7 +127,7 @@ class Legend implements ILegendClass {
 			return 0;
 		}
 
-		const { group: gapsGroup = {} as TGroup, } = this.legendGaps;
+		const { group: gapsGroup = {} as ILegendGapsGroup, } = this.legendGaps;
 		const { height, } = groups[0];
 
 		return (gapsGroup.bottom || 0) + height;

@@ -171,7 +171,7 @@ class AxisX extends Axis implements IAxisXClass {
 
 				groupData.map((groupDataItem: IDataAtItemData) => {
 					if (groupDataItem.name === name) {
-						const groupLine: ILine = (this.data[group].line || {}) as any;
+						const groupLine: ILine | TEmptyObject = (this.data[group].line || {});
 
 						this.points.push({
 							onScreen: !ignoreNames.includes(name),
