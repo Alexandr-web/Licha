@@ -50,7 +50,7 @@ class Chart implements IChartClass {
 		// Тип диаграммы
 		this.type = type;
 		// Заголовок диаграммы
-		this.title = title;
+		this.title = title || {};
 		// Внутренние отступы диаграммы
 		this.padding = padding;
 		// Внутренний отступ по умолчанию
