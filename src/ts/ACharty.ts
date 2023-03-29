@@ -6,6 +6,7 @@ import Grid from "./ui/Grid";
 import AxisX from "./ui/axis/AxisX";
 import Legend from "./ui/Legend";
 import BlockInfo from "./ui/elements/BlockInfo";
+import Utils from "./Utils/Utils";
 
 import { TEmptyObject, TTypeChart, } from "./types/index";
 
@@ -20,7 +21,7 @@ import { ICap, } from "./interfaces/cap";
 import { IChartClass, IChartTitle, IChartTitleWithSizeAndPos, } from "./interfaces/chart";
 import { IData, } from "./interfaces/data";
 import { IGrid, IGridClass, } from "./interfaces/grid";
-import { IItemLegend, ILegend, ILegendClass, ILegendData, ILegendGapsLegend, } from "./interfaces/legend";
+import { IItemLegend, ILegend, ILegendClass, ILegendData, } from "./interfaces/legend";
 import { ILine, ILineTheme, } from "./interfaces/line";
 import { ITheme, } from "./interfaces/utils";
 
@@ -481,4 +482,4 @@ class ACharty implements IAchartyClass {
 	}
 }
 
-export default ACharty;
+export { Utils, ACharty, };

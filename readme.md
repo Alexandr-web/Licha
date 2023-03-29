@@ -16,6 +16,8 @@
 How to use this tool?
 
 ```js
+import { ACharty, Utils, } from "./dist/ACharty.js";
+
 const utils = new Utils();
 const chart = new ACharty({
   theme: utils.getTheme(20),

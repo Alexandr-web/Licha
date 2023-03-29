@@ -2,4 +2,3 @@ node_modules
 src/scss
 src/*.html
 src/ts/script.ts
-dist
