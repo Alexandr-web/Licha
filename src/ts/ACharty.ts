@@ -45,8 +45,8 @@ class ACharty implements IAchartyClass {
 	constructor({
 		selectorCanvas,
 		background,
-		title,
 		type,
+		title = {},
 		theme = {},
 		data = {},
 		axisY = {},
@@ -105,7 +105,7 @@ class ACharty implements IAchartyClass {
 	}
 
 	/**
-	 * Рисует заголовок диагрыммы
+	 * Рисует заголовок диаграммы
 	 * @param {IChartClass} canvas Экземпляр класса Canvas
 	 * @private
 	 */
@@ -322,8 +322,8 @@ class ACharty implements IAchartyClass {
 					x,
 					mousePos.y,
 					background,
-					padding,
 					canvas.ctx,
+					padding,
 					themeForWindow,
 					themeForLine,
 					themeForTitle,

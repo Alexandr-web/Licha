@@ -8,7 +8,7 @@ export interface IChartLineStyle {
     color: string;
     dotted: boolean;
     stepped: boolean;
-    fill: string | Array<string>;
+    fill: Array<string | string[]> | string;
 }
 
 export interface ILineChartClass {

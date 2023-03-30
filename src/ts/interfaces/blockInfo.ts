@@ -3,6 +3,7 @@ import { IPos, IPadding, ISize, IBounds, } from "./global";
 import { ILineTo, ILineTheme, } from "./line";
 import { IFont, } from "./text";
 import { IData, } from "./data";
+import { TEmptyObject, } from "../types/index";
 
 export interface IBlockInfoThemeWindow {
     color: Array<string> | string;
@@ -78,11 +79,11 @@ export interface IBlockInfoClass {
     data: IData;
     bounds: IBounds;
     elements: Array<IActiveElement>;
-    padding?: IPadding;
+    padding?: IPadding | TEmptyObject;
     titleData: ITitleBlockInfo;
     groupsData: IGroupsBlockInfo;
     readonly groupLineWidth: number;
-    triangleSizes: ISize;
+    readonly triangleSizes: ISize;
     title: string;
     themeForWindow: IBlockInfoThemeWindow;
     themeForLine: ILineTheme;
