@@ -73,7 +73,7 @@ class LineChart extends Chart implements ILineChartClass {
 		const dataKeys: Array<string> = Object.keys(this.data);
 		const idx: number = dataKeys.indexOf(group);
 		const themeColorForLine = getStyleByIndex(idx, this.themeForLine.color) as string;
-		const themeFillForLine: Array<string> | string = getStyleByIndex(idx, this.themeForLine.fill);
+		const themeFillForLine: Array<string | string[]> | string = getStyleByIndex(idx, this.themeForLine.fill);
 		const themeColorForCap = getStyleByIndex(idx, this.themeForCaps.color) as string;
 		const themeStrokeColorForCap = getStyleByIndex(idx, this.themeForCaps.strokeColor) as string;
 		const lineStyle: IChartLineStyle = {
@@ -127,7 +127,7 @@ class LineChart extends Chart implements ILineChartClass {
 	 * @param {string} group Группа, в которой находится линия
 	 * @private
 	 */
-	private _setFillGroupChart(coordinates: Array<IGroupDataCoordinates>, fill: string | Array<string>, stepped: boolean, group: string): void {
+	private _setFillGroupChart(coordinates: Array<IGroupDataCoordinates>, fill: Array<string | string[]> | string, stepped: boolean, group: string): void {
 		const firstPoint: IGroupDataCoordinates = coordinates[0];
 		const lastPoint: IGroupDataCoordinates = coordinates[coordinates.length - 1];
 		const yItemsOnScreen: Array<IPointY> = this.pointsY.filter(({ onScreen, }) => onScreen);
