@@ -4,7 +4,7 @@ class Element implements IElementClass {
 	public ctx: CanvasRenderingContext2D;
 	public x?: number;
 	public y?: number;
-	public color?: string;
+	public color?: string | Array<string>;
 	public rotateDeg?: number;
 	public opacity?: number;
 

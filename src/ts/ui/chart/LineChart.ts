@@ -210,12 +210,12 @@ class LineChart extends Chart implements ILineChartClass {
 	 */
 	private _drawLinesAndCaps(coordinates: Array<IGroupDataCoordinates>, gData: Array<IDataAtItemData>, gLine: ILine, gCap: ICap, group: string): void {
 		const { lineStyle, capStyle, themeStrokeColorForCap, } = this._getStyles(gLine, gCap, group);
+		// Содержит следующие позиции линии
+		const lineToArray: Array<IPos> = [];
 
 		// Находим координаты для линий
 		coordinates.map(({ value, name, x, y, }, index: number) => {
 			const nextDataItem: IDataAtItemData | undefined = gData[index + 1];
-			// Содержит следующие позиции линии
-			const lineToArray: Array<IPos> = [];
 
 			if (nextDataItem) {
 				// Элемент для следующей позиции Y линии
@@ -239,21 +239,8 @@ class LineChart extends Chart implements ILineChartClass {
 				}
 			}
 
-			// Рисуем линию
-			if (lineStyle.color) {
-				new Line(
-					x,
-					y,
-					lineStyle.color,
-					this.ctx,
-					lineToArray,
-					lineStyle.width,
-					lineStyle.dotted
-				).draw();
-			}
-
 			// Рисуем колпачок
-			if (capStyle.color) {
+			if (Object.keys(capStyle).length) {
 				new Cap(
 					capStyle.size,
 					capStyle.format === "circle" ? x : x - capStyle.size / 2,
@@ -283,6 +270,19 @@ class LineChart extends Chart implements ILineChartClass {
 				});
 			}
 		});
+
+		// Рисуем линию
+		if (Object.keys(lineStyle).length) {
+			new Line(
+				coordinates[0].x,
+				coordinates[0].y,
+				lineStyle.color,
+				this.ctx,
+				lineToArray,
+				lineStyle.width,
+				lineStyle.dotted
+			).draw();
+		}
 	}
 
 	/**
