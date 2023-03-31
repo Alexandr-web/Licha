@@ -103,9 +103,9 @@ class Grid implements IGridClass {
 	/**
 	 * Рисует горизонтальные линии
 	 * @private
-	 * @param {string} color Цвет линии
+	 * @param {string | Array<string>} color Цвет линии
 	 */
-	private _drawHorizontalLines(color: string): void {
+	private _drawHorizontalLines(color: string | Array<string>): void {
 		const { width, dotted, stretch, } = this.line;
 		const pointsYOnScreen: Array<IPointY> = this._getPointsOnScreen(this.pointsY);
 		const { x: startX, } = this.pointsX[0];
@@ -129,9 +129,9 @@ class Grid implements IGridClass {
 	/**
 	 * Рисует вертикальные линии
 	 * @private
-	 * @param {string} color Цвет линии
+	 * @param {string | Array<string>} color Цвет линии
 	 */
-	private _drawVerticalLines(color: string): void {
+	private _drawVerticalLines(color: string | Array<string>): void {
 		const { width, dotted, stretch, } = this.line;
 		const axisYOnScreen = this._getPointsOnScreen(this.pointsY) as Array<IPointY>;
 		const axisXOnScreen = this._getPointsOnScreen(this.pointsX) as Array<IPointX>;
@@ -165,7 +165,7 @@ class Grid implements IGridClass {
 
 		this._drawBackground();
 
-		const colorLine: string = this.line.color || this.theme.color;
+		const colorLine: string | Array<string> = this.line.color || this.theme.color;
 
 		switch (this.format) {
 			case "horizontal":

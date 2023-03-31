@@ -10,7 +10,7 @@ export interface ILineTheme {
 export interface ILine {
     fill?: Array<string> | string;
     stepped?: boolean;
-    color?: string;
+    color?: string | Array<string>;
     dotted?: boolean;
     width?: number;
 }

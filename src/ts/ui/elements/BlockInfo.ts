@@ -5,13 +5,13 @@ import Text from "./Text";
 import quickSort from "../../helpers/quickSort";
 import Line from "./Line";
 import CustomFigure from "./CustomFigure";
-import getStyleByIndex from "../../helpers/getStyleByIndex";
 
 import { ISpecialFontData, } from "../../interfaces/text";
 import { IActiveElement, ITitleBlockInfo, ITitleBlockInfoGaps, ITriangleData, IBlockInfoClass, IBlockInfoElementWithSize, IBlockInfoElementWithSizeGroup, IBlockInfoThemeGroup, IBlockInfoThemeTitle, IBlockInfoThemeWindow, IGroupsBlockInfo, } from "../../interfaces/blockInfo";
 import { ILinePos, ILineTheme, } from "../../interfaces/line";
 import { IPadding, IPos, ISize, IBounds, } from "../../interfaces/global";
 import { IData, } from "../../interfaces/data";
+import { TEmptyObject, } from "../../types/index";
 
 class BlockInfo extends Element implements IBlockInfoClass {
 	public editValue: (value: number) => string;
@@ -19,11 +19,11 @@ class BlockInfo extends Element implements IBlockInfoClass {
 	public data: IData;
 	public bounds: IBounds;
 	public elements: Array<IActiveElement>;
-	public padding?: IPadding;
+	public padding?: IPadding | TEmptyObject;
 	public titleData: ITitleBlockInfo;
 	public groupsData: IGroupsBlockInfo;
 	public readonly groupLineWidth: number;
-	public triangleSizes: ISize;
+	public readonly triangleSizes: ISize;
 	public title: string;
 	public themeForWindow: IBlockInfoThemeWindow;
 	public themeForLine: ILineTheme;
@@ -41,8 +41,8 @@ class BlockInfo extends Element implements IBlockInfoClass {
 		x,
 		y,
 		color,
-		padding,
 		ctx,
+		padding = {},
 		themeForWindow = {} as IBlockInfoThemeWindow,
 		themeForLine = {},
 		themeForTitle = {} as IBlockInfoThemeTitle,
@@ -106,14 +106,11 @@ class BlockInfo extends Element implements IBlockInfoClass {
 			const groupName = `${group}: ${correctGroupValue}`;
 			const { font: groupsFont, } = this.groupsData;
 			const { font: titleFont, } = this.titleData;
-			const dataKeys: Array<string> = Object.keys(this.data);
-			const idx: number = dataKeys.indexOf(group);
-			const themeColor = getStyleByIndex(idx, this.themeForLine.color) as string;
 
 			return {
 				group: {
 					name: groupName,
-					color: color || themeColor,
+					color,
 					...getTextSize(groupsFont.size, groupsFont.weight, groupName, this.ctx),
 				},
 				value: {
@@ -169,12 +166,12 @@ class BlockInfo extends Element implements IBlockInfoClass {
 			const linePos: ILinePos = {
 				moveTo: {
 					x: posX,
-					y: groupPos.y,
+					y: groupPos.y - group.height,
 				},
 				lineTo: [
 					{
 						x: posX,
-						y: groupPos.y - group.height,
+						y: groupPos.y,
 					}
 				],
 			};

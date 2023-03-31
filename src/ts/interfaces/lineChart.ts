@@ -5,10 +5,10 @@ import { ICap, ICapTheme, ICapData, } from "./cap";
 
 export interface IChartLineStyle {
     width: number;
-    color: string;
+    color: string | Array<string>;
     dotted: boolean;
     stepped: boolean;
-    fill: string | Array<string>;
+    fill: Array<string | string[]> | string;
 }
 
 export interface ILineChartClass {
