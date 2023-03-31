@@ -5,7 +5,6 @@ import Text from "./Text";
 import quickSort from "../../helpers/quickSort";
 import Line from "./Line";
 import CustomFigure from "./CustomFigure";
-import getStyleByIndex from "../../helpers/getStyleByIndex";
 
 import { ISpecialFontData, } from "../../interfaces/text";
 import { IActiveElement, ITitleBlockInfo, ITitleBlockInfoGaps, ITriangleData, IBlockInfoClass, IBlockInfoElementWithSize, IBlockInfoElementWithSizeGroup, IBlockInfoThemeGroup, IBlockInfoThemeTitle, IBlockInfoThemeWindow, IGroupsBlockInfo, } from "../../interfaces/blockInfo";
@@ -107,10 +106,7 @@ class BlockInfo extends Element implements IBlockInfoClass {
 			const groupName = `${group}: ${correctGroupValue}`;
 			const { font: groupsFont, } = this.groupsData;
 			const { font: titleFont, } = this.titleData;
-			// const dataKeys: Array<string> = Object.keys(this.data);
-			// const idx: number = dataKeys.indexOf(group);
-			// const themeColor = getStyleByIndex(idx, this.themeForLine.color) as string;
-			// console.log(group, color, themeColor);
+
 			return {
 				group: {
 					name: groupName,
@@ -170,12 +166,12 @@ class BlockInfo extends Element implements IBlockInfoClass {
 			const linePos: ILinePos = {
 				moveTo: {
 					x: posX,
-					y: groupPos.y,
+					y: groupPos.y - group.height,
 				},
 				lineTo: [
 					{
 						x: posX,
-						y: groupPos.y - group.height,
+						y: groupPos.y,
 					}
 				],
 			};

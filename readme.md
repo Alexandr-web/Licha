@@ -409,7 +409,7 @@ Parameters passed to the ACharty class constructor
   
     | Description  | Example | Type |
     | ------------- | ------------- | ------------- |
-    | Line color | `line: { color: "red", }`  | `string` |
+    | Line color | `line: { color: "red", }`  | `array<string> \| string` |
   
   * #### `dotted`
   
@@ -513,7 +513,7 @@ Parameters passed to the ACharty class constructor
     
         | Description  | Example | Type |
         | ------------- | ------------- | ------------- |
-        | Gird line color | `grid: { line: { color: "grey", } }`  | `string` |
+        | Gird line color | `grid: { line: { color: "grey", } }`  | `array<string> \| string` |
 
       * ##### `dotted`
     
@@ -887,7 +887,7 @@ Parameters passed to the ACharty class constructor
         
           | Description  | Example | Type |
           | ------------- | ------------- | ------------- |
-          | Line color | `data: { "My group": { line: { color: "white", }, }, }`  | `string` |
+          | Line color | `data: { "My group": { line: { color: "white", }, }, }`  | `array<string> \| string` |
         
         * ###### `dotted`
         
