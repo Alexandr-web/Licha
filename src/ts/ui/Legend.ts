@@ -27,14 +27,14 @@ class Legend implements ILegendClass {
 	public items: Array<IItemLegend>;
 
 	constructor(
-		showLegend,
-		data,
-		line,
-		ctx,
-		bounds,
-		font,
-		circle,
-		hideGroups,
+		showLegend: boolean,
+		data: IData,
+		line: ILine,
+		ctx: CanvasRenderingContext2D,
+		bounds: IBounds,
+		font: IFont,
+		circle: ICircleLegend,
+		hideGroups: Array<string>,
 		legendGaps = {} as ILegendGaps,
 		maxCount = 4,
 		themeForText = {} as ILegendTheme,

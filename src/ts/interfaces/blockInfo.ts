@@ -53,7 +53,7 @@ export interface ITitleBlockInfo {
 }
 
 export interface IBlockInfo {
-    background?: string;
+    background?: string | Array<string>;
     groups: IGroupsBlockInfo;
     title: ITitleBlockInfo;
     padding?: IPadding;

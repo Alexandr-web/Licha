@@ -3,13 +3,13 @@ import Line from "./elements/Line";
 
 import { TGridFormat, } from "../types/index";
 
-import { IPointX, } from "../interfaces/axisX";
-import { IPointY, } from "../interfaces/axisY";
+import { IPointX, IAxisXClass, } from "../interfaces/axisX";
+import { IPointY, IAxisYClass, } from "../interfaces/axisY";
 import { IGridClass, ILineGrid, IGridTheme, } from "../interfaces/grid";
 
 class Grid implements IGridClass {
 	public maxPointYWidth: number;
-	public names: Array<string>;
+	public names: Array<string | number>;
 	public ctx: CanvasRenderingContext2D;
 	public pointsY: Array<IPointY>;
 	public pointsX: Array<IPointX>;
@@ -18,17 +18,17 @@ class Grid implements IGridClass {
 	public line?: ILineGrid;
 	public format?: TGridFormat;
 	public theme: IGridTheme;
-	public background?: string;
+	public background?: string | Array<string>;
 	public distanceBetweenLineAndPoint: number;
 
 	constructor(
-		ctx,
-		names,
-		maxPointYWidth,
-		background,
-		axisY,
-		axisX,
-		format,
+		ctx: CanvasRenderingContext2D,
+		names: Array<string | number>,
+		maxPointYWidth: number,
+		axisY: IAxisYClass,
+		axisX: IAxisXClass,
+		background?: string | Array<string>,
+		format?: TGridFormat,
 		line = {} as ILineGrid,
 		theme = {} as IGridTheme
 	) {
@@ -39,9 +39,9 @@ class Grid implements IGridClass {
 		// Контекст элемента canvas
 		this.ctx = ctx;
 		// Содержит точки оси ординат
-		this.pointsY = axisY.points;
+		this.pointsY = axisY.points as Array<IPointY>;
 		// Содержит точки оси абсцисс
-		this.pointsX = axisX.points;
+		this.pointsX = axisX.points as Array<IPointX>;
 		// Правило, говорящее, что точки на оси абсцисс будут отрисованы
 		this.showPointsX = axisX.font.showText;
 		// Правило, говорящее, что точки на оси ординат будут отрисованы

@@ -92,7 +92,7 @@ Parameters passed to the ACharty class constructor
 
 | Description  | Example | Type |
 | ------------- | ------------- | ------------- |
-| Accepts the chart background | `background: "#ffffff"`  | `string` |
+| Accepts the chart background | `background: "#ffffff"`  | `array<string> \| string` |
 
 ### `padding`
 
@@ -441,7 +441,7 @@ Parameters passed to the ACharty class constructor
   
     | Description  | Example | Type |
     | ------------- | ------------- | ------------- |
-    | Line cap | `cap: { color: "red", }`  | `string` |
+    | Line cap | `cap: { color: "red", }`  | `array<string> \| string` |
   
   * #### `size`
   
@@ -481,7 +481,7 @@ Parameters passed to the ACharty class constructor
 
     | Description  | Example | Type |
     | ------------- | ------------- | ------------- |
-    | Accepts background grid | `grid: { background: "#c2c2c2", }`  | `string` |
+    | Accepts background grid | `grid: { background: "#c2c2c2", }`  | `array<string> \| string` |
 
   * #### `format`
 
@@ -637,7 +637,7 @@ Parameters passed to the ACharty class constructor
 
     | Description  | Example | Type |
     | ------------- | ------------- | ------------- |
-    | Window background | `blockInfo: { background: "black", }`  | `string` |
+    | Window background | `blockInfo: { background: "black", }`  | `array<string> \| string` |
 
   * #### `groups`
 
@@ -835,7 +835,7 @@ Parameters passed to the ACharty class constructor
         
         | Description  | Example | Type |
         | ------------- | ------------- | ------------- |
-        | Line cap | `data: { "My group": { cap: { color: "red" }, }, }`  | `string` |
+        | Line cap | `data: { "My group": { cap: { color: "red" }, }, }`  | `array<string> \| string` |
         
       * ###### `size`
         

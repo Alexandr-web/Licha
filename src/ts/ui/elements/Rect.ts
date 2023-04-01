@@ -1,5 +1,4 @@
 import Element from "./Element";
-import setGradientColor from "../../helpers/setGradientColor";
 
 import { IStroke, } from "../../interfaces/global";
 import { IRectClass, } from "../../interfaces/rect";
@@ -26,25 +25,13 @@ class Rect extends Element implements IRectClass {
 		this.stroke = stroke || {};
 	}
 
-	/**
-	 * Устанавливает цвет
-	 * @private
-	 */
-	private _setColor(): void {
-		if (Array.isArray(this.color)) {
-			setGradientColor(this.color, this.startY, this.endY, "fillStyle", this.ctx);
-		} else if (typeof this.color === "string") {
-			this.ctx.fillStyle = this.color;
-		}
-	}
-
 	// Рисует прямоугольник
 	public draw(): void {
 		this.ctx.beginPath();
 		this.ctx.setLineDash([0, 0]);
 		this.ctx.globalAlpha = this.opacity;
 
-		this._setColor();
+		this.setColor(this.startY, this.endY, "fillStyle");
 
 		this.ctx.fillRect(this.x, this.y, this.width, this.height);
 

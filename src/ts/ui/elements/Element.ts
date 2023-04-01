@@ -1,4 +1,5 @@
 import { IElementClass, } from "../../interfaces/element";
+import setGradientColor from "../../helpers/setGradientColor";
 
 class Element implements IElementClass {
 	public ctx: CanvasRenderingContext2D;
@@ -21,6 +22,24 @@ class Element implements IElementClass {
 		this.rotateDeg = rotateDeg;
 		// Прозрачность
 		this.opacity = opacity;
+	}
+
+	/**
+	 * Устанавливает цвет
+	 * @param {number} startY Начальная позиция по оси ординат
+	 * @param {number} endY Конечная позиция по оси ординат
+	 * @param {string} propertyToStyle Свойство, к которому нужно применять градиент
+	 * @param {number} startX Начальная позиция по оси абсцисс
+	 * @param {number} endX Конечная позиция по оси абсцисс
+	 */
+	public setColor(startY, endY, propertyToStyle, startX = 0, endX = 0): void {
+		if (Array.isArray(this.color) && this.color.length > 1) {
+			setGradientColor(this.color, startY, endY, propertyToStyle, this.ctx, startX, endX);
+		} else if (Array.isArray(this.color) && this.color.length === 1) {
+			this.ctx[propertyToStyle] = this.color[0];
+		} else if (typeof this.color === "string") {
+			this.ctx[propertyToStyle] = this.color;
+		}
 	}
 }
 

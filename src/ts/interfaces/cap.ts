@@ -18,6 +18,7 @@ export interface ICapData extends IPos {
     name: string | number;
     format: "square" | "circle";
     size: number;
+    color: string | Array<string>;
     stroke: {
         width?: number,
         color?: string,

@@ -1,6 +1,7 @@
 import getRange from "./getRange";
 
 /**
+ * Устанавливает градиент фигуре/линии
  * @param {Array<string>} color Содержит цвета
  * @param {number} startY Начальная позиция по оси ординат
  * @param {number} endY Конечная позиция по оси ординат

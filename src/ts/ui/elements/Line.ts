@@ -1,5 +1,4 @@
 import Element from "./Element";
-import setGradientColor from "../../helpers/setGradientColor";
 
 import { ILineClass, ILineTo, } from "../../interfaces/line";
 
@@ -19,20 +18,6 @@ class Line extends Element implements ILineClass {
 		this.dotted = dotted;
 	}
 
-	/**
-	 * Устанавливает цвет
-	 * @param {number} x Позиция по оси абсцисс
-	 * @param {number} y Позиция по оси ординат
-	 * @private
-	 */
-	private _setColor(x: number, y: number): void {
-		if (Array.isArray(this.color)) {
-			setGradientColor(this.color, this.y, y, "strokeStyle", this.ctx, this.x, x);
-		} else if (typeof this.color === "string") {
-			this.ctx.strokeStyle = this.color;
-		}
-	}
-
 	// Рисует линию
 	public draw(): void {
 		this.ctx.setLineDash(this.dotted ? [10, 20] : [0, 0]);
@@ -45,7 +30,7 @@ class Line extends Element implements ILineClass {
 		this.ctx.lineCap = "round";
 
 		this.lineTo.map(({ x, y, }) => {
-			this._setColor(x, y);
+			this.setColor(this.y, y, "strokeStyle", this.x, x);
 			this.ctx.lineTo(x, y);
 		});
 
