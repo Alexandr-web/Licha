@@ -1,5 +1,4 @@
 import Element from "./Element";
-import setGradientColor from "../../helpers/setGradientColor";
 
 import { ILineTo, } from "../../interfaces/line";
 import { ICustomFigureClass, } from "../../interfaces/customFigure";
@@ -20,18 +19,6 @@ class CustomFigure extends Element implements ICustomFigureClass {
 		this.endY = endY;
 	}
 
-	/**
-	 * Устанавливает цвет
-	 * @private
-	 */
-	private _setColor(): void {
-		if (Array.isArray(this.color)) {
-			setGradientColor(this.color, this.startY, this.endY, "fillStyle", this.ctx);
-		} else if (typeof this.color === "string") {
-			this.ctx.fillStyle = this.color;
-		}
-	}
-
 	// Рисует фигуру
 	public draw(): void {
 		this.ctx.beginPath();
@@ -40,7 +27,7 @@ class CustomFigure extends Element implements ICustomFigureClass {
 		this.ctx.lineCap = "round";
 
 		this.lineTo.map(({ x, y, }) => this.ctx.lineTo(x, y));
-		this._setColor();
+		this.setColor(this.startY, this.endY, "fillStyle");
 		this.ctx.fill();
 	}
 }

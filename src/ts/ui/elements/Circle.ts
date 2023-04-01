@@ -1,5 +1,4 @@
 import Element from "./Element";
-import setGradientColor from "../../helpers/setGradientColor";
 
 import { IStroke, } from "../../interfaces/global";
 import { ICircleClass, } from "../../interfaces/circle";
@@ -23,25 +22,13 @@ class Circle extends Element implements ICircleClass {
 		this.endY = endY;
 	}
 
-	/**
-	 * Устанавливает цвет
-	 * @private
-	 */
-	private _setColor(): void {
-		if (Array.isArray(this.color)) {
-			setGradientColor(this.color, this.startY, this.endY, "fillStyle", this.ctx);
-		} else if (typeof this.color === "string") {
-			this.ctx.fillStyle = this.color;
-		}
-	}
-
 	// Рисует круг
 	public draw(): void {
 		this.ctx.beginPath();
 		this.ctx.setLineDash([0, 0]);
 		this.ctx.globalAlpha = this.opacity;
 
-		this._setColor();
+		this.setColor(this.startY, this.endY, "fillStyle");
 
 		this.ctx.arc(this.x, this.y, this.radius, Math.PI * 2, 0);
 		this.ctx.fill();

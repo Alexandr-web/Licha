@@ -58,8 +58,9 @@ class Canvas implements ICanvasClass {
 	 */
 	private _setBackground(): void {
 		const background: string = this.background || this.theme.background;
+		const { width, height, } = this.getSizes();
 
-		new Rect(0, 0, background, this.ctx, this.getSizes().width, this.getSizes().height).draw();
+		new Rect(0, 0, background, this.ctx, width, height, 0, height).draw();
 	}
 
 	/**

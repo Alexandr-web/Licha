@@ -239,50 +239,49 @@ class LineChart extends Chart implements ILineChartClass {
 				}
 			}
 
-			// Рисуем колпачок
-			if (Object.keys(capStyle).length) {
-				new Cap(
-					capStyle.size,
-					capStyle.format === "circle" ? x : x - capStyle.size / 2,
-					capStyle.format === "circle" ? y : y - capStyle.size / 2,
-					capStyle.color,
-					capStyle.format,
-					this.ctx,
-					1,
-					capStyle.format === "circle" ? y - capStyle.size : y - capStyle.size / 2,
-					capStyle.format === "circle" ? y + capStyle.size : y + capStyle.size / 2,
-					0,
-					{
-						width: capStyle.stroke.width || 1,
-						color: capStyle.stroke.color || themeStrokeColorForCap,
-					}
-				).draw();
-
-				this.caps.push({
-					group,
-					value,
-					name,
-					x: capStyle.format === "circle" ? x : x - capStyle.size / 2,
-					y: capStyle.format === "circle" ? y : y - capStyle.size / 2,
-					stroke: capStyle.stroke,
-					format: capStyle.format,
-					size: capStyle.size,
-				});
-			}
+			this.caps.push({
+				group,
+				value,
+				name,
+				x: capStyle.format === "circle" ? x : x - capStyle.size / 2,
+				y: capStyle.format === "circle" ? y : y - capStyle.size / 2,
+				stroke: capStyle.stroke,
+				format: capStyle.format,
+				size: capStyle.size,
+				color: capStyle.color,
+			});
 		});
 
 		// Рисуем линию
-		if (Object.keys(lineStyle).length) {
-			new Line(
-				coordinates[0].x,
-				coordinates[0].y,
-				lineStyle.color,
+		new Line(
+			coordinates[0].x,
+			coordinates[0].y,
+			lineStyle.color,
+			this.ctx,
+			lineToArray,
+			lineStyle.width,
+			lineStyle.dotted
+		).draw();
+
+		// Рисуем колпачок
+		this.caps.map(({ x, y, color, format, size, stroke, }) => {
+			new Cap(
+				size,
+				x,
+				y,
+				color,
+				format,
 				this.ctx,
-				lineToArray,
-				lineStyle.width,
-				lineStyle.dotted
+				1,
+				format === "circle" ? y - size : y - size / 2,
+				format === "circle" ? y + size : y + size / 2,
+				0,
+				{
+					width: stroke.width || 1,
+					color: stroke.color || themeStrokeColorForCap,
+				}
 			).draw();
-		}
+		});
 	}
 
 	/**

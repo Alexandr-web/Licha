@@ -246,9 +246,9 @@ class ACharty implements IAchartyClass {
 			canvas.ctx,
 			axisY.getAxesData(this.data).names,
 			axisY.getMaxTextWidthAtYAxis(),
-			background,
 			axisY,
 			axisX,
+			background,
 			format,
 			line,
 			this.theme.grid

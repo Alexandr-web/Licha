@@ -11,14 +11,14 @@ export interface ILineGrid extends Omit<ILine, "fill" & "stepped"> {
 }
 
 export interface IGrid {
-    background?: string;
+    background?: string | Array<string>;
     format?: "vertical" | "horizontal" | "default";
     line?: ILineGrid;
 }
 
 export interface IGridClass {
     maxPointYWidth: number;
-    names: Array<string>;
+    names: Array<string | number>;
     ctx: CanvasRenderingContext2D;
     pointsY: Array<IPointY>;
     pointsX: Array<IPointX>;
@@ -27,7 +27,7 @@ export interface IGridClass {
     line?: ILineGrid;
     format?: "vertical" | "horizontal" | "default";
     theme: IGridTheme;
-    background?: string;
+    background?: string | Array<string>;
     distanceBetweenLineAndPoint: number;
 
     init(): IGridClass;
