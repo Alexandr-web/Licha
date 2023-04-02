@@ -203,17 +203,17 @@ class Chart implements IChartClass {
 	 * @returns {IGapsForYTitle} Отступы ({ top, bottom })
 	 */
 	public getGapsForYTitle(chartTitle: IChartTitleData, legend: ILegendData, axisX: IAxisX): IGapsForYTitle {
-		const { height: chartTitleHeight = 0, gapBottom: chartTitleGapBottom = 0, } = chartTitle;
+		const { y: chartTitleY = 0, gapBottom: chartTitleGapBottom = 0, } = chartTitle;
 		const { totalHeight: legendHeight, gaps: gapsLegend = {} as ILegendGaps, } = legend;
 		const { title: axisXTitle = {} as IAxisXTitle, } = axisX;
-		const { font: axisXTitleFont = {} as IFontWithText, gapTop = 0, } = axisXTitle;
+		const { font: axisXTitleFont = {} as IFontWithText, gapTop: axisXTitleGapTop = 0, } = axisXTitle;
 		const { size, weight = 600, text, } = axisXTitleFont;
 		const axisXTitleHeight: number = getTextSize(size, weight, text, this.ctx).height || 0;
 		const legendGapBottom: number = (gapsLegend.legend || {}).bottom || 0;
 
 		return {
-			top: chartTitleHeight + legendGapBottom + chartTitleGapBottom + legendHeight,
-			bottom: axisXTitleHeight + gapTop,
+			top: chartTitleY + legendGapBottom + chartTitleGapBottom + legendHeight,
+			bottom: axisXTitleHeight + axisXTitleGapTop,
 		};
 	}
 

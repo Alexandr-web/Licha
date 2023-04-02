@@ -10,8 +10,6 @@ export interface ISpecialFontData {
 
 export interface ITextClass {
     font: ISpecialFontData;
-    gapY?: number;
-    gapX?: number;
 
     getSizes(str: string): ISize;
     draw(): void;

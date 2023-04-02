@@ -86,9 +86,10 @@ class AxisY extends Axis implements IAxisYClass {
 			color,
 			str: `${weight} ${size}px Arial, sans-serif`,
 		};
+
 		const sizes: ISize = getTextSize(size, weight, text, this.ctx);
 		const startY: number = bounds.vertical.start + sizes.width / 2 + (gaps.top || 0);
-		const endY: number = bounds.vertical.end - (gaps.bottom || 0) - sizes.width / 2;
+		const endY: number = bounds.vertical.end - (gaps.bottom || 0);
 		const posTitle: IPos = {
 			x: bounds.horizontal.start + sizes.height,
 			y: startY + (endY - startY) / 2,
@@ -100,9 +101,7 @@ class AxisY extends Axis implements IAxisYClass {
 			posTitle.x,
 			posTitle.y,
 			null,
-			-90 * (Math.PI / 180),
-			1,
-			sizes.height / 2
+			-90 * (Math.PI / 180)
 		).draw();
 
 		this.titleData = {
