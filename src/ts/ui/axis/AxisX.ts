@@ -3,35 +3,37 @@ import Text from "../elements/Text";
 import getTextSize from "../../helpers/getTextSize";
 import getStyleByIndex from "../../helpers/getStyleByIndex";
 
-import { TEmptyObject, } from "../../types/index";
+import { TEmptyObject, TSort, } from "../../types/index";
 
 import { ISpecialFontData, } from "../../interfaces/text";
 import { IAxisXTitle, IAxisXClass, IAxisXTitleData, } from "../../interfaces/axisX";
 import { IBounds, IGapsForXTitle, ISize, IPos, IGapsForXPoints, } from "../../interfaces/global";
 import { IData, IDataAtItemData, } from "../../interfaces/data";
 import { ILine, ILineTheme, } from "../../interfaces/line";
+import { IAxisYTitle, } from "../../interfaces/axisY";
+import { IAxisThemePoint, IAxisThemeTitle, IFontAxis, } from "../../interfaces/axis";
 
 class AxisX extends Axis implements IAxisXClass {
-	public themeForLine: ILineTheme;
-	public ignoreNames?: Array<string> | ((name: string, index: number) => boolean);
+	public themeForLine: ILineTheme | TEmptyObject;
+	public ignoreNames?: Array<string | number> | ((name: string, index: number) => boolean);
 	public data: IData;
 	public editName?: (name: string | number) => string;
 	public line: ILine;
 	public titleData?: IAxisXTitleData;
 
 	constructor(
-		ctx,
-		data,
-		line,
-		title,
-		bounds,
-		font,
-		editName,
-		sortNames,
-		themeForTitle,
-		themeForPoint,
-		ignoreNames,
-		themeForLine = {}
+		ctx: CanvasRenderingContext2D,
+		data: IData,
+		line: ILine,
+		title: IAxisYTitle | IAxisXTitle | TEmptyObject,
+		bounds: IBounds,
+		font: IFontAxis | TEmptyObject,
+		editName: (name: string | number) => string,
+		sortNames: TSort,
+		themeForTitle: IAxisThemeTitle | TEmptyObject,
+		themeForPoint: IAxisThemePoint | TEmptyObject,
+		ignoreNames: Array<string | number> | ((name: string, index: number) => boolean),
+		themeForLine: ILineTheme | TEmptyObject = {}
 	) {
 		super(ctx, sortNames, themeForPoint, themeForTitle, title, bounds, font);
 

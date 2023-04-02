@@ -10,7 +10,19 @@ class Rect extends Element implements IRectClass {
 	public endY: number;
 	public stroke?: IStroke | object;
 
-	constructor(x, y, color, ctx, width, height, startY?: number, endY?: number, rotateDeg?: number, opacity?: number, stroke?: IStroke | object) {
+	constructor(
+		x: number,
+		y: number,
+		color: string | Array<string>,
+		ctx: CanvasRenderingContext2D,
+		width: number,
+		height: number,
+		startY?: number,
+		endY?: number,
+		rotateDeg?: number,
+		opacity?: number,
+		stroke?: IStroke | object
+	) {
 		super(x, y, color, ctx, rotateDeg, opacity);
 
 		// Ширина

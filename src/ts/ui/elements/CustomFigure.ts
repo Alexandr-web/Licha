@@ -8,7 +8,16 @@ class CustomFigure extends Element implements ICustomFigureClass {
 	public startY?: number;
 	public endY?: number;
 
-	constructor(x, y, color, ctx, lineTo, startY?: number, endY?: number, opacity?: number) {
+	constructor(
+		x: number,
+		y: number,
+		color: string | Array<string>,
+		ctx: CanvasRenderingContext2D,
+		lineTo: Array<ILineTo>,
+		startY?: number,
+		endY?: number,
+		opacity?: number
+	) {
 		super(x, y, color, ctx, opacity);
 
 		// Массив, содержащий данные позиций линии

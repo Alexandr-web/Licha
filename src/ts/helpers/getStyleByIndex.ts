@@ -1,10 +1,10 @@
 /**
- * Определяет стиль для элемента с индексом, который больше длины массива стилей
- * @param {Array<string | string[]>} res Содержит стили, последний из которых будет применен к элементу
- * @param {number} idx Индекс элемента
- * @param {Array<string | string[]>} styles Содержит массив стилей
- * @returns {Array<string | string[]> | string}
- */
+* Определяет стиль для элемента с индексом, который больше длины массива стилей
+* @param {Array<string | string[]>} res Содержит стили, последний из которых будет применен к элементу
+* @param {number} idx Индекс элемента
+* @param {Array<string | string[]>} styles Содержит массив стилей
+* @returns {Array<string | string[]> | string}
+*/
 function getStyleByBigIndex(res: Array<string | string[]>, idx: number, styles: Array<string | string[]>): Array<string | string[]> | string {
   const arr: Array<string | string[]> = res;
 

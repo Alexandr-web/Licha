@@ -39,7 +39,7 @@ class ACharty implements IAchartyClass {
 	public legend?: ILegend | TEmptyObject;
 	public blockInfo?: IBlockInfo | TEmptyObject;
 	public type?: TTypeChart;
-	public padding?: IPadding | number;
+	public padding?: IPadding;
 	public hideGroups?: Array<string>;
 
 	constructor({
@@ -431,8 +431,8 @@ class ACharty implements IAchartyClass {
 					this.data,
 					this.line,
 					this.cap,
-					axisY.points,
-					axisX.points,
+					axisY.points as Array<IPointY>,
+					axisX.points as Array<IPointX>,
 					canvas.ctx,
 					width,
 					height,

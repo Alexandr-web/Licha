@@ -4,16 +4,16 @@ import Cap from "../elements/Cap";
 import CustomFigure from "../elements/CustomFigure";
 import getStyleByIndex from "../../helpers/getStyleByIndex";
 
-import { TSort, } from "../../types/index";
+import { TEmptyObject, TSort, } from "../../types/index";
 
 import { IPointX, } from "../../interfaces/axisX";
 import { IPointY, } from "../../interfaces/axisY";
 import { ICap, ICapData, ICapTheme, } from "../../interfaces/cap";
-import { IChartCapStyle, IChartStyle, } from "../../interfaces/chart";
+import { IChartCapStyle, IChartStyle, IChartTitle, } from "../../interfaces/chart";
 import { IChartLineStyle, ILineChartClass, } from "../../interfaces/lineChart";
 import { IData, IDataAtItemData, IGroupDataCoordinates, } from "../../interfaces/data";
 import { ILine, ILineTheme, } from "../../interfaces/line";
-import { IPos, } from "../../interfaces/global";
+import { IPadding, IPos, } from "../../interfaces/global";
 
 class LineChart extends Chart implements ILineChartClass {
 	public pointsX: Array<IPointX>;
@@ -26,20 +26,20 @@ class LineChart extends Chart implements ILineChartClass {
 	public themeForCaps: ICapTheme;
 
 	constructor(
-		data,
-		line,
-		cap,
-		pointsY,
-		pointsX,
-		ctx,
-		width,
-		height,
-		title,
-		padding,
-		hideGroups,
-		sortValues,
-		themeForLine = {},
-		themeForCaps = {}
+		data: IData,
+		line: ILine,
+		cap: ICap,
+		pointsY: Array<IPointY>,
+		pointsX: Array<IPointX>,
+		ctx: CanvasRenderingContext2D,
+		width: number,
+		height: number,
+		title: IChartTitle | TEmptyObject,
+		padding: IPadding,
+		hideGroups: Array<string>,
+		sortValues: TSort,
+		themeForLine: ILineTheme | TEmptyObject = {},
+		themeForCaps: ICapTheme | TEmptyObject = {}
 	) {
 		super(padding, data, ctx, width, height, "line", title, null, hideGroups);
 
@@ -73,7 +73,7 @@ class LineChart extends Chart implements ILineChartClass {
 		const dataKeys: Array<string> = Object.keys(this.data);
 		const idx: number = dataKeys.indexOf(group);
 		const themeColorForLine = getStyleByIndex(idx, this.themeForLine.color) as string;
-		const themeFillForLine: Array<string | string[]> | string = getStyleByIndex(idx, this.themeForLine.fill);
+		const themeFillForLine = getStyleByIndex(idx, this.themeForLine.fill) as Array<string> | string;
 		const themeColorForCap = getStyleByIndex(idx, this.themeForCaps.color) as string;
 		const themeStrokeColorForCap = getStyleByIndex(idx, this.themeForCaps.strokeColor) as string;
 		const lineStyle: IChartLineStyle = {
@@ -127,7 +127,7 @@ class LineChart extends Chart implements ILineChartClass {
 	 * @param {string} group Группа, в которой находится линия
 	 * @private
 	 */
-	private _setFillGroupChart(coordinates: Array<IGroupDataCoordinates>, fill: Array<string | string[]> | string, stepped: boolean, group: string): void {
+	private _setFillGroupChart(coordinates: Array<IGroupDataCoordinates>, fill: Array<string> | string, stepped: boolean, group: string): void {
 		const firstPoint: IGroupDataCoordinates = coordinates[0];
 		const lastPoint: IGroupDataCoordinates = coordinates[coordinates.length - 1];
 		const yItemsOnScreen: Array<IPointY> = this.pointsY.filter(({ onScreen, }) => onScreen);

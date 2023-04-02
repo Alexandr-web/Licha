@@ -14,7 +14,19 @@ class Cap extends Element implements ICapClass {
 	public startY?: number;
 	public endY?: number;
 
-	constructor(size, x, y, color, format, ctx, opacity?: number, startY?: number, endY?: number, rotateDeg?: number, stroke?: IStroke) {
+	constructor(
+		size: number,
+		x: number,
+		y: number,
+		color: string | Array<string>,
+		format: TCapType,
+		ctx: CanvasRenderingContext2D,
+		opacity?: number,
+		startY?: number,
+		endY?: number,
+		rotateDeg?: number,
+		stroke?: IStroke
+	) {
 		super(x, y, color, ctx, rotateDeg, opacity);
 
 		// Формат колпачка

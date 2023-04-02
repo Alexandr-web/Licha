@@ -1,7 +1,7 @@
 import CustomFigure from "./elements/CustomFigure";
 import Line from "./elements/Line";
 
-import { TGridFormat, } from "../types/index";
+import { TEmptyObject, TGridFormat, } from "../types/index";
 
 import { IPointX, IAxisXClass, } from "../interfaces/axisX";
 import { IPointY, IAxisYClass, } from "../interfaces/axisY";
@@ -15,9 +15,9 @@ class Grid implements IGridClass {
 	public pointsX: Array<IPointX>;
 	public showPointsX: boolean;
 	public showPointsY: boolean;
-	public line?: ILineGrid;
+	public line?: ILineGrid | TEmptyObject;
 	public format?: TGridFormat;
-	public theme: IGridTheme;
+	public theme: IGridTheme | TEmptyObject;
 	public background?: string | Array<string>;
 	public distanceBetweenLineAndPoint: number;
 
@@ -29,8 +29,8 @@ class Grid implements IGridClass {
 		axisX: IAxisXClass,
 		background?: string | Array<string>,
 		format?: TGridFormat,
-		line = {} as ILineGrid,
-		theme = {} as IGridTheme
+		line: ILineGrid | TEmptyObject = {},
+		theme: IGridTheme | TEmptyObject = {}
 	) {
 		// Содержит максимальную ширину текста точки оси ординат
 		this.maxPointYWidth = maxPointYWidth;

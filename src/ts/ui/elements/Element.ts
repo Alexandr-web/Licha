@@ -9,7 +9,14 @@ class Element implements IElementClass {
 	public rotateDeg?: number;
 	public opacity?: number;
 
-	constructor(x, y, color, ctx, rotateDeg = 0, opacity = 1) {
+	constructor(
+		x: number,
+		y: number,
+		color: string | Array<string>,
+		ctx: CanvasRenderingContext2D,
+		rotateDeg = 0,
+		opacity = 1
+	) {
 		// Позиция по оси абсцисс
 		this.x = x;
 		// Позиция по оси ординат

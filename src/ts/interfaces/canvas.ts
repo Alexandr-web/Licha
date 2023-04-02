@@ -1,3 +1,4 @@
+import { TEmptyObject, } from "../types/index";
 import { ISize, } from "./global";
 
 export interface IDefaultStylesForCanvasElement {
@@ -11,10 +12,10 @@ export interface ICanvasTheme {
 
 export interface ICanvasClass {
     selector: string;
-    background: string;
+    background: string | Array<string>;
     ctx: CanvasRenderingContext2D;
     canvasElement: HTMLCanvasElement;
-    theme: ICanvasTheme;
+    theme: ICanvasTheme | TEmptyObject;
 
     getSizes(): ISize;
     init(): ICanvasClass;

@@ -23,13 +23,13 @@ class Axis implements IAxisClass {
   public themeForTitle: IAxisThemeTitle | TEmptyObject;
 
   constructor(
-    ctx,
-    sortNames,
-    themeForPoint = {},
-    themeForTitle = {},
-    title = {},
-    bounds = {},
-    font = {}
+    ctx: CanvasRenderingContext2D,
+    sortNames: TSort,
+    themeForPoint: IAxisThemePoint | TEmptyObject = {},
+    themeForTitle: IAxisThemeTitle | TEmptyObject = {},
+    title: IAxisYTitle | IAxisXTitle | TEmptyObject = {},
+    bounds: IBounds | TEmptyObject = {},
+    font: IFontAxis | TEmptyObject = {}
   ) {
     // Контекст элемента canvas
     this.ctx = ctx;

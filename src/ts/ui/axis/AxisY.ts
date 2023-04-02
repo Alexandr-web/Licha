@@ -10,6 +10,7 @@ import { ISpecialFontData, } from "../../interfaces/text";
 import { IBounds, ISize, IGapsForYPoints, IGapsForYTitle, IPos, } from "../../interfaces/global";
 import { IData, } from "../../interfaces/data";
 import { IAxisYClass, IAxisYTitle, IAxisYTitleData, IPointY, } from "../../interfaces/axisY";
+import { IFontAxis, IAxisThemePoint, IAxisThemeTitle, } from "../../interfaces/axis";
 
 class AxisY extends Axis implements IAxisYClass {
 	public step?: number;
@@ -19,16 +20,16 @@ class AxisY extends Axis implements IAxisYClass {
 	public titleData?: IAxisYTitleData;
 
 	constructor(
-		editValue,
-		data,
-		ctx,
-		title,
-		bounds,
-		font,
-		sortNames,
-		themeForTitle,
-		themeForPoint,
-		sortValues,
+		editValue: (value: number) => string | number,
+		data: IData,
+		ctx: CanvasRenderingContext2D,
+		title: IAxisYTitle | TEmptyObject,
+		bounds: IBounds,
+		font: IFontAxis | TEmptyObject,
+		sortNames: TSort,
+		themeForTitle: IAxisThemeTitle | TEmptyObject,
+		themeForPoint: IAxisThemePoint | TEmptyObject,
+		sortValues: TSort,
 		step = 3
 	) {
 		super(ctx, sortNames, themeForPoint, themeForTitle, title, bounds, font);
@@ -99,7 +100,9 @@ class AxisY extends Axis implements IAxisYClass {
 			posTitle.x,
 			posTitle.y,
 			null,
-			-90 * (Math.PI / 180)
+			-90 * (Math.PI / 180),
+			1,
+			sizes.height / 2
 		).draw();
 
 		this.titleData = {
