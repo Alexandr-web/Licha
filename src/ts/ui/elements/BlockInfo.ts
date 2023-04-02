@@ -7,46 +7,47 @@ import Line from "./Line";
 import CustomFigure from "./CustomFigure";
 
 import { ISpecialFontData, } from "../../interfaces/text";
-import { IActiveElement, ITitleBlockInfo, ITitleBlockInfoGaps, ITriangleData, IBlockInfoClass, IBlockInfoElementWithSize, IBlockInfoElementWithSizeGroup, IBlockInfoThemeGroup, IBlockInfoThemeTitle, IBlockInfoThemeWindow, IGroupsBlockInfo, } from "../../interfaces/blockInfo";
+import { ITitleBlockInfo, ITitleBlockInfoGaps, ITriangleData, IBlockInfoClass, IBlockInfoElementWithSize, IBlockInfoElementWithSizeGroup, IBlockInfoThemeGroup, IBlockInfoThemeTitle, IBlockInfoThemeWindow, IGroupsBlockInfo, } from "../../interfaces/blockInfo";
 import { ILinePos, ILineTheme, } from "../../interfaces/line";
 import { IPadding, IPos, ISize, IBounds, } from "../../interfaces/global";
 import { IData, } from "../../interfaces/data";
 import { TEmptyObject, } from "../../types/index";
+import { IPointX, } from "../../interfaces/axisX";
 
 class BlockInfo extends Element implements IBlockInfoClass {
 	public editValue: (value: number) => string;
 	public editName: (name: number | string) => string;
 	public data: IData;
 	public bounds: IBounds;
-	public elements: Array<IActiveElement>;
+	public elements: Array<IPointX>;
 	public padding?: IPadding | TEmptyObject;
 	public titleData: ITitleBlockInfo;
 	public groupsData: IGroupsBlockInfo;
 	public readonly groupLineWidth: number;
 	public readonly triangleSizes: ISize;
-	public title: string;
-	public themeForWindow: IBlockInfoThemeWindow;
-	public themeForLine: ILineTheme;
-	public themeForTitle: IBlockInfoThemeTitle;
-	public themeForGroup: IBlockInfoThemeGroup;
+	public title: string | number;
+	public themeForWindow: IBlockInfoThemeWindow | TEmptyObject;
+	public themeForLine: ILineTheme | TEmptyObject;
+	public themeForTitle: IBlockInfoThemeTitle | TEmptyObject;
+	public themeForGroup: IBlockInfoThemeGroup | TEmptyObject;
 
 	constructor(
-		editValue,
-		editName,
-		data,
-		bounds,
-		elements,
-		titleData,
-		groupsData,
-		x,
-		y,
-		color,
-		ctx,
-		padding = {},
-		themeForWindow = {} as IBlockInfoThemeWindow,
-		themeForLine = {},
-		themeForTitle = {} as IBlockInfoThemeTitle,
-		themeForGroup = {} as IBlockInfoThemeGroup
+		editValue: (value: number) => string,
+		editName: (name: number | string) => string,
+		data: IData,
+		bounds: IBounds,
+		elements: Array<IPointX>,
+		titleData: ITitleBlockInfo,
+		groupsData: IGroupsBlockInfo,
+		x: number,
+		y: number,
+		color: string | Array<string>,
+		ctx: CanvasRenderingContext2D,
+		padding: IPadding = {},
+		themeForWindow: IBlockInfoThemeWindow | TEmptyObject = {},
+		themeForLine: ILineTheme | TEmptyObject = {},
+		themeForTitle: IBlockInfoThemeTitle | TEmptyObject = {},
+		themeForGroup: IBlockInfoThemeGroup | TEmptyObject = {}
 	) {
 		super(x, y, color, ctx);
 
@@ -211,7 +212,7 @@ class BlockInfo extends Element implements IBlockInfoClass {
 		const { font, } = this.titleData;
 		const { size, weight, } = font;
 
-		return getTextSize(size, weight, this.title, this.ctx);
+		return getTextSize(size, weight, this.title.toString(), this.ctx);
 	}
 
 	/**
@@ -236,7 +237,7 @@ class BlockInfo extends Element implements IBlockInfoClass {
 		const { size, color = this.themeForTitle.color, weight, } = titleFont;
 		const font: ISpecialFontData = {
 			color,
-			text: this.title,
+			text: this.title.toString(),
 			str: `${weight} ${size}px Arial, sans-serif`,
 		};
 

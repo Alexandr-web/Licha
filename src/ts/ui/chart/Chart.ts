@@ -11,6 +11,8 @@ import { IData, } from "../../interfaces/data";
 import { IFontWithText, ISpecialFontData, } from "../../interfaces/text";
 import { ILegendData, ILegendGaps, } from "../../interfaces/legend";
 
+import isNumber from "../../helpers/isNumber";
+
 class Chart implements IChartClass {
 	public padding: IPadding;
 	public data: IData;
@@ -25,15 +27,15 @@ class Chart implements IChartClass {
 	public titleData: IChartTitleData;
 
 	constructor(
-		padding,
-		data,
-		ctx,
-		width,
-		height,
-		type,
-		title,
-		theme = {},
-		hideGroups = []
+		padding: IPadding,
+		data: IData,
+		ctx: CanvasRenderingContext2D,
+		width: number,
+		height: number,
+		type: TTypeChart,
+		title: IChartTitle | TEmptyObject,
+		theme: ITitleTheme | TEmptyObject = {},
+		hideGroups: Array<string> = []
 	) {
 		// Содержит скрытые группы
 		this.hideGroups = hideGroups;
@@ -73,19 +75,19 @@ class Chart implements IChartClass {
 
 	/**
 	 * Определяет границы диаграммы
-	 * @returns {IBounds} Границы ({ width, height, horizontal: { start, end }, vertical: { start, end }, })
+	 * @returns {IBounds} Границы
 	 */
 	public getBounds(): IBounds {
 		const bounds: IBounds = {
 			width: null,
 			height: null,
 			horizontal: {
-				start: this.padding.left || this.defaultPadding,
-				end: this.width - (this.padding.right || this.defaultPadding),
+				start: isNumber(this.padding.left) ? this.padding.left : this.defaultPadding,
+				end: this.width - (isNumber(this.padding.right) ? this.padding.right : this.defaultPadding),
 			},
 			vertical: {
-				start: this.padding.top || this.defaultPadding,
-				end: this.height - (this.padding.bottom || this.defaultPadding),
+				start: isNumber(this.padding.top) ? this.padding.top : this.defaultPadding,
+				end: this.height - (isNumber(this.padding.bottom) ? this.padding.bottom : this.defaultPadding),
 			},
 		};
 

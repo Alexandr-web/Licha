@@ -2,15 +2,16 @@ import Rect from "./elements/Rect";
 
 import { ISize, } from "../interfaces/global";
 import { ICanvasClass, ICanvasTheme, IDefaultStylesForCanvasElement, } from "../interfaces/canvas";
+import { TEmptyObject, } from "../types/index";
 
 class Canvas implements ICanvasClass {
 	public selector: string;
-	public background: string;
+	public background: string | Array<string>;
 	public ctx: CanvasRenderingContext2D;
 	public canvasElement: HTMLCanvasElement;
-	public theme: ICanvasTheme;
+	public theme: ICanvasTheme | TEmptyObject;
 
-	constructor(selector, background, theme = {} as ICanvasTheme) {
+	constructor(selector: string, background: string | Array<string>, theme = {}) {
 		// HTML элемент canvas
 		this.canvasElement = document.querySelector(selector);
 		// Задний фон canvas
@@ -57,7 +58,7 @@ class Canvas implements ICanvasClass {
 	 * @private
 	 */
 	private _setBackground(): void {
-		const background: string = this.background || this.theme.background;
+		const background: Array<string> | string = this.background || this.theme.background;
 		const { width, height, } = this.getSizes();
 
 		new Rect(0, 0, background, this.ctx, width, height, 0, height).draw();

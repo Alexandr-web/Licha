@@ -25,7 +25,7 @@ export interface IAchartyConstructor {
     legend?: ILegend | TEmptyObject;
     blockInfo?: IBlockInfo | TEmptyObject;
     type?: "line";
-    padding?: IPadding | number;
+    padding?: IPadding;
     hideGroups?: Array<string>;
 }
 

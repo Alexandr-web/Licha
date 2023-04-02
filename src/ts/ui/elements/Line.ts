@@ -7,7 +7,15 @@ class Line extends Element implements ILineClass {
 	public width?: number;
 	public dotted?: boolean;
 
-	constructor(x, y, color, ctx, lineTo: Array<ILineTo>, width?: number, dotted?: boolean) {
+	constructor(
+		x: number,
+		y: number,
+		color: string | Array<string>,
+		ctx: CanvasRenderingContext2D,
+		lineTo: Array<ILineTo>,
+		width?: number,
+		dotted?: boolean
+	) {
 		super(x, y, color, ctx);
 
 		// Массив, содержащий данные позиций линии

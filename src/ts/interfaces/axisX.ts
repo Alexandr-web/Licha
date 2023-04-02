@@ -25,7 +25,7 @@ export interface IAxisX extends IAxis {
 
 export interface IAxisXClass extends IAxisClass {
     themeForLine: ILineTheme;
-    ignoreNames?: Array<string> | ((name: string | number, index: number) => boolean);
+    ignoreNames?: Array<string | number> | ((name: string | number, index: number) => boolean);
     data: IData;
     editName?: (name: string | number) => string;
     line: ILine;

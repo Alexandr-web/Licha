@@ -1,6 +1,7 @@
 import { ILine, } from "./line";
 import { IPointY, } from "./axisY";
 import { IPointX, } from "./axisX";
+import { TEmptyObject, } from "../types/index";
 
 export interface IGridTheme {
     color: string;
@@ -24,9 +25,9 @@ export interface IGridClass {
     pointsX: Array<IPointX>;
     showPointsX: boolean;
     showPointsY: boolean;
-    line?: ILineGrid;
+    line?: ILineGrid | TEmptyObject;
     format?: "vertical" | "horizontal" | "default";
-    theme: IGridTheme;
+    theme: IGridTheme | TEmptyObject;
     background?: string | Array<string>;
     distanceBetweenLineAndPoint: number;
 

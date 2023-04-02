@@ -2,6 +2,7 @@ import { IFont, } from "./text";
 import { ISize, IPos, IBounds, IGapsForLegend, } from "./global";
 import { ILine, ILineTheme, } from "./line";
 import { IData, } from "./data";
+import { TEmptyObject, } from "../types/index";
 
 export interface ILegendTheme {
     color: string;
@@ -58,10 +59,10 @@ export interface ILegendClass {
     bounds: IBounds;
     circle: ICircleLegend;
     maxCount?: number;
-    legendGaps: ILegendGaps;
+    legendGaps: ILegendGaps | TEmptyObject;
     totalHeight: number;
-    themeForText: ILegendTheme;
-    themeForCircle: ILineTheme;
+    themeForText: ILegendTheme | TEmptyObject;
+    themeForCircle: ILineTheme | TEmptyObject;
     items: Array<IItemLegend>;
 
     draw(gaps: IGapsForLegend): ILegendClass;

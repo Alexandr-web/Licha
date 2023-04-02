@@ -13,10 +13,6 @@ export interface IBlockInfoThemeTitle {
     color: string;
 }
 
-export interface IActiveElement extends IPointX {
-    name: string;
-}
-
 export interface ITriangleData extends IPos {
     lineTo: Array<ILineTo>,
     startY: number;
@@ -56,7 +52,7 @@ export interface IBlockInfo {
     background?: string | Array<string>;
     groups: IGroupsBlockInfo;
     title: ITitleBlockInfo;
-    padding?: IPadding;
+    padding?: IPadding | TEmptyObject;
 }
 
 export interface IBlockInfoElementWithSizeGroup extends ISize {
@@ -78,17 +74,17 @@ export interface IBlockInfoClass {
     editName: (name: number | string) => string;
     data: IData;
     bounds: IBounds;
-    elements: Array<IActiveElement>;
+    elements: Array<IPointX>;
     padding?: IPadding | TEmptyObject;
     titleData: ITitleBlockInfo;
     groupsData: IGroupsBlockInfo;
     readonly groupLineWidth: number;
     readonly triangleSizes: ISize;
-    title: string;
-    themeForWindow: IBlockInfoThemeWindow;
-    themeForLine: ILineTheme;
-    themeForTitle: IBlockInfoThemeTitle;
-    themeForGroup: IBlockInfoThemeGroup;
+    title: string | number;
+    themeForWindow: IBlockInfoThemeWindow | TEmptyObject;
+    themeForLine: ILineTheme | TEmptyObject;
+    themeForTitle: IBlockInfoThemeTitle | TEmptyObject;
+    themeForGroup: IBlockInfoThemeGroup | TEmptyObject;
 
     init(): void;
 }

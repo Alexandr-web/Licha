@@ -9,7 +9,17 @@ class Circle extends Element implements ICircleClass {
 	public startY?: number;
 	public endY?: number;
 
-	constructor(radius, x, y, color, ctx, opacity?: number, startY?: number, endY?: number, stroke?: IStroke) {
+	constructor(
+		radius: number,
+		x: number,
+		y: number,
+		color: string | Array<string>,
+		ctx: CanvasRenderingContext2D,
+		opacity?: number,
+		startY?: number,
+		endY?: number,
+		stroke?: IStroke
+	) {
 		super(x, y, color, ctx, null, opacity);
 
 		// Радиус

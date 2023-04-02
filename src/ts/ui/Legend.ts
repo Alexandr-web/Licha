@@ -9,6 +9,7 @@ import { IData, } from "../interfaces/data";
 import { IColumnLegend, ILegendGaps, ILegendGapsGroup, ILegendTheme, IGapsForTextLegend, ICircleLegend, IItemLegend, ILegendClass, } from "../interfaces/legend";
 import { ILine, ILineTheme, } from "../interfaces/line";
 import { IFont, ISpecialFontData, } from "../interfaces/text";
+import { TEmptyObject, } from "../types/index";
 
 class Legend implements ILegendClass {
 	public hideGroups: Array<string>;
@@ -20,10 +21,10 @@ class Legend implements ILegendClass {
 	public bounds: IBounds;
 	public circle: ICircleLegend;
 	public maxCount: number;
-	public legendGaps: ILegendGaps;
+	public legendGaps: ILegendGaps | TEmptyObject;
 	public totalHeight: number;
-	public themeForText: ILegendTheme;
-	public themeForCircle: ILineTheme;
+	public themeForText: ILegendTheme | TEmptyObject;
+	public themeForCircle: ILineTheme | TEmptyObject;
 	public items: Array<IItemLegend>;
 
 	constructor(
@@ -35,10 +36,10 @@ class Legend implements ILegendClass {
 		font: IFont,
 		circle: ICircleLegend,
 		hideGroups: Array<string>,
-		legendGaps = {} as ILegendGaps,
+		legendGaps: ILegendGaps | TEmptyObject = {},
 		maxCount = 4,
-		themeForText = {} as ILegendTheme,
-		themeForCircle = {}
+		themeForText: ILegendTheme | TEmptyObject = {},
+		themeForCircle: ILineTheme | TEmptyObject = {}
 	) {
 		// Содержит названия скрытых групп
 		this.hideGroups = hideGroups;
