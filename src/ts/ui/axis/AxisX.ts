@@ -1,7 +1,9 @@
 import Axis from "./Axis";
 import Text from "../elements/Text";
+
 import getTextSize from "../../helpers/getTextSize";
 import getStyleByIndex from "../../helpers/getStyleByIndex";
+import getTextStr from "../../helpers/getTextStr";
 
 import { TEmptyObject, TSort, } from "../../types/index";
 
@@ -20,6 +22,7 @@ class AxisX extends Axis implements IAxisXClass {
 	public editName?: (name: string | number) => string;
 	public line: ILine;
 	public titleData?: IAxisXTitleData;
+	public rotate?: boolean;
 
 	constructor(
 		ctx: CanvasRenderingContext2D,
@@ -30,6 +33,7 @@ class AxisX extends Axis implements IAxisXClass {
 		font: IFontAxis | TEmptyObject,
 		editName: (name: string | number) => string,
 		sortNames: TSort,
+		rotate: boolean,
 		themeForTitle: IAxisThemeTitle | TEmptyObject,
 		themeForPoint: IAxisThemePoint | TEmptyObject,
 		ignoreNames: Array<string | number> | ((name: string, index: number) => boolean),
@@ -37,6 +41,8 @@ class AxisX extends Axis implements IAxisXClass {
 	) {
 		super(ctx, sortNames, themeForPoint, themeForTitle, title, bounds, font);
 
+		// Правило, при котором текст точек оси абсцисс будет повернут на 90 градусов
+		this.rotate = rotate;
 		// Стили для линии от темы
 		this.themeForLine = themeForLine;
 		/**
@@ -98,7 +104,7 @@ class AxisX extends Axis implements IAxisXClass {
 			color,
 			text,
 			weight,
-			str: `${weight} ${size}px Arial, sans-serif`,
+			str: getTextStr(size, weight),
 		};
 		const bounds: IBounds | TEmptyObject = this.bounds;
 		const sizes: ISize = getTextSize(size, weight, text, this.ctx);
@@ -191,22 +197,57 @@ class AxisX extends Axis implements IAxisXClass {
 				const font: ISpecialFontData = {
 					...this.font,
 					color,
-					str: `${weight} ${size}px Arial, sans-serif`,
+					str: getTextStr(size, weight),
 					text: this.getCorrectName(name).toString(),
 				};
 
-				new Text(
-					font,
-					this.ctx,
-					posXItem.x - nameSizes.width / 2,
-					posXItem.y
-				).draw();
+				if (this.rotate) {
+					new Text(
+						font,
+						this.ctx,
+						posXItem.x + nameSizes.height / 2,
+						posXItem.y,
+						null,
+						-90 * (Math.PI / 180)
+					).draw();
+				} else {
+					new Text(
+						font,
+						this.ctx,
+						posXItem.x - nameSizes.width / 2,
+						posXItem.y
+					).draw();
+				}
 			}
 		});
 
 		this.font.showText = showText;
 
 		return this;
+	}
+
+	/**
+	 * Определяет наибольшую ширину текста среди точек оси абсцисс
+	 * @returns {number}
+	 */
+	public getMaxWidthTextPoint(): number {
+		const names: Array<string | number> = this.getAxesData(this.data).names;
+		const { size, weight = 400, } = this.font;
+		const widths: Array<number> = names.map((name: string | number) => getTextSize(size, weight, `${this.getCorrectName(name)}`, this.ctx).width);
+
+		return Math.max(...widths);
+	}
+
+	/**
+	 * Определяет наибольшую ширину текста среди точек оси абсцисс
+	 * @returns {number}
+	 */
+	public getMaxHeightTextPoint(): number {
+		const names: Array<string | number> = this.getAxesData(this.data).names;
+		const { size, weight = 400, } = this.font;
+		const heights: Array<number> = names.map((name: string | number) => getTextSize(size, weight, `${this.getCorrectName(name)}`, this.ctx).height);
+
+		return Math.max(...heights);
 	}
 }
 

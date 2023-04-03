@@ -1,8 +1,10 @@
 import Axis from "./Axis";
 import Text from "../elements/Text";
+
 import getTextSize from "../../helpers/getTextSize";
 import getRange from "../../helpers/getRange";
 import quickSort from "../../helpers/quickSort";
+import getTextStr from "../../helpers/getTextStr";
 
 import { TEmptyObject, TSort, } from "../../types/index";
 
@@ -84,7 +86,7 @@ class AxisY extends Axis implements IAxisYClass {
 			size,
 			text,
 			color,
-			str: `${weight} ${size}px Arial, sans-serif`,
+			str: getTextStr(size, weight),
 		};
 
 		const sizes: ISize = getTextSize(size, weight, text, this.ctx);
@@ -158,7 +160,7 @@ class AxisY extends Axis implements IAxisYClass {
 			const font: ISpecialFontData = {
 				...this.font,
 				color,
-				str: `${weight} ${size}px Arial, sans-serif`,
+				str: getTextStr(size, weight),
 				text: this._getCorrectValue(value).toString(),
 			};
 

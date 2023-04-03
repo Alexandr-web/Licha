@@ -80,6 +80,8 @@ export interface IBlockInfoClass {
     groupsData: IGroupsBlockInfo;
     readonly groupLineWidth: number;
     readonly triangleSizes: ISize;
+    readonly defaultTitleFontWeight: number;
+    readonly defaultGroupsFontWeight: number;
     title: string | number;
     themeForWindow: IBlockInfoThemeWindow | TEmptyObject;
     themeForLine: ILineTheme | TEmptyObject;

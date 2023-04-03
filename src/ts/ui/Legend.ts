@@ -1,8 +1,10 @@
 import Text from "./elements/Text";
 import Circle from "./elements/Circle";
+import Line from "./elements/Line";
+
 import getTextSize from "../helpers/getTextSize";
 import getStyleByIndex from "../helpers/getStyleByIndex";
-import Line from "./elements/Line";
+import getTextStr from "../helpers/getTextStr";
 
 import { IBounds, ISize, IGapsForLegend, IPos, } from "../interfaces/global";
 import { IData, } from "../interfaces/data";
@@ -179,7 +181,7 @@ class Legend implements ILegendClass {
 		const font: ISpecialFontData = {
 			size,
 			color,
-			str: `${weight} ${size}px Arial, sans-serif`,
+			str: getTextStr(size, weight),
 			text: group,
 		};
 

@@ -1,10 +1,12 @@
 import Element from "./Element";
-import getTextSize from "../../helpers/getTextSize";
 import Rect from "./Rect";
 import Text from "./Text";
 import quickSort from "../../helpers/quickSort";
 import Line from "./Line";
 import CustomFigure from "./CustomFigure";
+
+import getTextSize from "../../helpers/getTextSize";
+import getTextStr from "../../helpers/getTextStr";
 
 import { ISpecialFontData, } from "../../interfaces/text";
 import { ITitleBlockInfo, ITitleBlockInfoGaps, ITriangleData, IBlockInfoClass, IBlockInfoElementWithSize, IBlockInfoElementWithSizeGroup, IBlockInfoThemeGroup, IBlockInfoThemeTitle, IBlockInfoThemeWindow, IGroupsBlockInfo, } from "../../interfaces/blockInfo";
@@ -25,6 +27,8 @@ class BlockInfo extends Element implements IBlockInfoClass {
 	public groupsData: IGroupsBlockInfo;
 	public readonly groupLineWidth: number;
 	public readonly triangleSizes: ISize;
+	public readonly defaultTitleFontWeight: number;
+	public readonly defaultGroupsFontWeight: number;
 	public title: string | number;
 	public themeForWindow: IBlockInfoThemeWindow | TEmptyObject;
 	public themeForLine: ILineTheme | TEmptyObject;
@@ -84,6 +88,10 @@ class BlockInfo extends Element implements IBlockInfoClass {
 		this.themeForTitle = themeForTitle;
 		// Стили для группы от темы
 		this.themeForGroup = themeForGroup;
+		// Жирность шрифта заголовка по умолчанию
+		this.defaultTitleFontWeight = 600;
+		// Жирность шрифта названия группы по умолчанию
+		this.defaultGroupsFontWeight = 400;
 	}
 
 	/**
@@ -112,11 +120,11 @@ class BlockInfo extends Element implements IBlockInfoClass {
 				group: {
 					name: groupName,
 					color,
-					...getTextSize(groupsFont.size, groupsFont.weight, groupName, this.ctx),
+					...getTextSize(groupsFont.size, groupsFont.weight || this.defaultTitleFontWeight, groupName, this.ctx),
 				},
 				value: {
 					name: correctGroupValue.toString(),
-					...getTextSize(titleFont.size, titleFont.weight, correctGroupValue, this.ctx),
+					...getTextSize(titleFont.size, titleFont.weight || this.defaultGroupsFontWeight, correctGroupValue, this.ctx),
 				},
 			};
 		});
@@ -210,7 +218,7 @@ class BlockInfo extends Element implements IBlockInfoClass {
 	 */
 	private _getTitleSize(): ISize {
 		const { font, } = this.titleData;
-		const { size, weight, } = font;
+		const { size, weight = this.defaultTitleFontWeight, } = font;
 
 		return getTextSize(size, weight, this.title.toString(), this.ctx);
 	}
@@ -234,11 +242,11 @@ class BlockInfo extends Element implements IBlockInfoClass {
 		}
 
 		const { font: titleFont, } = this.titleData;
-		const { size, color = this.themeForTitle.color, weight, } = titleFont;
+		const { size, color = this.themeForTitle.color, weight = this.defaultTitleFontWeight, } = titleFont;
 		const font: ISpecialFontData = {
 			color,
 			text: this.title.toString(),
-			str: `${weight} ${size}px Arial, sans-serif`,
+			str: getTextStr(size, weight),
 		};
 
 		new Text(
@@ -276,13 +284,13 @@ class BlockInfo extends Element implements IBlockInfoClass {
 	 */
 	private _drawGroups(windowIsOutOfBounds: boolean, blockWidth: number): void {
 		const { font: groupsFont, } = this.groupsData;
-		const { size, weight, color = this.themeForGroup.color, } = groupsFont;
+		const { size, weight = this.defaultGroupsFontWeight, color = this.themeForGroup.color, } = groupsFont;
 
 		this._getElementsWithSize().map(({ group, }, index: number) => {
 			const font: ISpecialFontData = {
 				text: group.name,
 				color,
-				str: `${weight} ${size}px Arial, sans-serif`,
+				str: getTextStr(size, weight),
 			};
 			const coordinates: IPos = this._getGroupsCoordinates(index);
 

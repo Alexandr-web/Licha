@@ -21,6 +21,7 @@ export interface IAxisX extends IAxis {
     editName?: (name: number | string) => string;
     ignoreNames?: ((name: number | string, index: number) => boolean) | Array<string | number>;
     title?: IAxisXTitle;
+    rotate?: boolean;
 }
 
 export interface IAxisXClass extends IAxisClass {
@@ -30,9 +31,12 @@ export interface IAxisXClass extends IAxisClass {
     editName?: (name: string | number) => string;
     line: ILine;
     titleData?: IAxisXTitleData;
+    rotate?: boolean;
 
     getIgnoreNames(): Array<string | number>;
     drawTitle(gaps: IGapsForXTitle): IAxisXClass;
     drawPoints(gaps: IGapsForXPoints): IAxisXClass;
     getCorrectName(name: string | number): string | number;
+    getMaxWidthTextPoint(): number;
+    getMaxHeightTextPoint(): number;
 }

@@ -289,6 +289,12 @@ Parameters passed to the ACharty class constructor
 
 #### Accepted parameters
 
+  * #### `rotate`
+
+    | Description  | Example | Type |
+    | ------------- | ------------- | ------------- |
+    | Flips the x-axis point names by 90 degrees | `axisX: { rotate: true, }`  | `boolean` |
+
   * #### `font`
 
     | Description  | Example | Type |

@@ -1,4 +1,7 @@
 import Text from "../elements/Text";
+
+import isNumber from "../../helpers/isNumber";
+import getTextStr from "../../helpers/getTextStr";
 import getTextSize from "../../helpers/getTextSize";
 
 import { TEmptyObject, TTypeChart, } from "../../types/index";
@@ -10,8 +13,6 @@ import { IChartClass, IChartTitle, IChartTitleData, IChartTitleWithSizeAndPos, I
 import { IData, } from "../../interfaces/data";
 import { IFontWithText, ISpecialFontData, } from "../../interfaces/text";
 import { ILegendData, ILegendGaps, } from "../../interfaces/legend";
-
-import isNumber from "../../helpers/isNumber";
 
 class Chart implements IChartClass {
 	public padding: IPadding;
@@ -107,7 +108,7 @@ class Chart implements IChartClass {
 		}
 
 		const { weight = 600, size, text, color = this.theme.color, } = this.title.font;
-		const font: ISpecialFontData = { color, text, str: `${weight} ${size}px Arial, sans-serif`, };
+		const font: ISpecialFontData = { color, text, str: getTextStr(size, weight), };
 		const sizes: ISize = getTextSize(size, weight, text, this.ctx);
 		const bounds: IBounds = this.getBounds();
 		const startX: number = bounds.horizontal.start;
@@ -139,15 +140,12 @@ class Chart implements IChartClass {
 	 * @param {IAxisXClass} axisX Экземпляр класса AxisX
 	 * @param {IChartTitle} chartTitle Содержит данные заголовка диаграммы
 	 * @param {ILegendData} legend Содержит данные легенды
-	 * @returns {IGapsForYPoints} Отступы ({ left, top, bottom })
+	 * @returns {IGapsForYPoints} Отступы
 	 */
 	public getGapsForYPoints(axisY: IAxisYClass, axisX: IAxisXClass, chartTitle: IChartTitleData, legend: ILegendData): IGapsForYPoints {
-		const { size, weight = 400, } = axisY.font;
 		const { gaps: gapsLegend = {} as ILegendGaps, totalHeight: legendHeight = 0, } = legend;
 		const { showText: showXText = Boolean(Object.keys(axisX.font).length), } = axisX.font;
-		const firstName: string | number = axisY.getAxesData(this.data).names[0];
 
-		const firstNameHeight: number = getTextSize(size, weight, firstName.toString(), this.ctx).height;
 		const legendGapBottom: number = (gapsLegend.legend || {}).bottom || 0;
 		const axisYTitleHeight: number = ((axisY.titleData || {})).height || 0;
 		const axisYTitleGapRight: number = ((axisY.titleData || {})).gapRight || 0;
@@ -155,11 +153,12 @@ class Chart implements IChartClass {
 		const chartTitleGapBottom: number = (chartTitle || {}).gapBottom || 0;
 		const axisXTitleHeight: number = ((axisX.titleData || {})).height || 0;
 		const axisXTitleGapTop: number = ((axisX.titleData || {})).gapTop || 0;
+		const gapBottomIfRotateX: number = axisX.rotate ? axisX.getMaxWidthTextPoint() : axisX.getMaxHeightTextPoint();
 
 		return {
 			left: axisYTitleHeight + axisYTitleGapRight,
 			top: chartTitleYPos + chartTitleGapBottom + legendHeight + legendGapBottom,
-			bottom: (showXText ? axisY.gapTopAxisX + firstNameHeight : 0) + axisXTitleHeight + axisXTitleGapTop,
+			bottom: (showXText ? axisX.gapTopAxisX + gapBottomIfRotateX : 0) + axisXTitleHeight + axisXTitleGapTop,
 		};
 	}
 

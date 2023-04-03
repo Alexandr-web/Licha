@@ -190,7 +190,7 @@ class ACharty implements IAchartyClass {
 	 * @returns {IAxisXClass}
 	 */
 	private _setAxisXTitle(canvas: ICanvasClass, chart: IChartClass, axisY: IAxisYClass): IAxisXClass {
-		const { font, editName, sort, ignoreNames, title, } = this.axisX;
+		const { font, editName, sort, ignoreNames, title, rotate, } = this.axisX;
 		const themeForTitle: IAxisThemeTitle = (this.theme.axis || {}).title;
 		const themeForPoint: IAxisThemePoint = (this.theme.axis || {}).point;
 		const themeForLine: ILineTheme = this.theme.line;
@@ -205,6 +205,7 @@ class ACharty implements IAchartyClass {
 			font,
 			editName,
 			sort,
+			rotate,
 			themeForTitle,
 			themeForPoint,
 			ignoreNames,
