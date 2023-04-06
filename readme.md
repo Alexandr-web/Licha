@@ -98,7 +98,7 @@ Parameters passed to the ACharty class constructor
 
 | Description  | Example | Type |
 | ------------- | ------------- | ------------- |
-| Accepts an object of padding values for a chart | `padding: { top: 10, right: 10, bottom: 10, ... } or just 10`  | `object | number` |
+| Accepts an object of padding values for a chart | `padding: { top: 10, right: 10, bottom: 10, ... } or just 10`  | `object \| number` |
 
 #### Accepted parameters
   
@@ -751,7 +751,7 @@ Parameters passed to the ACharty class constructor
 
     | Description  | Example | Type |
     | ------------- | ------------- | ------------- |
-    | Receives data related to window padding | `blockInfo: { padding: { ... } or just 10, }`  | `object | number` |
+    | Receives data related to window padding | `blockInfo: { padding: { ... } or just 10, }`  | `object \| number` |
 
     ##### Accepted parameters
   
