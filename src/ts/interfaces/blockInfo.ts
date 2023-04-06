@@ -52,7 +52,7 @@ export interface IBlockInfo {
     background?: string | Array<string>;
     groups: IGroupsBlockInfo;
     title: ITitleBlockInfo;
-    padding?: IPadding | TEmptyObject;
+    padding?: IPadding | TEmptyObject | number;
 }
 
 export interface IBlockInfoElementWithSizeGroup extends ISize {
@@ -75,7 +75,7 @@ export interface IBlockInfoClass {
     data: IData;
     bounds: IBounds;
     elements: Array<IPointX>;
-    padding?: IPadding | TEmptyObject;
+    padding?: IPadding | TEmptyObject | number;
     titleData: ITitleBlockInfo;
     groupsData: IGroupsBlockInfo;
     readonly groupLineWidth: number;

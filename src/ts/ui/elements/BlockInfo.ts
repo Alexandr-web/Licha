@@ -7,6 +7,8 @@ import CustomFigure from "./CustomFigure";
 
 import getTextSize from "../../helpers/getTextSize";
 import getTextStr from "../../helpers/getTextStr";
+import isNumber from "../../helpers/isNumber";
+import getPaddingObj from "../../helpers/getPaddingObj";
 
 import { ISpecialFontData, } from "../../interfaces/text";
 import { ITitleBlockInfo, ITitleBlockInfoGaps, ITriangleData, IBlockInfoClass, IBlockInfoElementWithSize, IBlockInfoElementWithSizeGroup, IBlockInfoThemeGroup, IBlockInfoThemeTitle, IBlockInfoThemeWindow, IGroupsBlockInfo, } from "../../interfaces/blockInfo";
@@ -22,7 +24,7 @@ class BlockInfo extends Element implements IBlockInfoClass {
 	public data: IData;
 	public bounds: IBounds;
 	public elements: Array<IPointX>;
-	public padding?: IPadding | TEmptyObject;
+	public padding?: IPadding | TEmptyObject | number;
 	public titleData: ITitleBlockInfo;
 	public groupsData: IGroupsBlockInfo;
 	public readonly groupLineWidth: number;
@@ -47,7 +49,7 @@ class BlockInfo extends Element implements IBlockInfoClass {
 		y: number,
 		color: string | Array<string>,
 		ctx: CanvasRenderingContext2D,
-		padding: IPadding = {},
+		padding: IPadding | TEmptyObject | number = 10,
 		themeForWindow: IBlockInfoThemeWindow | TEmptyObject = {},
 		themeForLine: ILineTheme | TEmptyObject = {},
 		themeForTitle: IBlockInfoThemeTitle | TEmptyObject = {},
@@ -66,7 +68,7 @@ class BlockInfo extends Element implements IBlockInfoClass {
 		// Содержит данные элементов, которые подходят по координатам мыши
 		this.elements = elements;
 		// Внутренние отступы
-		this.padding = padding;
+		this.padding = isNumber(padding) ? getPaddingObj(padding as number) : padding;
 		// Содержит данные заголовка
 		this.titleData = titleData;
 		// Содержит данные групп
@@ -165,7 +167,7 @@ class BlockInfo extends Element implements IBlockInfoClass {
 	 * @private
 	 */
 	private _drawLines(windowIsOutOfBounds: boolean, blockWidth: number): void {
-		const padding: IPadding = this.padding;
+		const padding = this.padding as IPadding;
 		const { x, } = this._getCoordinates();
 
 		for (let i = 0; i < this.elements.length; i++) {
@@ -230,7 +232,7 @@ class BlockInfo extends Element implements IBlockInfoClass {
 	 * @private
 	 */
 	private _drawTitle(windowIsOutOfBounds: boolean, blockWidth: number): void {
-		const padding: IPadding = this.padding;
+		const padding = this.padding as IPadding;
 		const { x, y, } = this._getCoordinates();
 		const coordinates: IPos = {
 			x: x + (padding.left || 0),
@@ -266,7 +268,7 @@ class BlockInfo extends Element implements IBlockInfoClass {
 	private _getGroupsCoordinates(index: number): IPos {
 		const { x, y, } = this._getCoordinates();
 		const { gaps = {} as ITitleBlockInfoGaps, } = this.titleData;
-		const padding: IPadding = this.padding;
+		const padding = this.padding as IPadding;
 		const prevGroups: Array<IBlockInfoElementWithSize> = this._getElementsWithSize().filter((element: IBlockInfoElementWithSize, idx: number) => idx <= index);
 		const top: number = this._getTopGroupsDistance(prevGroups.map(({ group: g, }) => g));
 
@@ -337,7 +339,7 @@ class BlockInfo extends Element implements IBlockInfoClass {
 	 * @returns {ISize} Размеры окна ({ width, height })
 	 */
 	private _getWindowSize(): ISize {
-		const padding: IPadding = this.padding;
+		const padding = this.padding as IPadding;
 		const { gaps: gapsGroups, } = this.groupsData;
 		const { gaps: gapsTitle, } = this.titleData;
 		const groups: Array<IBlockInfoElementWithSizeGroup> = this._getElementsWithSize().map(({ group, }) => group);

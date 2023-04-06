@@ -35,7 +35,7 @@ export interface IChartTitleData extends IChartTitle, ISize, IPos { }
 export interface IChartTitleWithSizeAndPos extends IPos, ISize, IChartTitle { }
 
 export interface IChartClass {
-    padding: IPadding;
+    padding: IPadding | TEmptyObject | number;
     data: IData;
     ctx: CanvasRenderingContext2D;
     width: number;

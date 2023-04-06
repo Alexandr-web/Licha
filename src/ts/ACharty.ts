@@ -25,6 +25,9 @@ import { IItemLegend, ILegend, ILegendClass, ILegendData, } from "./interfaces/l
 import { ILine, ILineTheme, } from "./interfaces/line";
 import { ITheme, } from "./interfaces/utils";
 
+import isNumber from "./helpers/isNumber";
+import getPaddingObj from "./helpers/getPaddingObj";
+
 class ACharty implements IAchartyClass {
 	public selectorCanvas: string;
 	public background?: string | Array<string>;
@@ -39,7 +42,7 @@ class ACharty implements IAchartyClass {
 	public legend?: ILegend | TEmptyObject;
 	public blockInfo?: IBlockInfo | TEmptyObject;
 	public type?: TTypeChart;
-	public padding?: IPadding;
+	public padding?: IPadding | TEmptyObject | number;
 	public hideGroups?: Array<string>;
 
 	constructor({
@@ -56,15 +59,10 @@ class ACharty implements IAchartyClass {
 		grid = {},
 		legend = {},
 		blockInfo = {},
-		padding = {
-			top: 10,
-			left: 10,
-			right: 10,
-			bottom: 10,
-		},
+		padding = 10,
 	}: IAchartyConstructor) {
 		// Внутренние отступы
-		this.padding = padding;
+		this.padding = isNumber(padding) ? getPaddingObj(padding as number) : padding;
 		// Данные колпачка
 		this.cap = cap;
 		// Данные легенды

@@ -3,6 +3,7 @@ import Text from "../elements/Text";
 import isNumber from "../../helpers/isNumber";
 import getTextStr from "../../helpers/getTextStr";
 import getTextSize from "../../helpers/getTextSize";
+import getPaddingObj from "../../helpers/getPaddingObj";
 
 import { TEmptyObject, TTypeChart, } from "../../types/index";
 
@@ -15,7 +16,7 @@ import { IFontWithText, ISpecialFontData, } from "../../interfaces/text";
 import { ILegendData, ILegendGaps, } from "../../interfaces/legend";
 
 class Chart implements IChartClass {
-	public padding: IPadding;
+	public padding: IPadding | TEmptyObject | number;
 	public data: IData;
 	public ctx: CanvasRenderingContext2D;
 	public width: number;
@@ -28,7 +29,7 @@ class Chart implements IChartClass {
 	public titleData: IChartTitleData;
 
 	constructor(
-		padding: IPadding,
+		padding: IPadding | TEmptyObject | number,
 		data: IData,
 		ctx: CanvasRenderingContext2D,
 		width: number,
@@ -55,7 +56,7 @@ class Chart implements IChartClass {
 		// Заголовок диаграммы
 		this.title = title || {};
 		// Внутренние отступы диаграммы
-		this.padding = padding;
+		this.padding = isNumber(padding) ? getPaddingObj(padding as number) : padding;
 		// Внутренний отступ по умолчанию
 		this.defaultPadding = 10;
 		// Содержит дополнительные данные заголовка диаграммы
@@ -79,16 +80,17 @@ class Chart implements IChartClass {
 	 * @returns {IBounds} Границы
 	 */
 	public getBounds(): IBounds {
+		const padding = this.padding as IPadding;
 		const bounds: IBounds = {
 			width: null,
 			height: null,
 			horizontal: {
-				start: isNumber(this.padding.left) ? this.padding.left : this.defaultPadding,
-				end: this.width - (isNumber(this.padding.right) ? this.padding.right : this.defaultPadding),
+				start: isNumber(padding.left) ? padding.left : this.defaultPadding,
+				end: this.width - (isNumber(padding.right) ? padding.right : this.defaultPadding),
 			},
 			vertical: {
-				start: isNumber(this.padding.top) ? this.padding.top : this.defaultPadding,
-				end: this.height - (isNumber(this.padding.bottom) ? this.padding.bottom : this.defaultPadding),
+				start: isNumber(padding.top) ? padding.top : this.defaultPadding,
+				end: this.height - (isNumber(padding.bottom) ? padding.bottom : this.defaultPadding),
 			},
 		};
 
@@ -235,13 +237,13 @@ class Chart implements IChartClass {
 	 * @returns {IGapsForLegend} Отступы ({ top, left })
 	 */
 	public getGapsForLegend(axisY: IAxisY, chartTitle: IChartTitleWithSizeAndPos): IGapsForLegend {
-		const { y = 0, gapBottom = 0, } = chartTitle;
+		const { height: chartTitleHeight = 0, gapBottom: chartTitleGapBottom = 0, } = chartTitle;
 		const { font = {}, } = (axisY.title || {});
 		const { size, weight = 600, text, } = font as IFontWithText;
 		const titleAxisYHeight: number = getTextSize(size, weight, text, this.ctx).height || 0;
 
 		return {
-			top: y + gapBottom,
+			top: chartTitleHeight + chartTitleGapBottom,
 			left: titleAxisYHeight,
 		};
 	}
