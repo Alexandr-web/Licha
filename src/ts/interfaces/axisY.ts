@@ -1,11 +1,11 @@
-import { IPos, ISize, IGapsForYTitle, IGapsForYPoints, } from "./global";
+import { IPos, ISize, IGaps, } from "./global";
 import { IFontWithText, } from "./text";
 import { IPoint, IAxis, IAxisClass, } from "./axis";
 import { IData, } from "./data";
 
 export interface IAxisYTitle {
     font: IFontWithText;
-    gapRight: number;
+    gaps: IGaps;
 }
 
 export interface IAxisYTitleData extends IAxisYTitle, IPos, ISize { }
@@ -25,7 +25,7 @@ export interface IAxisYClass extends IAxisClass {
     sortValues?: "more-less" | "less-more";
     titleData?: IAxisYTitleData;
 
-    drawTitle(gaps: IGapsForYTitle): IAxisYClass;
-    drawPoints(gaps: IGapsForYPoints): IAxisYClass;
+    drawTitle(gaps: IGaps): IAxisYClass;
+    drawPoints(gaps: IGaps): IAxisYClass;
     getMaxTextWidthAtYAxis(): number;
 }

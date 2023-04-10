@@ -4,4 +4,4 @@
  * @param {number} weight
  * @param {string}
  */
-export default (size, weight): string => `${weight} ${size}px Arial, sans-serif`;
+export default (size: number, weight: number): string => `${weight} ${size}px Arial, sans-serif`;

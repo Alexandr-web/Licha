@@ -10,10 +10,7 @@ import getRange from "./getRange";
  * @param {number} startX Начальная позиция по оси абсцисс
  * @param {number} endX Конечная позиция по оси абсцисс
  */
-export default (
-	colors: Array<string>, startY: number, endY: number, propertyToStyle: string,
-	ctx: CanvasRenderingContext2D, startX = 0, endX = 0
-): void => {
+export default (colors: Array<string>, startY: number, endY: number, propertyToStyle: string, ctx: CanvasRenderingContext2D, startX = 0, endX = 0): void => {
 	const grd: CanvasGradient = ctx.createLinearGradient(startX, startY, endX, endY);
 	const range: Array<number> = getRange(0, 1, colors.length - 1);
 

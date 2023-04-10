@@ -11,7 +11,7 @@ import { ILegend, } from "./legend";
 import { IPadding, } from "./global";
 import { IBlockInfo, } from "./blockInfo";
 
-export interface IAchartyConstructor {
+export interface ISineraConstructor {
     selectorCanvas: string;
     background?: string | Array<string>;
     title?: IChartTitle | TEmptyObject;
@@ -29,7 +29,7 @@ export interface IAchartyConstructor {
     hideGroups?: Array<string>;
 }
 
-export interface IAchartyClass extends IAchartyConstructor {
-    update(): IAchartyClass;
-    init(): IAchartyClass;
+export interface ISineraClass extends ISineraConstructor {
+    update(): ISineraClass;
+    init(): ISineraClass;
 }

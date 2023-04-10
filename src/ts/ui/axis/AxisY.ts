@@ -9,7 +9,7 @@ import getTextStr from "../../helpers/getTextStr";
 import { TEmptyObject, TSort, } from "../../types/index";
 
 import { ISpecialFontData, } from "../../interfaces/text";
-import { IBounds, ISize, IGapsForYPoints, IGapsForYTitle, IPos, } from "../../interfaces/global";
+import { IBounds, ISize, IGaps, IPos, } from "../../interfaces/global";
 import { IData, } from "../../interfaces/data";
 import { IAxisYClass, IAxisYTitle, IAxisYTitleData, IPointY, } from "../../interfaces/axisY";
 import { IFontAxis, IAxisThemePoint, IAxisThemeTitle, } from "../../interfaces/axis";
@@ -56,7 +56,7 @@ class AxisY extends Axis implements IAxisYClass {
 				color: "",
 				weight: null,
 			},
-			gapRight: null,
+			gaps: { right: null, },
 		};
 	}
 
@@ -72,10 +72,10 @@ class AxisY extends Axis implements IAxisYClass {
 
 	/**
 	 * Рисует заголовок на оси ординат
-	 * @param {IGapsForYTitle} gaps Отступы заголовка
+	 * @param {IGaps} gaps Отступы заголовка
 	 * @returns {IAxisYClass}
 	 */
-	public drawTitle(gaps: IGapsForYTitle): IAxisYClass {
+	public drawTitle(gaps: IGaps): IAxisYClass {
 		if (!Object.keys(this.title).length) {
 			return this;
 		}
@@ -117,10 +117,10 @@ class AxisY extends Axis implements IAxisYClass {
 
 	/**
 	 * Рисует точки на оси ординат
-	 * @param {IGapsForYPoints} gaps Отступы оси ординат
+	 * @param {IGaps} gaps Отступы оси ординат
 	 * @returns {IAxisYClass}
 	 */
-	public drawPoints(gaps: IGapsForYPoints): IAxisYClass {
+	public drawPoints(gaps: IGaps): IAxisYClass {
 		const values: Array<number> = this.getAxesData(this.data).values;
 		const bounds: IBounds | TEmptyObject = this.bounds;
 		const { size, showText = Boolean(Object.keys(this.font).length), weight = 400, color = this.themeForPoint.color, } = this.font;

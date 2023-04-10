@@ -6,9 +6,9 @@ import getTextSize from "../helpers/getTextSize";
 import getStyleByIndex from "../helpers/getStyleByIndex";
 import getTextStr from "../helpers/getTextStr";
 
-import { IBounds, ISize, IGapsForLegend, IPos, } from "../interfaces/global";
+import { IBounds, ISize, IGaps, IPos, } from "../interfaces/global";
 import { IData, } from "../interfaces/data";
-import { IColumnLegend, ILegendGaps, ILegendGapsGroup, ILegendTheme, IGapsForTextLegend, ICircleLegend, IItemLegend, ILegendClass, } from "../interfaces/legend";
+import { IColumnLegend, ILegendTheme, ILegendGaps, ICircleLegend, IItemLegend, ILegendClass, } from "../interfaces/legend";
 import { ILine, ILineTheme, } from "../interfaces/line";
 import { IFont, ISpecialFontData, } from "../interfaces/text";
 import { TEmptyObject, } from "../types/index";
@@ -105,7 +105,7 @@ class Legend implements ILegendClass {
 			return 0;
 		}
 
-		const { group: gapsGroup = {} as ILegendGapsGroup, circle: gapsCircle = { right: null, }, } = this.legendGaps;
+		const { group: gapsGroup = {} as IGaps, circle: gapsCircle = {} as IGaps, } = this.legendGaps as { group, circle, };
 		const { radius, } = this.circle;
 
 		return groups.reduce((acc: number, { width, }) => {
@@ -126,7 +126,7 @@ class Legend implements ILegendClass {
 			return 0;
 		}
 
-		const { group: gapsGroup = {} as ILegendGapsGroup, } = this.legendGaps;
+		const { group: gapsGroup = {} as IGaps, } = this.legendGaps as { group, };
 		const { height, } = groups[0];
 
 		return (gapsGroup.bottom || 0) + height;
@@ -169,11 +169,11 @@ class Legend implements ILegendClass {
 	 * @param {number} height Высота текста группы
 	 * @param {Array<IItemLegend>} groups Содержит группы
 	 * @param {number} index Индекс группы
-	 * @param {IGapsForTextLegend} gaps Отступы
+	 * @param {IGaps} gaps Отступы
 	 * @private
 	 * @returns {IPos} Позиция текста
 	 */
-	private _drawText(group: string, width: number, height: number, groups: Array<IItemLegend>, index: number, gaps: IGapsForTextLegend): IPos {
+	private _drawText(group: string, width: number, height: number, groups: Array<IItemLegend>, index: number, gaps: IGaps): IPos {
 		const bounds: IBounds = this.bounds;
 		const center: number = bounds.width / 2;
 		const totalGroupsDistance: number = this._getDistanceGroups(groups);
@@ -213,12 +213,12 @@ class Legend implements ILegendClass {
 	 * @param {number} x Позиция по оси абсцисс
 	 * @param {number} y Позиция по оси ординат
 	 * @param {number} height Высота
-	 * @param {string} color Цвет
+	 * @param {Array<string> | string} color Цвет
 	 * @private
 	 */
 	private _drawCircle(x: number, y: number, height: number, color: Array<string> | string): void {
 		const { radius, } = this.circle;
-		const { circle = { right: null, }, } = this.legendGaps;
+		const { circle = {}, } = this.legendGaps as { circle, };
 		const posCircle: IPos = {
 			x: x - radius - (circle.right || 0),
 			y: y - Math.max(radius, height / 2),
@@ -255,10 +255,10 @@ class Legend implements ILegendClass {
 
 	/**
 	 * Рисует легенду
-	 * @param {IGapsForLegend} gaps Содержит отступы легенды
+	 * @param {IGaps} gaps Содержит отступы легенды
 	 * @returns {ILegendClass}
 	 */
-	public draw(gaps: IGapsForLegend): ILegendClass {
+	public draw(gaps: IGaps): ILegendClass {
 		if (!this.showLegend) {
 			return this;
 		}

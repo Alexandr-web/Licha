@@ -1,6 +1,6 @@
 import { TEmptyObject, } from "../types/index";
 
-import { IStroke, ISize, IGapsForLegend, IPadding, IPos, IBounds, IGapsForYPoints, IGapsForXPoints, IGapsForYTitle, IGapsForXTitle, } from "./global";
+import { IStroke, ISize, IGaps, IPadding, IPos, IBounds, } from "./global";
 import { IChartLineStyle, } from "./lineChart";
 import { IFontWithText, } from "./text";
 import { IData, } from "./data";
@@ -23,7 +23,7 @@ export interface IChartStyle {
 
 export interface IChartTitle {
     font: IFontWithText;
-    gapBottom: number;
+    gaps: IGaps;
 }
 
 export interface ITitleTheme {
@@ -49,9 +49,9 @@ export interface IChartClass {
 
     getBounds(): IBounds;
     drawTitle(): IChartClass;
-    getGapsForYPoints(axisY: IAxisYClass, axisX: IAxisXClass, chartTitle: IChartTitle, legend: ILegendData): IGapsForYPoints;
-    getGapsForXPoints(axisY: IAxisYClass, axisX: IAxisXClass): IGapsForXPoints;
-    getGapsForYTitle(chartTitle: IChartTitleData, legend: ILegendData, axisX: IAxisX): IGapsForYTitle;
-    getGapsForXTitle(axisY: IAxisYClass): IGapsForXTitle;
-    getGapsForLegend(axisY: IAxisY | TEmptyObject, chartTitle: IChartTitleWithSizeAndPos): IGapsForLegend;
+    getGapsForYPoints(axisY: IAxisYClass, axisX: IAxisXClass, chartTitle: IChartTitle, legend: ILegendData): IGaps;
+    getGapsForXPoints(axisY: IAxisYClass, axisX: IAxisXClass): IGaps;
+    getGapsForYTitle(chartTitle: IChartTitleData, legend: ILegendData, axisX: IAxisX): IGaps;
+    getGapsForXTitle(axisY: IAxisYClass): IGaps;
+    getGapsForLegend(axisY: IAxisY | TEmptyObject, chartTitle: IChartTitleWithSizeAndPos): IGaps;
 }

@@ -1,9 +1,11 @@
-export interface IGapsForLegend {
-    top: number;
-    left: number;
+export interface IPadding {
+    top?: number;
+    right?: number;
+    bottom?: number;
+    left?: number;
 }
 
-export interface IPadding {
+export interface IGaps {
     top?: number;
     right?: number;
     bottom?: number;
@@ -36,25 +38,4 @@ export interface IBounds {
 export interface IStroke {
     width?: number;
     color?: string;
-}
-
-export interface IGapsForYPoints {
-    left: number;
-    top: number;
-    bottom: number;
-}
-
-export interface IGapsForXPoints {
-    left: number;
-    right: number;
-    bottom: number;
-}
-
-export interface IGapsForYTitle {
-    top: number;
-    bottom: number;
-}
-
-export interface IGapsForXTitle {
-    left: number;
 }

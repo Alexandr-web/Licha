@@ -10,12 +10,12 @@ import Utils from "./Utils/Utils";
 
 import { TEmptyObject, TTypeChart, } from "./types/index";
 
-import { IAchartyClass, IAchartyConstructor, } from "./interfaces/acharty";
+import { ISineraClass, ISineraConstructor, } from "./interfaces/sinera";
 import { IAxisPoints, IAxisThemePoint, IAxisThemeTitle, } from "./interfaces/axis";
 import { IAxisX, IAxisXClass, IPointX, } from "./interfaces/axisX";
 import { IAxisY, IAxisYClass, IPointY, } from "./interfaces/axisY";
 import { IBlockInfo, IBlockInfoThemeGroup, IBlockInfoThemeTitle, IBlockInfoThemeWindow, } from "./interfaces/blockInfo";
-import { IBounds, IGapsForLegend, IGapsForXTitle, IGapsForYTitle, IPadding, IPos, } from "./interfaces/global";
+import { IBounds, IGaps, IPadding, IPos, } from "./interfaces/global";
 import { ICanvasClass, } from "./interfaces/canvas";
 import { ICap, } from "./interfaces/cap";
 import { IChartClass, IChartTitle, IChartTitleWithSizeAndPos, } from "./interfaces/chart";
@@ -28,7 +28,7 @@ import { ITheme, } from "./interfaces/utils";
 import isNumber from "./helpers/isNumber";
 import getPaddingObj from "./helpers/getPaddingObj";
 
-class ACharty implements IAchartyClass {
+class Sinera implements ISineraClass {
 	public selectorCanvas: string;
 	public background?: string | Array<string>;
 	public title?: IChartTitle | TEmptyObject;
@@ -60,7 +60,7 @@ class ACharty implements IAchartyClass {
 		legend = {},
 		blockInfo = {},
 		padding = 10,
-	}: IAchartyConstructor) {
+	}: ISineraConstructor) {
 		// Внутренние отступы
 		this.padding = isNumber(padding) ? getPaddingObj(padding as number) : padding;
 		// Данные колпачка
@@ -104,8 +104,9 @@ class ACharty implements IAchartyClass {
 
 	/**
 	 * Рисует заголовок диаграммы
-	 * @param {IChartClass} canvas Экземпляр класса Canvas
+	 * @param {ICanvasClass} canvas Экземпляр класса Canvas
 	 * @private
+	 * @return {IChartClass}
 	 */
 	private _setChartTitle(canvas: ICanvasClass): IChartClass {
 		const { width, height, } = canvas.getSizes();
@@ -132,7 +133,7 @@ class ACharty implements IAchartyClass {
 	private _setLegend(canvas: ICanvasClass, chart: IChartClass): ILegendClass {
 		const { font, circle, gaps: legendGaps, maxCount, } = this.legend;
 		const showLegend = Boolean(Object.keys(this.legend).length);
-		const gaps: IGapsForLegend = chart.getGapsForLegend(this.axisY, chart.titleData as IChartTitleWithSizeAndPos);
+		const gaps: IGaps = chart.getGapsForLegend(this.axisY, chart.titleData as IChartTitleWithSizeAndPos);
 
 		return new Legend(
 			showLegend,
@@ -162,7 +163,7 @@ class ACharty implements IAchartyClass {
 		const { step, editValue, title, font, sort, } = this.axisY;
 		const themeForTitle: IAxisThemeTitle = (this.theme.axis || {}).title;
 		const themeForPoint: IAxisThemePoint = (this.theme.axis || {}).point;
-		const gaps: IGapsForYTitle = chart.getGapsForYTitle(chart.titleData, { ...legend, ...this.legend, } as ILegendData, this.axisX as IAxisX);
+		const gaps: IGaps = chart.getGapsForYTitle(chart.titleData, { ...legend, ...this.legend, } as ILegendData, this.axisX as IAxisX);
 
 		return new AxisY(
 			editValue,
@@ -192,7 +193,7 @@ class ACharty implements IAchartyClass {
 		const themeForTitle: IAxisThemeTitle = (this.theme.axis || {}).title;
 		const themeForPoint: IAxisThemePoint = (this.theme.axis || {}).point;
 		const themeForLine: ILineTheme = this.theme.line;
-		const gaps: IGapsForXTitle = chart.getGapsForXTitle(axisY);
+		const gaps: IGaps = chart.getGapsForXTitle(axisY);
 
 		return new AxisX(
 			canvas.ctx,
@@ -370,7 +371,7 @@ class ACharty implements IAchartyClass {
 	 * @param {ICanvasClass} canvas Экземпляр класса Canvas
 	 * @private
 	 */
-	private _leavemouseFromCanvasArea(canvas): void {
+	private _leavemouseFromCanvasArea(canvas: ICanvasClass): void {
 		canvas.canvasElement.addEventListener("mouseleave", this._leavemouseFromCanvasAreaHandler.bind(this));
 	}
 
@@ -447,7 +448,7 @@ class ACharty implements IAchartyClass {
 	}
 
 	// Обновление данных диаграммы
-	public update(): IAchartyClass {
+	public update(): ISineraClass {
 		const canvas: ICanvasClass = this._setCanvas();
 		const chart: IChartClass = this._setChartTitle(canvas);
 		const legend: ILegendClass = this._setLegend(canvas, chart);
@@ -462,7 +463,7 @@ class ACharty implements IAchartyClass {
 	}
 
 	// Рисует диаграмму
-	public init(): IAchartyClass {
+	public init(): ISineraClass {
 		const canvas: ICanvasClass = this._setCanvas();
 		const chart: IChartClass = this._setChartTitle(canvas);
 		const legend: ILegendClass = this._setLegend(canvas, chart);
@@ -481,4 +482,4 @@ class ACharty implements IAchartyClass {
 	}
 }
 
-export { Utils, ACharty, };
+export { Utils, Sinera, };
