@@ -1,4 +1,4 @@
-import { IPos, ISize, IGapsForXTitle, IGapsForXPoints, } from "./global";
+import { IPos, ISize, IGaps, } from "./global";
 import { IFontWithText, } from "./text";
 import { IPoint, IAxis, IAxisClass, } from "./axis";
 import { ILineTheme, ILine, } from "./line";
@@ -6,7 +6,7 @@ import { IData, } from "./data";
 
 export interface IAxisXTitle {
     font: IFontWithText;
-    gapTop: number;
+    gaps: IGaps;
 }
 
 export interface IAxisXTitleData extends IAxisXTitle, IPos, ISize { }
@@ -34,8 +34,8 @@ export interface IAxisXClass extends IAxisClass {
     rotate?: boolean;
 
     getIgnoreNames(): Array<string | number>;
-    drawTitle(gaps: IGapsForXTitle): IAxisXClass;
-    drawPoints(gaps: IGapsForXPoints): IAxisXClass;
+    drawTitle(gaps: IGaps): IAxisXClass;
+    drawPoints(gaps: IGaps): IAxisXClass;
     getCorrectName(name: string | number): string | number;
     getMaxWidthTextPoint(): number;
     getMaxHeightTextPoint(): number;

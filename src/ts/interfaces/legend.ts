@@ -1,5 +1,5 @@
 import { IFont, } from "./text";
-import { ISize, IPos, IBounds, IGapsForLegend, } from "./global";
+import { ISize, IPos, IBounds, IGaps, } from "./global";
 import { ILine, ILineTheme, } from "./line";
 import { IData, } from "./data";
 import { TEmptyObject, } from "../types/index";
@@ -8,27 +8,14 @@ export interface ILegendTheme {
     color: string;
 }
 
-export interface ILegendGapsCircle {
-    right: number;
-}
-
-export interface ILegendGapsGroup {
-    right: number;
-    bottom: number;
-}
-
-export interface ILegendGapsLegend {
-    bottom: number;
+export interface ICircleLegend {
+    radius: number,
 }
 
 export interface ILegendGaps {
-    circle: ILegendGapsCircle;
-    group: ILegendGapsGroup;
-    legend: ILegendGapsLegend;
-}
-
-export interface ICircleLegend {
-    radius: number,
+    circle: IGaps | TEmptyObject;
+    group: IGaps | TEmptyObject;
+    legend: IGaps | TEmptyObject;
 }
 
 export interface ILegend {
@@ -44,10 +31,6 @@ export interface IColumnLegend {
 }
 
 export interface IItemLegend extends ISize, IPos, IColumnLegend { }
-
-export interface IGapsForTextLegend extends IGapsForLegend {
-    top: number;
-}
 
 export interface ILegendClass {
     hideGroups: Array<string>;
@@ -65,7 +48,7 @@ export interface ILegendClass {
     themeForCircle: ILineTheme | TEmptyObject;
     items: Array<IItemLegend>;
 
-    draw(gaps: IGapsForLegend): ILegendClass;
+    draw(gaps: IGaps): ILegendClass;
 }
 
 export interface ILegendData extends ILegend, ILegendClass { }

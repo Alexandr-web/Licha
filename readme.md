@@ -1,25 +1,25 @@
 <div align="center">
   <h1>
-    <b>aCharty</b>
+    <b>Sinera</b>
   </h1>
   <p>
-    aCharty is a JavaScript project that will help you build a line chart
+    Sinera is a JavaScript project that will help you build a line chart
   </p>
 </div>
 
-* [Usage](https://github.com/Alexandr-web/aCharty#usage)
-* [Params](https://github.com/Alexandr-web/aCharty#params)
-* [Utils](https://github.com/Alexandr-web/aCharty#utils)
+* [Usage](https://github.com/Alexandr-web/Sinera#usage)
+* [Params](https://github.com/Alexandr-web/Sinera#params)
+* [Utils](https://github.com/Alexandr-web/Sinera#utils)
 
 ## Usage
 
 How to use this tool?
 
 ```js
-import { ACharty, Utils, } from "./dist/ACharty.js";
+import { Sinera, Utils, } from "./dist/Sinera.js";
 
 const utils = new Utils();
-const chart = new ACharty({
+const chart = new Sinera({
   theme: utils.getTheme(20),
   selectorCanvas: "canvas",
   background: "transparent",
@@ -65,22 +65,22 @@ const chart = new ACharty({
 
 ## Params
 
-Parameters passed to the ACharty class constructor
+Parameters passed to the Sinera class constructor
 
-* [selectorCanvas](https://github.com/Alexandr-web/aCharty#selectorcanvas)
-* [background](https://github.com/Alexandr-web/aCharty#background)
-* [padding](https://github.com/Alexandr-web/aCharty#padding)
-* [type](https://github.com/Alexandr-web/aCharty#type)
-* [title](https://github.com/Alexandr-web/aCharty#title)
-* [axisY](https://github.com/Alexandr-web/aCharty#axisy)
-* [axisX](https://github.com/Alexandr-web/aCharty#axisx)
-* [line](https://github.com/Alexandr-web/aCharty#line)
-* [cap](https://github.com/Alexandr-web/aCharty#cap)
-* [grid](https://github.com/Alexandr-web/aCharty#grid)
-* [legend](https://github.com/Alexandr-web/aCharty#legend)
-* [blockInfo](https://github.com/Alexandr-web/aCharty#blockinfo)
-* [data](https://github.com/Alexandr-web/aCharty#data)
-* [theme](https://github.com/Alexandr-web/aCharty#theme)
+* [selectorCanvas](https://github.com/Alexandr-web/Sinera#selectorcanvas)
+* [background](https://github.com/Alexandr-web/Sinera#background)
+* [padding](https://github.com/Alexandr-web/Sinera#padding)
+* [type](https://github.com/Alexandr-web/Sinera#type)
+* [title](https://github.com/Alexandr-web/Sinera#title)
+* [axisY](https://github.com/Alexandr-web/Sinera#axisy)
+* [axisX](https://github.com/Alexandr-web/Sinera#axisx)
+* [line](https://github.com/Alexandr-web/Sinera#line)
+* [cap](https://github.com/Alexandr-web/Sinera#cap)
+* [grid](https://github.com/Alexandr-web/Sinera#grid)
+* [legend](https://github.com/Alexandr-web/Sinera#legend)
+* [blockInfo](https://github.com/Alexandr-web/Sinera#blockinfo)
+* [data](https://github.com/Alexandr-web/Sinera#data)
+* [theme](https://github.com/Alexandr-web/Sinera#theme)
 
 ### `selectorCanvas`
 
@@ -135,7 +135,7 @@ Parameters passed to the ACharty class constructor
 ### `title`
 | Description  | Example | Type |
 | ------------- | ------------- | ------------- |
-| Accepts options related to the title of the chart | `title: { font: { ... }, gapBottom: 10, }`  | `object` |
+| Accepts options related to the title of the chart | `title: { font: { ... }, gaps: { ... }, }`  | `object` |
 
 #### Accepted parameters
 
@@ -172,11 +172,19 @@ Parameters passed to the ACharty class constructor
       | Accepts font weight | `title: { font: { weight: 400, }, }`  | `number` |
 
 
-  * #### `gapBottom`
+  * #### `gaps`
 
     | Description  | Example | Type |
     | ------------- | ------------- | ------------- |
-    | Bottom gap | `title: { gapBottom: 15, }`  | `number` |
+    | Contains title gaps | `title: { gaps: { bottom: 15, }, }`  | `object` |
+
+    ##### Accepted parameters
+
+    * ##### `bottom`
+
+      | Description  | Example | Type |
+      | ------------- | ------------- | ------------- |
+      | Bottom gap | `title: { gaps: { bottom: 15, }, }`  | `number` |
 
 ### `axisY`
 
@@ -276,11 +284,19 @@ Parameters passed to the ACharty class constructor
         | ------------- | ------------- | ------------- |
         | Accepts font weight | `axisY: { title: { font: { weight: 400, }, }, }`  | `number` |
 
-    * #### `gapRight`
+    * #### `gaps`
 
       | Description  | Example | Type |
       | ------------- | ------------- | ------------- |
-      | Accepts gap on the right | `axisY: { title: { gapRight: 15, }, }`  | `number` |
+      | Contains title gaps | `axisY: { title: { gaps: { right: 15, }, }, }`  | `object` |
+
+    ##### Accepted parameters
+
+      * ##### `right`
+
+        | Description  | Example | Type |
+        | ------------- | ------------- | ------------- |
+        | Gap right | `axisY: { title: { gaps: { right: 15, }, }, }`  | `number` |
 
 ### `axisX`
 | Description  | Example | Type |
@@ -385,11 +401,19 @@ Parameters passed to the ACharty class constructor
         | ------------- | ------------- | ------------- |
         | Accepts font weight | `axisX: { title: { font: { weight: 400, }, }, }`  | `number` |
 
-    * #### `gapTop`
+    * #### `gaps`
 
       | Description  | Example | Type |
       | ------------- | ------------- | ------------- |
-      | Accepts gap from above | `axisX: { title: { gapTop: 15, }, }`  | `number` |
+      | Contains title gaps | `axisX: { title: { gaps: { top: 15, }, }, }`  | `object` |
+
+      ##### Accepted parameters
+
+      * ##### `top`
+
+        | Description  | Example | Type |
+        | ------------- | ------------- | ------------- |
+        | Gap top | `axisX: { title: { gaps: { top: 15, }, }, }`  | `number` |
 
 ### `line`
 
@@ -911,27 +935,27 @@ Parameters passed to the ACharty class constructor
 
 | Description  | Example | Type |
 | ------------- | ------------- | ------------- |
-| Accepts a data object belonging to the same theme. [More](https://github.com/Alexandr-web/aCharty#utils) | `theme: new Utils(0, "light")`  | `object` |
+| Accepts a data object belonging to the same theme. [More](https://github.com/Alexandr-web/Sinera#utils) | `theme: new Utils(0, "light")`  | `object` |
 
 ## Utils
 
 The Utils class contains helper resources such as themes and various colors
 
-### How to choose and apply a theme? [View all themes](https://github.com/Alexandr-web/aCharty/blob/master/.github/themes/readme.md)
+### How to choose and apply a theme? [View all themes](https://github.com/Alexandr-web/Sinera/blob/master/.github/themes/readme.md)
 
 ```js
 const utils = new Utils();
 
 // Accepts index and theme
 // The default index is 0 and the theme is dark
-new ACharty({ theme: utils.getTheme(2, "light") }).init();
+new Sinera({ theme: utils.getTheme(2, "light") }).init();
 ```
 
-### How to apply any color? [View all colors](https://github.com/Alexandr-web/aCharty/blob/master/.github/colors/readme.md)
+### How to apply any color? [View all colors](https://github.com/Alexandr-web/Sinera/blob/master/.github/colors/readme.md)
 
 ```js
 const utils = new Utils();
 
 // Accepts the name of the color and its transparency (default 1)
-new ACharty({ background: utils.getColor("jet", 0.6) }).init();
+new Sinera({ background: utils.getColor("jet", 0.6) }).init();
 ```

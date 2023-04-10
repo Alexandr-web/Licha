@@ -1,5 +1,5 @@
 import { IPointX, } from "./axisX";
-import { IPos, IPadding, ISize, IBounds, } from "./global";
+import { IPos, IPadding, ISize, IBounds, IGaps, } from "./global";
 import { ILineTo, ILineTheme, } from "./line";
 import { IFont, } from "./text";
 import { IData, } from "./data";
@@ -29,23 +29,14 @@ export interface IBlockInfoTheme {
     group: IBlockInfoThemeGroup;
 }
 
-export interface IGroupsBlockInfoGaps {
-    bottom: number;
-    right: number;
-}
-
 export interface IGroupsBlockInfo {
     font: IFont;
-    gaps: IGroupsBlockInfoGaps;
-}
-
-export interface ITitleBlockInfoGaps {
-    bottom: number;
+    gaps: IGaps;
 }
 
 export interface ITitleBlockInfo {
     font: IFont;
-    gaps: ITitleBlockInfoGaps;
+    gaps: IGaps;
 }
 
 export interface IBlockInfo {

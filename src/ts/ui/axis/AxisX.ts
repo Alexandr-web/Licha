@@ -9,7 +9,7 @@ import { TEmptyObject, TSort, } from "../../types/index";
 
 import { ISpecialFontData, } from "../../interfaces/text";
 import { IAxisXTitle, IAxisXClass, IAxisXTitleData, } from "../../interfaces/axisX";
-import { IBounds, IGapsForXTitle, ISize, IPos, IGapsForXPoints, } from "../../interfaces/global";
+import { IBounds, IGaps, ISize, IPos, } from "../../interfaces/global";
 import { IData, IDataAtItemData, } from "../../interfaces/data";
 import { ILine, ILineTheme, } from "../../interfaces/line";
 import { IAxisYTitle, } from "../../interfaces/axisY";
@@ -68,7 +68,7 @@ class AxisX extends Axis implements IAxisXClass {
 				color: "",
 				weight: null,
 			},
-			gapTop: null,
+			gaps: { top: null, },
 		};
 	}
 
@@ -90,10 +90,10 @@ class AxisX extends Axis implements IAxisXClass {
 
 	/**
 	 * Рисует заголовок на оси абсцисс
-	 * @param {IGapsForXTitle} gaps Отступы заголовка
-	 * @returns {IAxisXClassAxisX}
+	 * @param {IGaps} gaps Отступы заголовка
+	 * @returns {IAxisXClass}
 	 */
-	public drawTitle(gaps: IGapsForXTitle): IAxisXClass {
+	public drawTitle(gaps: IGaps): IAxisXClass {
 		if (!Object.keys(this.title).length) {
 			return this;
 		}
@@ -143,10 +143,10 @@ class AxisX extends Axis implements IAxisXClass {
 
 	/**
 	 * Рисует точки на оси абсцисс
-	 * @param {IGapsForXPointsobject} gaps Отступы оси абсцисс
+	 * @param {IGaps} gaps Отступы оси абсцисс
 	 * @returns {IAxisXClass}
 	 */
-	public drawPoints(gaps: IGapsForXPoints): IAxisXClass {
+	public drawPoints(gaps: IGaps): IAxisXClass {
 		const names: Array<string | number> = this.getAxesData(this.data).names;
 		const bounds: IBounds | TEmptyObject = this.bounds;
 		const ignoreNames: Array<string | number> = this.getIgnoreNames();

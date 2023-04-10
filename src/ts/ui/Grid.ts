@@ -157,7 +157,10 @@ class Grid implements IGridClass {
 		});
 	}
 
-	// Рисует сетку
+	/**
+	 * Рисует сетку
+	 * @returns {IGridClass}
+	 */
 	public init(): IGridClass {
 		if (!Object.keys(this.line).length) {
 			return;

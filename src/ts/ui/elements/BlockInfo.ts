@@ -11,7 +11,7 @@ import isNumber from "../../helpers/isNumber";
 import getPaddingObj from "../../helpers/getPaddingObj";
 
 import { ISpecialFontData, } from "../../interfaces/text";
-import { ITitleBlockInfo, ITitleBlockInfoGaps, ITriangleData, IBlockInfoClass, IBlockInfoElementWithSize, IBlockInfoElementWithSizeGroup, IBlockInfoThemeGroup, IBlockInfoThemeTitle, IBlockInfoThemeWindow, IGroupsBlockInfo, } from "../../interfaces/blockInfo";
+import { ITitleBlockInfo, ITriangleData, IBlockInfoClass, IBlockInfoElementWithSize, IBlockInfoElementWithSizeGroup, IBlockInfoThemeGroup, IBlockInfoThemeTitle, IBlockInfoThemeWindow, IGroupsBlockInfo, } from "../../interfaces/blockInfo";
 import { ILinePos, ILineTheme, } from "../../interfaces/line";
 import { IPadding, IPos, ISize, IBounds, } from "../../interfaces/global";
 import { IData, } from "../../interfaces/data";
@@ -100,9 +100,9 @@ class BlockInfo extends Element implements IBlockInfoClass {
 	 * Определяет корректное значение для точки
 	 * @param {number} value Значение точки
 	 * @private
-	 * @returns {string}
+	 * @returns {string | number}
 	 */
-	private _getCorrectGroupValue(value): string {
+	private _getCorrectGroupValue(value: number): string | number {
 		return this.editValue instanceof Function ? this.editValue(value) : value;
 	}
 
@@ -126,7 +126,7 @@ class BlockInfo extends Element implements IBlockInfoClass {
 				},
 				value: {
 					name: correctGroupValue.toString(),
-					...getTextSize(titleFont.size, titleFont.weight || this.defaultGroupsFontWeight, correctGroupValue, this.ctx),
+					...getTextSize(titleFont.size, titleFont.weight || this.defaultGroupsFontWeight, correctGroupValue.toString(), this.ctx),
 				},
 			};
 		});
@@ -135,7 +135,7 @@ class BlockInfo extends Element implements IBlockInfoClass {
 	/**
 	 * Определяет позицию окна
 	 * @private
-	 * @returns {IPos} Позиция окна ({ x, y })
+	 * @returns {IPos} Позиция окна
 	 */
 	private _getCoordinates(): IPos {
 		return {
@@ -263,11 +263,11 @@ class BlockInfo extends Element implements IBlockInfoClass {
 	 * Определяет позицию группы
 	 * @param {number} index Индекс текущей группы
 	 * @private
-	 * @returns {IPos} Позиция группы ({ x, y })
+	 * @returns {IPos} Позиция группы
 	 */
 	private _getGroupsCoordinates(index: number): IPos {
 		const { x, y, } = this._getCoordinates();
-		const { gaps = {} as ITitleBlockInfoGaps, } = this.titleData;
+		const { gaps = {}, } = this.titleData;
 		const padding = this.padding as IPadding;
 		const prevGroups: Array<IBlockInfoElementWithSize> = this._getElementsWithSize().filter((element: IBlockInfoElementWithSize, idx: number) => idx <= index);
 		const top: number = this._getTopGroupsDistance(prevGroups.map(({ group: g, }) => g));
@@ -329,7 +329,7 @@ class BlockInfo extends Element implements IBlockInfoClass {
 	 * @private
 	 * @returns {boolean}
 	 */
-	private _outOfBounds(blockWidth): boolean {
+	private _outOfBounds(blockWidth: number): boolean {
 		return this._getCoordinates().x + blockWidth > this.bounds.width;
 	}
 

@@ -3,13 +3,13 @@ const MiniCssExtractPlugn = require("mini-css-extract-plugin");
 const path = require("path");
 
 module.exports = {
-  entry: path.resolve(__dirname, "src/ts/ACharty.ts"),
-  mode: "production",
+  entry: path.resolve(__dirname, "src/ts/index.ts"),
+  mode: "development",
   output: {
-    filename: "ACharty.js",
+    filename: "Sinera.js",
     path: path.resolve(__dirname, "dist"),
     libraryTarget: "umd",
-    library: "ACharty",
+    library: "Sinera",
   },
   plugins: [
     new HtmlWebpackPlugin({ template: path.resolve(__dirname, "src/index.html"), }),

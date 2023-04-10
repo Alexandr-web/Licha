@@ -7,14 +7,14 @@
   </p>
 </div>
 
-* [Dark](https://github.com/Alexandr-web/aCharty/blob/master/.github/themes/readme.md#dark)
-* [Light](https://github.com/Alexandr-web/aCharty/blob/master/.github/themes/readme.md#light)
+* [Dark](https://github.com/Alexandr-web/Sinera/blob/master/.github/themes/readme.md#dark)
+* [Light](https://github.com/Alexandr-web/Sinera/blob/master/.github/themes/readme.md#light)
 
 
 We will take this piece of code as a basis, we will only change the parameters of the getTheme method
 
 ```js
-new ACharty({
+new Sinera({
   theme: utils.getTheme(/** Will only change here */),
   padding: { left: 20, },
   selectorCanvas: "canvas",
@@ -23,7 +23,7 @@ new ACharty({
       size: 19,
       text: "Title",
     },
-    gapBottom: 10,
+    gaps: { bottom: 10 },
   },
   blockInfo: {
     padding: {
@@ -54,7 +54,7 @@ new ACharty({
     font: { size: 16, },
     title: {
       font: { size: 18, text: "Days", },
-      gapTop: 25,
+      gaps: { top: 25 },
     },
   },
   axisY: {
@@ -65,7 +65,7 @@ new ACharty({
         size: 18,
         text: "Sold",
       },
-      gapRight: 25,
+      gaps: { right: 25 },
     },
     editValue: (val) => new Intl.NumberFormat("ru-RU", { style: "currency", currency: "RUB", maximumSignificantDigits: 1, }).format(val),
   },

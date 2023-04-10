@@ -39,7 +39,7 @@ class Element implements IElementClass {
 	 * @param {number} startX Начальная позиция по оси абсцисс
 	 * @param {number} endX Конечная позиция по оси абсцисс
 	 */
-	public setColor(startY, endY, propertyToStyle, startX = 0, endX = 0): void {
+	public setColor(startY: number, endY: number, propertyToStyle: string, startX = 0, endX = 0): void {
 		if (Array.isArray(this.color) && this.color.length > 1) {
 			setGradientColor(this.color, startY, endY, propertyToStyle, this.ctx, startX, endX);
 		} else if (Array.isArray(this.color) && this.color.length === 1) {

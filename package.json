@@ -1,8 +1,8 @@
 {
-  "name": "aCharty",
+  "name": "Sinera",
   "version": "1.0.0",
   "description": "Creating simple graphs",
-  "main": "./dist/ACharty.js",
+  "main": "./dist/Sinera.js",
   "scripts": {
     "start": "webpack serve --open",
     "build": "webpack",

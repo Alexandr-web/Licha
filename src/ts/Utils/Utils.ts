@@ -21,7 +21,7 @@ class Utils implements IUtilsClass {
 	 * Определяет тему
 	 * @param {number} num Индекс темы
 	 * @param {TTypeTheme} type Тип темы ("dark" или "light")
-	 * @returns {ITheme | {}} Данные темы
+	 * @returns {ITheme | TEmptyObject} Данные темы
 	 */
 	public getTheme(num = 0, type = "dark"): ITheme | TEmptyObject {
 		if (!this.themes[type] || !this.themes[type][num]) {
