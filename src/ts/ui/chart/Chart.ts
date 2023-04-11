@@ -145,7 +145,7 @@ class Chart implements IChartClass {
 	 * @returns {IGaps} Отступы
 	 */
 	public getGapsForYPoints(axisY: IAxisYClass, axisX: IAxisXClass, chartTitle: IChartTitleData, legend: ILegendData): IGaps {
-		const { gaps: gapsLegend, totalHeight: legendHeight = 0, } = legend;
+		const { gaps: gapsLegend = {} as ILegendGaps, totalHeight: legendHeight = 0, } = legend;
 		const { showText: showXText = Boolean(Object.keys(axisX.font).length), } = axisX.font;
 
 		const legendGapBottom: number = (gapsLegend.legend || {}).bottom || 0;
