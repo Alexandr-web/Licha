@@ -559,6 +559,20 @@ Parameters passed to the Sinera class constructor
 
 #### Accepted parameters
 
+  * #### `events`
+
+    | Description  | Example | Type |
+    | ------------- | ------------- | ------------- |
+    | Accepts event handlers | `legend: { events: { ... }, }`  | `object` |
+
+    ##### Accepted parameters
+
+    * ##### `onClick`
+
+      | Description  | Example | Type |
+      | ------------- | ------------- | ------------- |
+      | Called when the legend element is clicked | `legend: { events: { onClick() { console.log(this) }, }, }`  | `function` |
+
   * #### `circle`
 
     | Description  | Example | Type |
@@ -668,6 +682,20 @@ Parameters passed to the Sinera class constructor
     | Description  | Example | Type |
     | ------------- | ------------- | ------------- |
     | Window background | `blockInfo: { background: "black", }`  | `array<string> \| string` |
+
+  * #### `events`
+
+    | Description  | Example | Type |
+    | ------------- | ------------- | ------------- |
+    | Accepts event handlers | `blockInfo: { events: { ... }, }`  | `object` |
+
+    ##### Accepted parameters
+
+    * ##### `onAimed`
+
+      | Description  | Example | Type |
+      | ------------- | ------------- | ------------- |
+      | Called when a block with information about the active element is hovered over a point | `blockInfo: { events: { onAimed() { console.log(this) }, }, }`  | `function` |
 
   * #### `groups`
 

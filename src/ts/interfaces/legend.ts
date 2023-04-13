@@ -18,11 +18,16 @@ export interface ILegendGaps {
     legend: IGaps | TEmptyObject;
 }
 
+export interface ILegendEvents {
+    onClick?: () => any;
+}
+
 export interface ILegend {
     circle: ICircleLegend;
     font: IFont;
     gaps: ILegendGaps;
     maxCount?: number;
+    events?: ILegendEvents | TEmptyObject;
 }
 
 export interface IColumnLegend {

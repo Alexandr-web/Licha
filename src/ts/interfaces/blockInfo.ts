@@ -34,6 +34,10 @@ export interface IGroupsBlockInfo {
     gaps: IGaps;
 }
 
+export interface IEventsBlockInfo {
+    onAimed?: () => any;
+}
+
 export interface ITitleBlockInfo {
     font: IFont;
     gaps: IGaps;
@@ -44,6 +48,7 @@ export interface IBlockInfo {
     groups: IGroupsBlockInfo;
     title: ITitleBlockInfo;
     padding?: IPadding | TEmptyObject | number;
+    events?: IEventsBlockInfo | TEmptyObject;
 }
 
 export interface IBlockInfoElementWithSizeGroup extends ISize {
