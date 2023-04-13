@@ -5,6 +5,7 @@ import getTextSize from "../../helpers/getTextSize";
 import getRange from "../../helpers/getRange";
 import quickSort from "../../helpers/quickSort";
 import getTextStr from "../../helpers/getTextStr";
+import isFunction from "../../helpers/isFunction";
 
 import { TEmptyObject, TSort, } from "../../types/index";
 
@@ -67,7 +68,7 @@ class AxisY extends Axis implements IAxisYClass {
 	 * @returns {string | number} Корректное значение точки
 	 */
 	private _getCorrectValue(value: number): string | number {
-		return this.editValue instanceof Function ? this.editValue(value) : value;
+		return isFunction(this.editValue) ? this.editValue(value) : value;
 	}
 
 	/**

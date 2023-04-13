@@ -9,6 +9,7 @@ import getTextSize from "../../helpers/getTextSize";
 import getTextStr from "../../helpers/getTextStr";
 import isNumber from "../../helpers/isNumber";
 import getPaddingObj from "../../helpers/getPaddingObj";
+import isFunction from "../../helpers/isFunction";
 
 import { ISpecialFontData, } from "../../interfaces/text";
 import { ITitleBlockInfo, ITriangleData, IBlockInfoClass, IBlockInfoElementWithSize, IBlockInfoElementWithSizeGroup, IBlockInfoThemeGroup, IBlockInfoThemeTitle, IBlockInfoThemeWindow, IGroupsBlockInfo, } from "../../interfaces/blockInfo";
@@ -103,7 +104,7 @@ class BlockInfo extends Element implements IBlockInfoClass {
 	 * @returns {string | number}
 	 */
 	private _getCorrectGroupValue(value: number): string | number {
-		return this.editValue instanceof Function ? this.editValue(value) : value;
+		return isFunction(this.editValue) ? this.editValue(value) : value;
 	}
 
 	/**

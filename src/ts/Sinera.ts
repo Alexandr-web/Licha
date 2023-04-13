@@ -27,6 +27,7 @@ import { ITheme, } from "./interfaces/utils";
 
 import isNumber from "./helpers/isNumber";
 import getPaddingObj from "./helpers/getPaddingObj";
+import isFunction from "./helpers/isFunction";
 
 class Sinera implements ISineraClass {
 	public selectorCanvas: string;
@@ -287,7 +288,7 @@ class Sinera implements ISineraClass {
 		if (mousePos.y <= endY && mousePos.y >= startY) {
 			// Отбираем элементы, которые подходят по координатам на холсте
 			const activeElements: Array<IPointX> = pointsX.map((point) => {
-				if (this.axisX.editName instanceof Function) {
+				if (isFunction(this.axisX.editName)) {
 					return {
 						...point,
 						name: this.axisX.editName(point.name),
@@ -327,7 +328,7 @@ class Sinera implements ISineraClass {
 				).init();
 
 				// Вызываем функцию-обработчик для обработки события наведения на точку
-				if (events.onAimed instanceof Function) {
+				if (isFunction(events.onAimed)) {
 					events.onAimed.call({ ...mousePos, activeElements, });
 				}
 			}
@@ -402,7 +403,7 @@ class Sinera implements ISineraClass {
 			}
 
 			// Вызываем функцию-обработчик для обработки события клика на элемент легенды
-			if (events.onClick instanceof Function) {
+			if (isFunction(events.onClick)) {
 				const hiddenLegendItems = legendItems.filter(({ group: g, }) => this.hideGroups.includes(g));
 				const notHiddenItems = legendItems.filter(({ group: g, }) => !this.hideGroups.includes(g));
 

@@ -6,6 +6,8 @@ import { TEmptyObject, } from "../types/index";
 
 import { IColors, ITheme, IThemes, IUtilsClass, } from "../interfaces/utils";
 
+import isFunction from "../helpers/isFunction";
+
 class Utils implements IUtilsClass {
 	public themes: IThemes;
 	public colors: IColors;
@@ -38,7 +40,7 @@ class Utils implements IUtilsClass {
 	 * @returns {string} Цвет
 	 */
 	public getColor(name: string, opacity = 1): string {
-		if (!(this.colors[name] instanceof Function)) {
+		if (!isFunction(this.colors[name])) {
 			return "";
 		}
 
