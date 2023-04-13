@@ -191,12 +191,12 @@ class BlockInfo extends Element implements IBlockInfoClass {
 				Object.assign(linePos, {
 					moveTo: {
 						x: posX - (blockWidth + this.triangleSizes.height * 2),
-						y: groupPos.y,
+						y: groupPos.y - group.height,
 					},
 					lineTo: [
 						{
 							x: posX - (blockWidth + this.triangleSizes.height * 2),
-							y: groupPos.y - group.height,
+							y: groupPos.y,
 						}
 					],
 				});
