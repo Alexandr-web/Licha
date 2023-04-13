@@ -297,8 +297,6 @@ class Sinera implements ISineraClass {
 				return point;
 			}).filter(({ x, group, }) => !this.hideGroups.includes(group) && mousePos.x > (x - 5) && mousePos.x < (x + 5));
 
-			document.documentElement.setAttribute("style", `cursor: ${activeElements.length ? "none" : "default"}`);
-
 			if (activeElements.length) {
 				this.update();
 
@@ -328,12 +326,11 @@ class Sinera implements ISineraClass {
 					themeForGroup
 				).init();
 
+				// Вызываем функцию-обработчик для обработки события наведения на точку
 				if (events.onAimed instanceof Function) {
 					events.onAimed.call({ ...mousePos, activeElements, });
 				}
 			}
-		} else {
-			document.documentElement.setAttribute("style", "cursor: default");
 		}
 	}
 
