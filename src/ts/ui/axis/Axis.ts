@@ -12,7 +12,7 @@ class Axis implements IAxisClass {
   public ctx: CanvasRenderingContext2D;
   public title: IAxisYTitle | IAxisXTitle | TEmptyObject;
   public font: IFontAxis | TEmptyObject;
-  public bounds: IBounds | TEmptyObject;
+  public bounds: IBounds;
   public points: Array<IPointX | IPointY>;
   public sortNames: TSort;
   public uniqueNames: Array<string | number>;
@@ -25,10 +25,10 @@ class Axis implements IAxisClass {
   constructor(
     ctx: CanvasRenderingContext2D,
     sortNames: TSort,
+    bounds: IBounds,
     themeForPoint: IAxisThemePoint | TEmptyObject = {},
     themeForTitle: IAxisThemeTitle | TEmptyObject = {},
     title: IAxisYTitle | IAxisXTitle | TEmptyObject = {},
-    bounds: IBounds | TEmptyObject = {},
     font: IFontAxis | TEmptyObject = {}
   ) {
     // Контекст элемента canvas

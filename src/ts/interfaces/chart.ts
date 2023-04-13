@@ -5,7 +5,7 @@ import { IChartLineStyle, } from "./lineChart";
 import { IFontWithText, } from "./text";
 import { IData, } from "./data";
 import { IAxisYClass, IAxisY, } from "./axisY";
-import { IAxisXClass, IAxisX, } from "./axisX";
+import { IAxisXClass, } from "./axisX";
 import { ILegendData, } from "./legend";
 
 export interface IChartCapStyle {

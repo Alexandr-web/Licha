@@ -9,9 +9,10 @@ import getTextSize from "../../helpers/getTextSize";
 import getTextStr from "../../helpers/getTextStr";
 import isNumber from "../../helpers/isNumber";
 import getPaddingObj from "../../helpers/getPaddingObj";
+import isFunction from "../../helpers/isFunction";
 
 import { ISpecialFontData, } from "../../interfaces/text";
-import { ITitleBlockInfo, ITriangleData, IBlockInfoClass, IBlockInfoElementWithSize, IBlockInfoElementWithSizeGroup, IBlockInfoThemeGroup, IBlockInfoThemeTitle, IBlockInfoThemeWindow, IGroupsBlockInfo, } from "../../interfaces/blockInfo";
+import { ITitleBlockInfo, ITriangleData, IBlockInfoClass, IBlockInfoElementWithSize, IBlockInfoElementWithSizeGroup, IBlockInfoThemeGroup, IBlockInfoThemeTitle, IBlockInfoThemeWindow, IGroupsBlockInfo, ITriangleChangedData, } from "../../interfaces/blockInfo";
 import { ILinePos, ILineTheme, } from "../../interfaces/line";
 import { IPadding, IPos, ISize, IBounds, } from "../../interfaces/global";
 import { IData, } from "../../interfaces/data";
@@ -103,7 +104,7 @@ class BlockInfo extends Element implements IBlockInfoClass {
 	 * @returns {string | number}
 	 */
 	private _getCorrectGroupValue(value: number): string | number {
-		return this.editValue instanceof Function ? this.editValue(value) : value;
+		return isFunction(this.editValue) ? this.editValue(value) : value;
 	}
 
 	/**
@@ -161,6 +162,30 @@ class BlockInfo extends Element implements IBlockInfoClass {
 	}
 
 	/**
+	 * Определяет новую позицию линии, если окно вышло за пределы области графика
+	 * @param {number} posX Позиция окна по оси абсцисс
+	 * @param {number} blockWidth Ширина окна
+	 * @param {IPos} groupPos Позиция группы
+	 * @param {IBlockInfoElementWithSizeGroup} group Данные группы
+	 * @private
+	 * @returns {ILinePos}
+	 */
+	private _getNewLinesPosIfWindowIsOutOfBounds(posX: number, blockWidth: number, groupPos: IPos, group: IBlockInfoElementWithSizeGroup): ILinePos {
+		return {
+			moveTo: {
+				x: posX - (blockWidth + this.triangleSizes.height * 2),
+				y: groupPos.y - group.height,
+			},
+			lineTo: [
+				{
+					x: posX - (blockWidth + this.triangleSizes.height * 2),
+					y: groupPos.y,
+				}
+			],
+		};
+	}
+
+	/**
 	 * Рисует линии
 	 * @param {boolean} windowIsOutOfBounds Правило, говорящее, что окно вышло за границы диаграммы
 	 * @param {number} blockWidth Ширина окна
@@ -174,7 +199,8 @@ class BlockInfo extends Element implements IBlockInfoClass {
 			const { group, } = this._getElementsWithSize()[i];
 			const groupPos: IPos = this._getGroupsCoordinates(i);
 			const posX: number = x + blockWidth - (padding.right || 0);
-			const linePos: ILinePos = {
+
+			let linePos: ILinePos = {
 				moveTo: {
 					x: posX,
 					y: groupPos.y - group.height,
@@ -188,18 +214,7 @@ class BlockInfo extends Element implements IBlockInfoClass {
 			};
 
 			if (windowIsOutOfBounds) {
-				Object.assign(linePos, {
-					moveTo: {
-						x: posX - (blockWidth + this.triangleSizes.height * 2),
-						y: groupPos.y - group.height,
-					},
-					lineTo: [
-						{
-							x: posX - (blockWidth + this.triangleSizes.height * 2),
-							y: groupPos.y,
-						}
-					],
-				});
+				linePos = this._getNewLinesPosIfWindowIsOutOfBounds(posX, blockWidth, groupPos, group);
 			}
 
 			new Line(
@@ -350,6 +365,23 @@ class BlockInfo extends Element implements IBlockInfoClass {
 	}
 
 	/**
+	 * Определяет новую позицию треугольника, если ширина окна выходит за пределы графика
+	 * @param {number} x Позиция окна по оси абсцисс
+	 * @param {number} y Позиция окна по оси ординат
+	 * @returns {ITriangleChangedData}
+	 */
+	private _getNewPosTriangleIfWindowIsOutOfBounds(x: number, y: number): ITriangleChangedData {
+		return {
+			x: x - this.triangleSizes.height,
+			y,
+			lineTo: [
+				{ x, y: y + this.triangleSizes.width / 2, },
+				{ x: x - this.triangleSizes.height, y: y + this.triangleSizes.width, }
+			],
+		};
+	}
+
+	/**
 	 * Рисует треугольник
 	 * @private
 	 * @param {boolean} windowIsOutOfBounds Правило, говорящее, что окно вышло за границы диаграммы
@@ -369,14 +401,9 @@ class BlockInfo extends Element implements IBlockInfoClass {
 		};
 
 		if (windowIsOutOfBounds) {
-			Object.assign(triangleData, {
-				x: x - this.triangleSizes.height,
-				y,
-				lineTo: [
-					{ x, y: y + this.triangleSizes.width / 2, },
-					{ x: x - this.triangleSizes.height, y: y + this.triangleSizes.width, }
-				],
-			});
+			const { x: newX, y: newY, lineTo, } = this._getNewPosTriangleIfWindowIsOutOfBounds(x, y);
+
+			Object.assign(triangleData, { x: newX, y: newY, lineTo, });
 		}
 
 		new CustomFigure(

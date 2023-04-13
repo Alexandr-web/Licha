@@ -43,6 +43,12 @@ export interface ITitleBlockInfo {
     gaps: IGaps;
 }
 
+export interface ITriangleChangedData {
+    x: number;
+    y: number;
+    lineTo: Array<ILineTo>;
+}
+
 export interface IBlockInfo {
     background?: string | Array<string>;
     groups: IGroupsBlockInfo;
