@@ -35,8 +35,7 @@ export interface IGroupsBlockInfo {
 }
 
 export interface IEventsBlockInfo {
-    onHover?: () => any;
-    onMove?: () => any;
+    onAimed?: () => any;
 }
 
 export interface ITitleBlockInfo {

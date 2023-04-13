@@ -284,10 +284,6 @@ class Sinera implements ISineraClass {
 		const mousePos: IPos = { x: e.offsetX, y: e.offsetY, };
 		const { events = {}, } = this.blockInfo;
 
-		if (events.onMove instanceof Function) {
-			events.onMove.call(mousePos);
-		}
-
 		if (mousePos.y <= endY && mousePos.y >= startY) {
 			// Отбираем элементы, которые подходят по координатам на холсте
 			const activeElements: Array<IPointX> = pointsX.map((point) => {
@@ -332,8 +328,8 @@ class Sinera implements ISineraClass {
 					themeForGroup
 				).init();
 
-				if (events.onHover instanceof Function) {
-					events.onHover.call({ ...mousePos, activeElements, });
+				if (events.onAimed instanceof Function) {
+					events.onAimed.call({ ...mousePos, activeElements, });
 				}
 			}
 		} else {
@@ -389,6 +385,7 @@ class Sinera implements ISineraClass {
 	 * @private
 	 */
 	private _clickByCanvasAreaHandler(e: MouseEvent, legendItems: Array<IItemLegend>): void {
+		const { events = {}, } = this.legend;
 		const mousePos: IPos = { x: e.offsetX, y: e.offsetY, };
 		const findMatchLegendItem: IItemLegend | null = legendItems.find(({ x, y, width, height, }) => {
 			const endX: number = x + width;
@@ -405,6 +402,14 @@ class Sinera implements ISineraClass {
 				this.hideGroups.splice(findIdxHideGroup, 1);
 			} else {
 				this.hideGroups.push(group);
+			}
+
+			// Вызываем функцию-обработчик для обработки события клика на элемент легенды
+			if (events.onClick instanceof Function) {
+				const hiddenLegendItems = legendItems.filter(({ group: g, }) => this.hideGroups.includes(g));
+				const notHiddenItems = legendItems.filter(({ group: g, }) => !this.hideGroups.includes(g));
+
+				events.onClick.call({ element: findMatchLegendItem, hiddenElements: hiddenLegendItems, elements: legendItems, notHiddenElements: notHiddenItems, });
 			}
 
 			this.update();
