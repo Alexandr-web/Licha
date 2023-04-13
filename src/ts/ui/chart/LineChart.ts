@@ -14,7 +14,7 @@ import { ICap, ICapData, ICapTheme, } from "../../interfaces/cap";
 import { IChartCapStyle, IChartStyle, IChartTitle, } from "../../interfaces/chart";
 import { IChartLineStyle, ILineChartClass, } from "../../interfaces/lineChart";
 import { IData, IDataAtItemData, IGroupDataCoordinates, } from "../../interfaces/data";
-import { ILine, ILineTheme, } from "../../interfaces/line";
+import { ILine, ILineTheme, ILineTo, } from "../../interfaces/line";
 import { IPadding, IPos, } from "../../interfaces/global";
 
 class LineChart extends Chart implements ILineChartClass {
@@ -122,6 +122,44 @@ class LineChart extends Chart implements ILineChartClass {
 	}
 
 	/**
+	 * Определяет координаты для фигуры, которая будет "красить" группу всю
+	 * @param {Array<IGroupDataCoordinates>} coordinates массив координат линий графика
+	 * @param {boolean} stepped Правило, которое будет рисовать линию пошагово
+	 * @returns {Array<ILineTo>}
+	 */
+	private _getLineToForGroupFigure(coordinates: Array<IGroupDataCoordinates>, stepped: boolean): Array<ILineTo> {
+		const lineTo: Array<ILineTo> = [];
+
+		coordinates.map(({ x, y, }, index: number) => {
+			if (stepped) {
+				const nextItem: IGroupDataCoordinates | undefined = coordinates[index + 1];
+
+				if (nextItem) {
+					// Элемент для следующей позиции Y линии
+					const findNextAxisYItem: IPointY = this.pointsY.find((nextAxisYItem: IPointY) => nextAxisYItem.value === nextItem.value);
+					// Элемент для следующей позиции X линии
+					const findNextAxisXItem: IPointX = this.pointsX.find((nextAxisXItem: IPointX) => nextAxisXItem.name === nextItem.name);
+
+					lineTo.push(
+						{
+							x: findNextAxisXItem.x,
+							y,
+						},
+						{
+							x: findNextAxisXItem.x,
+							y: findNextAxisYItem.y,
+						}
+					);
+				}
+			} else if (index > 0) {
+				lineTo.push({ x, y, });
+			}
+		});
+
+		return lineTo;
+	}
+
+	/**
 	 * Создает задний фон всей группе
 	 * @param {Array<IGroupDataCoordinates>} coordinates массив координат линий графика
 	 * @param {string | Array<string>} fill содержит данные о цвете заднего фона
@@ -137,39 +175,12 @@ class LineChart extends Chart implements ILineChartClass {
 		const firstYPoint: IPointY = yItemsOnScreen[0];
 		const lineData = {
 			moveTo: { x: firstPoint.x, y: firstPoint.y, },
-			lineTo: [],
+			lineTo: this._getLineToForGroupFigure(coordinates, stepped),
 			fill,
 			group,
 			startY: Math.min(...coordinates.map(({ y, }) => y)),
 			endY: lastYPoint.y,
 		};
-
-		// Определяем координаты для будущей фигуры
-		coordinates.map(({ x, y, }, index: number) => {
-			if (stepped) {
-				const nextItem: IGroupDataCoordinates | undefined = coordinates[index + 1];
-
-				if (nextItem) {
-					// Элемент для следующей позиции Y линии
-					const findNextAxisYItem: IPointY = this.pointsY.find((nextAxisYItem: IPointY) => nextAxisYItem.value === nextItem.value);
-					// Элемент для следующей позиции X линии
-					const findNextAxisXItem: IPointX = this.pointsX.find((nextAxisXItem: IPointX) => nextAxisXItem.name === nextItem.name);
-
-					lineData.lineTo.push(
-						{
-							x: findNextAxisXItem.x,
-							y,
-						},
-						{
-							x: findNextAxisXItem.x,
-							y: findNextAxisYItem.y,
-						}
-					);
-				}
-			} else if (index > 0) {
-				lineData.lineTo.push({ x, y, });
-			}
-		});
 
 		// Закрываем фигуру
 		switch (this.sortValues) {
@@ -202,6 +213,52 @@ class LineChart extends Chart implements ILineChartClass {
 	}
 
 	/**
+	 * Рисует общую линию
+	 * @param {number} startX Начальная позиция линии по оси абсцисс
+	 * @param {number} startY Начальная позиция линии по оси ординат
+	 * @param {IChartLineStyle} lineStyle Содержит стили для линии
+	 * @param {Array<ILineTo>} lineTo Содержит массив координат последующих позиций линии
+	 * @private
+	 */
+	private _drawLine(startX: number, startY: number, lineStyle: IChartLineStyle, lineTo: Array<ILineTo>): void {
+		new Line(
+			startX,
+			startY,
+			lineStyle.color,
+			this.ctx,
+			lineTo,
+			lineStyle.width,
+			lineStyle.dotted
+		).draw();
+	}
+
+	/**
+	 * Рисует колпачки на графике
+	 * @param {string} themeStrokeColorForCap Цвет обводки
+	 * @private
+	 */
+	private _drawCaps(themeStrokeColorForCap: string): void {
+		this.caps.map(({ x, y, color, format, size, stroke, }) => {
+			new Cap(
+				size,
+				x,
+				y,
+				color,
+				format,
+				this.ctx,
+				1,
+				format === "circle" ? y - size : y - size / 2,
+				format === "circle" ? y + size : y + size / 2,
+				0,
+				{
+					width: stroke.width || 1,
+					color: stroke.color || themeStrokeColorForCap,
+				}
+			).draw();
+		});
+	}
+
+	/**
 	 * Рисует линии и колпачки
 	 * @param {Array<IGroupDataCoordinates>} coordinates Массив координат у данных группы
 	 * @param {Array<IDataAtItemData>} gData Данные группы
@@ -215,7 +272,7 @@ class LineChart extends Chart implements ILineChartClass {
 		// Содержит следующие позиции линии
 		const lineToArray: Array<IPos> = [];
 
-		// Находим координаты для линий
+		// Находим координаты для линии
 		coordinates.map(({ value, name, x, y, }, index: number) => {
 			const nextDataItem: IDataAtItemData | undefined = gData[index + 1];
 
@@ -254,36 +311,8 @@ class LineChart extends Chart implements ILineChartClass {
 			});
 		});
 
-		// Рисуем линию
-		new Line(
-			coordinates[0].x,
-			coordinates[0].y,
-			lineStyle.color,
-			this.ctx,
-			lineToArray,
-			lineStyle.width,
-			lineStyle.dotted
-		).draw();
-
-		// Рисуем колпачок
-		this.caps.map(({ x, y, color, format, size, stroke, }) => {
-			new Cap(
-				size,
-				x,
-				y,
-				color,
-				format,
-				this.ctx,
-				1,
-				format === "circle" ? y - size : y - size / 2,
-				format === "circle" ? y + size : y + size / 2,
-				0,
-				{
-					width: stroke.width || 1,
-					color: stroke.color || themeStrokeColorForCap,
-				}
-			).draw();
-		});
+		this._drawLine(coordinates[0].x, coordinates[0].y, lineStyle, lineToArray);
+		this._drawCaps(themeStrokeColorForCap);
 	}
 
 	/**

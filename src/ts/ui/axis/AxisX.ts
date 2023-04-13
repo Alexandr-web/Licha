@@ -40,7 +40,7 @@ class AxisX extends Axis implements IAxisXClass {
 		ignoreNames: Array<string | number> | ((name: string, index: number) => boolean),
 		themeForLine: ILineTheme | TEmptyObject = {}
 	) {
-		super(ctx, sortNames, themeForPoint, themeForTitle, title, bounds, font);
+		super(ctx, sortNames, bounds, themeForPoint, themeForTitle, title, font);
 
 		// Правило, при котором текст точек оси абсцисс будет повернут на 90 градусов
 		this.rotate = rotate;
@@ -142,6 +142,80 @@ class AxisX extends Axis implements IAxisXClass {
 	}
 
 	/**
+	 * Заполняет массив points данными точек оси абсцисс
+	 * @param {Array<string | number>} ignoreNames Содержит названия точек, которые не нужно рисовать
+	 * @param {IPos} posXItem Содержит позицию точки оси абсцисс
+	 * @param {ISize} nameSizes Содержит размеры названия точки
+	 * @param {string | number} name Название точки
+	 * @private
+	 */
+	private _fillPointsData(ignoreNames: Array<string | number>, posXItem: IPos, nameSizes: ISize, name: string | number): void {
+		for (const group in this.data) {
+			const groupData: Array<IDataAtItemData> = this.data[group].data;
+			const dataKeys: Array<string> = Object.keys(this.data);
+			const idx: number = dataKeys.indexOf(group);
+			const colorByTheme = getStyleByIndex(idx, this.themeForLine.color) as string;
+
+			groupData.map((groupDataItem: IDataAtItemData) => {
+				if (groupDataItem.name === name) {
+					const groupLine: ILine | TEmptyObject = (this.data[group].line || {});
+
+					this.points.push({
+						onScreen: !ignoreNames.includes(name),
+						name,
+						color: (groupLine.color || (this.line || {}).color || groupLine.fill || (this.line || {}).fill) || colorByTheme,
+						value: groupDataItem.value,
+						group,
+						...posXItem,
+						...nameSizes,
+					});
+				}
+			});
+		}
+	}
+
+	/**
+	 * Рисует названия точек на оси абсцисс
+	 * @param {boolean} showText Правило, при котором название точки будет рисоваться
+	 * @param {Array<string | number>} ignoreNames Содержит названия точек, которые не будут рисоваться
+	 * @param {string} color Цвет
+	 * @param {number} size Размер шрифта
+	 * @param {number} weight Жирность шрифта
+	 * @param {string | number} name Название точки
+	 * @param {IPos} posXItem Позиция точки оси басцисс
+	 * @param {ISize} nameSizes Размеры текста названия точки оси абсцисс
+	 * @private 
+	 */
+	private _drawText(showText: boolean, ignoreNames: Array<string | number>, color: string, size: number, weight: number, name: string | number, posXItem: IPos, nameSizes: ISize): void {
+		if (showText && !ignoreNames.includes(name)) {
+			const font: ISpecialFontData = {
+				...this.font,
+				color,
+				str: getTextStr(size, weight),
+				text: this.getCorrectName(name).toString(),
+			};
+
+			if (this.rotate) {
+				new Text(
+					font,
+					this.ctx,
+					posXItem.x + nameSizes.height / 2,
+					posXItem.y,
+					null,
+					-90 * (Math.PI / 180)
+				).draw();
+			} else {
+				new Text(
+					font,
+					this.ctx,
+					posXItem.x - nameSizes.width / 2,
+					posXItem.y
+				).draw();
+			}
+		}
+	}
+
+	/**
 	 * Рисует точки на оси абсцисс
 	 * @param {IGaps} gaps Отступы оси абсцисс
 	 * @returns {IAxisXClass}
@@ -169,56 +243,9 @@ class AxisX extends Axis implements IAxisXClass {
 
 			// Если это уникальное название присутствует в какой-либо группе,
 			// то мы добавляем его вместе с его значением
-			for (const group in this.data) {
-				const groupData: Array<IDataAtItemData> = this.data[group].data;
-				const dataKeys: Array<string> = Object.keys(this.data);
-				const idx: number = dataKeys.indexOf(group);
-				const colorByTheme = getStyleByIndex(idx, this.themeForLine.color) as string;
-
-				groupData.map((groupDataItem: IDataAtItemData) => {
-					if (groupDataItem.name === name) {
-						const groupLine: ILine | TEmptyObject = (this.data[group].line || {});
-
-						this.points.push({
-							onScreen: !ignoreNames.includes(name),
-							name,
-							color: (groupLine.color || (this.line || {}).color || groupLine.fill || (this.line || {}).fill) || colorByTheme,
-							value: groupDataItem.value,
-							group,
-							...posXItem,
-							...nameSizes,
-						});
-					}
-				});
-			}
-
+			this._fillPointsData(ignoreNames, posXItem, nameSizes, name);
 			// Рисуем текст
-			if (showText && !ignoreNames.includes(name)) {
-				const font: ISpecialFontData = {
-					...this.font,
-					color,
-					str: getTextStr(size, weight),
-					text: this.getCorrectName(name).toString(),
-				};
-
-				if (this.rotate) {
-					new Text(
-						font,
-						this.ctx,
-						posXItem.x + nameSizes.height / 2,
-						posXItem.y,
-						null,
-						-90 * (Math.PI / 180)
-					).draw();
-				} else {
-					new Text(
-						font,
-						this.ctx,
-						posXItem.x - nameSizes.width / 2,
-						posXItem.y
-					).draw();
-				}
-			}
+			this._drawText(showText, ignoreNames, color, size, weight, name, posXItem, nameSizes);
 		});
 
 		this.font.showText = showText;
