@@ -1,5 +1,7 @@
 import { IElementClass, } from "../../interfaces/element";
+
 import setGradientColor from "../../helpers/setGradientColor";
+import isString from "../../helpers/isString";
 
 class Element implements IElementClass {
 	public ctx: CanvasRenderingContext2D;
@@ -44,7 +46,7 @@ class Element implements IElementClass {
 			setGradientColor(this.color, startY, endY, propertyToStyle, this.ctx, startX, endX);
 		} else if (Array.isArray(this.color) && this.color.length === 1) {
 			this.ctx[propertyToStyle] = this.color[0];
-		} else if (typeof this.color === "string") {
+		} else if (isString(this.color)) {
 			this.ctx[propertyToStyle] = this.color;
 		}
 	}

@@ -2,7 +2,9 @@ import Chart from "./Chart";
 import Line from "../elements/Line";
 import Cap from "../elements/Cap";
 import CustomFigure from "../elements/CustomFigure";
+
 import getStyleByIndex from "../../helpers/getStyleByIndex";
+import isString from "../../helpers/isString";
 
 import { TEmptyObject, TSort, } from "../../types/index";
 
@@ -309,7 +311,7 @@ class LineChart extends Chart implements ILineChartClass {
 			const coordinates: Array<IGroupDataCoordinates> = this._getGroupsDataCoordinates(groupData);
 
 			// Рисуем задний фон группе
-			if (Array.isArray(lineStyle.fill) || (typeof lineStyle.fill === "string" && lineStyle.fill.length)) {
+			if (Array.isArray(lineStyle.fill) || (isString(lineStyle.fill) && lineStyle.fill.length)) {
 				this._setFillGroupChart(coordinates, lineStyle.fill, lineStyle.stepped, group);
 			}
 
