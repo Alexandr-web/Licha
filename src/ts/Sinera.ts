@@ -14,7 +14,7 @@ import { ISineraClass, ISineraConstructor, } from "./interfaces/sinera";
 import { IAxisPoints, IAxisThemePoint, IAxisThemeTitle, } from "./interfaces/axis";
 import { IAxisX, IAxisXClass, IPointX, } from "./interfaces/axisX";
 import { IAxisY, IAxisYClass, IPointY, } from "./interfaces/axisY";
-import { IBlockInfo, IBlockInfoThemeGroup, IBlockInfoThemeTitle, IBlockInfoThemeWindow, IEventsBlockInfo, } from "./interfaces/blockInfo";
+import { IBlockInfo, IBlockInfoThemeGroup, IBlockInfoThemeTitle, IBlockInfoThemeWindow, } from "./interfaces/blockInfo";
 import { IBounds, IGaps, IPadding, IPos, } from "./interfaces/global";
 import { ICanvasClass, } from "./interfaces/canvas";
 import { ICap, } from "./interfaces/cap";

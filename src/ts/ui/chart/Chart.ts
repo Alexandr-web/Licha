@@ -7,7 +7,7 @@ import getPaddingObj from "../../helpers/getPaddingObj";
 
 import { TEmptyObject, TTypeChart, } from "../../types/index";
 
-import { IAxisX, IAxisXClass, IAxisXTitle, IAxisXTitleData, } from "../../interfaces/axisX";
+import { IAxisXClass, IAxisXTitleData, } from "../../interfaces/axisX";
 import { IAxisY, IAxisYClass, IAxisYTitleData, } from "../../interfaces/axisY";
 import { IBounds, IPadding, IPos, ISize, IGaps, } from "../../interfaces/global";
 import { IChartClass, IChartTitle, IChartTitleData, IChartTitleWithSizeAndPos, ITitleTheme, } from "../../interfaces/chart";
