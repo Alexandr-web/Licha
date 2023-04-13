@@ -145,13 +145,13 @@ class Chart implements IChartClass {
 	 * @returns {IGaps} Отступы
 	 */
 	public getGapsForYPoints(axisY: IAxisYClass, axisX: IAxisXClass, chartTitle: IChartTitleData, legend: ILegendData): IGaps {
-		const { gaps: gapsLegend, totalHeight: legendHeight = 0, } = legend;
+		const { gaps: gapsLegend = {} as ILegendGaps, totalHeight: legendHeight = 0, } = legend;
 		const { showText: showXText = Boolean(Object.keys(axisX.font).length), } = axisX.font;
 
 		const legendGapBottom: number = (gapsLegend.legend || {}).bottom || 0;
 		const axisYTitleHeight: number = (axisY.titleData || {}).height || 0;
 		const axisYTitleGapRight: number = ((axisY.titleData || {}).gaps || {}).right || 0;
-		const chartTitleYPos: number = (chartTitle || {}).y || 0;
+		const chartTitleHeight: number = (chartTitle || {}).height || 0;
 		const chartTitleGapBottom: number = ((chartTitle || {}).gaps || {}).bottom || 0;
 		const axisXTitleHeight: number = (axisX.titleData || {}).height || 0;
 		const axisXTitleGapTop: number = ((axisX.titleData || {}).gaps || {}).top || 0;
@@ -159,7 +159,7 @@ class Chart implements IChartClass {
 
 		return {
 			left: axisYTitleHeight + axisYTitleGapRight,
-			top: chartTitleYPos + chartTitleGapBottom + legendHeight + legendGapBottom,
+			top: chartTitleHeight + chartTitleGapBottom + legendHeight + legendGapBottom,
 			bottom: (showXText ? axisX.gapTopAxisX + gapBottomIfRotateX : 0) + axisXTitleHeight + axisXTitleGapTop,
 		};
 	}
@@ -194,43 +194,6 @@ class Chart implements IChartClass {
 			right: lastNameIsNotIgnore ? lastNameWidth / 2 : 0,
 			bottom: axisXTitleHeight + axisXTitleGapTop,
 		};
-	}
-
-	/**
-	 * Определяет отступы для заголовка оси ординат
-	 * @param {IChartTitleWithSizeAndPos} chartTitle Содержит данные заголовка диаграммы
-	 * @param {ILegendData} legend Содержит данные легенды
-	 * @param {IAxisX} axisX Содержит данные оси абсцисс
-	 * @returns {IGaps} Отступы
-	 */
-	public getGapsForYTitle(chartTitle: IChartTitleData, legend: ILegendData, axisX: IAxisX): IGaps {
-		const { y: chartTitleY = 0, gaps: chartTitleGaps, } = chartTitle;
-		const { right: chartTitleGapBottom = 0, } = chartTitleGaps;
-		const { totalHeight: legendHeight, gaps: gapsLegend = {} as ILegendGaps, } = legend;
-		const { title: axisXTitle = {} as IAxisXTitle, } = axisX;
-		const { font: axisXTitleFont = {} as IFontWithText, gaps: axisXTitleGaps = {}, } = axisXTitle;
-		const { top: axisXTitleGapTop = 0, } = axisXTitleGaps;
-		const { size, weight = 600, text, } = axisXTitleFont;
-		const axisXTitleHeight: number = getTextSize(size, weight, text, this.ctx).height || 0;
-		const legendGapBottom: number = (gapsLegend.legend || {}).bottom || 0;
-
-		return {
-			top: chartTitleY + legendGapBottom + chartTitleGapBottom + legendHeight,
-			bottom: axisXTitleHeight + axisXTitleGapTop,
-		};
-	}
-
-	/**
-	 * Определяет отступы для заголовка оси абсцисс
-	 * @param {IAxisYClass} axisY Экземпляр класса AxisY
-	 * @returns {IGaps} Отступы
-	 */
-	public getGapsForXTitle(axisY: IAxisYClass): IGaps {
-		const { titleData = {} as IAxisYTitleData, gapRightAxisY, } = axisY;
-		const { gaps, height = 0, } = titleData;
-		const { right: gapRight = 0, } = gaps;
-
-		return { left: height + gapRight + gapRightAxisY, };
 	}
 
 	/**

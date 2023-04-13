@@ -51,7 +51,5 @@ export interface IChartClass {
     drawTitle(): IChartClass;
     getGapsForYPoints(axisY: IAxisYClass, axisX: IAxisXClass, chartTitle: IChartTitle, legend: ILegendData): IGaps;
     getGapsForXPoints(axisY: IAxisYClass, axisX: IAxisXClass): IGaps;
-    getGapsForYTitle(chartTitle: IChartTitleData, legend: ILegendData, axisX: IAxisX): IGaps;
-    getGapsForXTitle(axisY: IAxisYClass): IGaps;
     getGapsForLegend(axisY: IAxisY | TEmptyObject, chartTitle: IChartTitleWithSizeAndPos): IGaps;
 }

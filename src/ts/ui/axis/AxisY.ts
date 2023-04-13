@@ -72,10 +72,9 @@ class AxisY extends Axis implements IAxisYClass {
 
 	/**
 	 * Рисует заголовок на оси ординат
-	 * @param {IGaps} gaps Отступы заголовка
 	 * @returns {IAxisYClass}
 	 */
-	public drawTitle(gaps: IGaps): IAxisYClass {
+	public drawTitle(): IAxisYClass {
 		if (!Object.keys(this.title).length) {
 			return this;
 		}
@@ -90,8 +89,9 @@ class AxisY extends Axis implements IAxisYClass {
 		};
 
 		const sizes: ISize = getTextSize(size, weight, text, this.ctx);
-		const startY: number = bounds.vertical.start + sizes.width / 2 + (gaps.top || 0);
-		const endY: number = bounds.vertical.end - (gaps.bottom || 0);
+		const startY: number = bounds.vertical.start + sizes.width;
+		const endY: number = bounds.vertical.end;
+
 		const posTitle: IPos = {
 			x: bounds.horizontal.start + sizes.height,
 			y: startY + (endY - startY) / 2,
@@ -164,6 +164,7 @@ class AxisY extends Axis implements IAxisYClass {
 				text: this._getCorrectValue(value).toString(),
 			};
 
+			// Добавляем данные нарисованных точек в массив
 			this.points.push({
 				onScreen: true,
 				value,

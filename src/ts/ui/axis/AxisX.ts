@@ -90,10 +90,9 @@ class AxisX extends Axis implements IAxisXClass {
 
 	/**
 	 * Рисует заголовок на оси абсцисс
-	 * @param {IGaps} gaps Отступы заголовка
 	 * @returns {IAxisXClass}
 	 */
-	public drawTitle(gaps: IGaps): IAxisXClass {
+	public drawTitle(): IAxisXClass {
 		if (!Object.keys(this.title).length) {
 			return this;
 		}
@@ -108,7 +107,7 @@ class AxisX extends Axis implements IAxisXClass {
 		};
 		const bounds: IBounds | TEmptyObject = this.bounds;
 		const sizes: ISize = getTextSize(size, weight, text, this.ctx);
-		const startX: number = bounds.horizontal.start + (gaps.left || 0);
+		const startX: number = bounds.horizontal.start;
 		const endX: number = bounds.horizontal.end - sizes.width;
 		const posTitle: IPos = {
 			x: startX + (endX - startX) / 2,
