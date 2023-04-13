@@ -14,7 +14,7 @@ import { ISineraClass, ISineraConstructor, } from "./interfaces/sinera";
 import { IAxisPoints, IAxisThemePoint, IAxisThemeTitle, } from "./interfaces/axis";
 import { IAxisX, IAxisXClass, IPointX, } from "./interfaces/axisX";
 import { IAxisY, IAxisYClass, IPointY, } from "./interfaces/axisY";
-import { IBlockInfo, IBlockInfoThemeGroup, IBlockInfoThemeTitle, IBlockInfoThemeWindow, } from "./interfaces/blockInfo";
+import { IBlockInfo, IBlockInfoThemeGroup, IBlockInfoThemeTitle, IBlockInfoThemeWindow, IEventsBlockInfo, } from "./interfaces/blockInfo";
 import { IBounds, IGaps, IPadding, IPos, } from "./interfaces/global";
 import { ICanvasClass, } from "./interfaces/canvas";
 import { ICap, } from "./interfaces/cap";
@@ -183,11 +183,10 @@ class Sinera implements ISineraClass {
 	 * Рисует заголовок на оси абсцисс
 	 * @param {ICanvasClass} canvas Экземпляр класса Canvas
 	 * @param {IChartClass} chart Экземпляр класса Chart
-	 * @param {IAxisYClass} axisX Экземпляр класса AxisX
 	 * @private
 	 * @returns {IAxisXClass}
 	 */
-	private _setAxisXTitle(canvas: ICanvasClass, chart: IChartClass, axisY: IAxisYClass): IAxisXClass {
+	private _setAxisXTitle(canvas: ICanvasClass, chart: IChartClass): IAxisXClass {
 		const { font, editName, sort, ignoreNames, title, rotate, } = this.axisX;
 		const themeForTitle: IAxisThemeTitle = (this.theme.axis || {}).title;
 		const themeForPoint: IAxisThemePoint = (this.theme.axis || {}).point;
@@ -283,6 +282,11 @@ class Sinera implements ISineraClass {
 	 */
 	private _mousemoveByCanvasHandler(e: MouseEvent, endY: number, pointsX: Array<IPointX>, startY: number, canvas: ICanvasClass, bounds: IBounds): void {
 		const mousePos: IPos = { x: e.offsetX, y: e.offsetY, };
+		const { events = {}, } = this.blockInfo;
+
+		if (events.onMove instanceof Function) {
+			events.onMove.call(mousePos);
+		}
 
 		if (mousePos.y <= endY && mousePos.y >= startY) {
 			// Отбираем элементы, которые подходят по координатам на холсте
@@ -327,6 +331,10 @@ class Sinera implements ISineraClass {
 					themeForTitle,
 					themeForGroup
 				).init();
+
+				if (events.onHover instanceof Function) {
+					events.onHover.call({ ...mousePos, activeElements, });
+				}
 			}
 		} else {
 			document.documentElement.setAttribute("style", "cursor: default");
@@ -451,7 +459,7 @@ class Sinera implements ISineraClass {
 		const chart: IChartClass = this._setChartTitle(canvas);
 		const legend: ILegendClass = this._setLegend(canvas, chart);
 		const axisY: IAxisYClass = this._setAxisYTitle(canvas, chart);
-		const axisX: IAxisXClass = this._setAxisXTitle(canvas, chart, axisY);
+		const axisX: IAxisXClass = this._setAxisXTitle(canvas, chart);
 
 		this._setPoints(axisY, axisX, legend, chart);
 		this._setGrid(canvas, axisX, axisY);
@@ -466,7 +474,7 @@ class Sinera implements ISineraClass {
 		const chart: IChartClass = this._setChartTitle(canvas);
 		const legend: ILegendClass = this._setLegend(canvas, chart);
 		const axisY: IAxisYClass = this._setAxisYTitle(canvas, chart);
-		const axisX: IAxisXClass = this._setAxisXTitle(canvas, chart, axisY);
+		const axisX: IAxisXClass = this._setAxisXTitle(canvas, chart);
 		const points: IAxisPoints = this._setPoints(axisY, axisX, legend, chart);
 
 		this._mousemoveByCanvas(canvas, chart.getBounds(), points);

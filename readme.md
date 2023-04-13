@@ -669,6 +669,26 @@ Parameters passed to the Sinera class constructor
     | ------------- | ------------- | ------------- |
     | Window background | `blockInfo: { background: "black", }`  | `array<string> \| string` |
 
+  * #### `events`
+
+    | Description  | Example | Type |
+    | ------------- | ------------- | ------------- |
+    | Accepts event handlers | `blockInfo: { events: { ... }, }`  | `object` |
+
+    ##### Accepted parameters
+
+    * ##### `onMove`
+
+      | Description  | Example | Type |
+      | ------------- | ------------- | ------------- |
+      | Called when the block with information about the active element moves along the chart | `blockInfo: { events: { onMove() { console.log(this) }, }, }`  | `function` |
+
+    * ##### `onHover`
+
+      | Description  | Example | Type |
+      | ------------- | ------------- | ------------- |
+      | Called when a block with information about the active element is hovered over a point | `blockInfo: { events: { onHover() { console.log(this) }, }, }`  | `function` |
+
   * #### `groups`
 
     | Description  | Example | Type |
