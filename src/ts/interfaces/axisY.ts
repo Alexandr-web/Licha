@@ -25,7 +25,7 @@ export interface IAxisYClass extends IAxisClass {
     sortValues?: "more-less" | "less-more";
     titleData?: IAxisYTitleData;
 
-    drawTitle(gaps: IGaps): IAxisYClass;
+    drawTitle(): IAxisYClass;
     drawPoints(gaps: IGaps): IAxisYClass;
     getMaxTextWidthAtYAxis(): number;
 }

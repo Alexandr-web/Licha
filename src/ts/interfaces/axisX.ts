@@ -34,7 +34,7 @@ export interface IAxisXClass extends IAxisClass {
     rotate?: boolean;
 
     getIgnoreNames(): Array<string | number>;
-    drawTitle(gaps: IGaps): IAxisXClass;
+    drawTitle(): IAxisXClass;
     drawPoints(gaps: IGaps): IAxisXClass;
     getCorrectName(name: string | number): string | number;
     getMaxWidthTextPoint(): number;

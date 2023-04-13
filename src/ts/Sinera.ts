@@ -159,11 +159,10 @@ class Sinera implements ISineraClass {
 	 * @private
 	 * @returns {IAxisYClass}
 	 */
-	private _setAxisYTitle(canvas: ICanvasClass, chart: IChartClass, legend: ILegendClass): IAxisYClass {
+	private _setAxisYTitle(canvas: ICanvasClass, chart: IChartClass): IAxisYClass {
 		const { step, editValue, title, font, sort, } = this.axisY;
 		const themeForTitle: IAxisThemeTitle = (this.theme.axis || {}).title;
 		const themeForPoint: IAxisThemePoint = (this.theme.axis || {}).point;
-		const gaps: IGaps = chart.getGapsForYTitle(chart.titleData, { ...legend, ...this.legend, } as ILegendData, this.axisX as IAxisX);
 
 		return new AxisY(
 			editValue,
@@ -177,7 +176,7 @@ class Sinera implements ISineraClass {
 			themeForPoint,
 			sort,
 			step
-		).drawTitle(gaps);
+		).drawTitle();
 	}
 
 	/**
@@ -193,7 +192,6 @@ class Sinera implements ISineraClass {
 		const themeForTitle: IAxisThemeTitle = (this.theme.axis || {}).title;
 		const themeForPoint: IAxisThemePoint = (this.theme.axis || {}).point;
 		const themeForLine: ILineTheme = this.theme.line;
-		const gaps: IGaps = chart.getGapsForXTitle(axisY);
 
 		return new AxisX(
 			canvas.ctx,
@@ -209,7 +207,7 @@ class Sinera implements ISineraClass {
 			themeForPoint,
 			ignoreNames,
 			themeForLine
-		).drawTitle(gaps);
+		).drawTitle();
 	}
 
 	/**
@@ -452,7 +450,7 @@ class Sinera implements ISineraClass {
 		const canvas: ICanvasClass = this._setCanvas();
 		const chart: IChartClass = this._setChartTitle(canvas);
 		const legend: ILegendClass = this._setLegend(canvas, chart);
-		const axisY: IAxisYClass = this._setAxisYTitle(canvas, chart, legend);
+		const axisY: IAxisYClass = this._setAxisYTitle(canvas, chart);
 		const axisX: IAxisXClass = this._setAxisXTitle(canvas, chart, axisY);
 
 		this._setPoints(axisY, axisX, legend, chart);
@@ -467,7 +465,7 @@ class Sinera implements ISineraClass {
 		const canvas: ICanvasClass = this._setCanvas();
 		const chart: IChartClass = this._setChartTitle(canvas);
 		const legend: ILegendClass = this._setLegend(canvas, chart);
-		const axisY: IAxisYClass = this._setAxisYTitle(canvas, chart, legend);
+		const axisY: IAxisYClass = this._setAxisYTitle(canvas, chart);
 		const axisX: IAxisXClass = this._setAxisXTitle(canvas, chart, axisY);
 		const points: IAxisPoints = this._setPoints(axisY, axisX, legend, chart);
 

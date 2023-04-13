@@ -74,6 +74,16 @@ class Legend implements ILegendClass {
 	}
 
 	/**
+	 * Определяет максимальную позицию текста по оси ординат
+	 * @returns {number}
+	 */
+	getMaxPosYAtLegendItems(): number {
+		const allYPos: Array<number> = this.items.map(({ y, }) => y);
+
+		return Math.max(...allYPos);
+	}
+
+	/**
 	 * Определяет размеры у текста групп
 	 * @param {Array<IColumnLegend>} groups Содержит группы
 	 * @private
@@ -127,9 +137,21 @@ class Legend implements ILegendClass {
 		}
 
 		const { group: gapsGroup = {} as IGaps, } = this.legendGaps as { group, };
-		const { height, } = groups[0];
+		const height: number = this._getMaxGroupTextHeight(groups);
 
 		return (gapsGroup.bottom || 0) + height;
+	}
+
+	/**
+	 * Определяет максимальную высоту текста среди групп
+	 * @param {Array<IItemLegend>} groups Содержит группы
+	 * @private
+	 * @returns {number}
+	 */
+	_getMaxGroupTextHeight(groups: Array<IItemLegend>): number {
+		const heights: Array<number> = groups.map(({ height, }) => height);
+
+		return Math.max(...heights);
 	}
 
 	/**
