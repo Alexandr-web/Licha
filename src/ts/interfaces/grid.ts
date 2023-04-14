@@ -30,6 +30,7 @@ export interface IGridClass {
     theme: IGridTheme | TEmptyObject;
     background?: string | Array<string>;
     distanceBetweenLineAndPoint: number;
+    rotateAxisX: boolean;
 
     init(): IGridClass;
 }

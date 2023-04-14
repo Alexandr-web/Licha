@@ -23,6 +23,7 @@ class Grid implements IGridClass {
 	public theme: IGridTheme | TEmptyObject;
 	public background?: string | Array<string>;
 	public distanceBetweenLineAndPoint: number;
+	public readonly rotateAxisX: boolean;
 
 	constructor(
 		ctx: CanvasRenderingContext2D,
@@ -45,6 +46,8 @@ class Grid implements IGridClass {
 		this.pointsY = axisY.points as Array<IPointY>;
 		// Содержит точки оси абсцисс
 		this.pointsX = axisX.points as Array<IPointX>;
+		// Правило, при котором текст оси абсцисс будет повернут на 90 градусов
+		this.rotateAxisX = axisX.rotate;
 		// Правило, говорящее, что точки на оси абсцисс будут отрисованы
 		this.showPointsX = ifTrueThenOrElse(isUndefined(axisX.font.showText), Boolean(Object.keys(axisX.font).length), axisX.font.showText);
 		// Правило, говорящее, что точки на оси ординат будут отрисованы
@@ -144,16 +147,21 @@ class Grid implements IGridClass {
 
 		// Рисуем линии
 		this.names.map((name: string) => {
-			const { x, height, } = this.pointsX.find((axisXDataItem) => axisXDataItem.name === name) as IPointX;
-			const isOnScreen = Boolean(axisXOnScreen.find((point) => point.name === name));
-			const useStretch: boolean = stretch && isOnScreen && this.showPointsX;
+			const { x, height, width: pointXNameWidth, onScreen, } = this.pointsX.find((axisXDataItem) => axisXDataItem.name === name) as IPointX;
+			const useStretch: boolean = stretch && onScreen && this.showPointsX;
+
+			let endYPos = ifTrueThenOrElse(useStretch, endYPointX - (height + this.distanceBetweenLineAndPoint), endYPointY);
+
+			if (this.rotateAxisX && useStretch) {
+				endYPos = endYPointX - pointXNameWidth - this.distanceBetweenLineAndPoint;
+			}
 
 			new Line(
 				x,
 				startY,
 				color,
 				this.ctx,
-				[{ x, y: ifTrueThenOrElse(useStretch, endYPointX - (height + this.distanceBetweenLineAndPoint), endYPointY), }],
+				[{ x, y: endYPos, }],
 				width,
 				dotted
 			).draw();
