@@ -6,6 +6,7 @@ import getRange from "../../helpers/getRange";
 import quickSort from "../../helpers/quickSort";
 import getTextStr from "../../helpers/getTextStr";
 import isFunction from "../../helpers/isFunction";
+import ifTrueThenOrElse from "../../helpers/ifTrueThenOrElse";
 
 import { TEmptyObject, TSort, } from "../../types/index";
 
@@ -156,7 +157,7 @@ class AxisY extends Axis implements IAxisYClass {
 			const minValue: IPointY = (quickSort(this.points, "value").reverse() as Array<IPointY>).find(({ value, }) => value <= uValue);
 			const textSizes: ISize = getTextSize(size, weight, uValue.toString(), this.ctx);
 			const posYItem: IPos = {
-				x: showText ? bounds.horizontal.start : 0,
+				x: ifTrueThenOrElse(showText, bounds.horizontal.start, 0),
 				y: minValue.y + (uValue - minValue.value) * ((maxValue.y - minValue.y) / ((maxValue.value - minValue.value) || 1)),
 			};
 

@@ -5,6 +5,8 @@ import CustomFigure from "../elements/CustomFigure";
 
 import getStyleByIndex from "../../helpers/getStyleByIndex";
 import isString from "../../helpers/isString";
+import isUndefined from "../../helpers/isUndefined";
+import ifTrueThenOrElse from "../../helpers/ifTrueThenOrElse";
 
 import { TEmptyObject, TSort, } from "../../types/index";
 
@@ -234,11 +236,10 @@ class LineChart extends Chart implements ILineChartClass {
 
 	/**
 	 * Рисует колпачки на графике
-	 * @param {string} themeStrokeColorForCap Цвет обводки
 	 * @private
 	 */
-	private _drawCaps(themeStrokeColorForCap: string): void {
-		this.caps.map(({ x, y, color, format, size, stroke, }) => {
+	private _drawCaps(): void {
+		this.caps.map(({ x, y, size, color, format, stroke, }) => {
 			new Cap(
 				size,
 				x,
@@ -247,13 +248,10 @@ class LineChart extends Chart implements ILineChartClass {
 				format,
 				this.ctx,
 				1,
-				format === "circle" ? y - size : y - size / 2,
-				format === "circle" ? y + size : y + size / 2,
+				ifTrueThenOrElse(format === "circle", y - size, y - size / 2),
+				ifTrueThenOrElse(format === "circle", y + size, y + size / 2),
 				0,
-				{
-					width: stroke.width || 1,
-					color: stroke.color || themeStrokeColorForCap,
-				}
+				stroke
 			).draw();
 		});
 	}
@@ -275,6 +273,20 @@ class LineChart extends Chart implements ILineChartClass {
 		// Находим координаты для линии
 		coordinates.map(({ value, name, x, y, }, index: number) => {
 			const nextDataItem: IDataAtItemData | undefined = gData[index + 1];
+			const capItem: ICapData = {
+				group,
+				value,
+				name,
+				x: ifTrueThenOrElse(capStyle.format === "circle", x, x - capStyle.size / 2),
+				y: ifTrueThenOrElse(capStyle.format === "circle", y, y - capStyle.size / 2),
+				stroke: {
+					width: capStyle.stroke.width,
+					color: ifTrueThenOrElse(isUndefined(capStyle.stroke.color), themeStrokeColorForCap, capStyle.stroke.color),
+				},
+				format: capStyle.format,
+				size: capStyle.size,
+				color: capStyle.color,
+			};
 
 			if (nextDataItem) {
 				// Элемент для следующей позиции Y линии
@@ -298,21 +310,11 @@ class LineChart extends Chart implements ILineChartClass {
 				}
 			}
 
-			this.caps.push({
-				group,
-				value,
-				name,
-				x: capStyle.format === "circle" ? x : x - capStyle.size / 2,
-				y: capStyle.format === "circle" ? y : y - capStyle.size / 2,
-				stroke: capStyle.stroke,
-				format: capStyle.format,
-				size: capStyle.size,
-				color: capStyle.color,
-			});
+			this.caps.push(capItem);
 		});
 
 		this._drawLine(coordinates[0].x, coordinates[0].y, lineStyle, lineToArray);
-		this._drawCaps(themeStrokeColorForCap);
+		this._drawCaps();
 	}
 
 	/**

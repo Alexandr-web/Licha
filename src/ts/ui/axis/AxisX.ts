@@ -5,6 +5,7 @@ import getTextSize from "../../helpers/getTextSize";
 import getStyleByIndex from "../../helpers/getStyleByIndex";
 import getTextStr from "../../helpers/getTextStr";
 import isFunction from "../../helpers/isFunction";
+import ifTrueThenOrElse from "../../helpers/ifTrueThenOrElse";
 
 import { TEmptyObject, TSort, } from "../../types/index";
 
@@ -247,8 +248,6 @@ class AxisX extends Axis implements IAxisXClass {
 			// Рисуем текст
 			this._drawText(showText, ignoreNames, color, size, weight, name, posXItem, nameSizes);
 		});
-
-		this.font.showText = showText;
 
 		return this;
 	}

@@ -10,7 +10,7 @@ import { ILegendData, } from "./legend";
 
 export interface IChartCapStyle {
     size: number;
-    color: string;
+    color: string | Array<string>;
     stroke: IStroke;
     format: "square" | "circle";
 }

@@ -30,6 +30,10 @@ class CustomFigure extends Element implements ICustomFigureClass {
 
 	// Рисует фигуру
 	public draw(): void {
+		if (!this.color) {
+			return;
+		}
+
 		this.ctx.beginPath();
 		this.ctx.moveTo(this.x, this.y);
 		this.ctx.globalAlpha = this.opacity;

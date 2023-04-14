@@ -28,6 +28,7 @@ import { ITheme, } from "./interfaces/utils";
 import isNumber from "./helpers/isNumber";
 import getPaddingObj from "./helpers/getPaddingObj";
 import isFunction from "./helpers/isFunction";
+import ifTrueThenOrElse from "./helpers/ifTrueThenOrElse";
 
 class Sinera implements ISineraClass {
 	public selectorCanvas: string;
@@ -63,7 +64,7 @@ class Sinera implements ISineraClass {
 		padding = 10,
 	}: ISineraConstructor) {
 		// Внутренние отступы
-		this.padding = isNumber(padding) ? getPaddingObj(padding as number) : padding;
+		this.padding = ifTrueThenOrElse(isNumber(padding), getPaddingObj(padding as number), padding);
 		// Данные колпачка
 		this.cap = cap;
 		// Данные легенды

@@ -10,6 +10,7 @@ import getTextStr from "../../helpers/getTextStr";
 import isNumber from "../../helpers/isNumber";
 import getPaddingObj from "../../helpers/getPaddingObj";
 import isFunction from "../../helpers/isFunction";
+import ifTrueThenOrElse from "../../helpers/ifTrueThenOrElse";
 
 import { ISpecialFontData, } from "../../interfaces/text";
 import { ITitleBlockInfo, ITriangleData, IBlockInfoClass, IBlockInfoElementWithSize, IBlockInfoElementWithSizeGroup, IBlockInfoThemeGroup, IBlockInfoThemeTitle, IBlockInfoThemeWindow, IGroupsBlockInfo, ITriangleChangedData, } from "../../interfaces/blockInfo";
@@ -69,7 +70,7 @@ class BlockInfo extends Element implements IBlockInfoClass {
 		// Содержит данные элементов, которые подходят по координатам мыши
 		this.elements = elements;
 		// Внутренние отступы
-		this.padding = isNumber(padding) ? getPaddingObj(padding as number) : padding;
+		this.padding = ifTrueThenOrElse(isNumber(padding), getPaddingObj(padding as number), padding);
 		// Содержит данные заголовка
 		this.titleData = titleData;
 		// Содержит данные групп

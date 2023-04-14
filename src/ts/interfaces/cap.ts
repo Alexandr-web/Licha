@@ -1,4 +1,5 @@
 import { IStroke, IPos, } from "./global";
+import { TCapType, } from "../types/index";
 
 export interface ICapTheme {
     color?: Array<string>;
@@ -6,8 +7,8 @@ export interface ICapTheme {
 }
 
 export interface ICap {
-    format?: "square" | "circle";
-    color?: string;
+    format?: TCapType;
+    color?: string | Array<string>;
     size?: number;
     stroke?: IStroke;
 }
@@ -16,7 +17,7 @@ export interface ICapData extends IPos {
     group: string;
     value: number;
     name: string | number;
-    format: "square" | "circle";
+    format: TCapType;
     size: number;
     color: string | Array<string>;
     stroke: {
@@ -26,7 +27,7 @@ export interface ICapData extends IPos {
 }
 
 export interface ICapClass {
-    format: "square" | "circle";
+    format: TCapType;
     size: number;
     stroke?: IStroke;
     startY?: number;

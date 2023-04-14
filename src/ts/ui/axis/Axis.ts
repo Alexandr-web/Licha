@@ -1,4 +1,5 @@
 import quickSort from "../../helpers/quickSort";
+import ifTrueThenOrElse from "../../helpers/ifTrueThenOrElse";
 
 import { TSort, TEmptyObject, } from "../../types/index";
 
@@ -95,7 +96,7 @@ class Axis implements IAxisClass {
 
     return {
       values: sortedValues as Array<number>,
-      names: namesIsNumbers ? sortedNames : uniqueNames,
+      names: ifTrueThenOrElse(namesIsNumbers, sortedNames, uniqueNames),
     };
   }
 }

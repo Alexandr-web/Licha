@@ -1,5 +1,7 @@
 import Element from "./Element";
 
+import ifTrueThenOrElse from "../../helpers/ifTrueThenOrElse";
+
 import { ILineClass, ILineTo, } from "../../interfaces/line";
 
 class Line extends Element implements ILineClass {
@@ -28,7 +30,7 @@ class Line extends Element implements ILineClass {
 
 	// Рисует линию
 	public draw(): void {
-		this.ctx.setLineDash(this.dotted ? [10, 20] : [0, 0]);
+		this.ctx.setLineDash(ifTrueThenOrElse(this.dotted, [10, 20], [0, 0]));
 
 		this.ctx.beginPath();
 		this.ctx.moveTo(this.x, this.y);

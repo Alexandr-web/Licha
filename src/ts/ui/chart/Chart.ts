@@ -4,6 +4,7 @@ import isNumber from "../../helpers/isNumber";
 import getTextStr from "../../helpers/getTextStr";
 import getTextSize from "../../helpers/getTextSize";
 import getPaddingObj from "../../helpers/getPaddingObj";
+import ifTrueThenOrElse from "../../helpers/ifTrueThenOrElse";
 
 import { TEmptyObject, TTypeChart, } from "../../types/index";
 
@@ -56,7 +57,7 @@ class Chart implements IChartClass {
 		// Заголовок диаграммы
 		this.title = title || {};
 		// Внутренние отступы диаграммы
-		this.padding = isNumber(padding) ? getPaddingObj(padding as number) : padding;
+		this.padding = ifTrueThenOrElse(isNumber(padding), getPaddingObj(padding as number), padding);
 		// Внутренний отступ по умолчанию
 		this.defaultPadding = 10;
 		// Содержит дополнительные данные заголовка диаграммы
@@ -85,12 +86,12 @@ class Chart implements IChartClass {
 			width: null,
 			height: null,
 			horizontal: {
-				start: isNumber(padding.left) ? padding.left : this.defaultPadding,
-				end: this.width - (isNumber(padding.right) ? padding.right : this.defaultPadding),
+				start: ifTrueThenOrElse(isNumber(padding.left), padding.left, this.defaultPadding),
+				end: this.width - ifTrueThenOrElse(isNumber(padding.right), padding.right, this.defaultPadding),
 			},
 			vertical: {
-				start: isNumber(padding.top) ? padding.top : this.defaultPadding,
-				end: this.height - (isNumber(padding.bottom) ? padding.bottom : this.defaultPadding),
+				start: ifTrueThenOrElse(isNumber(padding.top), padding.top, this.defaultPadding),
+				end: this.height - ifTrueThenOrElse(isNumber(padding.bottom), padding.bottom, this.defaultPadding),
 			},
 		};
 
@@ -155,12 +156,12 @@ class Chart implements IChartClass {
 		const chartTitleGapBottom: number = ((chartTitle || {}).gaps || {}).bottom || 0;
 		const axisXTitleHeight: number = (axisX.titleData || {}).height || 0;
 		const axisXTitleGapTop: number = ((axisX.titleData || {}).gaps || {}).top || 0;
-		const gapBottomIfRotateX: number = axisX.rotate ? axisX.getMaxWidthTextPoint() : axisX.getMaxHeightTextPoint();
+		const gapBottomIfRotateX: number = ifTrueThenOrElse(axisX.rotate, axisX.getMaxWidthTextPoint(), axisX.getMaxHeightTextPoint());
 
 		return {
 			left: axisYTitleHeight + axisYTitleGapRight,
 			top: chartTitleHeight + chartTitleGapBottom + legendHeight + legendGapBottom,
-			bottom: (showXText ? axisX.gapTopAxisX + gapBottomIfRotateX : 0) + axisXTitleHeight + axisXTitleGapTop,
+			bottom: ifTrueThenOrElse(showXText, axisX.gapTopAxisX + gapBottomIfRotateX, 0) + axisXTitleHeight + axisXTitleGapTop,
 		};
 	}
 
@@ -190,8 +191,8 @@ class Chart implements IChartClass {
 		const axisXTitleGapTop: number = (axisXTitle.gaps || {}).top || 0;
 
 		return {
-			left: (firstNameIsNotIgnore ? firstNameWidth / 2 : 0) + axisYTitleHeight + axisYTitleGapRight + (showYText ? axisY.getMaxTextWidthAtYAxis() + gapRightAxisY : 0),
-			right: lastNameIsNotIgnore ? lastNameWidth / 2 : 0,
+			left: ifTrueThenOrElse(firstNameIsNotIgnore, firstNameWidth / 2, 0) + axisYTitleHeight + axisYTitleGapRight + ifTrueThenOrElse(showYText, axisY.getMaxTextWidthAtYAxis() + gapRightAxisY, 0),
+			right: ifTrueThenOrElse(lastNameIsNotIgnore, lastNameWidth / 2, 0),
 			bottom: axisXTitleHeight + axisXTitleGapTop,
 		};
 	}

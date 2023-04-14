@@ -2,13 +2,14 @@ import Element from "./Element";
 
 import { IStroke, } from "../../interfaces/global";
 import { IRectClass, } from "../../interfaces/rect";
+import { TEmptyObject, } from "../../types/index";
 
 class Rect extends Element implements IRectClass {
 	public width: number;
 	public height: number;
 	public startY: number;
 	public endY: number;
-	public stroke?: IStroke | object;
+	public stroke?: IStroke | TEmptyObject;
 
 	constructor(
 		x: number,
@@ -21,7 +22,7 @@ class Rect extends Element implements IRectClass {
 		endY?: number,
 		rotateDeg?: number,
 		opacity?: number,
-		stroke?: IStroke | object
+		stroke?: IStroke | TEmptyObject
 	) {
 		super(x, y, color, ctx, rotateDeg, opacity);
 
@@ -33,12 +34,16 @@ class Rect extends Element implements IRectClass {
 		this.startY = startY;
 		// Конечная позиция по оси ординат (для градиента)
 		this.endY = endY;
-		// Содержит данные обводки ({ color, width })
+		// Содержит данные обводки
 		this.stroke = stroke || {};
 	}
 
 	// Рисует прямоугольник
 	public draw(): void {
+		if (!this.color) {
+			return;
+		}
+
 		this.ctx.beginPath();
 		this.ctx.setLineDash([0, 0]);
 		this.ctx.globalAlpha = this.opacity;
@@ -47,7 +52,7 @@ class Rect extends Element implements IRectClass {
 
 		this.ctx.fillRect(this.x, this.y, this.width, this.height);
 
-		if (Object.keys(this.stroke).length) {
+		if (this.stroke.color && this.stroke.width) {
 			this.ctx.lineWidth = (this.stroke as IStroke).width;
 			this.ctx.strokeStyle = (this.stroke as IStroke).color;
 			this.ctx.strokeRect(this.x, this.y, this.width, this.height);

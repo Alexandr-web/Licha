@@ -3,6 +3,9 @@ import Line from "./elements/Line";
 
 import { TEmptyObject, TGridFormat, } from "../types/index";
 
+import isUndefined from "../helpers/isUndefined";
+import ifTrueThenOrElse from "../helpers/ifTrueThenOrElse";
+
 import { IPointX, IAxisXClass, } from "../interfaces/axisX";
 import { IPointY, IAxisYClass, } from "../interfaces/axisY";
 import { IGridClass, ILineGrid, IGridTheme, } from "../interfaces/grid";
@@ -43,9 +46,9 @@ class Grid implements IGridClass {
 		// Содержит точки оси абсцисс
 		this.pointsX = axisX.points as Array<IPointX>;
 		// Правило, говорящее, что точки на оси абсцисс будут отрисованы
-		this.showPointsX = axisX.font.showText;
+		this.showPointsX = ifTrueThenOrElse(isUndefined(axisX.font.showText), Boolean(Object.keys(axisX.font).length), axisX.font.showText);
 		// Правило, говорящее, что точки на оси ординат будут отрисованы
-		this.showPointsY = axisY.font.showText;
+		this.showPointsY = ifTrueThenOrElse(isUndefined(axisY.font.showText), Boolean(Object.keys(axisY.font).length), axisY.font.showText);
 		// Содержит данные линии
 		this.line = line;
 		// Формат сетки (horizontal или vertical)
@@ -115,7 +118,7 @@ class Grid implements IGridClass {
 		// Рисуем линии
 		pointsYOnScreen.map(({ y, x, }) => {
 			new Line(
-				useStretch ? (x + this.maxPointYWidth + this.distanceBetweenLineAndPoint) : startX,
+				ifTrueThenOrElse(useStretch, x + this.maxPointYWidth + this.distanceBetweenLineAndPoint, startX),
 				y,
 				color,
 				this.ctx,
@@ -150,7 +153,7 @@ class Grid implements IGridClass {
 				startY,
 				color,
 				this.ctx,
-				[{ x, y: useStretch ? endYPointX - (height + this.distanceBetweenLineAndPoint) : endYPointY, }],
+				[{ x, y: ifTrueThenOrElse(useStretch, endYPointX - (height + this.distanceBetweenLineAndPoint), endYPointY), }],
 				width,
 				dotted
 			).draw();

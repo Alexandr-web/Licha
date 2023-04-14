@@ -1,3 +1,5 @@
+import ifTrueThenOrElse from "./ifTrueThenOrElse";
+
 /**
  * Быстрая сортировка массива
  * @param {Array<number | object>} arr Содержит значений
@@ -14,7 +16,7 @@ function quickSort(arr: Array<number | object>, key?: string): Array<number | ob
 	const rightSide: Array<number | object> = [];
 
 	for (let i = 0; i < arr.length - 1; i++) {
-		if (key ? arr[i][key] < lastValue[key] : arr[i] < lastValue) {
+		if (ifTrueThenOrElse(Boolean(key), arr[i][key] < lastValue[key], arr[i] < lastValue)) {
 			leftSide.push(arr[i]);
 		} else {
 			rightSide.push(arr[i]);

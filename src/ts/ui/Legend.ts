@@ -5,6 +5,7 @@ import Line from "./elements/Line";
 import getTextSize from "../helpers/getTextSize";
 import getStyleByIndex from "../helpers/getStyleByIndex";
 import getTextStr from "../helpers/getTextStr";
+import ifTrueThenOrElse from "../helpers/ifTrueThenOrElse";
 
 import { IBounds, ISize, IGaps, IPos, } from "../interfaces/global";
 import { IData, } from "../interfaces/data";
@@ -60,7 +61,7 @@ class Legend implements ILegendClass {
 		// Данные круга
 		this.circle = circle;
 		// Максимальное кол-во элементов в одной колонке
-		this.maxCount = maxCount > 0 ? maxCount : 4;
+		this.maxCount = ifTrueThenOrElse(maxCount > 0, maxCount, 4);
 		// Отступы
 		this.legendGaps = legendGaps;
 		// Высота легенды
