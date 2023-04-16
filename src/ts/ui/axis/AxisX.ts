@@ -237,7 +237,7 @@ class AxisX extends Axis implements IAxisXClass {
 					return bounds.vertical.start + width + gaps.top;
 				}
 
-				return bounds.vertical.start + gaps.top;
+				return bounds.vertical.start + height + gaps.top;
 		}
 	}
 

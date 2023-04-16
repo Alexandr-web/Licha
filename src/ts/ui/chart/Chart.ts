@@ -162,7 +162,7 @@ class Chart implements IChartClass {
 
 		return {
 			left: axisYTitleHeight + axisYTitleGapRight,
-			top: chartTitleHeight + gapTopIfRotateX + chartTitleGapBottom + legendHeight + legendGapBottom + ifTrueThenOrElse([placeAxisX === "top", showXText], axisX.gapTopAxisX, 0),
+			top: chartTitleHeight + gapTopIfRotateX + chartTitleGapBottom + legendHeight + legendGapBottom + ifTrueThenOrElse([placeAxisX === "top", showXText], axisX.gapTopAxisX + axisX.getMaxHeightTextPoint(), 0),
 			bottom: ifTrueThenOrElse([showXText, placeAxisX === "bottom"], axisX.gapTopAxisX + gapBottomIfRotateX, 0) + axisXTitleHeight + axisXTitleGapTop,
 		};
 	}
