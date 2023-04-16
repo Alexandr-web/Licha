@@ -296,6 +296,12 @@ Parameters passed to the Sinera class constructor
     | ------------- | ------------- | ------------- |
     | Flips the x-axis point names by 90 degrees | `axisX: { rotate: true, }`  | `boolean` |
 
+  * #### `place`
+
+    | Description  | Example | Type |
+    | ------------- | ------------- | ------------- |
+    | Allows you to change the position of the x-axis (top or bottom) | `axisX: { place: "top", }`  | `string` |
+
   * #### `font`
 
     | Description  | Example | Type |

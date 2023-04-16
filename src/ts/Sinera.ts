@@ -189,7 +189,7 @@ class Sinera implements ISineraClass {
 	 * @returns {IAxisXClass}
 	 */
 	private _setAxisXTitle(canvas: ICanvasClass, chart: IChartClass): IAxisXClass {
-		const { font, editName, sort, ignoreNames, title, rotate, } = this.axisX;
+		const { font, editName, sort, ignoreNames, title, rotate, place, } = this.axisX;
 		const themeForTitle: IAxisThemeTitle = (this.theme.axis || {}).title;
 		const themeForPoint: IAxisThemePoint = (this.theme.axis || {}).point;
 		const themeForLine: ILineTheme = this.theme.line;
@@ -207,6 +207,7 @@ class Sinera implements ISineraClass {
 			themeForTitle,
 			themeForPoint,
 			ignoreNames,
+			place,
 			themeForLine
 		).drawTitle();
 	}
@@ -222,7 +223,7 @@ class Sinera implements ISineraClass {
 	 */
 	private _setPoints(axisY: IAxisYClass, axisX: IAxisXClass, legend: ILegendClass, chart: IChartClass): IAxisPoints {
 		const y: IAxisYClass = axisY.drawPoints(chart.getGapsForYPoints(axisY, axisX, chart.titleData, { ...this.legend, ...legend, } as ILegendData));
-		const x: IAxisXClass = axisX.drawPoints(chart.getGapsForXPoints(axisY, axisX));
+		const x: IAxisXClass = axisX.drawPoints(chart.getGapsForXPoints(axisY, axisX, chart, { ...this.legend, ...legend, } as ILegendData));
 
 		return {
 			pointsY: y.points as Array<IPointY>,

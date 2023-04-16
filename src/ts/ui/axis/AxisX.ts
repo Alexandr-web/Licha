@@ -5,9 +5,8 @@ import getTextSize from "../../helpers/getTextSize";
 import getStyleByIndex from "../../helpers/getStyleByIndex";
 import getTextStr from "../../helpers/getTextStr";
 import isFunction from "../../helpers/isFunction";
-import ifTrueThenOrElse from "../../helpers/ifTrueThenOrElse";
 
-import { TEmptyObject, TSort, } from "../../types/index";
+import { TAxisXPlace, TEmptyObject, TSort, } from "../../types/index";
 
 import { ISpecialFontData, } from "../../interfaces/text";
 import { IAxisXTitle, IAxisXClass, IAxisXTitleData, } from "../../interfaces/axisX";
@@ -16,6 +15,7 @@ import { IData, IDataAtItemData, } from "../../interfaces/data";
 import { ILine, ILineTheme, } from "../../interfaces/line";
 import { IAxisYTitle, } from "../../interfaces/axisY";
 import { IAxisThemePoint, IAxisThemeTitle, IFontAxis, } from "../../interfaces/axis";
+import isUndefined from "../../helpers/isUndefined";
 
 class AxisX extends Axis implements IAxisXClass {
 	public themeForLine: ILineTheme | TEmptyObject;
@@ -25,6 +25,7 @@ class AxisX extends Axis implements IAxisXClass {
 	public line: ILine;
 	public titleData?: IAxisXTitleData;
 	public rotate?: boolean;
+	public place?: TAxisXPlace;
 
 	constructor(
 		ctx: CanvasRenderingContext2D,
@@ -39,6 +40,7 @@ class AxisX extends Axis implements IAxisXClass {
 		themeForTitle: IAxisThemeTitle | TEmptyObject,
 		themeForPoint: IAxisThemePoint | TEmptyObject,
 		ignoreNames: Array<string | number> | ((name: string, index: number) => boolean),
+		place: TAxisXPlace,
 		themeForLine: ILineTheme | TEmptyObject = {}
 	) {
 		super(ctx, sortNames, bounds, themeForPoint, themeForTitle, title, font);
@@ -58,6 +60,8 @@ class AxisX extends Axis implements IAxisXClass {
 		this.editName = editName;
 		// Данные линии
 		this.line = line;
+		// Позиция оси абсцисс
+		this.place = place || "bottom";
 		// Содержит дополнительные данные заголовка
 		this.titleData = {
 			x: null,
@@ -217,6 +221,27 @@ class AxisX extends Axis implements IAxisXClass {
 	}
 
 	/**
+	 * Определяет позицию по оси ординат для элементов оси абсцисс
+	 * @param {IGaps} gaps Содержит отступы оси абсцисс
+	 * @param {number} height Высота названия точки оси абсцисс
+	 * @returns {number}
+	 */
+	private _getYPos(gaps: IGaps, height: number, width: number): number {
+		const bounds = this.bounds;
+
+		switch (this.place) {
+			case "bottom":
+				return bounds.vertical.end - gaps.bottom;
+			case "top":
+				if (this.rotate) {
+					return bounds.vertical.start + width + gaps.top;
+				}
+
+				return bounds.vertical.start + gaps.top;
+		}
+	}
+
+	/**
 	 * Рисует точки на оси абсцисс
 	 * @param {IGaps} gaps Отступы оси абсцисс
 	 * @returns {IAxisXClass}
@@ -229,9 +254,9 @@ class AxisX extends Axis implements IAxisXClass {
 
 		names.map((name: string | number, index: number) => {
 			// Начальная точка для отрисовки элементов
-			const startPoint: number = bounds.horizontal.start + (gaps.left || 0);
+			const startPoint: number = bounds.horizontal.start + gaps.left;
 			// Конечная точка для отрисовки элементов
-			const endPoint: number = bounds.horizontal.end - (gaps.right || 0) - startPoint;
+			const endPoint: number = bounds.horizontal.end - gaps.right - startPoint;
 			// Шаг, с которым отрисовываем элементы
 			const step: number = endPoint / (names.length - 1);
 			// Содержит размеры названия точки
@@ -239,7 +264,7 @@ class AxisX extends Axis implements IAxisXClass {
 			// Координаты элемента для отрисовки
 			const posXItem: IPos = {
 				x: step * index + startPoint,
-				y: bounds.vertical.end - (gaps.bottom || 0),
+				y: this._getYPos(gaps, nameSizes.height, nameSizes.width),
 			};
 
 			// Если это уникальное название присутствует в какой-либо группе,

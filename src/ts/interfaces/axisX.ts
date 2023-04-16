@@ -3,6 +3,7 @@ import { IFontWithText, } from "./text";
 import { IPoint, IAxis, IAxisClass, } from "./axis";
 import { ILineTheme, ILine, } from "./line";
 import { IData, } from "./data";
+import { TAxisXPlace, } from "../types/index";
 
 export interface IAxisXTitle {
     font: IFontWithText;
@@ -22,6 +23,7 @@ export interface IAxisX extends IAxis {
     ignoreNames?: ((name: number | string, index: number) => boolean) | Array<string | number>;
     title?: IAxisXTitle;
     rotate?: boolean;
+    place?: TAxisXPlace;
 }
 
 export interface IAxisXClass extends IAxisClass {
@@ -32,6 +34,7 @@ export interface IAxisXClass extends IAxisClass {
     line: ILine;
     titleData?: IAxisXTitleData;
     rotate?: boolean;
+    place?: TAxisXPlace;
 
     getIgnoreNames(): Array<string | number>;
     drawTitle(): IAxisXClass;
