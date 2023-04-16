@@ -171,16 +171,17 @@ class Chart implements IChartClass {
 	 * Определяет отступы для оси абсцисс
 	 * @param {IAxisYClass} axisY Экземпляр класса AxisY
 	 * @param {IAxisXClass} axisX Экземпляр класса AxisX
-	 * @param {IChartTitle} chartTitle Экземпляр класса Chart
+	 * @param {IChartClass} chart Экземпляр класса Chart
 	 * @param {ILegendData} legend Содержит данные легенды
 	 * @returns {IGaps} Отступы
 	 */
-	public getGapsForXPoints(axisY: IAxisYClass, axisX: IAxisXClass, chartTitle: IChartTitle, legend: ILegendData): IGaps {
+	public getGapsForXPoints(axisY: IAxisYClass, axisX: IAxisXClass, chart: IChartClass, legend: ILegendData): IGaps {
 		const { font: axisYFont = {}, titleData: axisYTitle = {} as IAxisYTitleData, gapRightAxisY, } = axisY;
 		const { font: axisXFont = {}, titleData: axisXTitle = {} as IAxisXTitleData, place = "bottom", } = axisX;
+		const { title: chartTitle = {}, titleData: chartTitleData, } = chart;
 		const { gaps: chartTitleGaps = {}, } = chartTitle;
 		const { gaps: gapsLegend = {}, totalHeight: legendHeight = 0, } = legend;
-		const { legend: legendGaps, } = gapsLegend as ILegendGaps;
+		const { legend: legendGaps = {}, } = gapsLegend as ILegendGaps;
 		const { bottom: legendGapBottom = 0, } = legendGaps;
 		const { bottom: chartTitleGapBottom = 0, } = chartTitleGaps as IGaps;
 		const ignoreNames: Array<string | number> = axisX.getIgnoreNames();
@@ -198,13 +199,13 @@ class Chart implements IChartClass {
 		const axisYTitleGapRight: number = (axisYTitle.gaps || {}).right || 0;
 		const axisXTitleHeight: number = axisXTitle.height || 0;
 		const axisXTitleGapTop: number = (axisXTitle.gaps || {}).top || 0;
-		const titleAxisYHeight: number = axisY.titleData.height || 0;
+		const chartTitleHeight: number = chartTitleData.height || 0;
 
 		return {
 			left: ifTrueThenOrElse(firstNameIsNotIgnore, firstNameWidth / 2, 0) + axisYTitleHeight + axisYTitleGapRight + ifTrueThenOrElse(showYText, axisY.getMaxTextWidthAtYAxis() + gapRightAxisY, 0),
 			right: ifTrueThenOrElse(lastNameIsNotIgnore, lastNameWidth / 2, 0),
 			bottom: axisXTitleHeight + axisXTitleGapTop,
-			top: ifTrueThenOrElse([showXText, place === "top"], legendGapBottom + legendHeight + titleAxisYHeight + chartTitleGapBottom, 0),
+			top: ifTrueThenOrElse([showXText, place === "top"], legendGapBottom + legendHeight + chartTitleGapBottom + chartTitleHeight, 0),
 		};
 	}
 

@@ -3,8 +3,8 @@ const MiniCssExtractPlugn = require("mini-css-extract-plugin");
 const path = require("path");
 
 module.exports = {
-  entry: path.resolve(__dirname, "src/ts/index.ts"),
-  mode: "development",
+  entry: path.resolve(__dirname, "src/ts/Sinera.ts"),
+  mode: "production",
   output: {
     filename: "Sinera.js",
     path: path.resolve(__dirname, "dist"),

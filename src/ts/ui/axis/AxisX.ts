@@ -231,13 +231,13 @@ class AxisX extends Axis implements IAxisXClass {
 
 		switch (this.place) {
 			case "bottom":
-				return bounds.vertical.end - (gaps.bottom || 0);
+				return bounds.vertical.end - gaps.bottom;
 			case "top":
 				if (this.rotate) {
-					return bounds.vertical.start + width + (gaps.top || 0);
+					return bounds.vertical.start + width + gaps.top;
 				}
 
-				return bounds.vertical.start + height / 2 + (gaps.top || 0);
+				return bounds.vertical.start + gaps.top;
 		}
 	}
 
@@ -254,9 +254,9 @@ class AxisX extends Axis implements IAxisXClass {
 
 		names.map((name: string | number, index: number) => {
 			// Начальная точка для отрисовки элементов
-			const startPoint: number = bounds.horizontal.start + (gaps.left || 0);
+			const startPoint: number = bounds.horizontal.start + gaps.left;
 			// Конечная точка для отрисовки элементов
-			const endPoint: number = bounds.horizontal.end - (gaps.right || 0) - startPoint;
+			const endPoint: number = bounds.horizontal.end - gaps.right - startPoint;
 			// Шаг, с которым отрисовываем элементы
 			const step: number = endPoint / (names.length - 1);
 			// Содержит размеры названия точки

@@ -223,7 +223,7 @@ class Sinera implements ISineraClass {
 	 */
 	private _setPoints(axisY: IAxisYClass, axisX: IAxisXClass, legend: ILegendClass, chart: IChartClass): IAxisPoints {
 		const y: IAxisYClass = axisY.drawPoints(chart.getGapsForYPoints(axisY, axisX, chart.titleData, { ...this.legend, ...legend, } as ILegendData));
-		const x: IAxisXClass = axisX.drawPoints(chart.getGapsForXPoints(axisY, axisX, this.title as IChartTitle, { ...this.legend, ...legend, } as ILegendData));
+		const x: IAxisXClass = axisX.drawPoints(chart.getGapsForXPoints(axisY, axisX, chart, { ...this.legend, ...legend, } as ILegendData));
 
 		return {
 			pointsY: y.points as Array<IPointY>,
