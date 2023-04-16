@@ -10,6 +10,7 @@
 * [Usage](https://github.com/Alexandr-web/Sinera#usage)
 * [Params](https://github.com/Alexandr-web/Sinera#params)
 * [Utils](https://github.com/Alexandr-web/Sinera#utils)
+* [Works](https://github.com/Alexandr-web/Sinera/blob/master/.github/works/readme.md)
 
 ## Usage
 
