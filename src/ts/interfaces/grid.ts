@@ -1,7 +1,7 @@
 import { ILine, } from "./line";
 import { IPointY, } from "./axisY";
 import { IPointX, } from "./axisX";
-import { TEmptyObject, } from "../types/index";
+import { TAxisXPlace, TEmptyObject, } from "../types/index";
 
 export interface IGridTheme {
     color: string;
@@ -31,6 +31,7 @@ export interface IGridClass {
     background?: string | Array<string>;
     distanceBetweenLineAndPoint: number;
     rotateAxisX: boolean;
+    placeAxisX: TAxisXPlace;
 
     init(): IGridClass;
 }

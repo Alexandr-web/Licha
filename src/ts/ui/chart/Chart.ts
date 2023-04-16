@@ -147,7 +147,8 @@ class Chart implements IChartClass {
 	 */
 	public getGapsForYPoints(axisY: IAxisYClass, axisX: IAxisXClass, chartTitle: IChartTitleData, legend: ILegendData): IGaps {
 		const { gaps: gapsLegend = {} as ILegendGaps, totalHeight: legendHeight = 0, } = legend;
-		const { showText: showXText = Boolean(Object.keys(axisX.font).length), } = axisX.font;
+		const { font: axisXFont = {}, place: placeAxisX = "top", } = axisX;
+		const { showText: showXText = Boolean(Object.keys(axisX.font).length), } = axisXFont;
 
 		const legendGapBottom: number = (gapsLegend.legend || {}).bottom || 0;
 		const axisYTitleHeight: number = (axisY.titleData || {}).height || 0;
@@ -157,11 +158,12 @@ class Chart implements IChartClass {
 		const axisXTitleHeight: number = (axisX.titleData || {}).height || 0;
 		const axisXTitleGapTop: number = ((axisX.titleData || {}).gaps || {}).top || 0;
 		const gapBottomIfRotateX: number = ifTrueThenOrElse(axisX.rotate, axisX.getMaxWidthTextPoint(), axisX.getMaxHeightTextPoint());
+		const gapTopIfRotateX: number = ifTrueThenOrElse([showXText, axisX.rotate, placeAxisX === "top"], axisX.getMaxWidthTextPoint(), 0);
 
 		return {
 			left: axisYTitleHeight + axisYTitleGapRight,
-			top: chartTitleHeight + chartTitleGapBottom + legendHeight + legendGapBottom,
-			bottom: ifTrueThenOrElse(showXText, axisX.gapTopAxisX + gapBottomIfRotateX, 0) + axisXTitleHeight + axisXTitleGapTop,
+			top: chartTitleHeight + gapTopIfRotateX + chartTitleGapBottom + legendHeight + legendGapBottom + ifTrueThenOrElse([placeAxisX === "top", showXText], axisX.gapTopAxisX, 0),
+			bottom: ifTrueThenOrElse([showXText, placeAxisX === "bottom"], axisX.gapTopAxisX + gapBottomIfRotateX, 0) + axisXTitleHeight + axisXTitleGapTop,
 		};
 	}
 
@@ -169,11 +171,18 @@ class Chart implements IChartClass {
 	 * Определяет отступы для оси абсцисс
 	 * @param {IAxisYClass} axisY Экземпляр класса AxisY
 	 * @param {IAxisXClass} axisX Экземпляр класса AxisX
+	 * @param {IChartTitle} chartTitle Экземпляр класса Chart
+	 * @param {ILegendData} legend Содержит данные легенды
 	 * @returns {IGaps} Отступы
 	 */
-	public getGapsForXPoints(axisY: IAxisYClass, axisX: IAxisXClass): IGaps {
+	public getGapsForXPoints(axisY: IAxisYClass, axisX: IAxisXClass, chartTitle: IChartTitle, legend: ILegendData): IGaps {
 		const { font: axisYFont = {}, titleData: axisYTitle = {} as IAxisYTitleData, gapRightAxisY, } = axisY;
-		const { font: axisXFont = {}, titleData: axisXTitle = {} as IAxisXTitleData, } = axisX;
+		const { font: axisXFont = {}, titleData: axisXTitle = {} as IAxisXTitleData, place = "bottom", } = axisX;
+		const { gaps: chartTitleGaps = {}, } = chartTitle;
+		const { gaps: gapsLegend = {}, totalHeight: legendHeight = 0, } = legend;
+		const { legend: legendGaps, } = gapsLegend as ILegendGaps;
+		const { bottom: legendGapBottom = 0, } = legendGaps;
+		const { bottom: chartTitleGapBottom = 0, } = chartTitleGaps as IGaps;
 		const ignoreNames: Array<string | number> = axisX.getIgnoreNames();
 		const names: Array<string | number> = axisY.getAxesData(this.data).names;
 		const lastName: string | number = names[names.length - 1];
@@ -189,11 +198,13 @@ class Chart implements IChartClass {
 		const axisYTitleGapRight: number = (axisYTitle.gaps || {}).right || 0;
 		const axisXTitleHeight: number = axisXTitle.height || 0;
 		const axisXTitleGapTop: number = (axisXTitle.gaps || {}).top || 0;
+		const titleAxisYHeight: number = axisY.titleData.height || 0;
 
 		return {
 			left: ifTrueThenOrElse(firstNameIsNotIgnore, firstNameWidth / 2, 0) + axisYTitleHeight + axisYTitleGapRight + ifTrueThenOrElse(showYText, axisY.getMaxTextWidthAtYAxis() + gapRightAxisY, 0),
 			right: ifTrueThenOrElse(lastNameIsNotIgnore, lastNameWidth / 2, 0),
 			bottom: axisXTitleHeight + axisXTitleGapTop,
+			top: ifTrueThenOrElse([showXText, place === "top"], legendGapBottom + legendHeight + titleAxisYHeight + chartTitleGapBottom, 0),
 		};
 	}
 

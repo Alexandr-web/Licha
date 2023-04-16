@@ -1,7 +1,7 @@
 import CustomFigure from "./elements/CustomFigure";
 import Line from "./elements/Line";
 
-import { TEmptyObject, TGridFormat, } from "../types/index";
+import { TAxisXPlace, TEmptyObject, TGridFormat, } from "../types/index";
 
 import isUndefined from "../helpers/isUndefined";
 import ifTrueThenOrElse from "../helpers/ifTrueThenOrElse";
@@ -23,6 +23,7 @@ class Grid implements IGridClass {
 	public theme: IGridTheme | TEmptyObject;
 	public background?: string | Array<string>;
 	public distanceBetweenLineAndPoint: number;
+	public readonly placeAxisX: TAxisXPlace;
 	public readonly rotateAxisX: boolean;
 
 	constructor(
@@ -46,6 +47,8 @@ class Grid implements IGridClass {
 		this.pointsY = axisY.points as Array<IPointY>;
 		// Содержит точки оси абсцисс
 		this.pointsX = axisX.points as Array<IPointX>;
+		// Позиция оси абсцисс
+		this.placeAxisX = axisX.place || "bottom";
 		// Правило, при котором текст оси абсцисс будет повернут на 90 градусов
 		this.rotateAxisX = axisX.rotate;
 		// Правило, говорящее, что точки на оси абсцисс будут отрисованы
@@ -133,6 +136,33 @@ class Grid implements IGridClass {
 	}
 
 	/**
+	 * Определяет конечную позицию по оси ординат вертикальной линии
+	 * @param {number} useStretch Правило, при котором используется правило stretch
+	 * @param {number} yPointX Позиция по оси ординат элемента оси абсцисс
+	 * @param {number} height Высота элемента оси абсцисс
+	 * @param {number} endYPointY Позиция по оси ординат последнего элемента оси ординат
+	 * @param {number} pointXNameWidth Ширина названия точки оси абсцисс
+	 * @param {number} startYPointY Позиция по оси ординат первого элемента оси ординат
+	 * @returns {number}
+	 */
+	private _getEndYPosForVerticalLines(useStretch: boolean, yPointX: number, height: number, endYPointY: number, pointXNameWidth: number, startYPointY: number): number {
+		switch (this.placeAxisX) {
+			case "bottom":
+				if (this.rotateAxisX && useStretch) {
+					return yPointX - pointXNameWidth - this.distanceBetweenLineAndPoint;
+				}
+
+				return ifTrueThenOrElse(useStretch, yPointX - (height + this.distanceBetweenLineAndPoint), endYPointY);
+			case "top":
+				if (this.rotateAxisX && useStretch) {
+					return yPointX + this.distanceBetweenLineAndPoint;
+				}
+
+				return ifTrueThenOrElse(useStretch, yPointX + this.distanceBetweenLineAndPoint, startYPointY);
+		}
+	}
+
+	/**
 	 * Рисует вертикальные линии
 	 * @private
 	 * @param {string | Array<string>} color Цвет линии
@@ -140,25 +170,18 @@ class Grid implements IGridClass {
 	private _drawVerticalLines(color: string | Array<string>): void {
 		const { width, dotted, stretch, } = this.line;
 		const axisYOnScreen = this._getPointsOnScreen(this.pointsY) as Array<IPointY>;
-		const axisXOnScreen = this._getPointsOnScreen(this.pointsX) as Array<IPointX>;
-		const { y: startY, } = axisYOnScreen[0];
-		const { y: endYPointX, } = axisXOnScreen[axisXOnScreen.length - 1];
+		const { y: startYPointY, } = axisYOnScreen[0];
 		const { y: endYPointY, } = axisYOnScreen[axisYOnScreen.length - 1];
 
 		// Рисуем линии
 		this.names.map((name: string) => {
-			const { x, height, width: pointXNameWidth, onScreen, } = this.pointsX.find((axisXDataItem) => axisXDataItem.name === name) as IPointX;
+			const { x, height, width: pointXNameWidth, onScreen, y: yPointX, } = this.pointsX.find((axisXDataItem) => axisXDataItem.name === name) as IPointX;
 			const useStretch: boolean = stretch && onScreen && this.showPointsX;
-
-			let endYPos = ifTrueThenOrElse(useStretch, endYPointX - (height + this.distanceBetweenLineAndPoint), endYPointY);
-
-			if (this.rotateAxisX && useStretch) {
-				endYPos = endYPointX - pointXNameWidth - this.distanceBetweenLineAndPoint;
-			}
+			const endYPos = this._getEndYPosForVerticalLines(useStretch, yPointX, height, endYPointY, pointXNameWidth, startYPointY);
 
 			new Line(
 				x,
-				startY,
+				ifTrueThenOrElse(this.placeAxisX === "top", endYPointY, startYPointY),
 				color,
 				this.ctx,
 				[{ x, y: endYPos, }],
