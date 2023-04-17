@@ -4,9 +4,9 @@ import { ILineTo, } from "../../interfaces/line";
 import { ICustomFigureClass, } from "../../interfaces/customFigure";
 
 class CustomFigure extends Element implements ICustomFigureClass {
-	public lineTo: Array<ILineTo>;
-	public startY?: number;
-	public endY?: number;
+	public readonly lineTo: Array<ILineTo>;
+	public readonly startY?: number;
+	public readonly endY?: number;
 
 	constructor(
 		x: number,

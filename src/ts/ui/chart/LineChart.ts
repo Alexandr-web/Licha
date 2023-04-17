@@ -20,14 +20,14 @@ import { ILine, ILineTheme, ILineTo, } from "../../interfaces/line";
 import { IPadding, IPos, } from "../../interfaces/global";
 
 class LineChart extends Chart implements ILineChartClass {
-	public pointsX: Array<IPointX>;
-	public pointsY: Array<IPointY>;
-	public line: ILine;
-	public cap: ICap;
-	public sortValues: TSort;
-	public caps: Array<ICapData>;
-	public themeForLine: ILineTheme;
-	public themeForCaps: ICapTheme;
+	public readonly pointsX: Array<IPointX>;
+	public readonly pointsY: Array<IPointY>;
+	public readonly line: ILine;
+	public readonly cap: ICap;
+	public readonly sortValues: TSort;
+	public readonly caps: Array<ICapData>;
+	public readonly themeForLine: ILineTheme;
+	public readonly themeForCaps: ICapTheme;
 
 	constructor(
 		data: IData,

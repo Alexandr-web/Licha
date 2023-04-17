@@ -4,22 +4,22 @@ import { ILine, ILineTheme, } from "./line";
 import { ICap, ICapTheme, ICapData, } from "./cap";
 
 export interface IChartLineStyle {
-    width: number;
-    color: string | Array<string>;
-    dotted: boolean;
-    stepped: boolean;
-    fill: Array<string> | string;
+    readonly width: number;
+    readonly color: string | Array<string>;
+    readonly dotted: boolean;
+    readonly stepped: boolean;
+    readonly fill: Array<string> | string;
 }
 
 export interface ILineChartClass {
-    pointsX: Array<IPointX>;
-    pointsY: Array<IPointY>;
-    line: ILine;
-    cap: ICap;
-    sortValues: "more-less" | "less-more";
-    caps: Array<ICapData>;
-    themeForLine: ILineTheme;
-    themeForCaps: ICapTheme;
+    readonly pointsX: Array<IPointX>;
+    readonly pointsY: Array<IPointY>;
+    readonly line: ILine;
+    readonly cap: ICap;
+    readonly sortValues: "more-less" | "less-more";
+    readonly caps: Array<ICapData>;
+    readonly themeForLine: ILineTheme;
+    readonly themeForCaps: ICapTheme;
 
     draw(): ILineChartClass;
 }

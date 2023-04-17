@@ -7,15 +7,15 @@ export interface IDefaultStylesForCanvasElement {
 }
 
 export interface ICanvasTheme {
-    background: string;
+    readonly background: string;
 }
 
 export interface ICanvasClass {
-    selector: string;
-    background: string | Array<string>;
-    ctx: CanvasRenderingContext2D;
-    canvasElement: HTMLCanvasElement;
-    theme: ICanvasTheme | TEmptyObject;
+    readonly selector: string;
+    readonly background?: string | Array<string>;
+    readonly ctx: CanvasRenderingContext2D;
+    readonly canvasElement: HTMLCanvasElement;
+    readonly theme: ICanvasTheme | TEmptyObject;
 
     getSizes(): ISize;
     init(): ICanvasClass;

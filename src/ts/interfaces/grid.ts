@@ -4,34 +4,34 @@ import { IPointX, } from "./axisX";
 import { TAxisXPlace, TEmptyObject, } from "../types/index";
 
 export interface IGridTheme {
-    color: string;
+    readonly color: string;
 }
 
 export interface ILineGrid extends Omit<ILine, "fill" & "stepped"> {
-    stretch?: boolean;
+    readonly stretch?: boolean;
 }
 
 export interface IGrid {
-    background?: string | Array<string>;
-    format?: "vertical" | "horizontal" | "default";
-    line?: ILineGrid;
+    readonly background?: string | Array<string>;
+    readonly format?: "vertical" | "horizontal" | "default";
+    readonly line?: ILineGrid;
 }
 
 export interface IGridClass {
-    maxPointYWidth: number;
-    names: Array<string | number>;
-    ctx: CanvasRenderingContext2D;
-    pointsY: Array<IPointY>;
-    pointsX: Array<IPointX>;
-    showPointsX: boolean;
-    showPointsY: boolean;
-    line?: ILineGrid | TEmptyObject;
-    format?: "vertical" | "horizontal" | "default";
-    theme: IGridTheme | TEmptyObject;
-    background?: string | Array<string>;
-    distanceBetweenLineAndPoint: number;
-    rotateAxisX: boolean;
-    placeAxisX: TAxisXPlace;
+    readonly maxPointYWidth: number;
+    readonly names: Array<string | number>;
+    readonly ctx: CanvasRenderingContext2D;
+    readonly pointsY: Array<IPointY>;
+    readonly pointsX: Array<IPointX>;
+    readonly showPointsX: boolean;
+    readonly showPointsY: boolean;
+    readonly line?: ILineGrid | TEmptyObject;
+    readonly format?: "vertical" | "horizontal" | "default";
+    readonly theme: IGridTheme | TEmptyObject;
+    readonly background?: string | Array<string>;
+    readonly distanceBetweenLineAndPoint: number;
+    readonly rotateAxisX: boolean;
+    readonly placeAxisX: TAxisXPlace;
 
     init(): IGridClass;
 }

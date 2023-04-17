@@ -5,17 +5,17 @@ import { IData, } from "./data";
 import { TEmptyObject, } from "../types/index";
 
 export interface ILegendTheme {
-    color: string;
+    readonly color: string;
 }
 
 export interface ICircleLegend {
-    radius: number,
+    readonly radius: number,
 }
 
 export interface ILegendGaps {
-    circle: IGaps | TEmptyObject;
-    group: IGaps | TEmptyObject;
-    legend: IGaps | TEmptyObject;
+    readonly circle: IGaps | TEmptyObject;
+    readonly group: IGaps | TEmptyObject;
+    readonly legend: IGaps | TEmptyObject;
 }
 
 export interface ILegendEvents {
@@ -23,34 +23,34 @@ export interface ILegendEvents {
 }
 
 export interface ILegend {
-    circle: ICircleLegend;
-    font: IFont;
-    gaps: ILegendGaps;
-    maxCount?: number;
-    events?: ILegendEvents | TEmptyObject;
+    readonly circle: ICircleLegend;
+    readonly font: IFont;
+    readonly gaps: ILegendGaps;
+    readonly maxCount?: number;
+    readonly events?: ILegendEvents | TEmptyObject;
 }
 
 export interface IColumnLegend {
-    group: string;
-    color: Array<string> | string;
+    readonly group: string;
+    readonly color: Array<string> | string;
 }
 
 export interface IItemLegend extends ISize, IPos, IColumnLegend { }
 
 export interface ILegendClass {
     hideGroups: Array<string>;
-    showLegend: boolean;
-    line: ILine;
-    font: IFont;
-    data: IData;
-    ctx: CanvasRenderingContext2D;
-    bounds: IBounds;
-    circle: ICircleLegend;
-    maxCount?: number;
-    legendGaps: ILegendGaps | TEmptyObject;
+    readonly showLegend: boolean;
+    readonly line: ILine;
+    readonly font: IFont;
+    readonly data: IData;
+    readonly ctx: CanvasRenderingContext2D;
+    readonly bounds: IBounds;
+    readonly circle: ICircleLegend;
+    readonly maxCount?: number;
+    readonly legendGaps: ILegendGaps | TEmptyObject;
     totalHeight: number;
-    themeForText: ILegendTheme | TEmptyObject;
-    themeForCircle: ILineTheme | TEmptyObject;
+    readonly themeForText: ILegendTheme | TEmptyObject;
+    readonly themeForCircle: ILineTheme | TEmptyObject;
     items: Array<IItemLegend>;
 
     draw(gaps: IGaps): ILegendClass;

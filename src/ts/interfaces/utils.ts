@@ -10,14 +10,14 @@ import { ICapTheme, } from "./cap";
 import { IBlockInfoTheme, } from "./blockInfo";
 
 export interface ITheme {
-    canvas: ICanvasTheme;
-    title: ITitleTheme;
-    legend: ILegendTheme;
-    axis?: IAxisTheme;
-    grid?: IGridTheme,
-    line?: ILineTheme;
-    cap?: ICapTheme;
-    blockInfo: IBlockInfoTheme;
+    readonly canvas: ICanvasTheme;
+    readonly title: ITitleTheme;
+    readonly legend: ILegendTheme;
+    readonly axis?: IAxisTheme;
+    readonly grid?: IGridTheme,
+    readonly line?: ILineTheme;
+    readonly cap?: ICapTheme;
+    readonly blockInfo: IBlockInfoTheme;
 }
 
 export interface IColors {
@@ -25,13 +25,13 @@ export interface IColors {
 }
 
 export interface IThemes {
-    dark: Array<ITheme>;
-    light: Array<ITheme>;
+    readonly dark: Array<ITheme>;
+    readonly light: Array<ITheme>;
 }
 
 export interface IUtilsClass {
-    themes: IThemes;
-    colors: IColors;
+    readonly themes: IThemes;
+    readonly colors: IColors;
 
     getTheme(num: number, type: string): ITheme | TEmptyObject;
     getColor(name: string, opacity: number): string;

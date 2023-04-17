@@ -5,11 +5,11 @@ import { IRectClass, } from "../../interfaces/rect";
 import { TEmptyObject, } from "../../types/index";
 
 class Rect extends Element implements IRectClass {
-	public width: number;
-	public height: number;
-	public startY: number;
-	public endY: number;
-	public stroke?: IStroke | TEmptyObject;
+	public readonly width: number;
+	public readonly height: number;
+	public readonly startY: number;
+	public readonly endY: number;
+	public readonly stroke?: IStroke | TEmptyObject;
 
 	constructor(
 		x: number,

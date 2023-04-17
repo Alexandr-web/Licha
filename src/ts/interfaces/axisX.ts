@@ -19,22 +19,22 @@ export interface IPointX extends IPoint {
 }
 
 export interface IAxisX extends IAxis {
-    editName?: (name: number | string) => string;
-    ignoreNames?: ((name: number | string, index: number) => boolean) | Array<string | number>;
-    title?: IAxisXTitle;
-    rotate?: boolean;
-    place?: TAxisXPlace;
+    readonly editName?: (name: number | string) => string;
+    readonly ignoreNames?: ((name: number | string, index: number) => boolean) | Array<string | number>;
+    readonly title?: IAxisXTitle;
+    readonly rotate?: boolean;
+    readonly place?: TAxisXPlace;
 }
 
 export interface IAxisXClass extends IAxisClass {
-    themeForLine: ILineTheme;
-    ignoreNames?: Array<string | number> | ((name: string | number, index: number) => boolean);
-    data: IData;
-    editName?: (name: string | number) => string;
-    line: ILine;
-    titleData?: IAxisXTitleData;
-    rotate?: boolean;
-    place?: TAxisXPlace;
+    readonly themeForLine: ILineTheme;
+    readonly ignoreNames?: Array<string | number> | ((name: string | number, index: number) => boolean);
+    readonly data: IData;
+    readonly editName?: (name: string | number) => string;
+    readonly line: ILine;
+    titleData: IAxisXTitleData;
+    readonly rotate?: boolean;
+    readonly place?: TAxisXPlace;
 
     getIgnoreNames(): Array<string | number>;
     drawTitle(): IAxisXClass;

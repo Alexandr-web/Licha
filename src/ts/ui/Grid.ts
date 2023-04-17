@@ -11,18 +11,18 @@ import { IPointY, IAxisYClass, } from "../interfaces/axisY";
 import { IGridClass, ILineGrid, IGridTheme, } from "../interfaces/grid";
 
 class Grid implements IGridClass {
-	public maxPointYWidth: number;
-	public names: Array<string | number>;
-	public ctx: CanvasRenderingContext2D;
-	public pointsY: Array<IPointY>;
-	public pointsX: Array<IPointX>;
-	public showPointsX: boolean;
-	public showPointsY: boolean;
-	public line?: ILineGrid | TEmptyObject;
-	public format?: TGridFormat;
-	public theme: IGridTheme | TEmptyObject;
-	public background?: string | Array<string>;
-	public distanceBetweenLineAndPoint: number;
+	public readonly maxPointYWidth: number;
+	public readonly names: Array<string | number>;
+	public readonly ctx: CanvasRenderingContext2D;
+	public readonly pointsY: Array<IPointY>;
+	public readonly pointsX: Array<IPointX>;
+	public readonly showPointsX: boolean;
+	public readonly showPointsY: boolean;
+	public readonly line?: ILineGrid | TEmptyObject;
+	public readonly format?: TGridFormat;
+	public readonly theme: IGridTheme | TEmptyObject;
+	public readonly background?: string | Array<string>;
+	public readonly distanceBetweenLineAndPoint: number;
 	public readonly placeAxisX: TAxisXPlace;
 	public readonly rotateAxisX: boolean;
 
@@ -32,8 +32,8 @@ class Grid implements IGridClass {
 		maxPointYWidth: number,
 		axisY: IAxisYClass,
 		axisX: IAxisXClass,
-		background?: string | Array<string>,
-		format?: TGridFormat,
+		background: string | Array<string>,
+		format: TGridFormat,
 		line: ILineGrid | TEmptyObject = {},
 		theme: IGridTheme | TEmptyObject = {}
 	) {

@@ -4,12 +4,12 @@ import setGradientColor from "../../helpers/setGradientColor";
 import isString from "../../helpers/isString";
 
 class Element implements IElementClass {
-	public ctx: CanvasRenderingContext2D;
-	public x?: number;
-	public y?: number;
-	public color?: string | Array<string>;
-	public rotateDeg?: number;
-	public opacity?: number;
+	public readonly ctx: CanvasRenderingContext2D;
+	public readonly x?: number;
+	public readonly y?: number;
+	public readonly color?: string | Array<string>;
+	public readonly rotateDeg?: number;
+	public readonly opacity?: number;
 
 	constructor(
 		x: number,

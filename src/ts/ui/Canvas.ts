@@ -5,11 +5,11 @@ import { ICanvasClass, ICanvasTheme, IDefaultStylesForCanvasElement, } from "../
 import { TEmptyObject, } from "../types/index";
 
 class Canvas implements ICanvasClass {
-	public selector: string;
-	public background: string | Array<string>;
-	public ctx: CanvasRenderingContext2D;
-	public canvasElement: HTMLCanvasElement;
-	public theme: ICanvasTheme | TEmptyObject;
+	public readonly selector: string;
+	public readonly background?: string | Array<string>;
+	public readonly ctx: CanvasRenderingContext2D;
+	public readonly canvasElement: HTMLCanvasElement;
+	public readonly theme: ICanvasTheme | TEmptyObject;
 
 	constructor(selector: string, background: string | Array<string>, theme = {}) {
 		// HTML элемент canvas

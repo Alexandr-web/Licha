@@ -50,11 +50,11 @@ export interface ITriangleChangedData {
 }
 
 export interface IBlockInfo {
-    background?: string | Array<string>;
-    groups: IGroupsBlockInfo;
-    title: ITitleBlockInfo;
-    padding?: IPadding | TEmptyObject | number;
-    events?: IEventsBlockInfo | TEmptyObject;
+    readonly background?: string | Array<string>;
+    readonly groups: IGroupsBlockInfo;
+    readonly title: ITitleBlockInfo;
+    readonly padding?: IPadding | TEmptyObject | number;
+    readonly events?: IEventsBlockInfo | TEmptyObject;
 }
 
 export interface IBlockInfoElementWithSizeGroup extends ISize {
@@ -72,23 +72,23 @@ export interface IBlockInfoElementWithSize {
 }
 
 export interface IBlockInfoClass {
-    editValue: (value: number) => string;
-    editName: (name: number | string) => string;
-    data: IData;
-    bounds: IBounds;
-    elements: Array<IPointX>;
-    padding?: IPadding | TEmptyObject | number;
-    titleData: ITitleBlockInfo;
-    groupsData: IGroupsBlockInfo;
+    readonly editValue: (value: number) => string;
+    readonly editName: (name: number | string) => string;
+    readonly data: IData;
+    readonly bounds: IBounds;
+    readonly elements: Array<IPointX>;
+    readonly padding?: IPadding | TEmptyObject | number;
+    readonly titleData: ITitleBlockInfo;
+    readonly groupsData: IGroupsBlockInfo;
     readonly groupLineWidth: number;
     readonly triangleSizes: ISize;
     readonly defaultTitleFontWeight: number;
     readonly defaultGroupsFontWeight: number;
-    title: string | number;
-    themeForWindow: IBlockInfoThemeWindow | TEmptyObject;
-    themeForLine: ILineTheme | TEmptyObject;
-    themeForTitle: IBlockInfoThemeTitle | TEmptyObject;
-    themeForGroup: IBlockInfoThemeGroup | TEmptyObject;
+    readonly title: string | number;
+    readonly themeForWindow: IBlockInfoThemeWindow | TEmptyObject;
+    readonly themeForLine: ILineTheme | TEmptyObject;
+    readonly themeForTitle: IBlockInfoThemeTitle | TEmptyObject;
+    readonly themeForGroup: IBlockInfoThemeGroup | TEmptyObject;
 
     init(): void;
 }

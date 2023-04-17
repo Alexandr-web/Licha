@@ -21,23 +21,23 @@ import { TEmptyObject, } from "../../types/index";
 import { IPointX, } from "../../interfaces/axisX";
 
 class BlockInfo extends Element implements IBlockInfoClass {
-	public editValue: (value: number) => string;
-	public editName: (name: number | string) => string;
-	public data: IData;
-	public bounds: IBounds;
-	public elements: Array<IPointX>;
-	public padding?: IPadding | TEmptyObject | number;
-	public titleData: ITitleBlockInfo;
-	public groupsData: IGroupsBlockInfo;
+	public readonly editValue: (value: number) => string;
+	public readonly editName: (name: number | string) => string;
+	public readonly data: IData;
+	public readonly bounds: IBounds;
+	public readonly elements: Array<IPointX>;
+	public readonly padding?: IPadding | TEmptyObject | number;
+	public readonly titleData: ITitleBlockInfo;
+	public readonly groupsData: IGroupsBlockInfo;
 	public readonly groupLineWidth: number;
 	public readonly triangleSizes: ISize;
 	public readonly defaultTitleFontWeight: number;
 	public readonly defaultGroupsFontWeight: number;
-	public title: string | number;
-	public themeForWindow: IBlockInfoThemeWindow | TEmptyObject;
-	public themeForLine: ILineTheme | TEmptyObject;
-	public themeForTitle: IBlockInfoThemeTitle | TEmptyObject;
-	public themeForGroup: IBlockInfoThemeGroup | TEmptyObject;
+	public readonly title: string | number;
+	public readonly themeForWindow: IBlockInfoThemeWindow | TEmptyObject;
+	public readonly themeForLine: ILineTheme | TEmptyObject;
+	public readonly themeForTitle: IBlockInfoThemeTitle | TEmptyObject;
+	public readonly themeForGroup: IBlockInfoThemeGroup | TEmptyObject;
 
 	constructor(
 		editValue: (value: number) => string,

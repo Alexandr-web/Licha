@@ -8,11 +8,11 @@ import { IStroke, } from "../../interfaces/global";
 import { ICapClass, } from "../../interfaces/cap";
 
 class Cap extends Element implements ICapClass {
-	public format: TCapType;
-	public size: number;
-	public stroke?: IStroke;
-	public startY?: number;
-	public endY?: number;
+	public readonly format: TCapType;
+	public readonly size: number;
+	public readonly stroke?: IStroke;
+	public readonly startY?: number;
+	public readonly endY?: number;
 
 	constructor(
 		size: number,
