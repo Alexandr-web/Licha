@@ -26,8 +26,6 @@ new Sinera({
     padding: 10,
     selectorCanvas: "canvas",
     background: [utils.getColor("bistre"), utils.getColor("charcoal")],
-    axisX: { font: { showText: false, }, },
-    axisY: { font: { showText: false, }, },
     grid: { line: { width: 1, }, },
     data: {
         "Group 1": {
