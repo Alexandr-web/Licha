@@ -15,7 +15,6 @@ import { IData, IDataAtItemData, } from "../../interfaces/data";
 import { ILine, ILineTheme, } from "../../interfaces/line";
 import { IAxisYTitle, } from "../../interfaces/axisY";
 import { IAxisThemePoint, IAxisThemeTitle, IFontAxis, } from "../../interfaces/axis";
-import isUndefined from "../../helpers/isUndefined";
 
 class AxisX extends Axis implements IAxisXClass {
 	public themeForLine: ILineTheme | TEmptyObject;
