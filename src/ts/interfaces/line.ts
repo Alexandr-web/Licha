@@ -8,11 +8,11 @@ export interface ILineTheme {
 }
 
 export interface ILine {
-    fill?: Array<string> | string;
-    stepped?: boolean;
-    color?: string | Array<string>;
-    dotted?: boolean;
-    width?: number;
+    readonly fill?: Array<string> | string;
+    readonly stepped?: boolean;
+    readonly color?: string | Array<string>;
+    readonly dotted?: boolean;
+    readonly width?: number;
 }
 
 export interface ILinePos {
@@ -21,9 +21,9 @@ export interface ILinePos {
 }
 
 export interface ILineClass {
-    lineTo: Array<ILineTo>;
-    width?: number;
-    dotted?: boolean;
+    readonly lineTo: Array<ILineTo>;
+    readonly width?: number;
+    readonly dotted?: boolean;
 
     draw(): void;
 }

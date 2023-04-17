@@ -1,10 +1,10 @@
 import { IStroke, } from "./global";
 
 export interface ICircleClass {
-    radius: number;
-    stroke?: IStroke;
-    startY?: number;
-    endY?: number;
+    readonly radius: number;
+    readonly stroke?: IStroke;
+    readonly startY?: number;
+    readonly endY?: number;
 
     draw(): void;
 }

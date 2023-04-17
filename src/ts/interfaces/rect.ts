@@ -1,11 +1,11 @@
 import { IStroke, } from "./global";
 
 export interface IRectClass {
-    width: number;
-    height: number;
-    startY: number;
-    endY: number;
-    stroke?: IStroke | object;
+    readonly width: number;
+    readonly height: number;
+    readonly startY: number;
+    readonly endY: number;
+    readonly stroke?: IStroke | object;
 
     draw(): void;
 }

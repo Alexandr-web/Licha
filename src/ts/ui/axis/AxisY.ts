@@ -17,10 +17,10 @@ import { IAxisYClass, IAxisYTitle, IAxisYTitleData, IPointY, } from "../../inter
 import { IFontAxis, IAxisThemePoint, IAxisThemeTitle, } from "../../interfaces/axis";
 
 class AxisY extends Axis implements IAxisYClass {
-	public step?: number;
-	public editValue?: (value: number) => string | number;
-	public data: IData;
-	public sortValues?: TSort;
+	public readonly step?: number;
+	public readonly editValue?: (value: number) => string | number;
+	public readonly data: IData;
+	public readonly sortValues?: TSort;
 	public titleData?: IAxisYTitleData;
 
 	constructor(

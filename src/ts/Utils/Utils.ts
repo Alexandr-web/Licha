@@ -9,8 +9,8 @@ import { IColors, ITheme, IThemes, IUtilsClass, } from "../interfaces/utils";
 import isFunction from "../helpers/isFunction";
 
 class Utils implements IUtilsClass {
-	public themes: IThemes;
-	public colors: IColors;
+	public readonly themes: IThemes;
+	public readonly colors: IColors;
 
 	constructor() {
 		// Содержит светлые и темные темы

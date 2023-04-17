@@ -2,15 +2,15 @@ import { IStroke, IPos, } from "./global";
 import { TCapType, } from "../types/index";
 
 export interface ICapTheme {
-    color?: Array<string>;
-    strokeColor?: Array<string>;
+    readonly color?: Array<string>;
+    readonly strokeColor?: Array<string>;
 }
 
 export interface ICap {
-    format?: TCapType;
-    color?: string | Array<string>;
-    size?: number;
-    stroke?: IStroke;
+    readonly format?: TCapType;
+    readonly color?: string | Array<string>;
+    readonly size?: number;
+    readonly stroke?: IStroke;
 }
 
 export interface ICapData extends IPos {
@@ -27,11 +27,11 @@ export interface ICapData extends IPos {
 }
 
 export interface ICapClass {
-    format: TCapType;
-    size: number;
-    stroke?: IStroke;
-    startY?: number;
-    endY?: number;
+    readonly format: TCapType;
+    readonly size: number;
+    readonly stroke?: IStroke;
+    readonly startY?: number;
+    readonly endY?: number;
 
     draw(): void;
 }

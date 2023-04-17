@@ -9,7 +9,7 @@ export interface ISpecialFontData {
 }
 
 export interface ITextClass {
-    font: ISpecialFontData;
+    readonly font: ISpecialFontData;
 
     getSizes(str: string): ISize;
     draw(): void;

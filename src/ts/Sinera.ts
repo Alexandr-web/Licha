@@ -5,8 +5,8 @@ import LineChart from "./ui/chart/LineChart";
 import Grid from "./ui/Grid";
 import AxisX from "./ui/axis/AxisX";
 import Legend from "./ui/Legend";
-import BlockInfo from "./ui/elements/BlockInfo";
 import Utils from "./Utils/Utils";
+import ChartEvents from "./ChartEvents";
 
 import { TEmptyObject, TTypeChart, } from "./types/index";
 
@@ -14,38 +14,38 @@ import { ISineraClass, ISineraConstructor, } from "./interfaces/sinera";
 import { IAxisPoints, IAxisThemePoint, IAxisThemeTitle, } from "./interfaces/axis";
 import { IAxisX, IAxisXClass, IPointX, } from "./interfaces/axisX";
 import { IAxisY, IAxisYClass, IPointY, } from "./interfaces/axisY";
-import { IBlockInfo, IBlockInfoThemeGroup, IBlockInfoThemeTitle, IBlockInfoThemeWindow, } from "./interfaces/blockInfo";
-import { IBounds, IGaps, IPadding, IPos, } from "./interfaces/global";
+import { IBlockInfo, } from "./interfaces/blockInfo";
+import { IGaps, IPadding, } from "./interfaces/global";
 import { ICanvasClass, } from "./interfaces/canvas";
 import { ICap, } from "./interfaces/cap";
 import { IChartClass, IChartTitle, IChartTitleWithSizeAndPos, } from "./interfaces/chart";
 import { IData, } from "./interfaces/data";
 import { IGrid, IGridClass, } from "./interfaces/grid";
-import { IItemLegend, ILegend, ILegendClass, ILegendData, } from "./interfaces/legend";
+import { ILegend, ILegendClass, ILegendData, } from "./interfaces/legend";
 import { ILine, ILineTheme, } from "./interfaces/line";
 import { ITheme, } from "./interfaces/utils";
 
 import isNumber from "./helpers/isNumber";
 import getPaddingObj from "./helpers/getPaddingObj";
-import isFunction from "./helpers/isFunction";
 import ifTrueThenOrElse from "./helpers/ifTrueThenOrElse";
+import { IChartEventsClass, } from "./interfaces/chartEvents";
 
 class Sinera implements ISineraClass {
-	public selectorCanvas: string;
-	public background?: string | Array<string>;
-	public title?: IChartTitle | TEmptyObject;
-	public theme?: ITheme | TEmptyObject;
-	public data: IData;
-	public axisY?: IAxisY | TEmptyObject;
-	public axisX?: IAxisX | TEmptyObject;
-	public line?: ILine | TEmptyObject;
-	public cap?: ICap;
-	public grid?: IGrid | TEmptyObject;
-	public legend?: ILegend | TEmptyObject;
-	public blockInfo?: IBlockInfo | TEmptyObject;
-	public type?: TTypeChart;
-	public padding?: IPadding | TEmptyObject | number;
-	public hideGroups?: Array<string>;
+	public readonly selectorCanvas: string;
+	public readonly background?: string | Array<string>;
+	public readonly title?: IChartTitle | TEmptyObject;
+	public readonly theme?: ITheme | TEmptyObject;
+	public readonly data: IData;
+	public readonly axisY?: IAxisY | TEmptyObject;
+	public readonly axisX?: IAxisX | TEmptyObject;
+	public readonly line?: ILine | TEmptyObject;
+	public readonly cap?: ICap | TEmptyObject;
+	public readonly grid?: IGrid | TEmptyObject;
+	public readonly legend?: ILegend | TEmptyObject;
+	public readonly blockInfo?: IBlockInfo | TEmptyObject;
+	public readonly type?: TTypeChart;
+	public readonly padding?: IPadding | TEmptyObject | number;
+	public readonly hideGroups?: Array<string>;
 
 	constructor({
 		selectorCanvas,
@@ -256,177 +256,6 @@ class Sinera implements ISineraClass {
 	}
 
 	/**
-	 * Обработчик события resize у window
-	 * Обновляет график и проверяет ширину окна с break points
-	 * @private
-	 */
-	private _windowResizeHandler(): void {
-		this.update();
-	}
-
-	/**
-	 * Добавление события resize элементу window
-	 * @private
-	 */
-	private _windowResize(): void {
-		window.addEventListener("resize", this._windowResizeHandler.bind(this));
-	}
-
-	/**
-	 * Обработчик события mousemove у элемента canvas
-	 * Рисует окно с информацией об активной группе
-	 * @param {MouseEvent} e Объект события
-	 * @param {number} endY Конечная область видимости окна с информацией об активной группе
-	 * @param {Array<IPointX>} pointsX Содержит данные всех точек на оси абсцисс
-	 * @param {number} startY Начальная область видимости окна с информацией об активной группе
-	 * @param {ICanvasClass} canvas Экземпляр класса Canvas
-	 * @param {IBounds} bounds Содержит границы холста
-	 * @private
-	 */
-	private _mousemoveByCanvasHandler(e: MouseEvent, endY: number, pointsX: Array<IPointX>, startY: number, canvas: ICanvasClass, bounds: IBounds): void {
-		const mousePos: IPos = { x: e.offsetX, y: e.offsetY, };
-		const { events = {}, } = this.blockInfo;
-
-		if (mousePos.y <= endY && mousePos.y >= startY) {
-			// Отбираем элементы, которые подходят по координатам на холсте
-			const activeElements: Array<IPointX> = pointsX.map((point) => {
-				if (isFunction(this.axisX.editName)) {
-					return {
-						...point,
-						name: this.axisX.editName(point.name),
-					};
-				}
-
-				return point;
-			}).filter(({ x, group, }) => !this.hideGroups.includes(group) && mousePos.x > (x - 5) && mousePos.x < (x + 5));
-
-			if (activeElements.length) {
-				this.update();
-
-				const [{ x, }]: Array<IPointX> = activeElements;
-				const { title, groups, background, padding, } = this.blockInfo;
-				const themeForWindow: IBlockInfoThemeWindow = (this.theme.blockInfo || {}).window;
-				const themeForLine: ILineTheme = this.theme.line;
-				const themeForTitle: IBlockInfoThemeTitle = (this.theme.blockInfo || {}).title;
-				const themeForGroup: IBlockInfoThemeGroup = (this.theme.blockInfo || {}).group;
-
-				new BlockInfo(
-					this.axisY.editValue,
-					this.axisX.editName,
-					this.data,
-					bounds,
-					activeElements,
-					title,
-					groups,
-					x,
-					mousePos.y,
-					background,
-					canvas.ctx,
-					padding,
-					themeForWindow,
-					themeForLine,
-					themeForTitle,
-					themeForGroup
-				).init();
-
-				// Вызываем функцию-обработчик для обработки события наведения на точку
-				if (isFunction(events.onAimed)) {
-					events.onAimed.call({ ...mousePos, activeElements, });
-				}
-			}
-		}
-	}
-
-	/**
-	 * Добавление события mousemove элементу canvas
-	 * @param {ICanvasClass} canvas Экземпляр класса Canvas
-	 * @param {IBounds} bounds Содержит границы холста
-	 * @param {{ pointsX: Array<IPointX>, pointsY: Array<IPointY> }} param2 Содержит данные всех осевых точек
-	 * @private
-	 */
-	private _mousemoveByCanvas(canvas: ICanvasClass, bounds: IBounds, { pointsX, pointsY, }): void {
-		if (!Object.keys(this.blockInfo).length) {
-			return;
-		}
-
-		const pointsYOnScreen: Array<IPointY> = pointsY.filter(({ onScreen, }) => onScreen);
-		const { y: firstPointYOrdinate, height: firstPointYHeight, } = pointsYOnScreen[0];
-		const { y: lastPointYOrdinate, height: lastPointYHeight, } = pointsYOnScreen[pointsYOnScreen.length - 1];
-		const endY: number = lastPointYOrdinate - firstPointYHeight / 2;
-		const startY: number = firstPointYOrdinate - lastPointYHeight / 2;
-
-		canvas.canvasElement.addEventListener("mousemove", (e: MouseEvent) => this._mousemoveByCanvasHandler(e, endY, pointsX, startY, canvas, bounds));
-	}
-
-	/**
-	 * Обработчик события mouseleave у элемента canvas
-	 * Обновляет график и изменяет тип курсора на обычный
-	 * @private
-	 */
-	private _leavemouseFromCanvasAreaHandler(): void {
-		document.documentElement.setAttribute("style", "default");
-		this.update();
-	}
-
-	/**
-	 * Добавление события mouseleave элементу canvas
-	 * @param {ICanvasClass} canvas Экземпляр класса Canvas
-	 * @private
-	 */
-	private _leavemouseFromCanvasArea(canvas: ICanvasClass): void {
-		canvas.canvasElement.addEventListener("mouseleave", this._leavemouseFromCanvasAreaHandler.bind(this));
-	}
-
-	/**
-	 * Обработчик события click у элемента canvas
-	 * Скрывает группы при клике на элементы легенды
-	 * @param {MouseEvent} e Объект event
-	 * @param {Array<IItemLegend>} legendItems Содержит данные элементов легенды
-	 * @private
-	 */
-	private _clickByCanvasAreaHandler(e: MouseEvent, legendItems: Array<IItemLegend>): void {
-		const { events = {}, } = this.legend;
-		const mousePos: IPos = { x: e.offsetX, y: e.offsetY, };
-		const findMatchLegendItem: IItemLegend | null = legendItems.find(({ x, y, width, height, }) => {
-			const endX: number = x + width;
-			const startY: number = y - height;
-
-			return (mousePos.x <= endX && mousePos.x >= x) && (mousePos.y <= y && mousePos.y >= startY);
-		});
-
-		if (findMatchLegendItem) {
-			const { group, } = findMatchLegendItem;
-			const findIdxHideGroup: number = this.hideGroups.indexOf(group);
-
-			if (findIdxHideGroup !== -1) {
-				this.hideGroups.splice(findIdxHideGroup, 1);
-			} else {
-				this.hideGroups.push(group);
-			}
-
-			// Вызываем функцию-обработчик для обработки события клика на элемент легенды
-			if (isFunction(events.onClick)) {
-				const hiddenLegendItems = legendItems.filter(({ group: g, }) => this.hideGroups.includes(g));
-				const notHiddenItems = legendItems.filter(({ group: g, }) => !this.hideGroups.includes(g));
-
-				events.onClick.call({ element: findMatchLegendItem, hiddenElements: hiddenLegendItems, elements: legendItems, notHiddenElements: notHiddenItems, });
-			}
-
-			this.update();
-		}
-	}
-
-	/**
-	 * Добавление события click элементу canvas
-	 * @param {ICanvasClass} canvas Экземпляр класса Canvas
-	 * @param {Array<IItemLegend>} legendItems Содержит данные элементов легенды
-	 * @private
-	 */
-	private _clickByCanvasArea(canvas: ICanvasClass, legendItems: Array<IItemLegend>): void {
-		canvas.canvasElement.addEventListener("click", (e: MouseEvent) => this._clickByCanvasAreaHandler(e, legendItems));
-	}
-
-	/**
 	 * Рисует диаграмму в зависимости от ее типа
 	 * @param {IAxisYClass} axisY Экземпляр класса AxisY
 	 * @param {IAxisXClass} axisX Экземпляр класса AxisX
@@ -481,13 +310,12 @@ class Sinera implements ISineraClass {
 		const axisY: IAxisYClass = this._setAxisYTitle(canvas, chart);
 		const axisX: IAxisXClass = this._setAxisXTitle(canvas, chart);
 		const points: IAxisPoints = this._setPoints(axisY, axisX, legend, chart);
+		const chartEvents: IChartEventsClass = new ChartEvents(this.data, this, this.update, this.blockInfo, this.axisX, this.axisY, this.theme, this.legend);
 
-		this._mousemoveByCanvas(canvas, chart.getBounds(), points);
-		this._leavemouseFromCanvasArea(canvas);
-		this._clickByCanvasArea(canvas, legend.items);
+		chartEvents.init(canvas, chart, points, legend);
+
 		this._setGrid(canvas, axisX, axisY);
 		this._drawChartByType(axisY, axisX, canvas);
-		this._windowResize();
 
 		return this;
 	}

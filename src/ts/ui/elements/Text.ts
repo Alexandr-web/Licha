@@ -4,7 +4,7 @@ import { ISize, } from "../../interfaces/global";
 import { ISpecialFontData, ITextClass, } from "../../interfaces/text";
 
 class Text extends Element implements ITextClass {
-	public font: ISpecialFontData;
+	public readonly font: ISpecialFontData;
 
 	constructor(font: ISpecialFontData, ctx: CanvasRenderingContext2D, x?: number, y?: number, color?: string, rotateDeg?: number, opacity?: number) {
 		super(x, y, color, ctx, rotateDeg, opacity);

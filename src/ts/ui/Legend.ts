@@ -16,18 +16,18 @@ import { TEmptyObject, } from "../types/index";
 
 class Legend implements ILegendClass {
 	public hideGroups: Array<string>;
-	public showLegend: boolean;
-	public line: ILine;
-	public font: IFont;
-	public data: IData;
-	public ctx: CanvasRenderingContext2D;
-	public bounds: IBounds;
-	public circle: ICircleLegend;
-	public maxCount: number;
-	public legendGaps: ILegendGaps | TEmptyObject;
+	public readonly showLegend: boolean;
+	public readonly line: ILine;
+	public readonly font: IFont;
+	public readonly data: IData;
+	public readonly ctx: CanvasRenderingContext2D;
+	public readonly bounds: IBounds;
+	public readonly circle: ICircleLegend;
+	public readonly maxCount: number;
+	public readonly legendGaps: ILegendGaps | TEmptyObject;
 	public totalHeight: number;
-	public themeForText: ILegendTheme | TEmptyObject;
-	public themeForCircle: ILineTheme | TEmptyObject;
+	public readonly themeForText: ILegendTheme | TEmptyObject;
+	public readonly themeForCircle: ILineTheme | TEmptyObject;
 	public items: Array<IItemLegend>;
 
 	constructor(

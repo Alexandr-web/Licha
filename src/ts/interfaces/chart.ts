@@ -1,4 +1,4 @@
-import { TEmptyObject, } from "../types/index";
+import { TCapType, TEmptyObject, TTypeChart, } from "../types/index";
 
 import { IStroke, ISize, IGaps, IPadding, IPos, IBounds, } from "./global";
 import { IChartLineStyle, } from "./lineChart";
@@ -12,7 +12,7 @@ export interface IChartCapStyle {
     size: number;
     color: string | Array<string>;
     stroke: IStroke;
-    format: "square" | "circle";
+    format: TCapType;
 }
 
 export interface IChartStyle {
@@ -35,16 +35,16 @@ export interface IChartTitleData extends IChartTitle, ISize, IPos { }
 export interface IChartTitleWithSizeAndPos extends IPos, ISize, IChartTitle { }
 
 export interface IChartClass {
-    padding: IPadding | TEmptyObject | number;
-    data: IData;
-    ctx: CanvasRenderingContext2D;
-    width: number;
-    height: number;
-    title: IChartTitle | TEmptyObject;
-    type: "line";
-    defaultPadding: number;
-    hideGroups: Array<string>;
-    theme: ITitleTheme | TEmptyObject;
+    readonly padding: IPadding | TEmptyObject | number;
+    readonly data: IData;
+    readonly ctx: CanvasRenderingContext2D;
+    readonly width: number;
+    readonly height: number;
+    readonly title: IChartTitle | TEmptyObject;
+    readonly type: TTypeChart;
+    readonly defaultPadding: number;
+    readonly hideGroups: Array<string>;
+    readonly theme: ITitleTheme | TEmptyObject;
     titleData: IChartTitleData;
 
     getBounds(): IBounds;

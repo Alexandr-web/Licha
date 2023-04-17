@@ -5,9 +5,9 @@ import ifTrueThenOrElse from "../../helpers/ifTrueThenOrElse";
 import { ILineClass, ILineTo, } from "../../interfaces/line";
 
 class Line extends Element implements ILineClass {
-	public lineTo: Array<ILineTo>;
-	public width?: number;
-	public dotted?: boolean;
+	public readonly lineTo: Array<ILineTo>;
+	public readonly width?: number;
+	public readonly dotted?: boolean;
 
 	constructor(
 		x: number,

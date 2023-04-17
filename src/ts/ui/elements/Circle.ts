@@ -4,10 +4,10 @@ import { IStroke, } from "../../interfaces/global";
 import { ICircleClass, } from "../../interfaces/circle";
 
 class Circle extends Element implements ICircleClass {
-	public radius: number;
-	public stroke?: IStroke;
-	public startY?: number;
-	public endY?: number;
+	public readonly radius: number;
+	public readonly stroke?: IStroke;
+	public readonly startY?: number;
+	public readonly endY?: number;
 
 	constructor(
 		radius: number,

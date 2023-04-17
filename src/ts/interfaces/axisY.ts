@@ -13,16 +13,16 @@ export interface IAxisYTitleData extends IAxisYTitle, IPos, ISize { }
 export interface IPointY extends IPoint { }
 
 export interface IAxisY extends IAxis {
-    step?: number;
-    editValue?: (value: number) => string;
-    title?: IAxisYTitle;
+    readonly step?: number;
+    readonly editValue?: (value: number) => string;
+    readonly title?: IAxisYTitle;
 }
 
 export interface IAxisYClass extends IAxisClass {
-    step?: number;
-    editValue?: (value: number) => string | number;
-    data: IData;
-    sortValues?: "more-less" | "less-more";
+    readonly step?: number;
+    readonly editValue?: (value: number) => string | number;
+    readonly data: IData;
+    readonly sortValues?: "more-less" | "less-more";
     titleData?: IAxisYTitleData;
 
     drawTitle(): IAxisYClass;

@@ -10,18 +10,18 @@ import { IBounds, } from "../../interfaces/global";
 import { IData, IDataAtItemData, } from "../../interfaces/data";
 
 class Axis implements IAxisClass {
-  public ctx: CanvasRenderingContext2D;
-  public title: IAxisYTitle | IAxisXTitle | TEmptyObject;
-  public font: IFontAxis | TEmptyObject;
-  public bounds: IBounds;
-  public points: Array<IPointX | IPointY>;
-  public sortNames: TSort;
-  public uniqueNames: Array<string | number>;
-  public uniqueValues: Array<number>;
+  public readonly ctx: CanvasRenderingContext2D;
+  public readonly title: IAxisYTitle | IAxisXTitle | TEmptyObject;
+  public readonly font: IFontAxis | TEmptyObject;
+  public readonly bounds: IBounds;
+  public readonly points: Array<IPointX | IPointY>;
+  public readonly sortNames: TSort;
+  public readonly uniqueNames: Array<string | number>;
+  public readonly uniqueValues: Array<number>;
   public readonly gapTopAxisX: number;
   public readonly gapRightAxisY: number;
-  public themeForPoint: IAxisThemePoint | TEmptyObject;
-  public themeForTitle: IAxisThemeTitle | TEmptyObject;
+  public readonly themeForPoint: IAxisThemePoint | TEmptyObject;
+  public readonly themeForTitle: IAxisThemeTitle | TEmptyObject;
 
   constructor(
     ctx: CanvasRenderingContext2D,

@@ -44,18 +44,18 @@ export interface IAxis {
 }
 
 export interface IAxisClass {
-    ctx: CanvasRenderingContext2D;
-    title: IAxisYTitle | IAxisXTitle | TEmptyObject;
-    font: IFontAxis | TEmptyObject;
-    bounds: IBounds | TEmptyObject;
-    points: Array<IPointX | IPointY>;
-    sortNames: "more-less" | "less-more";
-    uniqueNames: Array<string | number>;
-    uniqueValues: Array<number>;
+    readonly ctx: CanvasRenderingContext2D;
+    readonly title: IAxisYTitle | IAxisXTitle | TEmptyObject;
+    readonly font: IFontAxis | TEmptyObject;
+    readonly bounds: IBounds | TEmptyObject;
+    readonly points: Array<IPointX | IPointY>;
+    readonly sortNames: "more-less" | "less-more";
+    readonly uniqueNames: Array<string | number>;
+    readonly uniqueValues: Array<number>;
     readonly gapTopAxisX: number;
     readonly gapRightAxisY: number;
-    themeForPoint: IAxisThemePoint | TEmptyObject;
-    themeForTitle: IAxisThemeTitle | TEmptyObject;
+    readonly themeForPoint: IAxisThemePoint | TEmptyObject;
+    readonly themeForTitle: IAxisThemeTitle | TEmptyObject;
 
     getAxesData(data: IData): IAxesData;
 }

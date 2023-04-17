@@ -17,14 +17,14 @@ import { IAxisYTitle, } from "../../interfaces/axisY";
 import { IAxisThemePoint, IAxisThemeTitle, IFontAxis, } from "../../interfaces/axis";
 
 class AxisX extends Axis implements IAxisXClass {
-	public themeForLine: ILineTheme | TEmptyObject;
-	public ignoreNames?: Array<string | number> | ((name: string, index: number) => boolean);
-	public data: IData;
-	public editName?: (name: string | number) => string;
-	public line: ILine;
-	public titleData?: IAxisXTitleData;
-	public rotate?: boolean;
-	public place?: TAxisXPlace;
+	public readonly themeForLine: ILineTheme | TEmptyObject;
+	public readonly ignoreNames?: Array<string | number> | ((name: string, index: number) => boolean);
+	public readonly data: IData;
+	public readonly editName?: (name: string | number) => string;
+	public readonly line: ILine;
+	public titleData: IAxisXTitleData;
+	public readonly rotate?: boolean;
+	public readonly place?: TAxisXPlace;
 
 	constructor(
 		ctx: CanvasRenderingContext2D,

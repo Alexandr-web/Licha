@@ -1,9 +1,9 @@
 import { ILineTo, } from "./line";
 
 export interface ICustomFigureClass {
-    lineTo: Array<ILineTo>;
-    startY?: number;
-    endY?: number;
+    readonly lineTo: Array<ILineTo>;
+    readonly startY?: number;
+    readonly endY?: number;
 
     draw(): void;
 }

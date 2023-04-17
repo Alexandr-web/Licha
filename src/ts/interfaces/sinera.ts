@@ -1,4 +1,4 @@
-import { TEmptyObject, } from "../types/index";
+import { TEmptyObject, TTypeChart, } from "../types/index";
 import { IChartTitle, } from "./chart";
 import { ITheme, } from "./utils";
 import { IData, } from "./data";
@@ -12,21 +12,21 @@ import { IPadding, } from "./global";
 import { IBlockInfo, } from "./blockInfo";
 
 export interface ISineraConstructor {
-    selectorCanvas: string;
-    background?: string | Array<string>;
-    title?: IChartTitle | TEmptyObject;
-    theme?: ITheme | TEmptyObject;
-    data: IData;
-    axisY?: IAxisY | TEmptyObject;
-    axisX?: IAxisX | TEmptyObject;
-    line?: ILine | TEmptyObject;
-    cap?: ICap | object;
-    grid?: IGrid | TEmptyObject;
-    legend?: ILegend | TEmptyObject;
-    blockInfo?: IBlockInfo | TEmptyObject;
-    type?: "line";
-    padding?: IPadding | TEmptyObject | number;
-    hideGroups?: Array<string>;
+    readonly selectorCanvas: string;
+    readonly background?: string | Array<string>;
+    readonly title?: IChartTitle | TEmptyObject;
+    readonly theme?: ITheme | TEmptyObject;
+    readonly data: IData;
+    readonly axisY?: IAxisY | TEmptyObject;
+    readonly axisX?: IAxisX | TEmptyObject;
+    readonly line?: ILine | TEmptyObject;
+    readonly cap?: ICap | TEmptyObject;
+    readonly grid?: IGrid | TEmptyObject;
+    readonly legend?: ILegend | TEmptyObject;
+    readonly blockInfo?: IBlockInfo | TEmptyObject;
+    readonly type?: TTypeChart;
+    readonly padding?: IPadding | TEmptyObject | number;
+    readonly hideGroups?: Array<string>;
 }
 
 export interface ISineraClass extends ISineraConstructor {

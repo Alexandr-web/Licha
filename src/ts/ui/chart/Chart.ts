@@ -17,16 +17,16 @@ import { IFontWithText, ISpecialFontData, } from "../../interfaces/text";
 import { ILegendData, ILegendGaps, } from "../../interfaces/legend";
 
 class Chart implements IChartClass {
-	public padding: IPadding | TEmptyObject | number;
-	public data: IData;
-	public ctx: CanvasRenderingContext2D;
-	public width: number;
-	public height: number;
-	public title: IChartTitle | TEmptyObject;
-	public type: TTypeChart;
-	public defaultPadding: number;
-	public hideGroups: Array<string>;
-	public theme: ITitleTheme | TEmptyObject;
+	public readonly padding: IPadding | TEmptyObject | number;
+	public readonly data: IData;
+	public readonly ctx: CanvasRenderingContext2D;
+	public readonly width: number;
+	public readonly height: number;
+	public readonly title: IChartTitle | TEmptyObject;
+	public readonly type: TTypeChart;
+	public readonly defaultPadding: number;
+	public readonly hideGroups: Array<string>;
+	public readonly theme: ITitleTheme | TEmptyObject;
 	public titleData: IChartTitleData;
 
 	constructor(
