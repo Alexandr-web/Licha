@@ -158,11 +158,12 @@ class Chart implements IChartClass {
 		const axisXTitleHeight: number = (axisX.titleData || {}).height || 0;
 		const axisXTitleGapTop: number = ((axisX.titleData || {}).gaps || {}).top || 0;
 		const gapBottomIfRotateX: number = ifTrueThenOrElse(axisX.rotate, axisX.getMaxWidthTextPoint(), axisX.getMaxHeightTextPoint());
-		const gapTopIfRotateX: number = ifTrueThenOrElse([showXText, axisX.rotate, placeAxisX === "top"], axisX.getMaxWidthTextPoint(), 0);
+		const gapTopIfAxisXPlaceIsTopAndRotate: number = ifTrueThenOrElse([showXText, axisX.rotate, placeAxisX === "top"], axisX.getMaxWidthTextPoint() + axisX.gapTopAxisX, 0);
+		const gapTopIfAxisXPlaceIsTop: number = ifTrueThenOrElse([showXText, !axisX.rotate, placeAxisX === "top"], axisX.getMaxHeightTextPoint() + axisX.gapTopAxisX, 0);
 
 		return {
 			left: axisYTitleHeight + axisYTitleGapRight,
-			top: chartTitleHeight + gapTopIfRotateX + chartTitleGapBottom + legendHeight + legendGapBottom + ifTrueThenOrElse([placeAxisX === "top", showXText], axisX.gapTopAxisX + axisX.getMaxHeightTextPoint(), 0),
+			top: chartTitleHeight + gapTopIfAxisXPlaceIsTop + gapTopIfAxisXPlaceIsTopAndRotate + chartTitleGapBottom + legendHeight + legendGapBottom,
 			bottom: ifTrueThenOrElse([showXText, placeAxisX === "bottom"], axisX.gapTopAxisX + gapBottomIfRotateX, 0) + axisXTitleHeight + axisXTitleGapTop,
 		};
 	}

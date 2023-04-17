@@ -193,7 +193,7 @@ class AxisY extends Axis implements IAxisYClass {
 			// Начальная точка для отрисовки элементов
 			const startPoint: number = bounds.vertical.start + firstValueSizes.height / 2 + (gaps.top || 0);
 			// Конечная точка для отрисовки элементов
-			const endPoint: number = bounds.vertical.end - startPoint - (gaps.bottom || 0);
+			const endPoint: number = bounds.vertical.end - firstValueSizes.height / 2 - startPoint - (gaps.bottom || 0);
 			// Интервал для отрисовки элементов
 			const step: number = endPoint / (points.length - 1);
 			// Координаты для отрисовки элементов

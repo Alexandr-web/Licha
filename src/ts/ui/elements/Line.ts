@@ -30,6 +30,10 @@ class Line extends Element implements ILineClass {
 
 	// Рисует линию
 	public draw(): void {
+		if (!this.color) {
+			return;
+		}
+
 		this.ctx.setLineDash(ifTrueThenOrElse(this.dotted, [10, 20], [0, 0]));
 
 		this.ctx.beginPath();
