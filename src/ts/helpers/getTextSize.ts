@@ -2,6 +2,8 @@ import { ISpecialFontData, } from "../interfaces/text";
 import { ISize, } from "../interfaces/global";
 import Text from "../ui/elements/Text";
 
+import getTextStr from "./getTextStr";
+
 /**
  * Определяет размеры текста
  * @param {number} size Размер шрифта
@@ -13,7 +15,7 @@ import Text from "../ui/elements/Text";
 export default (size: number, weight: number, text: string, ctx: CanvasRenderingContext2D): ISize => {
 	const font: ISpecialFontData = {
 		size,
-		str: `${weight} ${size}px Arial, sans-serif`,
+		str: getTextStr(size, weight),
 		text,
 	};
 
