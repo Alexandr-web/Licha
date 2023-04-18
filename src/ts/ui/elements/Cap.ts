@@ -1,6 +1,7 @@
 import Element from "./Element";
 import Rect from "./Rect";
 import Circle from "./Circle";
+import Rhomb from "./Rhomb";
 
 import { TCapType, } from "../../types/index";
 
@@ -59,6 +60,21 @@ class Cap extends Element implements ICapClass {
 				break;
 			case "square":
 				new Rect(
+					this.x,
+					this.y,
+					this.color,
+					this.ctx,
+					this.size,
+					this.size,
+					this.startY,
+					this.endY,
+					this.rotateDeg,
+					this.opacity,
+					this.stroke
+				).draw();
+				break;
+			case "rhomb":
+				new Rhomb(
 					this.x,
 					this.y,
 					this.color,

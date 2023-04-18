@@ -91,7 +91,10 @@ class LineChart extends Chart implements ILineChartClass {
 		const capStyle: IChartCapStyle = {
 			size: gCap.size || this.cap.size,
 			color: gCap.color || this.cap.color || themeColorForCap,
-			stroke: gCap.stroke || this.cap.stroke || {},
+			stroke: {
+				width: (gCap.stroke || {}).width || (this.cap.stroke || {}).width,
+				color: (gCap.stroke || {}).color || (this.cap.stroke || {}).color,
+			},
 			format: gCap.format || this.cap.format,
 		};
 

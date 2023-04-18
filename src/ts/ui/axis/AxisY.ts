@@ -7,6 +7,7 @@ import quickSort from "../../helpers/quickSort";
 import getTextStr from "../../helpers/getTextStr";
 import isFunction from "../../helpers/isFunction";
 import ifTrueThenOrElse from "../../helpers/ifTrueThenOrElse";
+import getRadians from "../../helpers/getRadians";
 
 import { TEmptyObject, TSort, } from "../../types/index";
 
@@ -104,7 +105,7 @@ class AxisY extends Axis implements IAxisYClass {
 			posTitle.x,
 			posTitle.y,
 			null,
-			-90 * (Math.PI / 180)
+			getRadians(-90)
 		).draw();
 
 		this.titleData = {

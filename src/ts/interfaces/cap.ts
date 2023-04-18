@@ -13,6 +13,13 @@ export interface ICap {
     readonly stroke?: IStroke;
 }
 
+export interface ICapCoordinates {
+    startY: number;
+    endY: number;
+    x: number;
+    y: number;
+}
+
 export interface ICapData extends IPos {
     group: string;
     value: number;

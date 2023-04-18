@@ -455,7 +455,7 @@ Parameters passed to the Sinera class constructor
 
     | Description  | Example | Type |
     | ------------- | ------------- | ------------- |
-    | Cap format ("square" or "circle" (default "circle")) | `cap: { format: "square", }`  | `string` |
+    | Cap format ("square" or "circle" or "rhomb" (default "circle")) | `cap: { format: "square", }`  | `string` |
 
   * #### `color`
   
