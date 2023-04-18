@@ -15,6 +15,7 @@ import { IData, IDataAtItemData, } from "../../interfaces/data";
 import { ILine, ILineTheme, } from "../../interfaces/line";
 import { IAxisYTitle, } from "../../interfaces/axisY";
 import { IAxisThemePoint, IAxisThemeTitle, IFontAxis, } from "../../interfaces/axis";
+import getRadians from "../../helpers/getRadians";
 
 class AxisX extends Axis implements IAxisXClass {
 	public readonly themeForLine: ILineTheme | TEmptyObject;
@@ -206,7 +207,7 @@ class AxisX extends Axis implements IAxisXClass {
 					posXItem.x + nameSizes.height / 2,
 					posXItem.y,
 					null,
-					-90 * (Math.PI / 180)
+					getRadians(-90)
 				).draw();
 			} else {
 				new Text(
