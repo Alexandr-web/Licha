@@ -7,6 +7,7 @@ import getStyleByIndex from "../../helpers/getStyleByIndex";
 import isString from "../../helpers/isString";
 import isUndefined from "../../helpers/isUndefined";
 import ifTrueThenOrElse from "../../helpers/ifTrueThenOrElse";
+import getCapPos from "../../helpers/getCapPos";
 
 import { TEmptyObject, TSort, } from "../../types/index";
 
@@ -240,6 +241,8 @@ class LineChart extends Chart implements ILineChartClass {
 	 */
 	private _drawCaps(): void {
 		this.caps.map(({ x, y, size, color, format, stroke, }) => {
+			const { startY, endY, } = getCapPos(format, y, x, size);
+
 			new Cap(
 				size,
 				x,
@@ -248,8 +251,8 @@ class LineChart extends Chart implements ILineChartClass {
 				format,
 				this.ctx,
 				1,
-				ifTrueThenOrElse(format === "circle", y - size, y - size / 2),
-				ifTrueThenOrElse(format === "circle", y + size, y + size / 2),
+				startY,
+				endY,
 				0,
 				stroke
 			).draw();
@@ -269,23 +272,25 @@ class LineChart extends Chart implements ILineChartClass {
 		const { lineStyle, capStyle, themeStrokeColorForCap, } = this._getStyles(gLine, gCap, group);
 		// Содержит следующие позиции линии
 		const lineToArray: Array<IPos> = [];
+		const { format: capFormat, size: capSize, color: capColor, stroke: capStroke, } = capStyle;
 
 		// Находим координаты для линии
 		coordinates.map(({ value, name, x, y, }, index: number) => {
+			const { x: capX, y: capY, } = getCapPos(capFormat, y, x, capSize);
 			const nextDataItem: IDataAtItemData | undefined = gData[index + 1];
 			const capItem: ICapData = {
 				group,
 				value,
 				name,
-				x: ifTrueThenOrElse(capStyle.format === "circle", x, x - capStyle.size / 2),
-				y: ifTrueThenOrElse(capStyle.format === "circle", y, y - capStyle.size / 2),
+				x: capX,
+				y: capY,
 				stroke: {
-					width: capStyle.stroke.width,
-					color: ifTrueThenOrElse(isUndefined(capStyle.stroke.color), themeStrokeColorForCap, capStyle.stroke.color),
+					width: capStroke.width,
+					color: ifTrueThenOrElse(isUndefined(capStroke.color), themeStrokeColorForCap, capStroke.color),
 				},
-				format: capStyle.format,
-				size: capStyle.size,
-				color: capStyle.color,
+				format: capFormat,
+				size: capSize,
+				color: capColor,
 			};
 
 			if (nextDataItem) {
