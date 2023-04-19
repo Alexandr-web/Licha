@@ -15,7 +15,6 @@ import { IFont, ISpecialFontData, } from "../interfaces/text";
 import { TEmptyObject, } from "../types/index";
 
 class Legend implements ILegendClass {
-	public hideGroups: Array<string>;
 	public readonly showLegend: boolean;
 	public readonly line: ILine;
 	public readonly font: IFont;
@@ -25,9 +24,10 @@ class Legend implements ILegendClass {
 	public readonly circle: ICircleLegend;
 	public readonly maxCount: number;
 	public readonly legendGaps: ILegendGaps | TEmptyObject;
-	public totalHeight: number;
 	public readonly themeForText: ILegendTheme | TEmptyObject;
 	public readonly themeForCircle: ILineTheme | TEmptyObject;
+	public height: number;
+	public hideGroups: Array<string>;
 	public items: Array<IItemLegend>;
 
 	constructor(
@@ -64,21 +64,21 @@ class Legend implements ILegendClass {
 		this.maxCount = ifTrueThenOrElse(maxCount > 0, maxCount, 4);
 		// Отступы
 		this.legendGaps = legendGaps;
-		// Высота легенды
-		this.totalHeight = 0;
 		// Стили для текста от темы
 		this.themeForText = themeForText;
 		// Стили для круга от темы
 		this.themeForCircle = themeForCircle;
 		// Содержит данные элементов легенды
 		this.items = [];
+		// Высота легенды
+		this.height = 0;
 	}
 
 	/**
 	 * Определяет максимальную позицию текста по оси ординат
 	 * @returns {number}
 	 */
-	getMaxPosYAtLegendItems(): number {
+	public getMaxPosYAtLegendItems(): number {
 		const allYPos: Array<number> = this.items.map(({ y, }) => y);
 
 		return Math.max(...allYPos);
@@ -86,14 +86,14 @@ class Legend implements ILegendClass {
 
 	/**
 	 * Определяет размеры у текста групп
-	 * @param {Array<IColumnLegend>} groups Содержит группы
+	 * @param {Array<IColumnLegend>} column Содержит группы колонки
 	 * @private
 	 * @returns {Array<IItemLegend>} Группы с их размером текста
 	 */
-	private _getSizeGroups(groups: Array<IColumnLegend>): Array<IItemLegend> {
+	private _getSizeGroups(column: Array<IColumnLegend>): Array<IItemLegend> {
 		const { size, weight = 400, } = this.font;
 
-		return groups.map((groupItem: IColumnLegend) => {
+		return column.map((groupItem: IColumnLegend) => {
 			const sizes: ISize = getTextSize(size, weight, groupItem.group, this.ctx);
 
 			return {
@@ -111,7 +111,7 @@ class Legend implements ILegendClass {
 	 * @private
 	 * @returns {number} Общая дистанция
 	 */
-	private _getDistanceGroups(groups: Array<IItemLegend>): number {
+	private _getHorizontalDistance(groups: Array<IItemLegend>): number {
 		if (!groups.length) {
 			return 0;
 		}
@@ -137,10 +137,26 @@ class Legend implements ILegendClass {
 			return 0;
 		}
 
-		const { group: gapsGroup = {} as IGaps, } = this.legendGaps as { group, };
+		const { group: gapsGroup = {} as IGaps, } = this.legendGaps;
 		const height: number = this._getMaxGroupTextHeight(groups);
 
-		return (gapsGroup.bottom || 0) + height;
+		return height + gapsGroup.bottom || 0;
+	}
+
+	/**
+	 * Определяет ширину одной колонки
+	 * @param {Array<IItemLegend>} groups Содержит данные групп
+	 * @returns {number}
+	 */
+	private _getWidthColumn(groups: Array<IItemLegend>): number {
+		const { group: groupGaps = {}, circle: circleGaps = {}, } = this.legendGaps;
+		const { radius, } = this.circle;
+
+		return groups.reduce((acc: number, { width, }, idx: number) => {
+			acc += width + (circleGaps.right || 0) + radius + ifTrueThenOrElse(idx === groups.length - 1, 0, groupGaps.right || 0);
+
+			return acc;
+		}, 0);
 	}
 
 	/**
@@ -149,7 +165,7 @@ class Legend implements ILegendClass {
 	 * @private
 	 * @returns {number}
 	 */
-	_getMaxGroupTextHeight(groups: Array<IItemLegend>): number {
+	private _getMaxGroupTextHeight(groups: Array<IItemLegend>): number {
 		const heights: Array<number> = groups.map(({ height, }) => height);
 
 		return Math.max(...heights);
@@ -199,8 +215,8 @@ class Legend implements ILegendClass {
 	private _drawText(group: string, width: number, height: number, groups: Array<IItemLegend>, index: number, gaps: IGaps): IPos {
 		const bounds: IBounds = this.bounds;
 		const center: number = bounds.width / 2;
-		const totalGroupsDistance: number = this._getDistanceGroups(groups);
 		const { size, weight = 400, color = this.themeForText.color, } = this.font;
+		const { circle: gapsCircle = {}, } = this.legendGaps;
 		const font: ISpecialFontData = {
 			size,
 			color,
@@ -209,9 +225,12 @@ class Legend implements ILegendClass {
 		};
 
 		const prevGroups: Array<IItemLegend> = groups.filter((grp: IItemLegend, idx: number) => idx < index);
+		const horizontalDistanceAtPrevGroups: number = this._getHorizontalDistance(prevGroups);
+		const horizontalDistance: number = ifTrueThenOrElse(groups.length === 1, 0, horizontalDistanceAtPrevGroups);
+		const widthColumn: number = this._getWidthColumn(groups);
 		const posGroup: IPos = {
-			x: bounds.horizontal.start + (gaps.left || 0) + center - totalGroupsDistance / 2 + this._getDistanceGroups(prevGroups),
-			y: bounds.vertical.start + (gaps.top || 0) + height,
+			x: bounds.horizontal.start + gaps.left + horizontalDistance + (gapsCircle.right || 0) + center - widthColumn / 2,
+			y: bounds.vertical.start + gaps.top + height,
 		};
 
 		new Text(
@@ -221,6 +240,7 @@ class Legend implements ILegendClass {
 			posGroup.y
 		).draw();
 
+		// Перечеркиваем название, если оно есть в скрытых группах
 		if (this.hideGroups.includes(group)) {
 			const endX: number = width + posGroup.x;
 			const y: number = posGroup.y - height / 2;
@@ -241,9 +261,9 @@ class Legend implements ILegendClass {
 	 */
 	private _drawCircle(x: number, y: number, height: number, color: Array<string> | string): void {
 		const { radius, } = this.circle;
-		const { circle = {}, } = this.legendGaps as { circle, };
+		const { circle: gapsCircle = {}, } = this.legendGaps;
 		const posCircle: IPos = {
-			x: x - radius - (circle.right || 0),
+			x: x - (radius + (gapsCircle.right || 0)),
 			y: y - Math.max(radius, height / 2),
 		};
 
@@ -260,7 +280,7 @@ class Legend implements ILegendClass {
 	}
 
 	/**
-	 * Получает дистанцию между предыдущих колонок и текущей колонкой
+	 * Получает дистанцию между предыдущими колонками и текущей колонкой
 	 * @param {Array<IColumnLegend[]>} columns Содержит данные колонок
 	 * @param {number} index Индекс текущей колонки
 	 * @private
@@ -270,7 +290,9 @@ class Legend implements ILegendClass {
 		const prevColumns: Array<IColumnLegend[]> = columns.filter((c: Array<IColumnLegend>, i: number) => i < index);
 
 		return prevColumns.reduce((acc: number, prevColumn: Array<IColumnLegend>) => {
-			acc += this._getTopDistanceGroups(this._getSizeGroups(prevColumn));
+			const groups: Array<IItemLegend> = this._getSizeGroups(prevColumn);
+
+			acc += this._getTopDistanceGroups(groups);
 
 			return acc;
 		}, 0);
@@ -286,12 +308,18 @@ class Legend implements ILegendClass {
 			return this;
 		}
 
+		const { group: groupGaps = {}, } = this.legendGaps;
 		const columns: Array<IColumnLegend[]> = this._getColumns();
 
-		columns.map((groups: Array<IColumnLegend>, idx: number) => {
-			const updateGroups: Array<IItemLegend> = this._getSizeGroups(groups);
+		columns.map((column: Array<IColumnLegend>, idx: number) => {
+			const updateGroups: Array<IItemLegend> = this._getSizeGroups(column);
+			const maxHeightGroup: number = this._getMaxGroupTextHeight(updateGroups);
 			const gapFromPrevColumns: number = this._getDistanceTopFromPrevColumns(columns, idx);
 
+			// Считаем высоту легенды
+			this.height += maxHeightGroup + ifTrueThenOrElse(idx === columns.length - 1, 0, groupGaps.bottom || 0);
+
+			// Рисуем текст и круги
 			updateGroups.map(({ group, color: colorCap, height, width, }, index: number) => {
 				const posGroup: IPos = this._drawText(
 					group,
@@ -305,8 +333,6 @@ class Legend implements ILegendClass {
 				this.items.push({ group, ...posGroup, height, width, color: colorCap, });
 				this._drawCircle(posGroup.x, posGroup.y, height, colorCap);
 			});
-
-			this.totalHeight += this._getTopDistanceGroups(updateGroups);
 		});
 
 		return this;
