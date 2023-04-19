@@ -146,7 +146,7 @@ class Chart implements IChartClass {
 	 * @returns {IGaps} Отступы
 	 */
 	public getGapsForYPoints(axisY: IAxisYClass, axisX: IAxisXClass, chartTitle: IChartTitleData, legend: ILegendData): IGaps {
-		const { gaps: gapsLegend = {} as ILegendGaps, totalHeight: legendHeight = 0, } = legend;
+		const { gaps: gapsLegend = {} as ILegendGaps, height: legendHeight = 0, } = legend;
 		const { font: axisXFont = {}, place: placeAxisX = "top", } = axisX;
 		const { showText: showXText = Boolean(Object.keys(axisX.font).length), } = axisXFont;
 
@@ -181,16 +181,16 @@ class Chart implements IChartClass {
 		const { font: axisXFont = {}, titleData: axisXTitle = {} as IAxisXTitleData, place = "bottom", } = axisX;
 		const { title: chartTitle = {}, titleData: chartTitleData, } = chart;
 		const { gaps: chartTitleGaps = {}, } = chartTitle;
-		const { gaps: gapsLegend = {}, totalHeight: legendHeight = 0, } = legend;
+		const { gaps: gapsLegend = {}, height: legendHeight = 0, } = legend;
 		const { legend: legendGaps = {}, } = gapsLegend as ILegendGaps;
 		const { bottom: legendGapBottom = 0, } = legendGaps;
 		const { bottom: chartTitleGapBottom = 0, } = chartTitleGaps as IGaps;
+		const { weight = 400, size, showText: showXText = Boolean(Object.keys(axisXFont).length), } = axisXFont;
+		const { showText: showYText = Boolean(Object.keys(axisYFont).length), } = axisYFont;
 		const ignoreNames: Array<string | number> = axisX.getIgnoreNames();
 		const names: Array<string | number> = axisY.getAxesData(this.data).names;
 		const lastName: string | number = names[names.length - 1];
 		const firstName: string | number = names[0];
-		const { weight = 400, size, showText: showXText = Boolean(Object.keys(axisXFont).length), } = axisXFont;
-		const { showText: showYText = Boolean(Object.keys(axisYFont).length), } = axisYFont;
 
 		const firstNameWidth: number = getTextSize(size, weight, axisX.getCorrectName(firstName).toString(), this.ctx).width;
 		const firstNameIsNotIgnore: boolean = showXText && !(ignoreNames || []).includes(firstName);

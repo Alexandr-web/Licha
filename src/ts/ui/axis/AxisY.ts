@@ -192,14 +192,14 @@ class AxisY extends Axis implements IAxisYClass {
 			// Содержит размеры значения
 			const valueSizes: ISize = getTextSize(size, weight, this._getCorrectValue(value).toString(), this.ctx);
 			// Начальная точка для отрисовки элементов
-			const startPoint: number = bounds.vertical.start + firstValueSizes.height / 2 + (gaps.top || 0);
+			const startPoint: number = bounds.vertical.start + firstValueSizes.height / 2 + gaps.top;
 			// Конечная точка для отрисовки элементов
-			const endPoint: number = bounds.vertical.end - firstValueSizes.height / 2 - startPoint - (gaps.bottom || 0);
+			const endPoint: number = bounds.vertical.end - firstValueSizes.height / 2 - startPoint - gaps.bottom;
 			// Интервал для отрисовки элементов
 			const step: number = endPoint / (points.length - 1);
 			// Координаты для отрисовки элементов
 			const posYItem: IPos = {
-				x: bounds.horizontal.start + (gaps.left || 0),
+				x: bounds.horizontal.start + gaps.left,
 				y: step * index + startPoint,
 			};
 			const font: ISpecialFontData = {

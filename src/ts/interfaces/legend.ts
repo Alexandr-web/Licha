@@ -38,7 +38,6 @@ export interface IColumnLegend {
 export interface IItemLegend extends ISize, IPos, IColumnLegend { }
 
 export interface ILegendClass {
-    hideGroups: Array<string>;
     readonly showLegend: boolean;
     readonly line: ILine;
     readonly font: IFont;
@@ -48,9 +47,10 @@ export interface ILegendClass {
     readonly circle: ICircleLegend;
     readonly maxCount?: number;
     readonly legendGaps: ILegendGaps | TEmptyObject;
-    totalHeight: number;
     readonly themeForText: ILegendTheme | TEmptyObject;
     readonly themeForCircle: ILineTheme | TEmptyObject;
+    hideGroups: Array<string>;
+    height: number;
     items: Array<IItemLegend>;
 
     draw(gaps: IGaps): ILegendClass;
