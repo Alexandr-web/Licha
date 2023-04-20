@@ -12,6 +12,13 @@ export default (format: TCapType, y: number, x: number, size: number): ICapCoord
     const hypot = Math.hypot(size, size);
 
     switch (format) {
+        case "triangle":
+            return {
+                startY: 0,
+                endY: size,
+                x: x + size / 2,
+                y: y + size / 2,
+            };
         case "rhomb":
             return {
                 startY: 0,

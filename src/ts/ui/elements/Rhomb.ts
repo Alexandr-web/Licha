@@ -57,7 +57,7 @@ class Rhomb extends Element implements IRhombClass {
         this.setColor(this.startY, this.endY, "fillStyle");
         this.ctx.fillRect(0, 0, this.width, this.height);
 
-        if (Object.values(this.stroke).every(Boolean)) {
+        if (Object.keys(this.stroke).length && Object.values(this.stroke).every(Boolean)) {
             this.ctx.lineWidth = (this.stroke as IStroke).width;
             this.ctx.strokeStyle = (this.stroke as IStroke).color;
             this.ctx.strokeRect(0, 0, this.width, this.height);

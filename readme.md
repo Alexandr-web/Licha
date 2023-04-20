@@ -455,7 +455,7 @@ Parameters passed to the Sinera class constructor
 
     | Description  | Example | Type |
     | ------------- | ------------- | ------------- |
-    | Cap format ("square" or "circle" or "rhomb" (default "circle")) | `cap: { format: "square", }`  | `string` |
+    | Cap format ("square", "circle", "rhomb", "triangle") | `cap: { format: "square", }`  | `string` |
 
   * #### `color`
   
@@ -877,7 +877,7 @@ Parameters passed to the Sinera class constructor
 
         | Description  | Example | Type |
         | ------------- | ------------- | ------------- |
-        | Cap format ("square" or "circle" (default "circle")) | `data: { "My group": { cap: { format: "sqaure" }, }, }`  | `string` |
+        | Cap format ("square", "circle", "rhomb", "triangle") | `data: { "My group": { cap: { format: "sqaure" }, }, }`  | `string` |
 
       * ###### `color`
         
@@ -977,3 +977,5 @@ const utils = new Utils();
 // Accepts the name of the color and its transparency (default 1)
 new Sinera({ background: utils.getColor("jet", 0.6) }).init();
 ```
+
+To develop this tool, I was inspired by [Chart.js](https://www.chartjs.org/) library
