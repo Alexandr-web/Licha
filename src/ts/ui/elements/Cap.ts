@@ -2,6 +2,7 @@ import Element from "./Element";
 import Rect from "./Rect";
 import Circle from "./Circle";
 import Rhomb from "./Rhomb";
+import CustomFigure from "./CustomFigure";
 
 import { TCapType, } from "../../types/index";
 
@@ -45,6 +46,32 @@ class Cap extends Element implements ICapClass {
 	// Рисует колпачок
 	public draw(): void {
 		switch (this.format) {
+			case "triangle":
+				new CustomFigure(
+					this.x,
+					this.y,
+					this.color,
+					this.ctx,
+					[
+						{
+							x: this.x - this.size / 2,
+							y: this.y - this.size,
+						},
+						{
+							x: this.x - this.size,
+							y: this.y,
+						},
+						{
+							x: this.x,
+							y: this.y,
+						}
+					],
+					this.startY,
+					this.endY,
+					this.opacity,
+					this.stroke
+				).draw();
+				break;
 			case "circle":
 				new Circle(
 					this.size,

@@ -52,7 +52,7 @@ class Rect extends Element implements IRectClass {
 
 		this.ctx.fillRect(this.x, this.y, this.width, this.height);
 
-		if (this.stroke.color && this.stroke.width) {
+		if (Object.keys(this.stroke).length && Object.values(this.stroke).every(Boolean)) {
 			this.ctx.lineWidth = (this.stroke as IStroke).width;
 			this.ctx.strokeStyle = (this.stroke as IStroke).color;
 			this.ctx.strokeRect(this.x, this.y, this.width, this.height);
