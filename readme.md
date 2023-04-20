@@ -977,3 +977,4 @@ const utils = new Utils();
 // Accepts the name of the color and its transparency (default 1)
 new Sinera({ background: utils.getColor("jet", 0.6) }).init();
 ```
+To develop this tool, I was inspired by [Chart.js](https://www.chartjs.org/) library
