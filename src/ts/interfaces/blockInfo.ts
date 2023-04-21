@@ -4,6 +4,7 @@ import { ILineTo, ILineTheme, } from "./line";
 import { IFont, } from "./text";
 import { IData, } from "./data";
 import { TEmptyObject, } from "../types/index";
+import { IElementClass, } from "./element";
 
 export interface IBlockInfoThemeWindow {
     color: Array<string> | string;
@@ -71,7 +72,7 @@ export interface IBlockInfoElementWithSize {
     value: IBlockInfoElementWithSizeValue;
 }
 
-export interface IBlockInfoClass {
+export interface IBlockInfoClass extends IElementClass {
     readonly editValue: (value: number) => string;
     readonly editName: (name: number | string) => string;
     readonly data: IData;
@@ -89,6 +90,7 @@ export interface IBlockInfoClass {
     readonly themeForLine: ILineTheme | TEmptyObject;
     readonly themeForTitle: IBlockInfoThemeTitle | TEmptyObject;
     readonly themeForGroup: IBlockInfoThemeGroup | TEmptyObject;
+    readonly fontFamily: string;
 
     init(): void;
 }

@@ -49,6 +49,7 @@ export interface ILegendClass {
     readonly legendGaps: ILegendGaps | TEmptyObject;
     readonly themeForText: ILegendTheme | TEmptyObject;
     readonly themeForCircle: ILineTheme | TEmptyObject;
+    readonly fontFamily: string;
     hideGroups: Array<string>;
     height: number;
     items: Array<IItemLegend>;

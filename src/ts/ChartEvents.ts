@@ -26,6 +26,7 @@ class ChartEvents implements IChartEventsClass {
     public readonly legend?: ILegend | TEmptyObject;
     public readonly sineraContext: ISineraClass;
     public readonly update: () => ISineraClass;
+    public readonly fontFamily: string;
 
     constructor(
         data: IData,
@@ -35,8 +36,11 @@ class ChartEvents implements IChartEventsClass {
         axisX: IAxisX | TEmptyObject,
         axisY: IAxisY | TEmptyObject,
         theme: ITheme | TEmptyObject,
-        legend: ILegend | TEmptyObject
+        legend: ILegend | TEmptyObject,
+        fontFamily: string
     ) {
+        // Семейство шрифта
+        this.fontFamily = fontFamily;
         // Данные окна с информацией об активной группе
         this.blockInfo = blockInfo || {};
         // Данные оси абсцисс
@@ -119,6 +123,7 @@ class ChartEvents implements IChartEventsClass {
                     mousePos.y,
                     background,
                     canvas.ctx,
+                    this.fontFamily,
                     padding,
                     themeForWindow,
                     themeForLine,

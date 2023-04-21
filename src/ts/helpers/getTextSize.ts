@@ -10,12 +10,13 @@ import getTextStr from "./getTextStr";
  * @param {number} weight Жирность шрифта
  * @param {string} text Текст
  * @param {CanvasRenderingContext2D} ctx Контекст элемента canvas
- * @return {ISize} Размеры текста
+ * @param {string} fontFamily Семейство шрифта
+ * @returns {ISize} Размеры текста
  */
-export default (size: number, weight: number, text: string, ctx: CanvasRenderingContext2D): ISize => {
+export default (size: number, weight: number, text: string, ctx: CanvasRenderingContext2D, fontFamily: string): ISize => {
 	const font: ISpecialFontData = {
 		size,
-		str: getTextStr(size, weight),
+		str: getTextStr(size, weight, fontFamily),
 		text,
 	};
 

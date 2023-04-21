@@ -1,3 +1,4 @@
+import { IElementClass, } from "./element";
 import { IPos, } from "./global";
 
 export interface ILineTo extends IPos { }
@@ -20,7 +21,7 @@ export interface ILinePos {
     lineTo: Array<IPos>;
 }
 
-export interface ILineClass {
+export interface ILineClass extends IElementClass {
     readonly lineTo: Array<ILineTo>;
     readonly width?: number;
     readonly dotted?: boolean;

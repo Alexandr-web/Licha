@@ -1,4 +1,4 @@
-import { TEmptyObject, } from "../types/index";
+import { TEmptyObject, TSort, } from "../types/index";
 
 import { IPointY, IAxisYTitle, } from "./axisY";
 import { IPointX, IAxisXTitle, } from "./axisX";
@@ -40,7 +40,7 @@ export interface IAxesData {
 
 export interface IAxis {
     font: IFontAxis;
-    sort?: "more-less" | "less-more";
+    sort?: TSort;
 }
 
 export interface IAxisClass {
@@ -49,13 +49,14 @@ export interface IAxisClass {
     readonly font: IFontAxis | TEmptyObject;
     readonly bounds: IBounds | TEmptyObject;
     readonly points: Array<IPointX | IPointY>;
-    readonly sortNames: "more-less" | "less-more";
+    readonly sortNames: TSort;
     readonly uniqueNames: Array<string | number>;
     readonly uniqueValues: Array<number>;
     readonly gapTopAxisX: number;
     readonly gapRightAxisY: number;
     readonly themeForPoint: IAxisThemePoint | TEmptyObject;
     readonly themeForTitle: IAxisThemeTitle | TEmptyObject;
+    readonly fontFamily: string;
 
     getAxesData(data: IData): IAxesData;
 }

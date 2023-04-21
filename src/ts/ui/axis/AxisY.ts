@@ -35,9 +35,10 @@ class AxisY extends Axis implements IAxisYClass {
 		themeForTitle: IAxisThemeTitle | TEmptyObject,
 		themeForPoint: IAxisThemePoint | TEmptyObject,
 		sortValues: TSort,
+		fontFamily: string,
 		step = 3
 	) {
-		super(ctx, sortNames, bounds, themeForPoint, themeForTitle, title, font);
+		super(ctx, sortNames, bounds, fontFamily, themeForPoint, themeForTitle, title, font);
 
 		// Шаг, с которым будут рисоваться значения на оси ординат
 		this.step = step;
@@ -88,10 +89,10 @@ class AxisY extends Axis implements IAxisYClass {
 			size,
 			text,
 			color,
-			str: getTextStr(size, weight),
+			str: getTextStr(size, weight, this.fontFamily),
 		};
 
-		const sizes: ISize = getTextSize(size, weight, text, this.ctx);
+		const sizes: ISize = getTextSize(size, weight, text, this.ctx, this.fontFamily);
 		const startY: number = bounds.vertical.start + sizes.width;
 		const endY: number = bounds.vertical.end;
 		const posTitle: IPos = {
@@ -156,7 +157,7 @@ class AxisY extends Axis implements IAxisYClass {
 		values.map((uValue: number) => {
 			const maxValue: IPointY = (quickSort(this.points, "value") as Array<IPointY>).find(({ value, }) => value >= uValue);
 			const minValue: IPointY = (quickSort(this.points, "value").reverse() as Array<IPointY>).find(({ value, }) => value <= uValue);
-			const textSizes: ISize = getTextSize(size, weight, uValue.toString(), this.ctx);
+			const textSizes: ISize = getTextSize(size, weight, uValue.toString(), this.ctx, this.fontFamily);
 			const posYItem: IPos = {
 				x: ifTrueThenOrElse(showText, bounds.horizontal.start, 0),
 				y: minValue.y + (uValue - minValue.value) * ((maxValue.y - minValue.y) / ((maxValue.value - minValue.value) || 1)),
@@ -184,13 +185,13 @@ class AxisY extends Axis implements IAxisYClass {
 		const { size, showText = Boolean(Object.keys(this.font).length), weight = 400, color = this.themeForPoint.color, } = this.font;
 		const firstValue: number = Math.ceil(values[0]);
 		const lastValue: number = Math.floor(values[values.length - 1]);
-		const firstValueSizes: ISize = getTextSize(size, weight, firstValue.toString(), this.ctx);
+		const firstValueSizes: ISize = getTextSize(size, weight, firstValue.toString(), this.ctx, this.fontFamily);
 		const range: Array<number> = getRange(Math.min(firstValue, lastValue), Math.max(firstValue, lastValue), this.step);
 		const points: Array<number> = this._getPointsFromRange(lastValue, range);
 
 		points.map((value: number, index: number) => {
 			// Содержит размеры значения
-			const valueSizes: ISize = getTextSize(size, weight, this._getCorrectValue(value).toString(), this.ctx);
+			const valueSizes: ISize = getTextSize(size, weight, this._getCorrectValue(value).toString(), this.ctx, this.fontFamily);
 			// Начальная точка для отрисовки элементов
 			const startPoint: number = bounds.vertical.start + firstValueSizes.height / 2 + gaps.top;
 			// Конечная точка для отрисовки элементов
@@ -205,7 +206,7 @@ class AxisY extends Axis implements IAxisYClass {
 			const font: ISpecialFontData = {
 				...this.font,
 				color,
-				str: getTextStr(size, weight),
+				str: getTextStr(size, weight, this.fontFamily),
 				text: this._getCorrectValue(value).toString(),
 			};
 

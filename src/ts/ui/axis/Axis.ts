@@ -22,16 +22,20 @@ class Axis implements IAxisClass {
   public readonly gapRightAxisY: number;
   public readonly themeForPoint: IAxisThemePoint | TEmptyObject;
   public readonly themeForTitle: IAxisThemeTitle | TEmptyObject;
+  public readonly fontFamily: string;
 
   constructor(
     ctx: CanvasRenderingContext2D,
     sortNames: TSort,
     bounds: IBounds,
+    fontFamily: string,
     themeForPoint: IAxisThemePoint | TEmptyObject = {},
     themeForTitle: IAxisThemeTitle | TEmptyObject = {},
     title: IAxisYTitle | IAxisXTitle | TEmptyObject = {},
     font: IFontAxis | TEmptyObject = {}
   ) {
+    // Семейство шрифта
+    this.fontFamily = fontFamily;
     // Контекст элемента canvas
     this.ctx = ctx;
     // Содержит входные данные заголовка оси

@@ -46,11 +46,13 @@ class Sinera implements ISineraClass {
 	public readonly type?: TTypeChart;
 	public readonly padding?: IPadding | TEmptyObject | number;
 	public readonly hideGroups?: Array<string>;
+	public readonly fontFamily?: string;
 
 	constructor({
 		selectorCanvas,
 		background,
 		type,
+		fontFamily = "Arial",
 		title = {},
 		theme = {},
 		data = {},
@@ -63,6 +65,8 @@ class Sinera implements ISineraClass {
 		blockInfo = {},
 		padding = 10,
 	}: ISineraConstructor) {
+		// Семейство шрифтов
+		this.fontFamily = fontFamily;
 		// Внутренние отступы
 		this.padding = ifTrueThenOrElse(isNumber(padding), getPaddingObj(padding as number), padding);
 		// Данные колпачка
@@ -121,6 +125,7 @@ class Sinera implements ISineraClass {
 			height,
 			this.type,
 			this.title,
+			this.fontFamily,
 			this.theme.title
 		).drawTitle();
 	}
@@ -146,6 +151,7 @@ class Sinera implements ISineraClass {
 			font,
 			circle,
 			this.hideGroups,
+			this.fontFamily,
 			legendGaps,
 			maxCount,
 			this.theme.legend,
@@ -177,6 +183,7 @@ class Sinera implements ISineraClass {
 			themeForTitle,
 			themeForPoint,
 			sort,
+			this.fontFamily,
 			step
 		).drawTitle();
 	}
@@ -208,6 +215,7 @@ class Sinera implements ISineraClass {
 			themeForPoint,
 			ignoreNames,
 			place,
+			this.fontFamily,
 			themeForLine
 		).drawTitle();
 	}
@@ -280,6 +288,7 @@ class Sinera implements ISineraClass {
 					null,
 					this.hideGroups,
 					this.axisY.sort,
+					this.fontFamily,
 					this.theme.line,
 					this.theme.cap
 				).draw();
@@ -310,7 +319,7 @@ class Sinera implements ISineraClass {
 		const axisY: IAxisYClass = this._setAxisYTitle(canvas, chart);
 		const axisX: IAxisXClass = this._setAxisXTitle(canvas, chart);
 		const points: IAxisPoints = this._setPoints(axisY, axisX, legend, chart);
-		const chartEvents: IChartEventsClass = new ChartEvents(this.data, this, this.update, this.blockInfo, this.axisX, this.axisY, this.theme, this.legend);
+		const chartEvents: IChartEventsClass = new ChartEvents(this.data, this, this.update, this.blockInfo, this.axisX, this.axisY, this.theme, this.legend, this.fontFamily);
 
 		chartEvents.init(canvas, chart, points, legend);
 

@@ -45,6 +45,7 @@ export interface IChartClass {
     readonly defaultPadding: number;
     readonly hideGroups: Array<string>;
     readonly theme: ITitleTheme | TEmptyObject;
+    readonly fontFamily: string;
     titleData: IChartTitleData;
 
     getBounds(): IBounds;

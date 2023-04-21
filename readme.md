@@ -52,6 +52,7 @@ new Sinera({
 Parameters passed to the Sinera class constructor
 
 * [selectorCanvas](https://github.com/Alexandr-web/Sinera#selectorcanvas)
+* [fontFamily](https://github.com/Alexandr-web/Sinera#fontfamily)
 * [background](https://github.com/Alexandr-web/Sinera#background)
 * [padding](https://github.com/Alexandr-web/Sinera#padding)
 * [type](https://github.com/Alexandr-web/Sinera#type)
@@ -70,7 +71,13 @@ Parameters passed to the Sinera class constructor
 
 | Description  | Example | Type |
 | ------------- | ------------- | ------------- |
-| Accepts a canvas element selector  | `selectorCanvas: ".my-chart"`  | `string` |
+| Accepts a canvas element selector | `selectorCanvas: ".my-chart"`  | `string` |
+
+### `fontFamily`
+
+| Description  | Example | Type |
+| ------------- | ------------- | ------------- |
+| Sets the font family ("Arial" default). Make sure you have this font installed on your computer and connected to the site | `fontFamily: "Montserrat"`  | `string` |
 
 ### `background`
 

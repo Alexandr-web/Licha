@@ -1,6 +1,7 @@
+import { IElementClass, } from "./element";
 import { IStroke, } from "./global";
 
-export interface ICircleClass {
+export interface ICircleClass extends IElementClass {
     readonly radius: number;
     readonly stroke?: IStroke;
     readonly startY?: number;
