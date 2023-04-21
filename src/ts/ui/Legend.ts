@@ -26,6 +26,7 @@ class Legend implements ILegendClass {
 	public readonly legendGaps: ILegendGaps | TEmptyObject;
 	public readonly themeForText: ILegendTheme | TEmptyObject;
 	public readonly themeForCircle: ILineTheme | TEmptyObject;
+	public readonly fontFamily: string;
 	public height: number;
 	public hideGroups: Array<string>;
 	public items: Array<IItemLegend>;
@@ -39,11 +40,14 @@ class Legend implements ILegendClass {
 		font: IFont,
 		circle: ICircleLegend,
 		hideGroups: Array<string>,
+		fontFamily: string,
 		legendGaps: ILegendGaps | TEmptyObject = {},
 		maxCount = 4,
 		themeForText: ILegendTheme | TEmptyObject = {},
 		themeForCircle: ILineTheme | TEmptyObject = {}
 	) {
+		// Семейство шрифта
+		this.fontFamily = fontFamily;
 		// Содержит названия скрытых групп
 		this.hideGroups = hideGroups;
 		// Если включено, то легенда будет нарисована
@@ -94,7 +98,7 @@ class Legend implements ILegendClass {
 		const { size, weight = 400, } = this.font;
 
 		return column.map((groupItem: IColumnLegend) => {
-			const sizes: ISize = getTextSize(size, weight, groupItem.group, this.ctx);
+			const sizes: ISize = getTextSize(size, weight, groupItem.group, this.ctx, this.fontFamily);
 
 			return {
 				...sizes,
@@ -220,7 +224,7 @@ class Legend implements ILegendClass {
 		const font: ISpecialFontData = {
 			size,
 			color,
-			str: getTextStr(size, weight),
+			str: getTextStr(size, weight, this.fontFamily),
 			text: group,
 		};
 

@@ -27,6 +27,7 @@ class Chart implements IChartClass {
 	public readonly defaultPadding: number;
 	public readonly hideGroups: Array<string>;
 	public readonly theme: ITitleTheme | TEmptyObject;
+	public readonly fontFamily: string;
 	public titleData: IChartTitleData;
 
 	constructor(
@@ -37,9 +38,12 @@ class Chart implements IChartClass {
 		height: number,
 		type: TTypeChart,
 		title: IChartTitle | TEmptyObject,
+		fontFamily: string,
 		theme: ITitleTheme | TEmptyObject = {},
 		hideGroups: Array<string> = []
 	) {
+		// Семейство шрифта
+		this.fontFamily = fontFamily;
 		// Содержит скрытые группы
 		this.hideGroups = hideGroups;
 		// Содержит стили от темы
@@ -111,8 +115,8 @@ class Chart implements IChartClass {
 		}
 
 		const { weight = 600, size, text, color = this.theme.color, } = this.title.font;
-		const font: ISpecialFontData = { color, text, str: getTextStr(size, weight), };
-		const sizes: ISize = getTextSize(size, weight, text, this.ctx);
+		const font: ISpecialFontData = { color, text, str: getTextStr(size, weight, this.fontFamily), };
+		const sizes: ISize = getTextSize(size, weight, text, this.ctx, this.fontFamily);
 		const bounds: IBounds = this.getBounds();
 		const startX: number = bounds.horizontal.start;
 		const endX: number = bounds.horizontal.end - sizes.width;
@@ -192,9 +196,9 @@ class Chart implements IChartClass {
 		const lastName: string | number = names[names.length - 1];
 		const firstName: string | number = names[0];
 
-		const firstNameWidth: number = getTextSize(size, weight, axisX.getCorrectName(firstName).toString(), this.ctx).width;
+		const firstNameWidth: number = getTextSize(size, weight, axisX.getCorrectName(firstName).toString(), this.ctx, this.fontFamily).width;
 		const firstNameIsNotIgnore: boolean = showXText && !(ignoreNames || []).includes(firstName);
-		const lastNameWidth: number = getTextSize(size, weight, axisX.getCorrectName(lastName).toString(), this.ctx).width;
+		const lastNameWidth: number = getTextSize(size, weight, axisX.getCorrectName(lastName).toString(), this.ctx, this.fontFamily).width;
 		const lastNameIsNotIgnore: boolean = showXText && !(ignoreNames || []).includes(lastName);
 		const axisYTitleHeight: number = axisYTitle.height || 0;
 		const axisYTitleGapRight: number = (axisYTitle.gaps || {}).right || 0;
@@ -221,7 +225,7 @@ class Chart implements IChartClass {
 		const { bottom: chartTitleGapBottom = 0, } = chartTitleGaps;
 		const { font = {}, } = (axisY.title || {});
 		const { size, weight = 600, text, } = font as IFontWithText;
-		const titleAxisYHeight: number = getTextSize(size, weight, text, this.ctx).height || 0;
+		const titleAxisYHeight: number = getTextSize(size, weight, text, this.ctx, this.fontFamily).height || 0;
 
 		return {
 			top: chartTitleHeight + chartTitleGapBottom,

@@ -27,6 +27,7 @@ export interface ISineraConstructor {
     readonly type?: TTypeChart;
     readonly padding?: IPadding | TEmptyObject | number;
     readonly hideGroups?: Array<string>;
+    readonly fontFamily?: string;
 }
 
 export interface ISineraClass extends ISineraConstructor {

@@ -23,9 +23,9 @@ class AxisX extends Axis implements IAxisXClass {
 	public readonly data: IData;
 	public readonly editName?: (name: string | number) => string;
 	public readonly line: ILine;
-	public titleData: IAxisXTitleData;
 	public readonly rotate?: boolean;
 	public readonly place?: TAxisXPlace;
+	public titleData: IAxisXTitleData;
 
 	constructor(
 		ctx: CanvasRenderingContext2D,
@@ -41,9 +41,10 @@ class AxisX extends Axis implements IAxisXClass {
 		themeForPoint: IAxisThemePoint | TEmptyObject,
 		ignoreNames: Array<string | number> | ((name: string, index: number) => boolean),
 		place: TAxisXPlace,
+		fontFamily: string,
 		themeForLine: ILineTheme | TEmptyObject = {}
 	) {
-		super(ctx, sortNames, bounds, themeForPoint, themeForTitle, title, font);
+		super(ctx, sortNames, bounds, fontFamily, themeForPoint, themeForTitle, title, font);
 
 		// Правило, при котором текст точек оси абсцисс будет повернут на 90 градусов
 		this.rotate = rotate;
@@ -109,10 +110,10 @@ class AxisX extends Axis implements IAxisXClass {
 			color,
 			text,
 			weight,
-			str: getTextStr(size, weight),
+			str: getTextStr(size, weight, this.fontFamily),
 		};
 		const bounds: IBounds | TEmptyObject = this.bounds;
-		const sizes: ISize = getTextSize(size, weight, text, this.ctx);
+		const sizes: ISize = getTextSize(size, weight, text, this.ctx, this.fontFamily);
 		const startX: number = bounds.horizontal.start;
 		const endX: number = bounds.horizontal.end - sizes.width;
 		const posTitle: IPos = {
@@ -196,7 +197,7 @@ class AxisX extends Axis implements IAxisXClass {
 			const font: ISpecialFontData = {
 				...this.font,
 				color,
-				str: getTextStr(size, weight),
+				str: getTextStr(size, weight, this.fontFamily),
 				text: this.getCorrectName(name).toString(),
 			};
 
@@ -260,7 +261,7 @@ class AxisX extends Axis implements IAxisXClass {
 			// Шаг, с которым отрисовываем элементы
 			const step: number = endPoint / (names.length - 1);
 			// Содержит размеры названия точки
-			const nameSizes: ISize = getTextSize(size, weight, `${this.getCorrectName(name)}`, this.ctx);
+			const nameSizes: ISize = getTextSize(size, weight, `${this.getCorrectName(name)}`, this.ctx, this.fontFamily);
 			// Координаты элемента для отрисовки
 			const posXItem: IPos = {
 				x: step * index + startPoint,
@@ -284,7 +285,7 @@ class AxisX extends Axis implements IAxisXClass {
 	public getMaxWidthTextPoint(): number {
 		const names: Array<string | number> = this.getAxesData(this.data).names;
 		const { size, weight = 400, } = this.font;
-		const widths: Array<number> = names.map((name: string | number) => getTextSize(size, weight, `${this.getCorrectName(name)}`, this.ctx).width);
+		const widths: Array<number> = names.map((name: string | number) => getTextSize(size, weight, `${this.getCorrectName(name)}`, this.ctx, this.fontFamily).width);
 
 		return Math.max(...widths);
 	}
@@ -296,7 +297,7 @@ class AxisX extends Axis implements IAxisXClass {
 	public getMaxHeightTextPoint(): number {
 		const names: Array<string | number> = this.getAxesData(this.data).names;
 		const { size, weight = 400, } = this.font;
-		const heights: Array<number> = names.map((name: string | number) => getTextSize(size, weight, `${this.getCorrectName(name)}`, this.ctx).height);
+		const heights: Array<number> = names.map((name: string | number) => getTextSize(size, weight, `${this.getCorrectName(name)}`, this.ctx, this.fontFamily).height);
 
 		return Math.max(...heights);
 	}

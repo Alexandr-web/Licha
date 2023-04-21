@@ -2,6 +2,7 @@ import { IPos, ISize, IGaps, } from "./global";
 import { IFontWithText, } from "./text";
 import { IPoint, IAxis, IAxisClass, } from "./axis";
 import { IData, } from "./data";
+import { TSort, } from "../types/index";
 
 export interface IAxisYTitle {
     font: IFontWithText;
@@ -22,7 +23,7 @@ export interface IAxisYClass extends IAxisClass {
     readonly step?: number;
     readonly editValue?: (value: number) => string | number;
     readonly data: IData;
-    readonly sortValues?: "more-less" | "less-more";
+    readonly sortValues?: TSort;
     titleData?: IAxisYTitleData;
 
     drawTitle(): IAxisYClass;

@@ -38,6 +38,7 @@ class BlockInfo extends Element implements IBlockInfoClass {
 	public readonly themeForLine: ILineTheme | TEmptyObject;
 	public readonly themeForTitle: IBlockInfoThemeTitle | TEmptyObject;
 	public readonly themeForGroup: IBlockInfoThemeGroup | TEmptyObject;
+	public readonly fontFamily: string;
 
 	constructor(
 		editValue: (value: number) => string,
@@ -51,6 +52,7 @@ class BlockInfo extends Element implements IBlockInfoClass {
 		y: number,
 		color: string | Array<string>,
 		ctx: CanvasRenderingContext2D,
+		fontFamily: string,
 		padding: IPadding | TEmptyObject | number = 10,
 		themeForWindow: IBlockInfoThemeWindow | TEmptyObject = {},
 		themeForLine: ILineTheme | TEmptyObject = {},
@@ -59,6 +61,8 @@ class BlockInfo extends Element implements IBlockInfoClass {
 	) {
 		super(x, y, color, ctx);
 
+		// Семейство шрифта
+		this.fontFamily = fontFamily;
 		// Метод, который изменяет вид значения
 		this.editValue = editValue;
 		// Метод, который изменяет вид значения
@@ -124,11 +128,11 @@ class BlockInfo extends Element implements IBlockInfoClass {
 				group: {
 					name: groupName,
 					color,
-					...getTextSize(groupsFont.size, groupsFont.weight || this.defaultTitleFontWeight, groupName, this.ctx),
+					...getTextSize(groupsFont.size, groupsFont.weight || this.defaultTitleFontWeight, groupName, this.ctx, this.fontFamily),
 				},
 				value: {
 					name: correctGroupValue.toString(),
-					...getTextSize(titleFont.size, titleFont.weight || this.defaultGroupsFontWeight, correctGroupValue.toString(), this.ctx),
+					...getTextSize(titleFont.size, titleFont.weight || this.defaultGroupsFontWeight, correctGroupValue.toString(), this.ctx, this.fontFamily),
 				},
 			};
 		});
@@ -238,7 +242,7 @@ class BlockInfo extends Element implements IBlockInfoClass {
 		const { font, } = this.titleData;
 		const { size, weight = this.defaultTitleFontWeight, } = font;
 
-		return getTextSize(size, weight, this.title.toString(), this.ctx);
+		return getTextSize(size, weight, this.title.toString(), this.ctx, this.fontFamily);
 	}
 
 	/**
@@ -264,7 +268,7 @@ class BlockInfo extends Element implements IBlockInfoClass {
 		const font: ISpecialFontData = {
 			color,
 			text: this.title.toString(),
-			str: getTextStr(size, weight),
+			str: getTextStr(size, weight, this.fontFamily),
 		};
 
 		new Text(
@@ -308,7 +312,7 @@ class BlockInfo extends Element implements IBlockInfoClass {
 			const font: ISpecialFontData = {
 				text: group.name,
 				color,
-				str: getTextStr(size, weight),
+				str: getTextStr(size, weight, this.fontFamily),
 			};
 			const coordinates: IPos = this._getGroupsCoordinates(index);
 

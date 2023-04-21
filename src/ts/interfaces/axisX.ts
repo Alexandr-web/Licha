@@ -32,9 +32,9 @@ export interface IAxisXClass extends IAxisClass {
     readonly data: IData;
     readonly editName?: (name: string | number) => string;
     readonly line: ILine;
-    titleData: IAxisXTitleData;
     readonly rotate?: boolean;
     readonly place?: TAxisXPlace;
+    titleData: IAxisXTitleData;
 
     getIgnoreNames(): Array<string | number>;
     drawTitle(): IAxisXClass;

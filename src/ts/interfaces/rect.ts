@@ -1,6 +1,7 @@
+import { IElementClass, } from "./element";
 import { IStroke, } from "./global";
 
-export interface IRectClass {
+export interface IRectClass extends IElementClass {
     readonly width: number;
     readonly height: number;
     readonly startY: number;

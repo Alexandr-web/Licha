@@ -1,5 +1,6 @@
 import { IStroke, IPos, } from "./global";
 import { TCapType, } from "../types/index";
+import { IElementClass, } from "./element";
 
 export interface ICapTheme {
     readonly color?: Array<string>;
@@ -33,7 +34,7 @@ export interface ICapData extends IPos {
     };
 }
 
-export interface ICapClass {
+export interface ICapClass extends IElementClass {
     readonly format: TCapType;
     readonly size: number;
     readonly stroke?: IStroke;

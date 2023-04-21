@@ -20,6 +20,7 @@ export interface IChartEventsClass {
     readonly legend?: ILegend | TEmptyObject;
     readonly sineraContext: ISineraClass;
     readonly update: () => ISineraClass;
+    readonly fontFamily: string;
 
     windowResize(): void;
     mousemoveByCanvas(canvas: ICanvasClass, bounds: IBounds, { pointsX, pointsY, }): void;

@@ -43,10 +43,11 @@ class LineChart extends Chart implements ILineChartClass {
 		padding: IPadding,
 		hideGroups: Array<string>,
 		sortValues: TSort,
+		fontFamily: string,
 		themeForLine: ILineTheme | TEmptyObject = {},
 		themeForCaps: ICapTheme | TEmptyObject = {}
 	) {
-		super(padding, data, ctx, width, height, "line", title, null, hideGroups);
+		super(padding, data, ctx, width, height, "line", title, fontFamily, null, hideGroups);
 
 		// Содержит данные точек оси абсцисс
 		this.pointsX = pointsX;
