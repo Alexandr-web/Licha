@@ -5,6 +5,7 @@ import getTextStr from "../../helpers/getTextStr";
 import getTextSize from "../../helpers/getTextSize";
 import getPaddingObj from "../../helpers/getPaddingObj";
 import ifTrueThenOrElse from "../../helpers/ifTrueThenOrElse";
+import defaultParams from "../../helpers/defaultParams";
 
 import { TEmptyObject, TTypeChart, } from "../../types/index";
 
@@ -114,7 +115,8 @@ class Chart implements IChartClass {
 			return this;
 		}
 
-		const { weight = 600, size, text, color = this.theme.color, } = this.title.font;
+		const { size: defaultSize, weight: defaultWeight, } = defaultParams.titleFont;
+		const { weight = defaultWeight, size = defaultSize, text, color = this.theme.color, } = this.title.font;
 		const font: ISpecialFontData = { color, text, str: getTextStr(size, weight, this.fontFamily), };
 		const sizes: ISize = getTextSize(size, weight, text, this.ctx, this.fontFamily);
 		const bounds: IBounds = this.getBounds();
@@ -150,6 +152,7 @@ class Chart implements IChartClass {
 	 * @returns {IGaps} Отступы
 	 */
 	public getGapsForYPoints(axisY: IAxisYClass, axisX: IAxisXClass, chartTitle: IChartTitleData, legend: ILegendData): IGaps {
+		const { place: defaultAxisXPlace, } = defaultParams.axisX;
 		// Отступы всех элементов легенды и высота легенды
 		const { gaps: gapsLegend = {} as ILegendGaps, height: legendHeight = 0, } = legend;
 		// Отступы легенды
@@ -161,7 +164,7 @@ class Chart implements IChartClass {
 		// Высота и отступы заголовка диаграммы
 		const { height: chartTitleHeight = 0, gaps: chartTitleGaps = {}, } = chartTitle;
 		// Данные шрифта, позиция и данные заголовка оси абсцисс
-		const { font: axisXFont = {}, place: placeAxisX = "top", titleData: axisXTitleData = {}, } = axisX;
+		const { font: axisXFont = {}, place: placeAxisX = defaultAxisXPlace, titleData: axisXTitleData = {}, } = axisX;
 		// Высота и отступы заголовка оси абсцисс
 		const { height: axisXTitleDataHeight = 0, gaps: axisXTitleDataGaps = {}, } = axisXTitleData as IAxisXTitleData;
 		// Правило, при котором элементы оси абсцисс будут отображаться на диаграмме
@@ -198,10 +201,13 @@ class Chart implements IChartClass {
 	 * @returns {IGaps} Отступы
 	 */
 	public getGapsForXPoints(axisY: IAxisYClass, axisX: IAxisXClass, chart: IChartClass, legend: ILegendData): IGaps {
+		const { place: defaultAxisYPlace, } = defaultParams.axisY;
+		const { place: defaultAxisXPlace, } = defaultParams.axisX;
+		const { size: defaultSize, weight: defaultWeight, } = defaultParams.textFont;
 		// Данные шрифта, заголовок, отступ между осями и позиция оси ординат
-		const { font: axisYFont = {}, titleData: axisYTitle = {} as IAxisYTitleData, gapRightAxisY, place: axisYPlace = "left", } = axisY;
+		const { font: axisYFont = {}, titleData: axisYTitle = {} as IAxisYTitleData, gapRightAxisY, place: axisYPlace = defaultAxisYPlace, } = axisY;
 		// Данные шрифта, заголовок, позиция оси абсцисс и правило, при котором элементы оси абсцисс будут повернуты на 90 градусов
-		const { font: axisXFont = {}, titleData: axisXTitle = {} as IAxisXTitleData, place: axisXPlace = "bottom", rotate: rotateAxisX, } = axisX;
+		const { font: axisXFont = {}, titleData: axisXTitle = {} as IAxisXTitleData, place: axisXPlace = defaultAxisXPlace, rotate: rotateAxisX, } = axisX;
 		// Заголовок и дынные заголовка диаграммы
 		const { title: chartTitle = {}, titleData: chartTitleData, } = chart;
 		// Отступы у заголовка диаграммы
@@ -215,7 +221,7 @@ class Chart implements IChartClass {
 		// Нижний отступ заголовка диаграммы
 		const { bottom: chartTitleGapBottom = 0, } = chartTitleGaps as IGaps;
 		// Жирность, размер элементов оси абсцисс и правило, при котором элементы оси абсцисс будут отображаться на диаграмме
-		const { weight = 400, size, showText: showXText = Boolean(Object.keys(axisXFont).length), } = axisXFont;
+		const { weight = defaultWeight, size = defaultSize, showText: showXText = Boolean(Object.keys(axisXFont).length), } = axisXFont;
 		// Правило, при котором элементы оси ординат будут отображаться на диаграмме
 		const { showText: showYText = Boolean(Object.keys(axisYFont).length), } = axisYFont;
 		// Названия, которые не будут отображаться на диаграмме
@@ -271,6 +277,7 @@ class Chart implements IChartClass {
 	 * @returns {IGaps} Отступы
 	 */
 	public getGapsForLegend(axisY: IAxisY, chartTitle: IChartTitleWithSizeAndPos): IGaps {
+		const { size: defaultSize, weight: defaultWeight, } = defaultParams.titleFont;
 		// Заголовок оси ординат
 		const { title: axisYTitle = {}, } = axisY;
 		// Высота и отступы заголовка диаграммы
@@ -280,7 +287,7 @@ class Chart implements IChartClass {
 		// Данные шрифта у заголовка оси ординат
 		const { font: axisYFont = {}, gaps: axisYGaps = {}, } = axisYTitle as IAxisYTitle;
 		// Размер, жирность и текст у заголовка оси ординат
-		const { size, weight = 600, text, } = axisYFont as IFontWithText;
+		const { size = defaultSize, weight = defaultWeight, text, } = axisYFont as IFontWithText;
 		// Высота заголовка оси ординат
 		const titleAxisYHeight: number = getTextSize(size, weight, text, this.ctx, this.fontFamily).height || 0;
 

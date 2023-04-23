@@ -24,6 +24,7 @@ import { IGrid, IGridClass, } from "./interfaces/grid";
 import { ILegend, ILegendClass, ILegendData, } from "./interfaces/legend";
 import { ILine, ILineTheme, } from "./interfaces/line";
 import { ITheme, } from "./interfaces/utils";
+import defaultParams from "./helpers/defaultParams";
 
 import isNumber from "./helpers/isNumber";
 import getPaddingObj from "./helpers/getPaddingObj";
@@ -52,7 +53,7 @@ class Sinera implements ISineraClass {
 		selectorCanvas,
 		background,
 		type,
-		fontFamily = "Arial",
+		fontFamily = defaultParams.fontFamily,
 		title = {},
 		theme = {},
 		data = {},

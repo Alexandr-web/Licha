@@ -5,6 +5,7 @@ import getTextSize from "../../helpers/getTextSize";
 import getStyleByIndex from "../../helpers/getStyleByIndex";
 import getTextStr from "../../helpers/getTextStr";
 import isFunction from "../../helpers/isFunction";
+import defaultParams from "../../helpers/defaultParams";
 
 import { TAxisXPlace, TEmptyObject, TSort, } from "../../types/index";
 
@@ -62,7 +63,7 @@ class AxisX extends Axis implements IAxisXClass {
 		// Данные линии
 		this.line = line;
 		// Позиция оси абсцисс
-		this.place = place || "bottom";
+		this.place = place || defaultParams.axisX.place;
 		// Содержит дополнительные данные заголовка
 		this.titleData = {
 			x: null,
@@ -70,9 +71,9 @@ class AxisX extends Axis implements IAxisXClass {
 			width: null,
 			height: null,
 			font: {
-				text: "",
+				text: null,
 				size: null,
-				color: "",
+				color: null,
 				weight: null,
 			},
 			gaps: { top: null, },
@@ -104,7 +105,8 @@ class AxisX extends Axis implements IAxisXClass {
 			return this;
 		}
 
-		const { size, weight = 600, color = this.themeForTitle.color, text, } = this.title.font;
+		const { size: defaultSize, weight: defaultWeight, } = defaultParams.titleFont;
+		const { size = defaultSize, weight = defaultWeight, color = this.themeForTitle.color, text, } = this.title.font;
 		const font: ISpecialFontData = {
 			size,
 			color,
@@ -251,7 +253,8 @@ class AxisX extends Axis implements IAxisXClass {
 		const names: Array<string | number> = this.getAxesData(this.data).names;
 		const bounds: IBounds | TEmptyObject = this.bounds;
 		const ignoreNames: Array<string | number> = this.getIgnoreNames();
-		const { size, weight = 400, showText = Boolean(Object.keys(this.font).length), color = this.themeForPoint.color, } = this.font;
+		const { size: defaultSize, weight: defaultWeight, } = defaultParams.textFont;
+		const { size = defaultSize, weight = defaultWeight, showText = Boolean(Object.keys(this.font).length), color = this.themeForPoint.color, } = this.font;
 
 		names.map((name: string | number, index: number) => {
 			// Начальная точка для отрисовки элементов
@@ -284,7 +287,8 @@ class AxisX extends Axis implements IAxisXClass {
 	 */
 	public getMaxWidthTextPoint(): number {
 		const names: Array<string | number> = this.getAxesData(this.data).names;
-		const { size, weight = 400, } = this.font;
+		const { size: defaultSize, weight: defaultWeight, } = defaultParams.textFont;
+		const { size = defaultSize, weight = defaultWeight, } = this.font;
 		const widths: Array<number> = names.map((name: string | number) => getTextSize(size, weight, `${this.getCorrectName(name)}`, this.ctx, this.fontFamily).width);
 
 		return Math.max(...widths);
@@ -296,7 +300,8 @@ class AxisX extends Axis implements IAxisXClass {
 	 */
 	public getMaxHeightTextPoint(): number {
 		const names: Array<string | number> = this.getAxesData(this.data).names;
-		const { size, weight = 400, } = this.font;
+		const { size: defaultSize, weight: defaultWeight, } = defaultParams.textFont;
+		const { size = defaultSize, weight = defaultWeight, } = this.font;
 		const heights: Array<number> = names.map((name: string | number) => getTextSize(size, weight, `${this.getCorrectName(name)}`, this.ctx, this.fontFamily).height);
 
 		return Math.max(...heights);

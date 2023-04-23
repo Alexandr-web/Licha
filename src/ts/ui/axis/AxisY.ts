@@ -8,6 +8,7 @@ import getTextStr from "../../helpers/getTextStr";
 import isFunction from "../../helpers/isFunction";
 import ifTrueThenOrElse from "../../helpers/ifTrueThenOrElse";
 import getRadians from "../../helpers/getRadians";
+import defaultParams from "../../helpers/defaultParams";
 
 import { TAxisYPlace, TEmptyObject, TSort, } from "../../types/index";
 
@@ -49,9 +50,9 @@ class AxisY extends Axis implements IAxisYClass {
 		// Содержит данные групп
 		this.data = data;
 		// Тип сортировки точек оси ординат
-		this.sortValues = sortValues || "less-more";
+		this.sortValues = sortValues || defaultParams.axisY.sort;
 		// Позиция оси ординат
-		this.place = place || "left";
+		this.place = place || defaultParams.axisY.place;
 		// Содержит дополнительные данные заголовка оси ординат
 		this.titleData = {
 			x: null,
@@ -59,9 +60,9 @@ class AxisY extends Axis implements IAxisYClass {
 			width: null,
 			height: null,
 			font: {
-				text: "",
+				text: null,
 				size: null,
-				color: "",
+				color: null,
 				weight: null,
 			},
 			gaps: { right: null, },
@@ -87,8 +88,9 @@ class AxisY extends Axis implements IAxisYClass {
 			return this;
 		}
 
+		const { size: defaultSize, weight: defaultWeight, } = defaultParams.titleFont;
 		const bounds: IBounds | TEmptyObject = this.bounds;
-		const { size, text, color = this.themeForTitle.color, weight = 600, } = this.title.font;
+		const { size = defaultSize, text, color = this.themeForTitle.color, weight = defaultWeight, } = this.title.font;
 		const font: ISpecialFontData = {
 			size,
 			text,
@@ -203,7 +205,8 @@ class AxisY extends Axis implements IAxisYClass {
 	public drawPoints(gaps: IGaps): IAxisYClass {
 		const values: Array<number> = this.getAxesData(this.data).values;
 		const bounds: IBounds = this.bounds;
-		const { size, showText = Boolean(Object.keys(this.font).length), weight = 400, color = this.themeForPoint.color, } = this.font;
+		const { size: defaultSize, weight: defaultWeight, } = defaultParams.textFont;
+		const { size = defaultSize, showText = Boolean(Object.keys(this.font).length), weight = defaultWeight, color = this.themeForPoint.color, } = this.font;
 		const firstValue: number = Math.ceil(values[0]);
 		const lastValue: number = Math.floor(values[values.length - 1]);
 		const firstValueSizes: ISize = getTextSize(size, weight, firstValue.toString(), this.ctx, this.fontFamily);

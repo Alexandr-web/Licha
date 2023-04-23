@@ -25,7 +25,7 @@ class Circle extends Element implements ICircleClass {
 		// Радиус
 		this.radius = radius;
 		// Содержит данные обводки
-		this.stroke = (stroke || {});
+		this.stroke = stroke || {};
 		// Начальная позиция по оси ординат (для градиента)
 		this.startY = startY;
 		// Конечная позиция по оси ординат (для градиента)

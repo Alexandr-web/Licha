@@ -6,7 +6,15 @@ import { ISpecialFontData, ITextClass, } from "../../interfaces/text";
 class Text extends Element implements ITextClass {
 	public readonly font: ISpecialFontData;
 
-	constructor(font: ISpecialFontData, ctx: CanvasRenderingContext2D, x?: number, y?: number, color?: string, rotateDeg?: number, opacity?: number) {
+	constructor(
+		font: ISpecialFontData,
+		ctx: CanvasRenderingContext2D,
+		x?: number,
+		y?: number,
+		color?: string,
+		rotateDeg?: number,
+		opacity?: number
+	) {
 		super(x, y, color, ctx, rotateDeg, opacity);
 
 		// Содержит данные шрифта

@@ -161,11 +161,10 @@ class ChartEvents implements IChartEventsClass {
 
     /**
      * Обработчик события mouseleave у элемента canvas
-     * Обновляет график и изменяет тип курсора на обычный
+     * Обновляет график
      * @private
      */
     private _leavemouseFromCanvasAreaHandler(): void {
-        document.documentElement.setAttribute("style", "default");
         this.update.call(this.sineraContext);
     }
 
