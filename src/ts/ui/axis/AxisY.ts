@@ -9,7 +9,7 @@ import isFunction from "../../helpers/isFunction";
 import ifTrueThenOrElse from "../../helpers/ifTrueThenOrElse";
 import getRadians from "../../helpers/getRadians";
 
-import { TEmptyObject, TSort, } from "../../types/index";
+import { TAxisYPlace, TEmptyObject, TSort, } from "../../types/index";
 
 import { ISpecialFontData, } from "../../interfaces/text";
 import { IBounds, ISize, IGaps, IPos, } from "../../interfaces/global";
@@ -22,6 +22,7 @@ class AxisY extends Axis implements IAxisYClass {
 	public readonly editValue?: (value: number) => string | number;
 	public readonly data: IData;
 	public readonly sortValues?: TSort;
+	public readonly place?: TAxisYPlace;
 	public titleData?: IAxisYTitleData;
 
 	constructor(
@@ -36,6 +37,7 @@ class AxisY extends Axis implements IAxisYClass {
 		themeForPoint: IAxisThemePoint | TEmptyObject,
 		sortValues: TSort,
 		fontFamily: string,
+		place: TAxisYPlace,
 		step = 3
 	) {
 		super(ctx, sortNames, bounds, fontFamily, themeForPoint, themeForTitle, title, font);
@@ -48,6 +50,8 @@ class AxisY extends Axis implements IAxisYClass {
 		this.data = data;
 		// Тип сортировки точек оси ординат
 		this.sortValues = sortValues || "less-more";
+		// Позиция оси ординат
+		this.place = place || "left";
 		// Содержит дополнительные данные заголовка оси ординат
 		this.titleData = {
 			x: null,
@@ -175,6 +179,23 @@ class AxisY extends Axis implements IAxisYClass {
 	}
 
 	/**
+	 * Определяет позицию по оси абсцисс точек оси ординат
+	 * @param {IBounds} bounds Содержит границы холста
+	 * @param {IGaps} gaps Содержит отступы оси ординат
+	 * @param {number} width Ширина точки оси ординат
+	 * @private
+	 * @returns {number}
+	 */
+	private _getPosXForPoints(bounds: IBounds, gaps: IGaps, width: number): number {
+		switch (this.place) {
+			case "left":
+				return bounds.horizontal.start + gaps.left;
+			case "right":
+				return bounds.horizontal.end - width;
+		}
+	}
+
+	/**
 	 * Рисует точки на оси ординат
 	 * @param {IGaps} gaps Отступы оси ординат
 	 * @returns {IAxisYClass}
@@ -200,7 +221,7 @@ class AxisY extends Axis implements IAxisYClass {
 			const step: number = endPoint / (points.length - 1);
 			// Координаты для отрисовки элементов
 			const posYItem: IPos = {
-				x: bounds.horizontal.start + gaps.left,
+				x: this._getPosXForPoints(bounds, gaps, valueSizes.width),
 				y: step * index + startPoint,
 			};
 			const font: ISpecialFontData = {

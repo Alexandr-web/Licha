@@ -185,6 +185,12 @@ Parameters passed to the Sinera class constructor
 
 #### Accepted parameters
 
+  * #### `place`
+
+    | Description  | Example | Type |
+    | ------------- | ------------- | ------------- |
+    | Position of the y-axis ("left", "right") | `axisY: { place: "right", }`  | `string` |
+
   * #### `font`
 
     | Description  | Example | Type |

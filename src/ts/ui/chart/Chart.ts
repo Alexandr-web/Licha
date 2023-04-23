@@ -150,25 +150,42 @@ class Chart implements IChartClass {
 	 * @returns {IGaps} Отступы
 	 */
 	public getGapsForYPoints(axisY: IAxisYClass, axisX: IAxisXClass, chartTitle: IChartTitleData, legend: ILegendData): IGaps {
+		// Отступы всех элементов легенды и высота легенды
 		const { gaps: gapsLegend = {} as ILegendGaps, height: legendHeight = 0, } = legend;
-		const { font: axisXFont = {}, place: placeAxisX = "top", } = axisX;
+		// Отступы легенды
+		const { legend: legendGaps = {}, } = gapsLegend;
+		// Данные заголовка оси ординат
+		const { titleData: axisYTitleData = {}, } = axisY;
+		// Отступы заголовка оси ординат и его высота
+		const { gaps: axisYTitleDataGaps = {}, height: axisYTitleHeight, } = axisYTitleData as IAxisYTitleData;
+		// Высота и отступы заголовка диаграммы
+		const { height: chartTitleHeight = 0, gaps: chartTitleGaps = {}, } = chartTitle;
+		// Данные шрифта, позиция и данные заголовка оси абсцисс
+		const { font: axisXFont = {}, place: placeAxisX = "top", titleData: axisXTitleData = {}, } = axisX;
+		// Высота и отступы заголовка оси абсцисс
+		const { height: axisXTitleDataHeight = 0, gaps: axisXTitleDataGaps = {}, } = axisXTitleData as IAxisXTitleData;
+		// Правило, при котором элементы оси абсцисс будут отображаться на диаграмме
 		const { showText: showXText = Boolean(Object.keys(axisX.font).length), } = axisXFont;
 
-		const legendGapBottom: number = (gapsLegend.legend || {}).bottom || 0;
-		const axisYTitleHeight: number = (axisY.titleData || {}).height || 0;
-		const axisYTitleGapRight: number = ((axisY.titleData || {}).gaps || {}).right || 0;
-		const chartTitleHeight: number = (chartTitle || {}).height || 0;
-		const chartTitleGapBottom: number = ((chartTitle || {}).gaps || {}).bottom || 0;
-		const axisXTitleHeight: number = (axisX.titleData || {}).height || 0;
-		const axisXTitleGapTop: number = ((axisX.titleData || {}).gaps || {}).top || 0;
+		// Нижний отступ у легенды
+		const legendGapBottom: number = legendGaps.bottom || 0;
+		// Отступ справа у заголовка оси ординат
+		const axisYTitleGapRight: number = axisYTitleDataGaps.right || 0;
+		// Нижний отступ у заголовка диаграммы
+		const chartTitleGapBottom: number = chartTitleGaps.bottom || 0;
+		// Верхний отступ у заголовка оси абсцисс
+		const axisXTitleGapTop: number = axisXTitleDataGaps.top || 0;
+		// Отступ снизу, если правило rotate у axisX правдиво
 		const gapBottomIfRotateX: number = ifTrueThenOrElse(axisX.rotate, axisX.getMaxWidthTextPoint(), axisX.getMaxHeightTextPoint());
+		// Отступ сверху, если позиция у оси абсцисс сверху и правило rotate у axisX правдиво
 		const gapTopIfAxisXPlaceIsTopAndRotate: number = ifTrueThenOrElse([showXText, axisX.rotate, placeAxisX === "top"], axisX.getMaxWidthTextPoint() + axisX.gapTopAxisX, 0);
+		// Отступ сверху, если позиция у оси абсцисс сверху и правило rotate у axisX ложно
 		const gapTopIfAxisXPlaceIsTop: number = ifTrueThenOrElse([showXText, !axisX.rotate, placeAxisX === "top"], axisX.getMaxHeightTextPoint() + axisX.gapTopAxisX, 0);
 
 		return {
 			left: axisYTitleHeight + axisYTitleGapRight,
 			top: chartTitleHeight + gapTopIfAxisXPlaceIsTop + gapTopIfAxisXPlaceIsTopAndRotate + chartTitleGapBottom + legendHeight + legendGapBottom,
-			bottom: ifTrueThenOrElse([showXText, placeAxisX === "bottom"], axisX.gapTopAxisX + gapBottomIfRotateX, 0) + axisXTitleHeight + axisXTitleGapTop,
+			bottom: ifTrueThenOrElse([showXText, placeAxisX === "bottom"], axisX.gapTopAxisX + gapBottomIfRotateX, 0) + axisXTitleDataHeight + axisXTitleGapTop,
 		};
 	}
 
@@ -181,36 +198,69 @@ class Chart implements IChartClass {
 	 * @returns {IGaps} Отступы
 	 */
 	public getGapsForXPoints(axisY: IAxisYClass, axisX: IAxisXClass, chart: IChartClass, legend: ILegendData): IGaps {
-		const { font: axisYFont = {}, titleData: axisYTitle = {} as IAxisYTitleData, gapRightAxisY, } = axisY;
-		const { font: axisXFont = {}, titleData: axisXTitle = {} as IAxisXTitleData, place = "bottom", } = axisX;
+		// Данные шрифта, заголовок, отступ между осями и позиция оси ординат
+		const { font: axisYFont = {}, titleData: axisYTitle = {} as IAxisYTitleData, gapRightAxisY, place: axisYPlace = "left", } = axisY;
+		// Данные шрифта, заголовок, позиция оси абсцисс и правило, при котором элементы оси абсцисс будут повернуты на 90 градусов
+		const { font: axisXFont = {}, titleData: axisXTitle = {} as IAxisXTitleData, place: axisXPlace = "bottom", rotate: rotateAxisX, } = axisX;
+		// Заголовок и дынные заголовка диаграммы
 		const { title: chartTitle = {}, titleData: chartTitleData, } = chart;
+		// Отступы у заголовка диаграммы
 		const { gaps: chartTitleGaps = {}, } = chartTitle;
+		// Отступы и высота легенды
 		const { gaps: gapsLegend = {}, height: legendHeight = 0, } = legend;
+		// Объект отступов легенды
 		const { legend: legendGaps = {}, } = gapsLegend as ILegendGaps;
+		// Отступы легенды
 		const { bottom: legendGapBottom = 0, } = legendGaps;
+		// Нижний отступ заголовка диаграммы
 		const { bottom: chartTitleGapBottom = 0, } = chartTitleGaps as IGaps;
+		// Жирность, размер элементов оси абсцисс и правило, при котором элементы оси абсцисс будут отображаться на диаграмме
 		const { weight = 400, size, showText: showXText = Boolean(Object.keys(axisXFont).length), } = axisXFont;
+		// Правило, при котором элементы оси ординат будут отображаться на диаграмме
 		const { showText: showYText = Boolean(Object.keys(axisYFont).length), } = axisYFont;
+		// Названия, которые не будут отображаться на диаграмме
 		const ignoreNames: Array<string | number> = axisX.getIgnoreNames();
+		// Все названия
 		const names: Array<string | number> = axisY.getAxesData(this.data).names;
 		const lastName: string | number = names[names.length - 1];
 		const firstName: string | number = names[0];
 
-		const firstNameWidth: number = getTextSize(size, weight, axisX.getCorrectName(firstName).toString(), this.ctx, this.fontFamily).width;
+		// Ширина и высота первого названия
+		const { width: firstNameWidth, height: firstNameHeight, } = getTextSize(size, weight, axisX.getCorrectName(firstName).toString(), this.ctx, this.fontFamily);
+		// Отображено ли первое название
 		const firstNameIsNotIgnore: boolean = showXText && !(ignoreNames || []).includes(firstName);
-		const lastNameWidth: number = getTextSize(size, weight, axisX.getCorrectName(lastName).toString(), this.ctx, this.fontFamily).width;
+		// Ширина и высота последнего названия
+		const { width: lastNameWidth, height: lastNameHeight, } = getTextSize(size, weight, axisX.getCorrectName(lastName).toString(), this.ctx, this.fontFamily);
+		// Отображено ли последнее название
 		const lastNameIsNotIgnore: boolean = showXText && !(ignoreNames || []).includes(lastName);
+		// Высота заголовка оси ординат
 		const axisYTitleHeight: number = axisYTitle.height || 0;
+		// Отступ справа у заголовка оси ординат
 		const axisYTitleGapRight: number = (axisYTitle.gaps || {}).right || 0;
+		// Высота заголовка оси абсцисс
 		const axisXTitleHeight: number = axisXTitle.height || 0;
+		// Отступ справа у заголовка оси абсцисс
 		const axisXTitleGapTop: number = (axisXTitle.gaps || {}).top || 0;
+		// Высота заголовка диаграммы
 		const chartTitleHeight: number = chartTitleData.height || 0;
+		// Отступ справа, если последнее название отображено и правило rotate у axisX ложно
+		const gapRightIfLastNameIsNotIgnoreAndRotateXIsFalse: number = ifTrueThenOrElse([lastNameIsNotIgnore, !rotateAxisX], lastNameWidth / 2, 0);
+		// Отступ справа, если последнее название отображено и правило rotate у axisX правдиво
+		const gapRightIfLastNameIsNotIgnoreAndRotateXIsTrue: number = ifTrueThenOrElse([lastNameIsNotIgnore, rotateAxisX], lastNameHeight / 2, 0);
+		// Отступ слева, если первое название отображено и правило rotate у axisX ложно
+		const gapLeftIfFirstNameIsNotIgnoreAndRotateAxisXIsFalse: number = ifTrueThenOrElse([firstNameIsNotIgnore, !rotateAxisX], firstNameWidth / 2, 0);
+		// Отступ слева, если первое название отображено и правило rotate у axisX правдиво
+		const gapLeftIfFirstNameIsNotIgnoreAndRotateAxisXIsTrue: number = ifTrueThenOrElse([firstNameIsNotIgnore, rotateAxisX], firstNameHeight / 2, 0);
+		// Отступ слева, если ось ординат находится слева
+		const gapLeftIfAxisYPlaceIsLeft: number = ifTrueThenOrElse([showYText, axisYPlace === "left"], axisY.getMaxTextWidthAtYAxis() + gapRightAxisY, 0);
+		// Отступ слева, если ось ординат находится справа
+		const gapRightIfAxisYPlaceIsRight: number = ifTrueThenOrElse([axisYPlace === "right", showYText], axisY.getMaxTextWidthAtYAxis() + gapRightAxisY, 0);
 
 		return {
-			left: ifTrueThenOrElse(firstNameIsNotIgnore, firstNameWidth / 2, 0) + axisYTitleHeight + axisYTitleGapRight + ifTrueThenOrElse(showYText, axisY.getMaxTextWidthAtYAxis() + gapRightAxisY, 0),
-			right: ifTrueThenOrElse(lastNameIsNotIgnore, lastNameWidth / 2, 0),
+			left: gapLeftIfFirstNameIsNotIgnoreAndRotateAxisXIsTrue + gapLeftIfFirstNameIsNotIgnoreAndRotateAxisXIsFalse + axisYTitleHeight + axisYTitleGapRight + gapLeftIfAxisYPlaceIsLeft,
+			right: gapRightIfLastNameIsNotIgnoreAndRotateXIsTrue + gapRightIfLastNameIsNotIgnoreAndRotateXIsFalse + gapRightIfAxisYPlaceIsRight,
 			bottom: axisXTitleHeight + axisXTitleGapTop,
-			top: ifTrueThenOrElse([showXText, place === "top"], legendGapBottom + legendHeight + chartTitleGapBottom + chartTitleHeight, 0),
+			top: ifTrueThenOrElse([showXText, axisXPlace === "top"], legendGapBottom + legendHeight + chartTitleGapBottom + chartTitleHeight, 0),
 		};
 	}
 
@@ -221,10 +271,17 @@ class Chart implements IChartClass {
 	 * @returns {IGaps} Отступы
 	 */
 	public getGapsForLegend(axisY: IAxisY, chartTitle: IChartTitleWithSizeAndPos): IGaps {
+		// Заголовок оси ординат
+		const { title: axisYTitle = {}, } = axisY;
+		// Высота и отступы заголовка диаграммы
 		const { height: chartTitleHeight = 0, gaps: chartTitleGaps, } = chartTitle;
+		// Нижний отступ заголовка диаграммы
 		const { bottom: chartTitleGapBottom = 0, } = chartTitleGaps;
-		const { font = {}, } = (axisY.title || {});
-		const { size, weight = 600, text, } = font as IFontWithText;
+		// Данные шрифта у заголовка оси ординат
+		const { font: axisYFont = {}, } = axisYTitle as IAxisY;
+		// Размер, жирность и текст у заголовка оси ординат
+		const { size, weight = 600, text, } = axisYFont as IFontWithText;
+		// Высота заголовка оси ординат
 		const titleAxisYHeight: number = getTextSize(size, weight, text, this.ctx, this.fontFamily).height || 0;
 
 		return {

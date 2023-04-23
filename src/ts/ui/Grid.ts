@@ -1,7 +1,7 @@
 import CustomFigure from "./elements/CustomFigure";
 import Line from "./elements/Line";
 
-import { TAxisXPlace, TEmptyObject, TGridFormat, } from "../types/index";
+import { TAxisXPlace, TAxisYPlace, TEmptyObject, TGridFormat, } from "../types/index";
 
 import isUndefined from "../helpers/isUndefined";
 import ifTrueThenOrElse from "../helpers/ifTrueThenOrElse";
@@ -25,6 +25,7 @@ class Grid implements IGridClass {
 	public readonly distanceBetweenLineAndPoint: number;
 	public readonly placeAxisX: TAxisXPlace;
 	public readonly rotateAxisX: boolean;
+	public readonly placeAxisY: TAxisYPlace;
 
 	constructor(
 		ctx: CanvasRenderingContext2D,
@@ -49,6 +50,8 @@ class Grid implements IGridClass {
 		this.pointsX = axisX.points as Array<IPointX>;
 		// Позиция оси абсцисс
 		this.placeAxisX = axisX.place || "bottom";
+		// Позиция оси ординат
+		this.placeAxisY = axisY.place || "left";
 		// Правило, при котором текст оси абсцисс будет повернут на 90 градусов
 		this.rotateAxisX = axisX.rotate;
 		// Правило, говорящее, что точки на оси абсцисс будут отрисованы
@@ -110,6 +113,44 @@ class Grid implements IGridClass {
 	}
 
 	/**
+	 * Определяет начальную и конечную позиции для горизонтальных линий сетки
+	 * @param {boolean} useStretch Правило, при котором используется правило stretch
+	 * @param {number} posXAtPointY Позиция элемента оси ординат на оси абсцисс
+	 * @param {number} startX Позиция первого элемента оси ординат на оси абсцисс
+	 * @param {number} endX Позиция последнего оси ординат на оси абсцисс
+	 * @param {number} minPosXBetweenPointsY Минимальная позиция на оси абсцисс среди всех элементов оси ординат
+	 * @private
+	 * @returns {}
+	 */
+	private _getXPositionsForHorizontalLines(useStretch: boolean, posXAtPointY: number, startX: number, endX: number, minPosXBetweenPointsY: number) {
+		const defaultPos = {
+			start: startX,
+			end: endX,
+		};
+
+		switch (this.placeAxisY) {
+			case "left":
+				if (useStretch) {
+					return {
+						start: posXAtPointY + this.maxPointYWidth + this.distanceBetweenLineAndPoint,
+						end: endX,
+					};
+				}
+
+				return defaultPos;
+			case "right":
+				if (useStretch) {
+					return {
+						start: startX,
+						end: minPosXBetweenPointsY - this.distanceBetweenLineAndPoint,
+					};
+				}
+
+				return defaultPos;
+		}
+	}
+
+	/**
 	 * Рисует горизонтальные линии
 	 * @private
 	 * @param {string | Array<string>} color Цвет линии
@@ -120,15 +161,18 @@ class Grid implements IGridClass {
 		const { x: startX, } = this.pointsX[0];
 		const { x: endX, } = this.pointsX[this.pointsX.length - 1];
 		const useStretch: boolean = stretch && this.showPointsY;
+		const minPosXBetweenPointsY: number = Math.min(...pointsYOnScreen.map(({ x, }) => x));
 
 		// Рисуем линии
 		pointsYOnScreen.map(({ y, x, }) => {
+			const { start, end, } = this._getXPositionsForHorizontalLines(useStretch, x, startX, endX, minPosXBetweenPointsY);
+
 			new Line(
-				ifTrueThenOrElse(useStretch, x + this.maxPointYWidth + this.distanceBetweenLineAndPoint, startX),
+				start,
 				y,
 				color,
 				this.ctx,
-				[{ x: endX, y, }],
+				[{ x: end, y, }],
 				width,
 				dotted
 			).draw();
@@ -143,6 +187,7 @@ class Grid implements IGridClass {
 	 * @param {number} endYPointY Позиция по оси ординат последнего элемента оси ординат
 	 * @param {number} pointXNameWidth Ширина названия точки оси абсцисс
 	 * @param {number} startYPointY Позиция по оси ординат первого элемента оси ординат
+	 * @private
 	 * @returns {number}
 	 */
 	private _getEndYPosForVerticalLines(useStretch: boolean, yPointX: number, height: number, endYPointY: number, pointXNameWidth: number, startYPointY: number): number {
