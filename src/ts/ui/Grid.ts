@@ -120,9 +120,9 @@ class Grid implements IGridClass {
 	 * @param {number} endX Позиция последнего оси ординат на оси абсцисс
 	 * @param {number} minPosXBetweenPointsY Минимальная позиция на оси абсцисс среди всех элементов оси ординат
 	 * @private
-	 * @returns {}
+	 * @returns {{ start: number, end: number, }}
 	 */
-	private _getXPositionsForHorizontalLines(useStretch: boolean, posXAtPointY: number, startX: number, endX: number, minPosXBetweenPointsY: number) {
+	private _getXPositionsForHorizontalLines(useStretch: boolean, posXAtPointY: number, startX: number, endX: number, minPosXBetweenPointsY: number): { start: number, end: number, } {
 		const defaultPos = {
 			start: startX,
 			end: endX,

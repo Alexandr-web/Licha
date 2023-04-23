@@ -9,7 +9,7 @@ import ifTrueThenOrElse from "../../helpers/ifTrueThenOrElse";
 import { TEmptyObject, TTypeChart, } from "../../types/index";
 
 import { IAxisXClass, IAxisXTitleData, } from "../../interfaces/axisX";
-import { IAxisY, IAxisYClass, IAxisYTitleData, } from "../../interfaces/axisY";
+import { IAxisY, IAxisYClass, IAxisYTitle, IAxisYTitleData, } from "../../interfaces/axisY";
 import { IBounds, IPadding, IPos, ISize, IGaps, } from "../../interfaces/global";
 import { IChartClass, IChartTitle, IChartTitleData, IChartTitleWithSizeAndPos, ITitleTheme, } from "../../interfaces/chart";
 import { IData, } from "../../interfaces/data";
@@ -278,7 +278,7 @@ class Chart implements IChartClass {
 		// Нижний отступ заголовка диаграммы
 		const { bottom: chartTitleGapBottom = 0, } = chartTitleGaps;
 		// Данные шрифта у заголовка оси ординат
-		const { font: axisYFont = {}, } = axisYTitle as IAxisY;
+		const { font: axisYFont = {}, gaps: axisYGaps = {}, } = axisYTitle as IAxisYTitle;
 		// Размер, жирность и текст у заголовка оси ординат
 		const { size, weight = 600, text, } = axisYFont as IFontWithText;
 		// Высота заголовка оси ординат
@@ -286,7 +286,7 @@ class Chart implements IChartClass {
 
 		return {
 			top: chartTitleHeight + chartTitleGapBottom,
-			left: titleAxisYHeight,
+			left: titleAxisYHeight + axisYGaps.right || 0,
 		};
 	}
 }

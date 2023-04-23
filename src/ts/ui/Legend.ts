@@ -12,7 +12,7 @@ import { IData, } from "../interfaces/data";
 import { IColumnLegend, ILegendTheme, ILegendGaps, ICircleLegend, IItemLegend, ILegendClass, } from "../interfaces/legend";
 import { ILine, ILineTheme, } from "../interfaces/line";
 import { IFont, ISpecialFontData, } from "../interfaces/text";
-import { TEmptyObject, } from "../types/index";
+import { TEmptyObject, TLegendPlace, } from "../types/index";
 
 class Legend implements ILegendClass {
 	public readonly showLegend: boolean;
@@ -27,6 +27,7 @@ class Legend implements ILegendClass {
 	public readonly themeForText: ILegendTheme | TEmptyObject;
 	public readonly themeForCircle: ILineTheme | TEmptyObject;
 	public readonly fontFamily: string;
+	public readonly place?: TLegendPlace;
 	public height: number;
 	public hideGroups: Array<string>;
 	public items: Array<IItemLegend>;
@@ -41,11 +42,14 @@ class Legend implements ILegendClass {
 		circle: ICircleLegend,
 		hideGroups: Array<string>,
 		fontFamily: string,
+		place: TLegendPlace,
 		legendGaps: ILegendGaps | TEmptyObject = {},
 		maxCount = 4,
 		themeForText: ILegendTheme | TEmptyObject = {},
 		themeForCircle: ILineTheme | TEmptyObject = {}
 	) {
+		// Позиция легенды
+		this.place = place || "center";
 		// Семейство шрифта
 		this.fontFamily = fontFamily;
 		// Содержит названия скрытых групп
@@ -120,7 +124,7 @@ class Legend implements ILegendClass {
 			return 0;
 		}
 
-		const { group: gapsGroup = {} as IGaps, circle: gapsCircle = {} as IGaps, } = this.legendGaps as { group, circle, };
+		const { group: gapsGroup = {} as IGaps, circle: gapsCircle = {} as IGaps, } = this.legendGaps;
 		const { radius, } = this.circle;
 
 		return groups.reduce((acc: number, { width, }) => {
@@ -150,6 +154,7 @@ class Legend implements ILegendClass {
 	/**
 	 * Определяет ширину одной колонки
 	 * @param {Array<IItemLegend>} groups Содержит данные групп
+	 * @private
 	 * @returns {number}
 	 */
 	private _getWidthColumn(groups: Array<IItemLegend>): number {
@@ -206,6 +211,38 @@ class Legend implements ILegendClass {
 	}
 
 	/**
+	 * Определяет позицию текста на оси абсцисс
+	 * @param {IBounds} bounds Границы холста
+	 * @param {IGaps} gaps Отступы легенды
+	 * @param {Array<IItemLegend>} groups Содержит группы колонки
+	 * @param {number} gapsCircleRight Отступ справа у круга
+	 * @param {number} index Индекс текущей колонки
+	 * @private
+	 * @returns {number}
+	 */
+	private _getPosX(bounds: IBounds, gaps: IGaps, groups: Array<IItemLegend>, gapsCircleRight: number, index: number): number {
+		const center: number = bounds.width / 2;
+		const { radius, } = this.circle;
+		const widthColumn: number = this._getWidthColumn(groups);
+		const currentGroup: IItemLegend = groups[index];
+		const prevGroups: Array<IItemLegend> = groups.filter((grp: IItemLegend, idx: number) => idx < index);
+		const nextGroups: Array<IItemLegend> = groups.filter((grp: IItemLegend, idx: number) => idx > index);
+		const horizontalDistanceAtPrevGroups: number = this._getHorizontalDistance(prevGroups);
+		const horizontalDistanceAtNextGroups: number = this._getHorizontalDistance(nextGroups);
+		const horizontalDistanceLeft: number = ifTrueThenOrElse(groups.length === 1, 0, horizontalDistanceAtPrevGroups);
+		const horizontalDistanceRight: number = ifTrueThenOrElse(!nextGroups.length, 0, horizontalDistanceAtNextGroups);
+
+		switch (this.place) {
+			case "left":
+				return bounds.horizontal.start + gaps.left + horizontalDistanceLeft + gapsCircleRight + radius * 2;
+			case "center":
+				return bounds.horizontal.start + gaps.left + horizontalDistanceLeft + gapsCircleRight + center - widthColumn / 2;
+			case "right":
+				return (bounds.horizontal.end - currentGroup.width) - (horizontalDistanceRight + gapsCircleRight);
+		}
+	}
+
+	/**
 	 * Рисует текст группы
 	 * @param {string} group Содержит текст группы
 	 * @param {number} width Ширина текста группы
@@ -218,7 +255,6 @@ class Legend implements ILegendClass {
 	 */
 	private _drawText(group: string, width: number, height: number, groups: Array<IItemLegend>, index: number, gaps: IGaps): IPos {
 		const bounds: IBounds = this.bounds;
-		const center: number = bounds.width / 2;
 		const { size, weight = 400, color = this.themeForText.color, } = this.font;
 		const { circle: gapsCircle = {}, } = this.legendGaps;
 		const font: ISpecialFontData = {
@@ -228,12 +264,8 @@ class Legend implements ILegendClass {
 			text: group,
 		};
 
-		const prevGroups: Array<IItemLegend> = groups.filter((grp: IItemLegend, idx: number) => idx < index);
-		const horizontalDistanceAtPrevGroups: number = this._getHorizontalDistance(prevGroups);
-		const horizontalDistance: number = ifTrueThenOrElse(groups.length === 1, 0, horizontalDistanceAtPrevGroups);
-		const widthColumn: number = this._getWidthColumn(groups);
 		const posGroup: IPos = {
-			x: bounds.horizontal.start + gaps.left + horizontalDistance + (gapsCircle.right || 0) + center - widthColumn / 2,
+			x: this._getPosX(bounds, gaps, groups, gapsCircle.right || 0, index),
 			y: bounds.vertical.start + gaps.top + height,
 		};
 

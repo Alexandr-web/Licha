@@ -140,7 +140,6 @@ class AxisX extends Axis implements IAxisXClass {
 	/**
 	 * Определяет название точки на оси абсцисс
 	 * @param {string | number} name Название точки
-	 * @private
 	 * @returns {string | number} Корректное название точки
 	 */
 	public getCorrectName(name: string | number): string | number {
@@ -225,6 +224,7 @@ class AxisX extends Axis implements IAxisXClass {
 	 * Определяет позицию по оси ординат для элементов оси абсцисс
 	 * @param {IGaps} gaps Содержит отступы оси абсцисс
 	 * @param {number} height Высота названия точки оси абсцисс
+	 * @private
 	 * @returns {number}
 	 */
 	private _getYPos(gaps: IGaps, height: number, width: number): number {

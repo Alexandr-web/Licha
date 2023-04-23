@@ -6,7 +6,7 @@ import { ILineTheme, } from "./interfaces/line";
 import { ICanvasClass, } from "./interfaces/canvas";
 import { IItemLegend, ILegend, ILegendClass, } from "./interfaces/legend";
 
-import BlockInfo from "./ui/elements/BlockInfo";
+import BlockInfo from "./ui/BlockInfo";
 
 import isFunction from "./helpers/isFunction";
 import { ITheme, } from "./interfaces/utils";
