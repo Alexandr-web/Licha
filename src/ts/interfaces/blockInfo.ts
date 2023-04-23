@@ -83,8 +83,6 @@ export interface IBlockInfoClass extends IElementClass {
     readonly groupsData: IGroupsBlockInfo;
     readonly groupLineWidth: number;
     readonly triangleSizes: ISize;
-    readonly defaultTitleFontWeight: number;
-    readonly defaultGroupsFontWeight: number;
     readonly title: string | number;
     readonly themeForWindow: IBlockInfoThemeWindow | TEmptyObject;
     readonly themeForLine: ILineTheme | TEmptyObject;

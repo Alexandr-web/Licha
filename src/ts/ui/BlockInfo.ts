@@ -11,6 +11,7 @@ import isNumber from "../helpers/isNumber";
 import getPaddingObj from "../helpers/getPaddingObj";
 import isFunction from "../helpers/isFunction";
 import ifTrueThenOrElse from "../helpers/ifTrueThenOrElse";
+import defaultParams from "../helpers/defaultParams";
 
 import { ISpecialFontData, } from "../interfaces/text";
 import { ITitleBlockInfo, ITriangleData, IBlockInfoClass, IBlockInfoElementWithSize, IBlockInfoElementWithSizeGroup, IBlockInfoThemeGroup, IBlockInfoThemeTitle, IBlockInfoThemeWindow, IGroupsBlockInfo, ITriangleChangedData, } from "../interfaces/blockInfo";
@@ -31,8 +32,6 @@ class BlockInfo extends Element implements IBlockInfoClass {
 	public readonly groupsData: IGroupsBlockInfo;
 	public readonly groupLineWidth: number;
 	public readonly triangleSizes: ISize;
-	public readonly defaultTitleFontWeight: number;
-	public readonly defaultGroupsFontWeight: number;
 	public readonly title: string | number;
 	public readonly themeForWindow: IBlockInfoThemeWindow | TEmptyObject;
 	public readonly themeForLine: ILineTheme | TEmptyObject;
@@ -96,10 +95,6 @@ class BlockInfo extends Element implements IBlockInfoClass {
 		this.themeForTitle = themeForTitle;
 		// Стили для группы от темы
 		this.themeForGroup = themeForGroup;
-		// Жирность шрифта заголовка по умолчанию
-		this.defaultTitleFontWeight = 600;
-		// Жирность шрифта названия группы по умолчанию
-		this.defaultGroupsFontWeight = 400;
 	}
 
 	/**
@@ -118,21 +113,26 @@ class BlockInfo extends Element implements IBlockInfoClass {
 	 * @returns {Array<IBlockInfoElementWithSize>} Массив, содержащий данные элементов, включая их размеры
 	 */
 	private _getElementsWithSize(): Array<IBlockInfoElementWithSize> {
+		const { size: defaultSizeText, weight: defaultWeightText, } = defaultParams.textFont;
+		const { size: defaultSizeTitle, weight: defaultWeightTitle, } = defaultParams.titleFont;
+
 		return this.elements.map(({ group, value, color, }) => {
 			const correctGroupValue: string | number = this._getCorrectGroupValue(value);
 			const groupName = `${group}: ${correctGroupValue}`;
 			const { font: groupsFont, } = this.groupsData;
 			const { font: titleFont, } = this.titleData;
+			const { size: groupSize = defaultSizeText, weight: groupWeight = defaultWeightText, } = groupsFont;
+			const { size: titleSize = defaultSizeTitle, weight: titleWeight = defaultWeightTitle, } = titleFont;
 
 			return {
 				group: {
 					name: groupName,
 					color,
-					...getTextSize(groupsFont.size, groupsFont.weight || this.defaultTitleFontWeight, groupName, this.ctx, this.fontFamily),
+					...getTextSize(groupSize, groupWeight, groupName, this.ctx, this.fontFamily),
 				},
 				value: {
 					name: correctGroupValue.toString(),
-					...getTextSize(titleFont.size, titleFont.weight || this.defaultGroupsFontWeight, correctGroupValue.toString(), this.ctx, this.fontFamily),
+					...getTextSize(titleSize, titleWeight, correctGroupValue.toString(), this.ctx, this.fontFamily),
 				},
 			};
 		});
@@ -239,8 +239,9 @@ class BlockInfo extends Element implements IBlockInfoClass {
 	 * @returns {ISize} Размеры
 	 */
 	private _getTitleSize(): ISize {
+		const { size: defaultSize, weight: defaultWeight, } = defaultParams.titleFont;
 		const { font, } = this.titleData;
-		const { size, weight = this.defaultTitleFontWeight, } = font;
+		const { size = defaultSize, weight = defaultWeight, } = font;
 
 		return getTextSize(size, weight, this.title.toString(), this.ctx, this.fontFamily);
 	}
@@ -263,8 +264,9 @@ class BlockInfo extends Element implements IBlockInfoClass {
 			coordinates.x -= blockWidth + this.triangleSizes.height * 2;
 		}
 
+		const { size: defaultSize, weight: defaultWeight, } = defaultParams.titleFont;
 		const { font: titleFont, } = this.titleData;
-		const { size, color = this.themeForTitle.color, weight = this.defaultTitleFontWeight, } = titleFont;
+		const { size = defaultSize, color = this.themeForTitle.color, weight = defaultWeight, } = titleFont;
 		const font: ISpecialFontData = {
 			color,
 			text: this.title.toString(),
@@ -305,8 +307,9 @@ class BlockInfo extends Element implements IBlockInfoClass {
 	 * @private
 	 */
 	private _drawGroups(windowIsOutOfBounds: boolean, blockWidth: number): void {
+		const { size: defaultSize, weight: defaultWeight, } = defaultParams.textFont;
 		const { font: groupsFont, } = this.groupsData;
-		const { size, weight = this.defaultGroupsFontWeight, color = this.themeForGroup.color, } = groupsFont;
+		const { size = defaultSize, weight = defaultWeight, color = this.themeForGroup.color, } = groupsFont;
 
 		this._getElementsWithSize().map(({ group, }, index: number) => {
 			const font: ISpecialFontData = {
@@ -363,8 +366,8 @@ class BlockInfo extends Element implements IBlockInfoClass {
 		const { gaps: gapsGroups, } = this.groupsData;
 		const { gaps: gapsTitle, } = this.titleData;
 		const groups: Array<IBlockInfoElementWithSizeGroup> = this._getElementsWithSize().map(({ group, }) => group);
-		const width: number = this._getMaxContentWidth(this._getElementsWithSize()) + (padding.right || 0) + (padding.left || 0) + (gapsGroups.right || 0) + this.groupLineWidth;
-		const height: number = this._getTitleSize().height + this._getTopGroupsDistance(groups) + (gapsTitle.bottom || 0) + (padding.bottom || 0);
+		const width: number = this._getMaxContentWidth(this._getElementsWithSize()) + padding.right + padding.left + gapsGroups.right + this.groupLineWidth;
+		const height: number = this._getTitleSize().height + this._getTopGroupsDistance(groups) + gapsTitle.bottom + padding.bottom;
 
 		return { width, height, };
 	}

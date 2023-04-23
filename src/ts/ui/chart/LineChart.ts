@@ -8,6 +8,7 @@ import isString from "../../helpers/isString";
 import isUndefined from "../../helpers/isUndefined";
 import ifTrueThenOrElse from "../../helpers/ifTrueThenOrElse";
 import getCapPos from "../../helpers/getCapPos";
+import defaultParams from "../../helpers/defaultParams";
 
 import { TEmptyObject, TSort, } from "../../types/index";
 
@@ -57,8 +58,8 @@ class LineChart extends Chart implements ILineChartClass {
 		this.line = line;
 		// Содержит данные колпачка
 		this.cap = cap;
-		// Содержит сортированные значения
-		this.sortValues = sortValues || "less-more";
+		// Тип сортировки значений
+		this.sortValues = sortValues || defaultParams.axisY.sort;
 		// Содержит данные нарисованных колпачков
 		this.caps = [];
 		// Содержит стилия для линии от темы

@@ -5,6 +5,7 @@ import { TAxisXPlace, TAxisYPlace, TEmptyObject, TGridFormat, } from "../types/i
 
 import isUndefined from "../helpers/isUndefined";
 import ifTrueThenOrElse from "../helpers/ifTrueThenOrElse";
+import defaultParams from "../helpers/defaultParams";
 
 import { IPointX, IAxisXClass, } from "../interfaces/axisX";
 import { IPointY, IAxisYClass, } from "../interfaces/axisY";
@@ -49,9 +50,9 @@ class Grid implements IGridClass {
 		// Содержит точки оси абсцисс
 		this.pointsX = axisX.points as Array<IPointX>;
 		// Позиция оси абсцисс
-		this.placeAxisX = axisX.place || "bottom";
+		this.placeAxisX = axisX.place || defaultParams.axisX.place;
 		// Позиция оси ординат
-		this.placeAxisY = axisY.place || "left";
+		this.placeAxisY = axisY.place || defaultParams.axisY.place;
 		// Правило, при котором текст оси абсцисс будет повернут на 90 градусов
 		this.rotateAxisX = axisX.rotate;
 		// Правило, говорящее, что точки на оси абсцисс будут отрисованы
@@ -60,8 +61,8 @@ class Grid implements IGridClass {
 		this.showPointsY = ifTrueThenOrElse(isUndefined(axisY.font.showText), Boolean(Object.keys(axisY.font).length), axisY.font.showText);
 		// Содержит данные линии
 		this.line = line;
-		// Формат сетки (horizontal или vertical)
-		this.format = format || "default";
+		// Формат сетки
+		this.format = format || defaultParams.grid.format;
 		// Данные темы
 		this.theme = theme;
 		// Задний фон сетки
@@ -256,7 +257,7 @@ class Grid implements IGridClass {
 			case "vertical":
 				this._drawVerticalLines(colorLine);
 				break;
-			default:
+			case "default":
 				this._drawVerticalLines(colorLine);
 				this._drawHorizontalLines(colorLine);
 		}

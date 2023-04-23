@@ -1,3 +1,5 @@
+import { TAxisXPlace, TAxisYPlace, TGridFormat, TLegendPlace, TSort, } from "../types/index";
+
 export interface IPadding {
     top?: number;
     right?: number;
@@ -38,4 +40,26 @@ export interface IBounds {
 export interface IStroke {
     width?: number;
     color?: string;
+}
+
+export interface IDefaultParams {
+    titleFont: {
+        size: number,
+        weight: number,
+    };
+    textFont: {
+        size: number,
+        weight: number,
+    };
+    axisX: {
+        sort: TSort,
+        place: TAxisXPlace,
+    };
+    axisY: {
+        sort: TSort,
+        place: TAxisYPlace,
+    };
+    grid: { format: TGridFormat, };
+    legend: { place: TLegendPlace, };
+    fontFamily: string;
 }

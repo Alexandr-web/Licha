@@ -1,5 +1,6 @@
 import quickSort from "../../helpers/quickSort";
 import ifTrueThenOrElse from "../../helpers/ifTrueThenOrElse";
+import defaultParams from "../../helpers/defaultParams";
 
 import { TSort, TEmptyObject, } from "../../types/index";
 
@@ -47,7 +48,7 @@ class Axis implements IAxisClass {
     // Содержит данные точек, находящихся на этой оси
     this.points = [];
     // Тип сортировки точек ("less-more" или "more-less")
-    this.sortNames = sortNames || "less-more";
+    this.sortNames = sortNames || defaultParams.axisX.sort;
     // Содержит уникальные названия точек оси абсцисс
     this.uniqueNames = [];
     // Содержит уникальные значения точек оси ординат
