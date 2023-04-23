@@ -138,7 +138,7 @@ class Sinera implements ISineraClass {
 	 * @return {ILegendClass}
 	 */
 	private _setLegend(canvas: ICanvasClass, chart: IChartClass): ILegendClass {
-		const { font, circle, gaps: legendGaps, maxCount, } = this.legend;
+		const { font, circle, gaps: legendGaps, maxCount, place, } = this.legend;
 		const showLegend = Boolean(Object.keys(this.legend).length);
 		const gaps: IGaps = chart.getGapsForLegend(this.axisY, chart.titleData as IChartTitleWithSizeAndPos);
 
@@ -152,6 +152,7 @@ class Sinera implements ISineraClass {
 			circle,
 			this.hideGroups,
 			this.fontFamily,
+			place,
 			legendGaps,
 			maxCount,
 			this.theme.legend,

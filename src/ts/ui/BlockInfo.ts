@@ -1,24 +1,24 @@
-import Element from "./Element";
-import Rect from "./Rect";
-import Text from "./Text";
-import quickSort from "../../helpers/quickSort";
-import Line from "./Line";
-import CustomFigure from "./CustomFigure";
+import Element from "./elements/Element";
+import Rect from "./elements/Rect";
+import Text from "./elements/Text";
+import quickSort from "../helpers/quickSort";
+import Line from "./elements/Line";
+import CustomFigure from "./elements/CustomFigure";
 
-import getTextSize from "../../helpers/getTextSize";
-import getTextStr from "../../helpers/getTextStr";
-import isNumber from "../../helpers/isNumber";
-import getPaddingObj from "../../helpers/getPaddingObj";
-import isFunction from "../../helpers/isFunction";
-import ifTrueThenOrElse from "../../helpers/ifTrueThenOrElse";
+import getTextSize from "../helpers/getTextSize";
+import getTextStr from "../helpers/getTextStr";
+import isNumber from "../helpers/isNumber";
+import getPaddingObj from "../helpers/getPaddingObj";
+import isFunction from "../helpers/isFunction";
+import ifTrueThenOrElse from "../helpers/ifTrueThenOrElse";
 
-import { ISpecialFontData, } from "../../interfaces/text";
-import { ITitleBlockInfo, ITriangleData, IBlockInfoClass, IBlockInfoElementWithSize, IBlockInfoElementWithSizeGroup, IBlockInfoThemeGroup, IBlockInfoThemeTitle, IBlockInfoThemeWindow, IGroupsBlockInfo, ITriangleChangedData, } from "../../interfaces/blockInfo";
-import { ILinePos, ILineTheme, } from "../../interfaces/line";
-import { IPadding, IPos, ISize, IBounds, } from "../../interfaces/global";
-import { IData, } from "../../interfaces/data";
-import { TEmptyObject, } from "../../types/index";
-import { IPointX, } from "../../interfaces/axisX";
+import { ISpecialFontData, } from "../interfaces/text";
+import { ITitleBlockInfo, ITriangleData, IBlockInfoClass, IBlockInfoElementWithSize, IBlockInfoElementWithSizeGroup, IBlockInfoThemeGroup, IBlockInfoThemeTitle, IBlockInfoThemeWindow, IGroupsBlockInfo, ITriangleChangedData, } from "../interfaces/blockInfo";
+import { ILinePos, ILineTheme, } from "../interfaces/line";
+import { IPadding, IPos, ISize, IBounds, } from "../interfaces/global";
+import { IData, } from "../interfaces/data";
+import { TEmptyObject, } from "../types/index";
+import { IPointX, } from "../interfaces/axisX";
 
 class BlockInfo extends Element implements IBlockInfoClass {
 	public readonly editValue: (value: number) => string;
@@ -236,7 +236,7 @@ class BlockInfo extends Element implements IBlockInfoClass {
 	/**
 	 * Определяет размеры заголовка
 	 * @private
-	 * @returns {ISize} Размеры ({ width, height })
+	 * @returns {ISize} Размеры
 	 */
 	private _getTitleSize(): ISize {
 		const { font, } = this.titleData;
@@ -373,6 +373,7 @@ class BlockInfo extends Element implements IBlockInfoClass {
 	 * Определяет новую позицию треугольника, если ширина окна выходит за пределы графика
 	 * @param {number} x Позиция окна по оси абсцисс
 	 * @param {number} y Позиция окна по оси ординат
+	 * @private
 	 * @returns {ITriangleChangedData}
 	 */
 	private _getNewPosTriangleIfWindowIsOutOfBounds(x: number, y: number): ITriangleChangedData {

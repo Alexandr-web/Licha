@@ -562,6 +562,12 @@ Parameters passed to the Sinera class constructor
 
 #### Accepted parameters
 
+  * #### `place`
+
+    | Description  | Example | Type |
+    | ------------- | ------------- | ------------- |
+    | Legend position ("left", "center", "right") | `legend: { place: "left", }`  | `string` |
+
   * #### `events`
 
     | Description  | Example | Type |

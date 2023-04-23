@@ -132,6 +132,7 @@ class LineChart extends Chart implements ILineChartClass {
 	 * Определяет координаты для фигуры, которая будет "красить" группу всю
 	 * @param {Array<IGroupDataCoordinates>} coordinates массив координат линий графика
 	 * @param {boolean} stepped Правило, которое будет рисовать линию пошагово
+	 * @private
 	 * @returns {Array<ILineTo>}
 	 */
 	private _getLineToForGroupFigure(coordinates: Array<IGroupDataCoordinates>, stepped: boolean): Array<ILineTo> {

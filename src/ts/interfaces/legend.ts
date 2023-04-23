@@ -2,7 +2,7 @@ import { IFont, } from "./text";
 import { ISize, IPos, IBounds, IGaps, } from "./global";
 import { ILine, ILineTheme, } from "./line";
 import { IData, } from "./data";
-import { TEmptyObject, } from "../types/index";
+import { TEmptyObject, TLegendPlace, } from "../types/index";
 
 export interface ILegendTheme {
     readonly color: string;
@@ -28,6 +28,7 @@ export interface ILegend {
     readonly gaps: ILegendGaps;
     readonly maxCount?: number;
     readonly events?: ILegendEvents | TEmptyObject;
+    readonly place?: TLegendPlace;
 }
 
 export interface IColumnLegend {
@@ -50,6 +51,7 @@ export interface ILegendClass {
     readonly themeForText: ILegendTheme | TEmptyObject;
     readonly themeForCircle: ILineTheme | TEmptyObject;
     readonly fontFamily: string;
+    readonly place?: TLegendPlace;
     hideGroups: Array<string>;
     height: number;
     items: Array<IItemLegend>;
