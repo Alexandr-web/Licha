@@ -168,7 +168,7 @@ class Sinera implements ISineraClass {
 	 * @returns {IAxisYClass}
 	 */
 	private _setAxisYTitle(canvas: ICanvasClass, chart: IChartClass): IAxisYClass {
-		const { step, editValue, title, font, sort, } = this.axisY;
+		const { place, step, editValue, title, font, sort, } = this.axisY;
 		const themeForTitle: IAxisThemeTitle = (this.theme.axis || {}).title;
 		const themeForPoint: IAxisThemePoint = (this.theme.axis || {}).point;
 
@@ -184,6 +184,7 @@ class Sinera implements ISineraClass {
 			themeForPoint,
 			sort,
 			this.fontFamily,
+			place,
 			step
 		).drawTitle();
 	}

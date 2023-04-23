@@ -5,3 +5,4 @@ export type TTypeChart = "line";
 export type TTypeTheme = "dark" | "light";
 export type TEmptyObject = Record<string, never>;
 export type TAxisXPlace = "top" | "bottom";
+export type TAxisYPlace = "right" | "left";
