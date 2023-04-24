@@ -100,6 +100,11 @@ class LineChart extends Chart implements ILineChartClass {
 			format: gCap.format || this.cap.format,
 		};
 
+		// Меняем цвета заливки группы местами
+		if (this.sortValues === "more-less" && Array.isArray(lineStyle.fill)) {
+			lineStyle.fill = lineStyle.fill.reverse();
+		}
+
 		return {
 			lineStyle,
 			capStyle,
@@ -115,9 +120,9 @@ class LineChart extends Chart implements ILineChartClass {
 	 */
 	private _getGroupsDataCoordinates(gData: Array<IDataAtItemData>): Array<IGroupDataCoordinates> {
 		return gData.map(({ value, name, }) => {
-			// Элемент для начальной позиции Y линии
+			// Элемент для начальной позиции Y
 			const findAxisYItem = this.pointsY.find((axisYItem: IPointY) => axisYItem.value === value) as IPointY;
-			// Элемент для начальной позиции X линии
+			// Элемент для начальной позиции X
 			const findAxisXItem = this.pointsX.find((axisXItem: IPointX) => axisXItem.name === name) as IPointX;
 
 			return {
@@ -130,13 +135,13 @@ class LineChart extends Chart implements ILineChartClass {
 	}
 
 	/**
-	 * Определяет координаты для фигуры, которая будет "красить" группу всю
+	 * Определяет координаты для фигуры, которая будет "красить" всю группу
 	 * @param {Array<IGroupDataCoordinates>} coordinates массив координат линий графика
 	 * @param {boolean} stepped Правило, которое будет рисовать линию пошагово
 	 * @private
 	 * @returns {Array<ILineTo>}
 	 */
-	private _getLineToForGroupFigure(coordinates: Array<IGroupDataCoordinates>, stepped: boolean): Array<ILineTo> {
+	private _getPosLineToForGroupFigure(coordinates: Array<IGroupDataCoordinates>, stepped: boolean): Array<ILineTo> {
 		const lineTo: Array<ILineTo> = [];
 
 		coordinates.map(({ x, y, }, index: number) => {
@@ -170,7 +175,7 @@ class LineChart extends Chart implements ILineChartClass {
 
 	/**
 	 * Создает задний фон всей группе
-	 * @param {Array<IGroupDataCoordinates>} coordinates массив координат линий графика
+	 * @param {Array<IGroupDataCoordinates>} coordinates массив координат точек графика
 	 * @param {string | Array<string>} fill содержит данные о цвете заднего фона
 	 * @param {boolean} stepped Правило, которое будет рисовать линию пошагово
 	 * @param {string} group Группа, в которой находится линия
@@ -184,7 +189,7 @@ class LineChart extends Chart implements ILineChartClass {
 		const firstYPoint: IPointY = yItemsOnScreen[0];
 		const lineData = {
 			moveTo: { x: firstPoint.x, y: firstPoint.y, },
-			lineTo: this._getLineToForGroupFigure(coordinates, stepped),
+			lineTo: this._getPosLineToForGroupFigure(coordinates, stepped),
 			fill,
 			group,
 			startY: Math.min(...coordinates.map(({ y, }) => y)),
@@ -206,6 +211,9 @@ class LineChart extends Chart implements ILineChartClass {
 					{ x: firstPoint.x, y: firstYPoint.y, },
 					lineData.moveTo
 				);
+
+				lineData.startY = firstYPoint.y;
+				lineData.endY = Math.max(...coordinates.map(({ y, }) => y));
 				break;
 		}
 
@@ -345,7 +353,7 @@ class LineChart extends Chart implements ILineChartClass {
 		for (const group in visibleGroups) {
 			const {
 				data: groupData,
-				line: groupLine = {} as ILine,
+				line: groupLine = {},
 				cap: groupCap = {},
 			} = visibleGroups[group];
 
