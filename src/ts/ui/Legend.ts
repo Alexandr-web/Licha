@@ -223,8 +223,8 @@ class Legend implements ILegendClass {
 	 * @returns {number}
 	 */
 	private _getPosX(bounds: IBounds, gaps: IGaps, groups: Array<IItemLegend>, gapsCircleRight: number, index: number): number {
-		const center: number = bounds.width / 2;
 		const { radius, } = this.circle;
+		const center: number = (bounds.width - (bounds.horizontal.start + gaps.left + radius)) / 2;
 		const widthColumn: number = this._getWidthColumn(groups);
 		const currentGroup: IItemLegend = groups[index];
 		const prevGroups: Array<IItemLegend> = groups.filter((grp: IItemLegend, idx: number) => idx < index);
