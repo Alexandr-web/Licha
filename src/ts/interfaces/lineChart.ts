@@ -10,7 +10,7 @@ export interface IChartLineStyle {
     readonly color: string | Array<string>;
     readonly dotted: boolean;
     readonly stepped: boolean;
-    readonly fill: Array<string> | string;
+    fill: Array<string> | string;
 }
 
 export interface ILineChartClass extends IChartClass {
