@@ -14,8 +14,8 @@ export default (format: TCapType, y: number, x: number, size: number): ICapCoord
     switch (format) {
         case "triangle":
             return {
-                startY: 0,
-                endY: size,
+                startY: y - size / 2,
+                endY: y,
                 x: x + size / 2,
                 y: y + size / 2,
             };

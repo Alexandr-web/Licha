@@ -100,11 +100,6 @@ class LineChart extends Chart implements ILineChartClass {
 			format: gCap.format || this.cap.format,
 		};
 
-		// Меняем цвета заливки группы местами
-		if (this.sortValues === "more-less" && Array.isArray(lineStyle.fill)) {
-			lineStyle.fill = lineStyle.fill.reverse();
-		}
-
 		return {
 			lineStyle,
 			capStyle,
