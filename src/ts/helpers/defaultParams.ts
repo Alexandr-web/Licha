@@ -20,6 +20,7 @@ const defaultParams: IDefaultParams = {
     grid: { format: "default", },
     legend: { place: "center", },
     fontFamily: "Arial",
+    typeChart: "line",
 };
 
 export default defaultParams;

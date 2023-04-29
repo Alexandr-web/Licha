@@ -661,3 +661,128 @@ new Sinera({
     },
 }).init();
 ```
+
+## Work 11
+
+<img src="./w11.PNG" />
+
+```js
+import { Sinera, Utils, } from "./Sinera";
+
+const utils = new Utils();
+
+window.addEventListener("load", () => {
+    new Sinera({
+        padding: 10,
+        selectorCanvas: "canvas",
+        background: utils.getColor("black"),
+        fontFamily: "Poppins",
+        legend: {
+            circle: { radius: 4, },
+            font: { color: utils.getColor("silver"), },
+            place: "left",
+            maxCount: 2,
+            gaps: {
+                circle: { right: 5, },
+                group: {
+                    right: 8,
+                    bottom: 5,
+                },
+                legend: { bottom: 10, },
+            },
+        },
+        title: {
+            font: {
+                color: utils.getColor("silver"),
+                text: "Chart title",
+            },
+            gaps: { bottom: 25, },
+        },
+        axisX: {
+            font: { color: utils.getColor("silver"), },
+            ignoreNames: (n, i) => i % 2 !== 0,
+            title: {
+                font: {
+                    color: utils.getColor("silver"),
+                    text: "Year",
+                },
+                gaps: { top: 15, },
+            },
+        },
+        axisY: {
+            font: { color: utils.getColor("silver"), },
+            place: "right",
+            step: 4,
+            title: {
+                font: {
+                    color: utils.getColor("silver"),
+                    text: "Percent",
+                },
+                gaps: { right: 15, },
+            },
+            editValue: (val) => val + "%",
+        },
+        grid: {
+            line: {
+                width: 0.5,
+                color: utils.getColor("onyx"),
+                stretch: true,
+            },
+        },
+        cap: {
+            format: "circle",
+            size: 5,
+            stroke: {
+                width: 2,
+                color: utils.getColor("black"),
+            },
+        },
+        data: {
+            "Red": {
+                line: {
+                    fill: utils.getColor("darkRed", 0.1),
+                    color: utils.getColor("darkRed"),
+                },
+                cap: { color: utils.getColor("darkRed"), },
+                data: [
+                    { name: 2010, value: 8, },
+                    { name: 2011, value: 14, },
+                    { name: 2012, value: 15.2321, },
+                    { name: 2013, value: 11.5142, },
+                    { name: 2014, value: 13, },
+                    { name: 2015, value: 12, },
+                    { name: 2016, value: 12.32131, },
+                    { name: 2017, value: 12.666, },
+                    { name: 2018, value: 11.4211, },
+                    { name: 2019, value: 19.321, },
+                    { name: 2020, value: 1.3222, },
+                    { name: 2021, value: 5.321, },
+                    { name: 2022, value: 19.332131, }
+                ],
+            },
+            "Coral": {
+                line: {
+                    fill: utils.getColor("coral", 0.1),
+                    color: utils.getColor("coral"),
+                },
+                cap: { color: utils.getColor("coral"), },
+                data: [
+                    { name: 2010, value: 0, },
+                    { name: 2011, value: 100, },
+                    { name: 2012, value: 88.321, },
+                    { name: 2013, value: 42.321, },
+                    { name: 2014, value: 45.321, },
+                    { name: 2015, value: 50.321, },
+                    { name: 2016, value: 19, },
+                    { name: 2017, value: 15.666, },
+                    { name: 2018, value: 11.4211, },
+                    { name: 2019, value: 52.321, },
+                    { name: 2020, value: 39.3222, },
+                    { name: 2021, value: 72.321, },
+                    { name: 2022, value: 93.332131, }
+                ],
+            },
+        },
+    }).init();
+});
+```

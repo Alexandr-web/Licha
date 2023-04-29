@@ -18,7 +18,7 @@ import { TEmptyObject, TLegendPlace, } from "../types/index";
 class Legend implements ILegendClass {
 	public readonly showLegend: boolean;
 	public readonly line: ILine;
-	public readonly font: IFont;
+	public readonly font?: IFont;
 	public readonly data: IData;
 	public readonly ctx: CanvasRenderingContext2D;
 	public readonly bounds: IBounds;
@@ -60,7 +60,7 @@ class Legend implements ILegendClass {
 		// Данные линии
 		this.line = line;
 		// Данные шрифта
-		this.font = font;
+		this.font = font || {};
 		// Содержит данные групп
 		this.data = data;
 		// Контекст элемента canvas
@@ -224,7 +224,7 @@ class Legend implements ILegendClass {
 	 */
 	private _getPosX(bounds: IBounds, gaps: IGaps, groups: Array<IItemLegend>, gapsCircleRight: number, index: number): number {
 		const { radius, } = this.circle;
-		const center: number = (bounds.width - (bounds.horizontal.start + gaps.left + radius)) / 2;
+		const center: number = bounds.width / 2;
 		const widthColumn: number = this._getWidthColumn(groups);
 		const currentGroup: IItemLegend = groups[index];
 		const prevGroups: Array<IItemLegend> = groups.filter((grp: IItemLegend, idx: number) => idx < index);
@@ -238,9 +238,9 @@ class Legend implements ILegendClass {
 			case "left":
 				return bounds.horizontal.start + gaps.left + horizontalDistanceLeft + gapsCircleRight + radius * 2;
 			case "center":
-				return bounds.horizontal.start + gaps.left + horizontalDistanceLeft + gapsCircleRight + center - widthColumn / 2;
+				return bounds.horizontal.start + horizontalDistanceLeft + gapsCircleRight + radius + center - widthColumn / 2;
 			case "right":
-				return (bounds.horizontal.end - currentGroup.width) - (horizontalDistanceRight + gapsCircleRight);
+				return bounds.horizontal.end - currentGroup.width - radius - horizontalDistanceRight;
 		}
 	}
 

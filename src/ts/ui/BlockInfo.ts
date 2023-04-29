@@ -119,8 +119,8 @@ class BlockInfo extends Element implements IBlockInfoClass {
 		return this.elements.map(({ group, value, color, }) => {
 			const correctGroupValue: string | number = this._getCorrectGroupValue(value);
 			const groupName = `${group}: ${correctGroupValue}`;
-			const { font: groupsFont, } = this.groupsData;
-			const { font: titleFont, } = this.titleData;
+			const { font: groupsFont = {}, } = this.groupsData;
+			const { font: titleFont = {}, } = this.titleData;
 			const { size: groupSize = defaultSizeText, weight: groupWeight = defaultWeightText, } = groupsFont;
 			const { size: titleSize = defaultSizeTitle, weight: titleWeight = defaultWeightTitle, } = titleFont;
 
@@ -240,7 +240,7 @@ class BlockInfo extends Element implements IBlockInfoClass {
 	 */
 	private _getTitleSize(): ISize {
 		const { size: defaultSize, weight: defaultWeight, } = defaultParams.titleFont;
-		const { font, } = this.titleData;
+		const { font = {}, } = this.titleData;
 		const { size = defaultSize, weight = defaultWeight, } = font;
 
 		return getTextSize(size, weight, this.title.toString(), this.ctx, this.fontFamily);
@@ -265,7 +265,7 @@ class BlockInfo extends Element implements IBlockInfoClass {
 		}
 
 		const { size: defaultSize, weight: defaultWeight, } = defaultParams.titleFont;
-		const { font: titleFont, } = this.titleData;
+		const { font: titleFont = {}, } = this.titleData;
 		const { size = defaultSize, color = this.themeForTitle.color, weight = defaultWeight, } = titleFont;
 		const font: ISpecialFontData = {
 			color,
@@ -308,7 +308,7 @@ class BlockInfo extends Element implements IBlockInfoClass {
 	 */
 	private _drawGroups(windowIsOutOfBounds: boolean, blockWidth: number): void {
 		const { size: defaultSize, weight: defaultWeight, } = defaultParams.textFont;
-		const { font: groupsFont, } = this.groupsData;
+		const { font: groupsFont = {}, } = this.groupsData;
 		const { size = defaultSize, weight = defaultWeight, color = this.themeForGroup.color, } = groupsFont;
 
 		this._getElementsWithSize().map(({ group, }, index: number) => {

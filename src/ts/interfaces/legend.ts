@@ -24,7 +24,7 @@ export interface ILegendEvents {
 
 export interface ILegend {
     readonly circle: ICircleLegend;
-    readonly font: IFont;
+    readonly font?: IFont;
     readonly gaps: ILegendGaps;
     readonly maxCount?: number;
     readonly events?: ILegendEvents | TEmptyObject;
@@ -41,7 +41,7 @@ export interface IItemLegend extends ISize, IPos, IColumnLegend { }
 export interface ILegendClass {
     readonly showLegend: boolean;
     readonly line: ILine;
-    readonly font: IFont;
+    readonly font?: IFont;
     readonly data: IData;
     readonly ctx: CanvasRenderingContext2D;
     readonly bounds: IBounds;

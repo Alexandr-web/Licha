@@ -1,4 +1,4 @@
-import { TAxisXPlace, TAxisYPlace, TGridFormat, TLegendPlace, TSort, } from "../types/index";
+import { TAxisXPlace, TAxisYPlace, TGridFormat, TLegendPlace, TSort, TTypeChart, } from "../types/index";
 
 export interface IPadding {
     top?: number;
@@ -62,4 +62,5 @@ export interface IDefaultParams {
     grid: { format: TGridFormat, };
     legend: { place: TLegendPlace, };
     fontFamily: string;
+    typeChart: TTypeChart;
 }
