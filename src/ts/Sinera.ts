@@ -75,7 +75,7 @@ class Sinera implements ISineraClass {
 		// Данные легенды
 		this.legend = legend;
 		// Тип диаграммы
-		this.type = type || "line";
+		this.type = type || defaultParams.typeChart;
 		// Данные задней сетки диаграммы
 		this.grid = grid;
 		// Данные линии
@@ -165,7 +165,6 @@ class Sinera implements ISineraClass {
 	 * Рисует заголовок на оси ординат
 	 * @param {ICanvasClass} canvas Экземпляр класса Canvas
 	 * @param {IChartClass} chart Экземпляр класса Chart
-	 * @param {ILegendClass} legend Экземпляр класса Legend
 	 * @private
 	 * @returns {IAxisYClass}
 	 */

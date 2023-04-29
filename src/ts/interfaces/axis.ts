@@ -39,7 +39,7 @@ export interface IAxesData {
 }
 
 export interface IAxis {
-    font: IFontAxis;
+    font?: IFontAxis;
     sort?: TSort;
 }
 

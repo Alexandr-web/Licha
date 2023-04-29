@@ -31,7 +31,7 @@ export interface IBlockInfoTheme {
 }
 
 export interface IGroupsBlockInfo {
-    font: IFont;
+    font?: IFont;
     gaps: IGaps;
 }
 
@@ -40,7 +40,7 @@ export interface IEventsBlockInfo {
 }
 
 export interface ITitleBlockInfo {
-    font: IFont;
+    font?: IFont;
     gaps: IGaps;
 }
 
