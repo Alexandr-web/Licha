@@ -118,7 +118,6 @@ class Sinera implements ISineraClass {
 	 */
 	private _setChartTitle(canvas: ICanvasClass): IChartClass {
 		const { width, height, } = canvas.getSizes();
-		const { title: axisYTitle, } = this.axisY;
 
 		return new Chart(
 			this.padding,
@@ -129,9 +128,7 @@ class Sinera implements ISineraClass {
 			this.type,
 			this.title,
 			this.fontFamily,
-			this.theme.title,
-			null,
-			axisYTitle
+			this.theme.title
 		).drawTitle();
 	}
 
@@ -145,7 +142,7 @@ class Sinera implements ISineraClass {
 	private _setLegend(canvas: ICanvasClass, chart: IChartClass): ILegendClass {
 		const { font, circle, gaps: legendGaps, maxCount, place, } = this.legend;
 		const showLegend = Boolean(Object.keys(this.legend).length);
-		const gaps: IGaps = chart.getGapsForLegend(this.axisY, chart.titleData);
+		const gaps: IGaps = chart.getGapsForLegend(chart.titleData);
 
 		return new Legend(
 			showLegend,

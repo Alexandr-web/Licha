@@ -12,7 +12,7 @@ import getMaxSizePoint from "../../helpers/getMaxSizePoint";
 import { TEmptyObject, TTypeChart, } from "../../types/index";
 
 import { IAxisX, IAxisXClass, IAxisXTitle, IAxisXTitleData, } from "../../interfaces/axisX";
-import { IAxisY, IAxisYClass, IAxisYTitle, IAxisYTitleData, } from "../../interfaces/axisY";
+import { IAxisYClass, IAxisYTitleData, } from "../../interfaces/axisY";
 import { IBounds, IPadding, IPos, ISize, IGaps, } from "../../interfaces/global";
 import { IChartClass, IChartTitle, IChartTitleData, ITitleTheme, } from "../../interfaces/chart";
 import { IData, } from "../../interfaces/data";
@@ -31,7 +31,6 @@ class Chart implements IChartClass {
 	public readonly hideGroups: Array<string>;
 	public readonly theme: ITitleTheme | TEmptyObject;
 	public readonly fontFamily: string;
-	public readonly axisYTitle: IAxisYTitle | TEmptyObject;
 	public titleData: IChartTitleData;
 
 	constructor(
@@ -44,11 +43,8 @@ class Chart implements IChartClass {
 		title: IChartTitle | TEmptyObject,
 		fontFamily: string,
 		theme: ITitleTheme | TEmptyObject = {},
-		hideGroups: Array<string> = [],
-		axisYTitle: IAxisYTitle | TEmptyObject = {}
+		hideGroups: Array<string> = []
 	) {
-		// Содержит данные заголовка оси ординат
-		this.axisYTitle = axisYTitle;
 		// Семейство шрифта
 		this.fontFamily = fontFamily;
 		// Содержит скрытые группы
@@ -121,18 +117,13 @@ class Chart implements IChartClass {
 	private _getPosXForTitle(sizes: ISize): number {
 		const bounds: IBounds = this.getBounds();
 		const { place: defaultPlace, } = defaultParams.chartTitle;
-		const { size: defaultSize, weight: defaultWeight, } = defaultParams.titleFont;
 		const { place = defaultPlace, } = this.title;
-		const { gaps: axisYTitleGaps = {}, font: axisYTitleFont = {}, } = this.axisYTitle;
-		const { size: axisYTitleSize = defaultSize, weight: axisYTitleWeight = defaultWeight, text, } = axisYTitleFont as IFontWithText;
-		const axisYTitleHeight: number = getTextSize(axisYTitleSize, axisYTitleWeight, text, this.ctx, this.fontFamily).height;
-		const axisYTitleGapRight: number = axisYTitleGaps.right || 0;
 		const startX: number = bounds.horizontal.start;
 		const endX: number = bounds.horizontal.end - sizes.width;
 
 		switch (place) {
 			case "left":
-				return startX + ifTrueThenOrElse("text" in axisYTitleFont, axisYTitleGapRight + axisYTitleHeight, 0);
+				return startX;
 			case "center":
 				return startX + (endX - startX) / 2;
 			case "right":
@@ -309,29 +300,16 @@ class Chart implements IChartClass {
 
 	/**
 	 * Определяет отступы для легенды
-	 * @param {IAxisY} axisY Содержит данные оси ординат
 	 * @param {IChartTitleData} chartTitle Содержит данные заголовка диаграммы
 	 * @returns {IGaps} Отступы
 	 */
-	public getGapsForLegend(axisY: IAxisY, chartTitle: IChartTitleData): IGaps {
-		const { size: defaultSize, weight: defaultWeight, } = defaultParams.titleFont;
-		// Заголовок оси ординат
-		const { title: axisYTitle = {}, } = axisY;
+	public getGapsForLegend(chartTitle: IChartTitleData): IGaps {
 		// Высота и отступы заголовка диаграммы
 		const { height: chartTitleHeight = 0, gaps: chartTitleGaps, } = chartTitle;
 		// Нижний отступ заголовка диаграммы
 		const { bottom: chartTitleGapBottom = 0, } = chartTitleGaps;
-		// Данные шрифта у заголовка оси ординат
-		const { font: axisYFont = {}, gaps: axisYGaps = {}, } = axisYTitle as IAxisYTitle;
-		// Размер, жирность и текст у заголовка оси ординат
-		const { size = defaultSize, weight = defaultWeight, text, } = axisYFont as IFontWithText;
-		// Высота заголовка оси ординат
-		const titleAxisYHeight: number = getTextSize(size, weight, text, this.ctx, this.fontFamily).height;
 
-		return {
-			top: chartTitleHeight + chartTitleGapBottom,
-			left: titleAxisYHeight + axisYGaps.right || 0,
-		};
+		return { top: chartTitleHeight + chartTitleGapBottom, };
 	}
 
 	/**
