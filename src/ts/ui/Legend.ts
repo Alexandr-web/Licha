@@ -240,7 +240,7 @@ class Legend implements ILegendClass {
 			case "center":
 				return bounds.horizontal.start + horizontalDistanceLeft + gapsCircleRight + radius + center - widthColumn / 2;
 			case "right":
-				return bounds.horizontal.end - currentGroup.width - radius - horizontalDistanceRight;
+				return bounds.horizontal.end - currentGroup.width - horizontalDistanceRight;
 		}
 	}
 

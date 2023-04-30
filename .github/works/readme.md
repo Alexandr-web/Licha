@@ -786,3 +786,114 @@ window.addEventListener("load", () => {
     }).init();
 });
 ```
+
+## Work 12
+
+<img src="./w12.PNG" />
+
+```js
+import { Sinera, Utils, } from "./Sinera";
+
+const utils = new Utils();
+
+window.addEventListener("load", () => {
+    new Sinera({
+        padding: 10,
+        selectorCanvas: "canvas",
+        theme: utils.getTheme(2, "light"),
+        fontFamily: "Poppins",
+        legend: {
+            circle: { radius: 4, },
+            place: "right",
+            maxCount: 3,
+            gaps: {
+                circle: { right: 5, },
+                group: {
+                    right: 8,
+                    bottom: 5,
+                },
+                legend: { bottom: 25, },
+            },
+        },
+        title: {
+            font: {
+                text: "Chart",
+                size: 20,
+                weight: 400,
+            },
+            gaps: { bottom: 10, },
+            place: "right",
+        },
+        axisX: {
+            font: { showText: true, },
+            sort: "more-less",
+            ignoreNames: (n, i) => i % 2 !== 0,
+        },
+        axisY: {
+            font: { showText: true, },
+            place: "right",
+            step: 4,
+            editValue: (val) => val + "%",
+        },
+        grid: { line: { width: 0.5, }, },
+        cap: {
+            format: "circle",
+            size: 5,
+            stroke: { width: 2, },
+        },
+        data: {
+            "Pink": {
+                data: [
+                    { name: 2010, value: 30, },
+                    { name: 2011, value: 40, },
+                    { name: 2012, value: 50, },
+                    { name: 2013, value: 50.5142, },
+                    { name: 2014, value: 60, },
+                    { name: 2015, value: 80, },
+                    { name: 2016, value: 15, },
+                    { name: 2017, value: 16, },
+                    { name: 2018, value: 17, },
+                    { name: 2019, value: 12.321, },
+                    { name: 2020, value: 11.3222, },
+                    { name: 2021, value: 50, },
+                    { name: 2022, value: 90.332131, }
+                ],
+            },
+            "Purple": {
+                data: [
+                    { name: 2010, value: 8, },
+                    { name: 2011, value: 14, },
+                    { name: 2012, value: 15.2321, },
+                    { name: 2013, value: 11.5142, },
+                    { name: 2014, value: 13, },
+                    { name: 2015, value: 12, },
+                    { name: 2016, value: 12.32131, },
+                    { name: 2017, value: 12.666, },
+                    { name: 2018, value: 11.4211, },
+                    { name: 2019, value: 19.321, },
+                    { name: 2020, value: 1.3222, },
+                    { name: 2021, value: 5.321, },
+                    { name: 2022, value: 19.332131, }
+                ],
+            },
+            "Blue": {
+                data: [
+                    { name: 2010, value: 0, },
+                    { name: 2011, value: 100, },
+                    { name: 2012, value: 88.321, },
+                    { name: 2013, value: 42.321, },
+                    { name: 2014, value: 45.321, },
+                    { name: 2015, value: 50.321, },
+                    { name: 2016, value: 19, },
+                    { name: 2017, value: 15.666, },
+                    { name: 2018, value: 11.4211, },
+                    { name: 2019, value: 52.321, },
+                    { name: 2020, value: 39.3222, },
+                    { name: 2021, value: 72.321, },
+                    { name: 2022, value: 93.332131, }
+                ],
+            },
+        },
+    }).init();
+});
+```
