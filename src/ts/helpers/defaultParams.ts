@@ -21,6 +21,7 @@ const defaultParams: IDefaultParams = {
     legend: { place: "center", },
     fontFamily: "Arial",
     typeChart: "line",
+    chartTitle: { place: "center", },
 };
 
 export default defaultParams;

@@ -29,6 +29,7 @@ class Chart implements IChartClass {
 	public readonly hideGroups: Array<string>;
 	public readonly theme: ITitleTheme | TEmptyObject;
 	public readonly fontFamily: string;
+	public readonly axisYTitle: IAxisYTitle | TEmptyObject;
 	public titleData: IChartTitleData;
 
 	constructor(
@@ -41,8 +42,11 @@ class Chart implements IChartClass {
 		title: IChartTitle | TEmptyObject,
 		fontFamily: string,
 		theme: ITitleTheme | TEmptyObject = {},
-		hideGroups: Array<string> = []
+		hideGroups: Array<string> = [],
+		axisYTitle: IAxisYTitle | TEmptyObject = {}
 	) {
+		// Содержит данные заголовка оси ординат
+		this.axisYTitle = axisYTitle;
 		// Семейство шрифта
 		this.fontFamily = fontFamily;
 		// Содержит скрытые группы
@@ -107,6 +111,33 @@ class Chart implements IChartClass {
 	}
 
 	/**
+	 * Определяет позицию заголовка по оси абсцисс
+	 * @param {ISize} sizes Размеры текста заголовка
+	 * @returns {number}
+	 */
+	private _getPosXForTitle(sizes: ISize): number {
+		const bounds: IBounds = this.getBounds();
+		const { place: defaultPlace, } = defaultParams.chartTitle;
+		const { size: defaultSize, weight: defaultWeight, } = defaultParams.titleFont;
+		const { place = defaultPlace, } = this.title;
+		const { gaps: axisYTitleGaps = {}, font: axisYTitleFont = {}, } = this.axisYTitle;
+		const { size: axisYTitleSize = defaultSize, weight: axisYTitleWeight = defaultWeight, text, } = axisYTitleFont as IFontWithText;
+		const axisYTitleHeight: number = getTextSize(axisYTitleSize, axisYTitleWeight, text, this.ctx, this.fontFamily).height;
+		const axisYTitleGapRight: number = axisYTitleGaps.right || 0;
+		const startX: number = bounds.horizontal.start;
+		const endX: number = bounds.horizontal.end - sizes.width;
+
+		switch (place) {
+			case "left":
+				return startX + ifTrueThenOrElse("text" in axisYTitleFont, axisYTitleGapRight + axisYTitleHeight, 0);
+			case "center":
+				return startX + (endX - startX) / 2;
+			case "right":
+				return endX;
+		}
+	}
+
+	/**
 	 * Рисует заголовок диаграммы
 	 * @returns {IChartClass}
 	 */
@@ -120,10 +151,8 @@ class Chart implements IChartClass {
 		const font: ISpecialFontData = { color, text, str: getTextStr(size, weight, this.fontFamily), };
 		const sizes: ISize = getTextSize(size, weight, text, this.ctx, this.fontFamily);
 		const bounds: IBounds = this.getBounds();
-		const startX: number = bounds.horizontal.start;
-		const endX: number = bounds.horizontal.end - sizes.width;
 		const posText: IPos = {
-			x: startX + (endX - startX) / 2,
+			x: this._getPosXForTitle(sizes),
 			y: bounds.vertical.start + sizes.height,
 		};
 

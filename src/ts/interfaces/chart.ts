@@ -1,10 +1,10 @@
-import { TCapType, TEmptyObject, TTypeChart, } from "../types/index";
+import { TCapType, TChartTitlePlace, TEmptyObject, TTypeChart, } from "../types/index";
 
 import { IStroke, ISize, IGaps, IPadding, IPos, IBounds, } from "./global";
 import { IChartLineStyle, } from "./lineChart";
 import { IFontWithText, } from "./text";
 import { IData, } from "./data";
-import { IAxisYClass, IAxisY, } from "./axisY";
+import { IAxisYClass, IAxisY, IAxisYTitle, } from "./axisY";
 import { IAxisXClass, } from "./axisX";
 import { ILegendData, } from "./legend";
 
@@ -24,6 +24,7 @@ export interface IChartStyle {
 export interface IChartTitle {
     font: IFontWithText;
     gaps: IGaps;
+    place?: TChartTitlePlace;
 }
 
 export interface ITitleTheme {
@@ -46,6 +47,7 @@ export interface IChartClass {
     readonly hideGroups: Array<string>;
     readonly theme: ITitleTheme | TEmptyObject;
     readonly fontFamily: string;
+    readonly axisYTitle: IAxisYTitle | TEmptyObject;
     titleData: IChartTitleData;
 
     getBounds(): IBounds;

@@ -52,7 +52,7 @@ class Sinera implements ISineraClass {
 	constructor({
 		selectorCanvas,
 		background,
-		type,
+		type = defaultParams.typeChart,
 		fontFamily = defaultParams.fontFamily,
 		title = {},
 		theme = {},
@@ -75,7 +75,7 @@ class Sinera implements ISineraClass {
 		// Данные легенды
 		this.legend = legend;
 		// Тип диаграммы
-		this.type = type || defaultParams.typeChart;
+		this.type = type;
 		// Данные задней сетки диаграммы
 		this.grid = grid;
 		// Данные линии
@@ -117,6 +117,7 @@ class Sinera implements ISineraClass {
 	 */
 	private _setChartTitle(canvas: ICanvasClass): IChartClass {
 		const { width, height, } = canvas.getSizes();
+		const { title: axisYTitle, } = this.axisY;
 
 		return new Chart(
 			this.padding,
@@ -127,7 +128,9 @@ class Sinera implements ISineraClass {
 			this.type,
 			this.title,
 			this.fontFamily,
-			this.theme.title
+			this.theme.title,
+			null,
+			axisYTitle
 		).drawTitle();
 	}
 
