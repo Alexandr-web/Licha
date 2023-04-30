@@ -130,6 +130,12 @@ Parameters passed to the Sinera class constructor
 
 #### Accepted parameters
 
+  * #### `place`
+
+    | Description  | Example | Type |
+    | ------------- | ------------- | ------------- |
+    | Title position ("left", "center", "right") | `title: { place: "right", }`  | `string` |
+
   * #### `font`
 
     | Description  | Example | Type |
