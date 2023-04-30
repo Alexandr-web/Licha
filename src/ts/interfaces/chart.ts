@@ -45,13 +45,12 @@ export interface IChartClass {
     readonly hideGroups: Array<string>;
     readonly theme: ITitleTheme | TEmptyObject;
     readonly fontFamily: string;
-    readonly axisYTitle: IAxisYTitle | TEmptyObject;
     titleData: IChartTitleData;
 
     getBounds(): IBounds;
     drawTitle(): IChartClass;
     getGapsForYPoints(axisY: IAxisYClass, axisX: IAxisXClass, chartTitle: IChartTitle, legend: ILegendData): IGaps;
     getGapsForXPoints(axisY: IAxisYClass, axisX: IAxisXClass, chart: IChartClass, legend: ILegendData): IGaps;
-    getGapsForLegend(axisY: IAxisY | TEmptyObject, chartTitle: IChartTitleData): IGaps;
+    getGapsForLegend(chartTitle: IChartTitleData): IGaps;
     getGapsForAxisYTitle(chartTitle: IChartTitleData, legend: ILegendClass, axisX: IAxisX, names: Array<string | number>): IGaps;
 }

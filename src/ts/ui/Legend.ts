@@ -216,14 +216,13 @@ class Legend implements ILegendClass {
 	/**
 	 * Определяет позицию текста на оси абсцисс
 	 * @param {IBounds} bounds Границы холста
-	 * @param {IGaps} gaps Отступы легенды
 	 * @param {Array<IItemLegend>} groups Содержит группы колонки
 	 * @param {number} gapsCircleRight Отступ справа у круга
 	 * @param {number} index Индекс текущей колонки
 	 * @private
 	 * @returns {number}
 	 */
-	private _getPosX(bounds: IBounds, gaps: IGaps, groups: Array<IItemLegend>, gapsCircleRight: number, index: number): number {
+	private _getPosX(bounds: IBounds, groups: Array<IItemLegend>, gapsCircleRight: number, index: number): number {
 		const { radius, } = this.circle;
 		const center: number = bounds.width / 2;
 		const widthColumn: number = this._getWidthColumn(groups);
@@ -237,9 +236,9 @@ class Legend implements ILegendClass {
 
 		switch (this.place) {
 			case "left":
-				return bounds.horizontal.start + gaps.left + horizontalDistanceLeft + gapsCircleRight + radius * 2;
+				return bounds.horizontal.start + horizontalDistanceLeft + gapsCircleRight + radius * 2;
 			case "center":
-				return bounds.horizontal.start + horizontalDistanceLeft + gapsCircleRight + radius + center - widthColumn / 2;
+				return bounds.horizontal.start + horizontalDistanceLeft + gapsCircleRight + center - widthColumn / 2;
 			case "right":
 				return bounds.horizontal.end - currentGroup.width - horizontalDistanceRight;
 		}
@@ -269,7 +268,7 @@ class Legend implements ILegendClass {
 		};
 
 		const posGroup: IPos = {
-			x: this._getPosX(bounds, gaps, groups, gapsCircle.right, index),
+			x: this._getPosX(bounds, groups, gapsCircle.right, index),
 			y: bounds.vertical.start + gaps.top + height,
 		};
 
