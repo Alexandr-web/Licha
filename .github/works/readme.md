@@ -789,7 +789,7 @@ window.addEventListener("load", () => {
 
 ## Work 12
 
-<img src="./w12.PNG" />
+<img src="./w12.png" />
 
 ```js
 import { Sinera, Utils, } from "./Sinera";
