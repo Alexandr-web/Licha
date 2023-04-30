@@ -352,19 +352,27 @@ class Chart implements IChartClass {
 		// Высота и отступы заголовка диаграммы
 		const { height: chartTitleHeight, gaps: chartTitleGaps = {}, } = chartTitle;
 		// Заголовок и данные шрифта оси абсцисс
-		const { title: axisXTitle = {}, font: axisXFont = {}, } = axisX;
+		const { title: axisXTitle = {}, font: axisXFont = {}, rotate: rotateAxisX, } = axisX;
+		// Правило, которое говорит, что текст на оси абсцисс будет отображен
+		const { showText: showTextAxisX = Boolean(Object.keys(axisXFont).length), } = axisXFont;
 		// Данные шрифта и отступы заголовка оси абсцисс
 		const { font: axisXTitleFont = {}, gaps: axisXTitleGaps = {}, } = axisXTitle as IAxisXTitle;
 		// Размер, жирность и текст заголовка оси абсцисс
 		const { size: axisXTitleSize = defaultTitleSize, weight: axisXTitleWeight = defaultTitleWeight, text, } = axisXTitleFont as IFontWithText;
 		// Высота заголовка оси абсцисс
 		const axisXTitleHeight: number = getTextSize(axisXTitleSize, axisXTitleWeight, text, this.ctx, this.fontFamily).height;
-		// Максимальная высота точки оси абсцисс
-		const maxHeightPointX: number = getMaxSizePoint(axisXFont, names, this.ctx, this.fontFamily, getCorrectName.bind(axisX)).height;
+		// Максимальная высота и ширина точки оси абсцисс
+		const { width: maxWidthPointX, height: maxHeightPointX, } = getMaxSizePoint(axisXFont, names, this.ctx, this.fontFamily, getCorrectName.bind(axisX));
+		// Сработает нижний отступ, если правило rotate будет ложным
+		const gapBottomIfRotateIsFalse: number = ifTrueThenOrElse([showTextAxisX, !rotateAxisX], defaultParams.gapTopAxisX + maxHeightPointX, 0);
+		// Сработает нижний отступ, если правило rotate будет правдивым
+		const gapBottomIfRotateIsTrue: number = ifTrueThenOrElse([showTextAxisX, rotateAxisX], defaultParams.gapTopAxisX + maxWidthPointX, 0);
+		// Сработает нижний отступ, если заголовок оси абсцисс существует
+		const gapBottomIfAxisXTitleExist: number = ifTrueThenOrElse("text" in axisXTitleFont, axisXTitleHeight + axisXTitleGaps.top || 0, 0);
 
 		return {
 			top: legendHeight + chartTitleHeight + (gapsLegend.bottom || 0) + (chartTitleGaps.bottom || 0),
-			bottom: axisXTitleHeight + defaultParams.gapTopAxisX + maxHeightPointX + (axisXTitleGaps.top || 0),
+			bottom: gapBottomIfRotateIsTrue + gapBottomIfRotateIsFalse + gapBottomIfAxisXTitleExist,
 		};
 	}
 }
