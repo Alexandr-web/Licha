@@ -1,4 +1,4 @@
-import { TEmptyObject, } from "../types/index";
+import { TEmptyObject, TUpdate, } from "../types/index";
 import { IAxisPoints, } from "./axis";
 import { IAxisX, } from "./axisX";
 import { IAxisY, } from "./axisY";
@@ -19,7 +19,7 @@ export interface IChartEventsClass {
     readonly data: IData;
     readonly legend?: ILegend | TEmptyObject;
     readonly sineraContext: ISineraClass;
-    readonly update: () => ISineraClass;
+    readonly update: TUpdate;
     readonly fontFamily: string;
 
     windowResize(): void;

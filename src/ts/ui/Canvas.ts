@@ -1,7 +1,7 @@
-import Rect from "./elements/Rect";
-
 import { ISize, } from "../interfaces/global";
 import { ICanvasClass, ICanvasTheme, IDefaultStylesForCanvasElement, } from "../interfaces/canvas";
+
+import Rect from "./elements/Rect";
 import { TEmptyObject, } from "../types/index";
 
 class Canvas implements ICanvasClass {

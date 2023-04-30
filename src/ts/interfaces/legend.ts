@@ -2,7 +2,7 @@ import { IFont, } from "./text";
 import { ISize, IPos, IBounds, IGaps, } from "./global";
 import { ILine, ILineTheme, } from "./line";
 import { IData, } from "./data";
-import { TEmptyObject, TLegendPlace, } from "../types/index";
+import { TEmptyObject, TLegendPlace, TOnClick, } from "../types/index";
 
 export interface ILegendTheme {
     readonly color: string;
@@ -19,7 +19,7 @@ export interface ILegendGaps {
 }
 
 export interface ILegendEvents {
-    onClick?: () => any;
+    onClick?: TOnClick;
 }
 
 export interface ILegend {

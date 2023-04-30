@@ -1,8 +1,8 @@
-import Element from "./Element";
-
 import { ILineTo, } from "../../interfaces/line";
 import { ICustomFigureClass, } from "../../interfaces/customFigure";
 import { IStroke, } from "../../interfaces/global";
+
+import Element from "./Element";
 import { TEmptyObject, } from "../../types/index";
 
 class CustomFigure extends Element implements ICustomFigureClass {

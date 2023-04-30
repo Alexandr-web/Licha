@@ -1,8 +1,8 @@
-import Element from "./Element";
-
 import { IStroke, } from "../../interfaces/global";
-import { TEmptyObject, } from "../../types/index";
 import { IRhombClass, } from "../../interfaces/rhomb";
+
+import Element from "./Element";
+import { TEmptyObject, } from "../../types/index";
 import getRadians from "../../helpers/getRadians";
 
 class Rhomb extends Element implements IRhombClass {

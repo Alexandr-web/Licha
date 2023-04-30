@@ -5,17 +5,16 @@ import { IBounds, IPos, } from "./interfaces/global";
 import { ILineTheme, } from "./interfaces/line";
 import { ICanvasClass, } from "./interfaces/canvas";
 import { IItemLegend, ILegend, ILegendClass, } from "./interfaces/legend";
-
-import BlockInfo from "./ui/BlockInfo";
-
-import isFunction from "./helpers/isFunction";
 import { ITheme, } from "./interfaces/utils";
 import { IData, } from "./interfaces/data";
-import { TEmptyObject, } from "./types/index";
 import { ISineraClass, } from "./interfaces/sinera";
 import { IAxisPoints, } from "./interfaces/axis";
 import { IChartClass, } from "./interfaces/chart";
 import { IChartEventsClass, } from "./interfaces/chartEvents";
+
+import BlockInfo from "./ui/BlockInfo";
+import { TEmptyObject, TUpdate, } from "./types/index";
+import isFunction from "./helpers/isFunction";
 
 class ChartEvents implements IChartEventsClass {
     public readonly blockInfo?: IBlockInfo | TEmptyObject;
@@ -25,13 +24,13 @@ class ChartEvents implements IChartEventsClass {
     public readonly data: IData;
     public readonly legend?: ILegend | TEmptyObject;
     public readonly sineraContext: ISineraClass;
-    public readonly update: () => ISineraClass;
+    public readonly update: TUpdate;
     public readonly fontFamily: string;
 
     constructor(
         data: IData,
         sineraContext: ISineraClass,
-        update: () => ISineraClass,
+        update: TUpdate,
         blockInfo: IBlockInfo | TEmptyObject,
         axisX: IAxisX | TEmptyObject,
         axisY: IAxisY | TEmptyObject,

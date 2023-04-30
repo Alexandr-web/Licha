@@ -3,7 +3,7 @@ import { IFontWithText, } from "./text";
 import { IPoint, IAxis, IAxisClass, } from "./axis";
 import { ILineTheme, ILine, } from "./line";
 import { IData, } from "./data";
-import { TAxisXPlace, } from "../types/index";
+import { TAxisXPlace, TEditName, TIgnoreNames, } from "../types/index";
 
 export interface IAxisXTitle {
     font: IFontWithText;
@@ -19,8 +19,8 @@ export interface IPointX extends IPoint {
 }
 
 export interface IAxisX extends IAxis {
-    readonly editName?: (name: number | string) => string;
-    readonly ignoreNames?: ((name: number | string, index: number) => boolean) | Array<string | number>;
+    readonly editName?: TEditName;
+    readonly ignoreNames?: TIgnoreNames;
     readonly title?: IAxisXTitle;
     readonly rotate?: boolean;
     readonly place?: TAxisXPlace;
@@ -28,9 +28,9 @@ export interface IAxisX extends IAxis {
 
 export interface IAxisXClass extends IAxisClass {
     readonly themeForLine: ILineTheme;
-    readonly ignoreNames?: Array<string | number> | ((name: string | number, index: number) => boolean);
+    readonly ignoreNames?: TIgnoreNames;
     readonly data: IData;
-    readonly editName?: (name: string | number) => string;
+    readonly editName?: TEditName;
     readonly line: ILine;
     readonly rotate?: boolean;
     readonly place?: TAxisXPlace;
@@ -39,7 +39,4 @@ export interface IAxisXClass extends IAxisClass {
     getIgnoreNames(): Array<string | number>;
     drawTitle(): IAxisXClass;
     drawPoints(gaps: IGaps): IAxisXClass;
-    getCorrectName(name: string | number): string | number;
-    getMaxWidthTextPoint(): number;
-    getMaxHeightTextPoint(): number;
 }

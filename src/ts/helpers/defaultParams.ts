@@ -9,6 +9,7 @@ const defaultParams: IDefaultParams = {
         size: 16,
         weight: 400,
     },
+    gapTopAxisX: 10,
     axisX: {
         sort: "less-more",
         place: "bottom",

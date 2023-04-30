@@ -3,7 +3,7 @@ import { IPos, IPadding, ISize, IBounds, IGaps, } from "./global";
 import { ILineTo, ILineTheme, } from "./line";
 import { IFont, } from "./text";
 import { IData, } from "./data";
-import { TEmptyObject, } from "../types/index";
+import { TEmptyObject, TEditName, TEditValue, TOnAimed, } from "../types/index";
 import { IElementClass, } from "./element";
 
 export interface IBlockInfoThemeWindow {
@@ -36,7 +36,7 @@ export interface IGroupsBlockInfo {
 }
 
 export interface IEventsBlockInfo {
-    onAimed?: () => any;
+    onAimed?: TOnAimed;
 }
 
 export interface ITitleBlockInfo {
@@ -73,8 +73,8 @@ export interface IBlockInfoElementWithSize {
 }
 
 export interface IBlockInfoClass extends IElementClass {
-    readonly editValue: (value: number) => string;
-    readonly editName: (name: number | string) => string;
+    readonly editValue: TEditValue;
+    readonly editName: TEditName;
     readonly data: IData;
     readonly bounds: IBounds;
     readonly elements: Array<IPointX>;

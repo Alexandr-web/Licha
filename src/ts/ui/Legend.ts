@@ -13,6 +13,7 @@ import { IData, } from "../interfaces/data";
 import { IColumnLegend, ILegendTheme, ILegendGaps, ICircleLegend, IItemLegend, ILegendClass, } from "../interfaces/legend";
 import { ILine, ILineTheme, } from "../interfaces/line";
 import { IFont, ISpecialFontData, } from "../interfaces/text";
+
 import { TEmptyObject, TLegendPlace, } from "../types/index";
 
 class Legend implements ILegendClass {

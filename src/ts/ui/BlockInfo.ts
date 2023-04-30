@@ -1,10 +1,10 @@
 import Element from "./elements/Element";
 import Rect from "./elements/Rect";
 import Text from "./elements/Text";
-import quickSort from "../helpers/quickSort";
 import Line from "./elements/Line";
 import CustomFigure from "./elements/CustomFigure";
 
+import quickSort from "../helpers/quickSort";
 import getTextSize from "../helpers/getTextSize";
 import getTextStr from "../helpers/getTextStr";
 import isNumber from "../helpers/isNumber";
@@ -18,12 +18,13 @@ import { ITitleBlockInfo, ITriangleData, IBlockInfoClass, IBlockInfoElementWithS
 import { ILinePos, ILineTheme, } from "../interfaces/line";
 import { IPadding, IPos, ISize, IBounds, } from "../interfaces/global";
 import { IData, } from "../interfaces/data";
-import { TEmptyObject, } from "../types/index";
 import { IPointX, } from "../interfaces/axisX";
 
+import { TEmptyObject, TEditValue, TEditName, } from "../types/index";
+
 class BlockInfo extends Element implements IBlockInfoClass {
-	public readonly editValue: (value: number) => string;
-	public readonly editName: (name: number | string) => string;
+	public readonly editValue: TEditValue;
+	public readonly editName: TEditName;
 	public readonly data: IData;
 	public readonly bounds: IBounds;
 	public readonly elements: Array<IPointX>;
@@ -40,8 +41,8 @@ class BlockInfo extends Element implements IBlockInfoClass {
 	public readonly fontFamily: string;
 
 	constructor(
-		editValue: (value: number) => string,
-		editName: (name: number | string) => string,
+		editValue: TEditValue,
+		editName: TEditName,
 		data: IData,
 		bounds: IBounds,
 		elements: Array<IPointX>,

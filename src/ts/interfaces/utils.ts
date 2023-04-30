@@ -1,4 +1,4 @@
-import { TEmptyObject, } from "../types/index";
+import { TEmptyObject, TColorFunc, } from "../types/index";
 
 import { ICanvasTheme, } from "./canvas";
 import { ITitleTheme, } from "./chart";
@@ -21,7 +21,7 @@ export interface ITheme {
 }
 
 export interface IColors {
-    [key: string]: (opacity?: number) => string;
+    [key: string]: TColorFunc;
 }
 
 export interface IThemes {
