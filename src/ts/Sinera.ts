@@ -5,6 +5,7 @@ import LineChart from "./ui/chart/LineChart";
 import Grid from "./ui/Grid";
 import AxisX from "./ui/axis/AxisX";
 import Legend from "./ui/Legend";
+import Axis from "./ui/axis/Axis";
 import Utils from "./Utils/Utils";
 import ChartEvents from "./ChartEvents";
 
@@ -18,18 +19,18 @@ import { IBlockInfo, } from "./interfaces/blockInfo";
 import { IGaps, IPadding, } from "./interfaces/global";
 import { ICanvasClass, } from "./interfaces/canvas";
 import { ICap, } from "./interfaces/cap";
-import { IChartClass, IChartTitle, IChartTitleWithSizeAndPos, } from "./interfaces/chart";
+import { IChartClass, IChartTitle, } from "./interfaces/chart";
 import { IData, } from "./interfaces/data";
 import { IGrid, IGridClass, } from "./interfaces/grid";
 import { ILegend, ILegendClass, ILegendData, } from "./interfaces/legend";
 import { ILine, ILineTheme, } from "./interfaces/line";
+import { IChartEventsClass, } from "./interfaces/chartEvents";
 import { ITheme, } from "./interfaces/utils";
-import defaultParams from "./helpers/defaultParams";
 
 import isNumber from "./helpers/isNumber";
 import getPaddingObj from "./helpers/getPaddingObj";
 import ifTrueThenOrElse from "./helpers/ifTrueThenOrElse";
-import { IChartEventsClass, } from "./interfaces/chartEvents";
+import defaultParams from "./helpers/defaultParams";
 
 class Sinera implements ISineraClass {
 	public readonly selectorCanvas: string;
@@ -144,7 +145,7 @@ class Sinera implements ISineraClass {
 	private _setLegend(canvas: ICanvasClass, chart: IChartClass): ILegendClass {
 		const { font, circle, gaps: legendGaps, maxCount, place, } = this.legend;
 		const showLegend = Boolean(Object.keys(this.legend).length);
-		const gaps: IGaps = chart.getGapsForLegend(this.axisY, chart.titleData as IChartTitleWithSizeAndPos);
+		const gaps: IGaps = chart.getGapsForLegend(this.axisY, chart.titleData);
 
 		return new Legend(
 			showLegend,
@@ -165,16 +166,20 @@ class Sinera implements ISineraClass {
 	}
 
 	/**
-	 * Рисует заголовок на оси ординат
+	 * Рисует заголовок оси ординат
 	 * @param {ICanvasClass} canvas Экземпляр класса Canvas
 	 * @param {IChartClass} chart Экземпляр класса Chart
+	 * @param {ILegendClass} legend Экземпляр класса Legend
 	 * @private
 	 * @returns {IAxisYClass}
 	 */
-	private _setAxisYTitle(canvas: ICanvasClass, chart: IChartClass): IAxisYClass {
+	private _setAxisYTitle(canvas: ICanvasClass, chart: IChartClass, legend: ILegendClass): IAxisYClass {
 		const { place, step, editValue, title, font, sort, } = this.axisY;
 		const themeForTitle: IAxisThemeTitle = (this.theme.axis || {}).title;
 		const themeForPoint: IAxisThemePoint = (this.theme.axis || {}).point;
+		const { sort: sortNames, } = this.axisX;
+		const names: Array<string | number> = new Axis(canvas.ctx, sortNames, chart.getBounds(), this.fontFamily).getAxesData(this.data).names;
+		const gaps: IGaps = chart.getGapsForAxisYTitle(chart.titleData, legend, this.axisX, names);
 
 		return new AxisY(
 			editValue,
@@ -190,7 +195,7 @@ class Sinera implements ISineraClass {
 			this.fontFamily,
 			place,
 			step
-		).drawTitle();
+		).drawTitle(gaps);
 	}
 
 	/**
@@ -306,7 +311,7 @@ class Sinera implements ISineraClass {
 		const canvas: ICanvasClass = this._setCanvas();
 		const chart: IChartClass = this._setChartTitle(canvas);
 		const legend: ILegendClass = this._setLegend(canvas, chart);
-		const axisY: IAxisYClass = this._setAxisYTitle(canvas, chart);
+		const axisY: IAxisYClass = this._setAxisYTitle(canvas, chart, legend);
 		const axisX: IAxisXClass = this._setAxisXTitle(canvas, chart);
 
 		this._setPoints(axisY, axisX, legend, chart);
@@ -321,7 +326,7 @@ class Sinera implements ISineraClass {
 		const canvas: ICanvasClass = this._setCanvas();
 		const chart: IChartClass = this._setChartTitle(canvas);
 		const legend: ILegendClass = this._setLegend(canvas, chart);
-		const axisY: IAxisYClass = this._setAxisYTitle(canvas, chart);
+		const axisY: IAxisYClass = this._setAxisYTitle(canvas, chart, legend);
 		const axisX: IAxisXClass = this._setAxisXTitle(canvas, chart);
 		const points: IAxisPoints = this._setPoints(axisY, axisX, legend, chart);
 		const chartEvents: IChartEventsClass = new ChartEvents(this.data, this, this.update, this.blockInfo, this.axisX, this.axisY, this.theme, this.legend, this.fontFamily);

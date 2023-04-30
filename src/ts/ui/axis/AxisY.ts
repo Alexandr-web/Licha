@@ -1,5 +1,6 @@
 import Axis from "./Axis";
 import Text from "../elements/Text";
+import { TAxisYPlace, TEmptyObject, TSort, TEditValue, } from "../../types/index";
 
 import getTextSize from "../../helpers/getTextSize";
 import getRange from "../../helpers/getRange";
@@ -10,8 +11,6 @@ import ifTrueThenOrElse from "../../helpers/ifTrueThenOrElse";
 import getRadians from "../../helpers/getRadians";
 import defaultParams from "../../helpers/defaultParams";
 
-import { TAxisYPlace, TEmptyObject, TSort, } from "../../types/index";
-
 import { ISpecialFontData, } from "../../interfaces/text";
 import { IBounds, ISize, IGaps, IPos, } from "../../interfaces/global";
 import { IData, } from "../../interfaces/data";
@@ -20,14 +19,14 @@ import { IFontAxis, IAxisThemePoint, IAxisThemeTitle, } from "../../interfaces/a
 
 class AxisY extends Axis implements IAxisYClass {
 	public readonly step?: number;
-	public readonly editValue?: (value: number) => string | number;
+	public readonly editValue?: TEditValue;
 	public readonly data: IData;
 	public readonly sortValues?: TSort;
 	public readonly place?: TAxisYPlace;
 	public titleData?: IAxisYTitleData;
 
 	constructor(
-		editValue: (value: number) => string | number,
+		editValue: TEditValue,
 		data: IData,
 		ctx: CanvasRenderingContext2D,
 		title: IAxisYTitle | TEmptyObject,
@@ -81,9 +80,10 @@ class AxisY extends Axis implements IAxisYClass {
 
 	/**
 	 * Рисует заголовок на оси ординат
+	 * @param {IGaps} gaps Отступы заголовка
 	 * @returns {IAxisYClass}
 	 */
-	public drawTitle(): IAxisYClass {
+	public drawTitle(gaps: IGaps): IAxisYClass {
 		if (!Object.keys(this.title).length) {
 			return this;
 		}
@@ -99,8 +99,8 @@ class AxisY extends Axis implements IAxisYClass {
 		};
 
 		const sizes: ISize = getTextSize(size, weight, text, this.ctx, this.fontFamily);
-		const startY: number = bounds.vertical.start + sizes.width;
-		const endY: number = bounds.vertical.end;
+		const startY: number = bounds.vertical.start + sizes.width + gaps.top;
+		const endY: number = bounds.vertical.end - gaps.bottom;
 		const posTitle: IPos = {
 			x: bounds.horizontal.start + sizes.height,
 			y: startY + (endY - startY) / 2,

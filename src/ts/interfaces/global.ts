@@ -63,5 +63,6 @@ export interface IDefaultParams {
     legend: { place: TLegendPlace, };
     fontFamily: string;
     typeChart: TTypeChart;
+    gapTopAxisX: number;
     chartTitle: { place: TChartTitlePlace, };
 }

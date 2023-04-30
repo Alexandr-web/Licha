@@ -54,7 +54,7 @@ class Axis implements IAxisClass {
     // Содержит уникальные значения точек оси ординат
     this.uniqueValues = [];
     // Дистанция между осью абсцисс и графиком
-    this.gapTopAxisX = 10;
+    this.gapTopAxisX = defaultParams.gapTopAxisX;
     // Дистанция между осью ординат и графиком
     this.gapRightAxisY = 10;
     // Стили для точек от темы

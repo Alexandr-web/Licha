@@ -1,7 +1,7 @@
-import Element from "./Element";
-
 import { IStroke, } from "../../interfaces/global";
 import { IRectClass, } from "../../interfaces/rect";
+
+import Element from "./Element";
 import { TEmptyObject, } from "../../types/index";
 
 class Rect extends Element implements IRectClass {

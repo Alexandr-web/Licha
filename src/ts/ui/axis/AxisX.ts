@@ -1,13 +1,14 @@
 import Axis from "./Axis";
 import Text from "../elements/Text";
+import { TAxisXPlace, TEmptyObject, TSort, TIgnoreNames, TEditName, TIgnoreNamesFunc, } from "../../types/index";
 
 import getTextSize from "../../helpers/getTextSize";
 import getStyleByIndex from "../../helpers/getStyleByIndex";
 import getTextStr from "../../helpers/getTextStr";
 import isFunction from "../../helpers/isFunction";
 import defaultParams from "../../helpers/defaultParams";
-
-import { TAxisXPlace, TEmptyObject, TSort, } from "../../types/index";
+import getCorrectName from "../../helpers/getCorrectName";
+import getRadians from "../../helpers/getRadians";
 
 import { ISpecialFontData, } from "../../interfaces/text";
 import { IAxisXTitle, IAxisXClass, IAxisXTitleData, } from "../../interfaces/axisX";
@@ -16,13 +17,12 @@ import { IData, IDataAtItemData, } from "../../interfaces/data";
 import { ILine, ILineTheme, } from "../../interfaces/line";
 import { IAxisYTitle, } from "../../interfaces/axisY";
 import { IAxisThemePoint, IAxisThemeTitle, IFontAxis, } from "../../interfaces/axis";
-import getRadians from "../../helpers/getRadians";
 
 class AxisX extends Axis implements IAxisXClass {
 	public readonly themeForLine: ILineTheme | TEmptyObject;
-	public readonly ignoreNames?: Array<string | number> | ((name: string, index: number) => boolean);
+	public readonly ignoreNames?: TIgnoreNames;
 	public readonly data: IData;
-	public readonly editName?: (name: string | number) => string;
+	public readonly editName?: TEditName;
 	public readonly line: ILine;
 	public readonly rotate?: boolean;
 	public readonly place?: TAxisXPlace;
@@ -35,12 +35,12 @@ class AxisX extends Axis implements IAxisXClass {
 		title: IAxisYTitle | IAxisXTitle | TEmptyObject,
 		bounds: IBounds,
 		font: IFontAxis | TEmptyObject,
-		editName: (name: string | number) => string,
+		editName: TEditName,
 		sortNames: TSort,
 		rotate: boolean,
 		themeForTitle: IAxisThemeTitle | TEmptyObject,
 		themeForPoint: IAxisThemePoint | TEmptyObject,
-		ignoreNames: Array<string | number> | ((name: string, index: number) => boolean),
+		ignoreNames: TIgnoreNames,
 		place: TAxisXPlace,
 		fontFamily: string,
 		themeForLine: ILineTheme | TEmptyObject = {}
@@ -86,7 +86,7 @@ class AxisX extends Axis implements IAxisXClass {
 	 */
 	public getIgnoreNames(): Array<string | number> {
 		if (isFunction(this.ignoreNames)) {
-			return this.getAxesData(this.data).names.filter(this.ignoreNames as (name: string, index: number) => boolean);
+			return this.getAxesData(this.data).names.filter(this.ignoreNames as TIgnoreNamesFunc);
 		}
 
 		if (Array.isArray(this.ignoreNames)) {
@@ -140,15 +140,6 @@ class AxisX extends Axis implements IAxisXClass {
 	}
 
 	/**
-	 * Определяет название точки на оси абсцисс
-	 * @param {string | number} name Название точки
-	 * @returns {string | number} Корректное название точки
-	 */
-	public getCorrectName(name: string | number): string | number {
-		return isFunction(this.editName) ? this.editName(name) : name;
-	}
-
-	/**
 	 * Заполняет массив points данными точек оси абсцисс
 	 * @param {Array<string | number>} ignoreNames Содержит названия точек, которые не нужно рисовать
 	 * @param {IPos} posXItem Содержит позицию точки оси абсцисс
@@ -199,7 +190,7 @@ class AxisX extends Axis implements IAxisXClass {
 				...this.font,
 				color,
 				str: getTextStr(size, weight, this.fontFamily),
-				text: this.getCorrectName(name).toString(),
+				text: getCorrectName.call(this, name).toString(),
 			};
 
 			if (this.rotate) {
@@ -264,7 +255,7 @@ class AxisX extends Axis implements IAxisXClass {
 			// Шаг, с которым отрисовываем элементы
 			const step: number = endPoint / (names.length - 1);
 			// Содержит размеры названия точки
-			const nameSizes: ISize = getTextSize(size, weight, `${this.getCorrectName(name)}`, this.ctx, this.fontFamily);
+			const nameSizes: ISize = getTextSize(size, weight, getCorrectName.call(this, name).toString(), this.ctx, this.fontFamily);
 			// Координаты элемента для отрисовки
 			const posXItem: IPos = {
 				x: step * index + startPoint,
@@ -279,32 +270,6 @@ class AxisX extends Axis implements IAxisXClass {
 		});
 
 		return this;
-	}
-
-	/**
-	 * Определяет наибольшую ширину текста среди точек оси абсцисс
-	 * @returns {number}
-	 */
-	public getMaxWidthTextPoint(): number {
-		const names: Array<string | number> = this.getAxesData(this.data).names;
-		const { size: defaultSize, weight: defaultWeight, } = defaultParams.textFont;
-		const { size = defaultSize, weight = defaultWeight, } = this.font;
-		const widths: Array<number> = names.map((name: string | number) => getTextSize(size, weight, `${this.getCorrectName(name)}`, this.ctx, this.fontFamily).width);
-
-		return Math.max(...widths);
-	}
-
-	/**
-	 * Определяет наибольшую ширину текста среди точек оси абсцисс
-	 * @returns {number}
-	 */
-	public getMaxHeightTextPoint(): number {
-		const names: Array<string | number> = this.getAxesData(this.data).names;
-		const { size: defaultSize, weight: defaultWeight, } = defaultParams.textFont;
-		const { size = defaultSize, weight = defaultWeight, } = this.font;
-		const heights: Array<number> = names.map((name: string | number) => getTextSize(size, weight, `${this.getCorrectName(name)}`, this.ctx, this.fontFamily).height);
-
-		return Math.max(...heights);
 	}
 }
 

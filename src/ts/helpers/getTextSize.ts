@@ -1,7 +1,7 @@
 import { ISpecialFontData, } from "../interfaces/text";
 import { ISize, } from "../interfaces/global";
-import Text from "../ui/elements/Text";
 
+import Text from "../ui/elements/Text";
 import getTextStr from "./getTextStr";
 
 /**

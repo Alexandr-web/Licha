@@ -1,7 +1,5 @@
 import Element from "./Element";
-
 import ifTrueThenOrElse from "../../helpers/ifTrueThenOrElse";
-
 import { ILineClass, ILineTo, } from "../../interfaces/line";
 
 class Line extends Element implements ILineClass {

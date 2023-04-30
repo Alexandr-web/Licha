@@ -3,9 +3,7 @@ import dark from "./themes/dark";
 import colors from "./colors";
 
 import { TEmptyObject, } from "../types/index";
-
 import { IColors, ITheme, IThemes, IUtilsClass, } from "../interfaces/utils";
-
 import isFunction from "../helpers/isFunction";
 
 class Utils implements IUtilsClass {
