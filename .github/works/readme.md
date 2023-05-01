@@ -12,11 +12,11 @@
 <img src="./w1.PNG" />
 
 ```js
-import { Sinera, Utils, } from "./Sinera";
+import { Licha, Utils, } from "./Licha";
 
 const utils = new Utils();
 
-new Sinera({
+new Licha({
     theme: utils.getTheme(11),
     padding: 10,
     selectorCanvas: "canvas",
@@ -59,11 +59,11 @@ new Sinera({
 <img src="./w2.PNG" />
 
 ```js
-import { Sinera, Utils, } from "./Sinera";
+import { Licha, Utils, } from "./Licha";
 
 const utils = new Utils();
 
-new Sinera({
+new Licha({
     theme: utils.getTheme(12),
     padding: 10,
     selectorCanvas: "canvas",
@@ -119,11 +119,11 @@ new Sinera({
 <img src="./w3.PNG" />
 
 ```js
-import { Sinera, Utils, } from "./Sinera";
+import { Licha, Utils, } from "./Licha";
 
 const utils = new Utils();
 
-new Sinera({
+new Licha({
     padding: 10,
     selectorCanvas: "canvas",
     background: "#1F212E",
@@ -153,11 +153,11 @@ new Sinera({
 <img src="./w4.PNG" />
 
 ```js
-import { Sinera, Utils, } from "./Sinera";
+import { Licha, Utils, } from "./Licha";
 
 const utils = new Utils();
 
-new Sinera({
+new Licha({
     padding: 10,
     selectorCanvas: "canvas",
     background: "#ffffff",
@@ -219,11 +219,11 @@ new Sinera({
 <img src="./w5.PNG" />
 
 ```js
-import { Sinera, Utils, } from "./Sinera";
+import { Licha, Utils, } from "./Licha";
 
 const utils = new Utils();
 
-new Sinera({
+new Licha({
     padding: 10,
     selectorCanvas: "canvas",
     background: "white",
@@ -279,11 +279,11 @@ new Sinera({
 <img src="./w6.PNG" />
 
 ```js
-import { Sinera, Utils, } from "./Sinera";
+import { Licha, Utils, } from "./Licha";
 
 const utils = new Utils();
 
-new Sinera({
+new Licha({
     padding: 10,
     selectorCanvas: "canvas",
     background: "white",
@@ -379,11 +379,11 @@ new Sinera({
 <img src="./w7.PNG" />
 
 ```js
-import { Sinera, Utils, } from "./Sinera";
+import { Licha, Utils, } from "./Licha";
 
 const utils = new Utils();
 
-new Sinera({
+new Licha({
     padding: 10,
     selectorCanvas: "canvas",
     background: "white",
@@ -424,9 +424,9 @@ new Sinera({
 <img src="./w8.PNG" />
 
 ```js
-import { Sinera, } from "./Sinera";
+import { Licha, } from "./Licha";
 
-new Sinera({
+new Licha({
     padding: 10,
     selectorCanvas: "canvas",
     background: ["#262B62", "#11132C"],
@@ -511,9 +511,9 @@ new Sinera({
 <img src="./w9.PNG" />
 
 ```js
-import { Sinera, } from "./Sinera";
+import { Licha, } from "./Licha";
 
-new Sinera({
+new Licha({
     padding: 10,
     selectorCanvas: "canvas",
     background: "#002C63",
@@ -571,9 +571,9 @@ new Sinera({
 <img src="./w10.PNG" />
 
 ```js
-import { Sinera, } from "./Sinera";
+import { Licha, } from "./Licha";
 
-new Sinera({
+new Licha({
     padding: 10,
     selectorCanvas: "canvas",
     background: "#262626",
@@ -667,11 +667,11 @@ new Sinera({
 <img src="./w11.PNG" />
 
 ```js
-import { Sinera, Utils, } from "./Sinera";
+import { Licha, Utils, } from "./Licha";
 
 const utils = new Utils();
 
-new Sinera({
+new Licha({
     padding: 10,
     selectorCanvas: "canvas",
     background: utils.getColor("black"),
@@ -790,11 +790,11 @@ new Sinera({
 <img src="./w12.png" />
 
 ```js
-import { Sinera, Utils, } from "./Sinera";
+import { Licha, Utils, } from "./Licha";
 
 const utils = new Utils();
 
-new Sinera({
+new Licha({
     padding: 10,
     selectorCanvas: "canvas",
     theme: utils.getTheme(2, "light"),

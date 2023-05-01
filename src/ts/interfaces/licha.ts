@@ -11,7 +11,7 @@ import { ILegend, } from "./legend";
 import { IPadding, } from "./global";
 import { IBlockInfo, } from "./blockInfo";
 
-export interface ISineraConstructor {
+export interface ILichaConstructor {
     readonly selectorCanvas: string;
     readonly background?: string | Array<string>;
     readonly title?: IChartTitle | TEmptyObject;
@@ -30,7 +30,7 @@ export interface ISineraConstructor {
     readonly fontFamily?: string;
 }
 
-export interface ISineraClass extends ISineraConstructor {
-    update(): ISineraClass;
-    init(): ISineraClass;
+export interface ILichaClass extends ILichaConstructor {
+    update(): ILichaClass;
+    init(): ILichaClass;
 }

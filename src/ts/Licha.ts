@@ -11,7 +11,7 @@ import ChartEvents from "./ChartEvents";
 
 import { TEmptyObject, TTypeChart, } from "./types/index";
 
-import { ISineraClass, ISineraConstructor, } from "./interfaces/sinera";
+import { ILichaClass, ILichaConstructor, } from "./interfaces/licha";
 import { IAxisPoints, IAxisThemePoint, IAxisThemeTitle, } from "./interfaces/axis";
 import { IAxisX, IAxisXClass, IPointX, } from "./interfaces/axisX";
 import { IAxisY, IAxisYClass, IPointY, } from "./interfaces/axisY";
@@ -32,7 +32,7 @@ import getPaddingObj from "./helpers/getPaddingObj";
 import ifTrueThenOrElse from "./helpers/ifTrueThenOrElse";
 import defaultParams from "./helpers/defaultParams";
 
-class Sinera implements ISineraClass {
+class Licha implements ILichaClass {
 	public readonly selectorCanvas: string;
 	public readonly background?: string | Array<string>;
 	public readonly title?: IChartTitle | TEmptyObject;
@@ -66,7 +66,7 @@ class Sinera implements ISineraClass {
 		legend = {},
 		blockInfo = {},
 		padding = 10,
-	}: ISineraConstructor) {
+	}: ILichaConstructor) {
 		// Семейство шрифтов
 		this.fontFamily = fontFamily;
 		// Внутренние отступы
@@ -304,7 +304,7 @@ class Sinera implements ISineraClass {
 	}
 
 	// Обновление данных диаграммы
-	public update(): ISineraClass {
+	public update(): ILichaClass {
 		const canvas: ICanvasClass = this._setCanvas();
 		const chart: IChartClass = this._setChartTitle(canvas);
 		const legend: ILegendClass = this._setLegend(canvas, chart);
@@ -319,7 +319,7 @@ class Sinera implements ISineraClass {
 	}
 
 	// Рисует диаграмму
-	public init(): ISineraClass {
+	public init(): ILichaClass {
 		const canvas: ICanvasClass = this._setCanvas();
 		const chart: IChartClass = this._setChartTitle(canvas);
 		const legend: ILegendClass = this._setLegend(canvas, chart);
@@ -337,4 +337,4 @@ class Sinera implements ISineraClass {
 	}
 }
 
-export { Utils, Sinera, };
+export { Utils, Licha, };

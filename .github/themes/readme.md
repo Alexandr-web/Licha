@@ -7,19 +7,19 @@
   </p>
 </div>
 
-* [Dark](https://github.com/Alexandr-web/Sinera/blob/master/.github/themes/readme.md#dark)
-* [Light](https://github.com/Alexandr-web/Sinera/blob/master/.github/themes/readme.md#light)
+* [Dark](https://github.com/Alexandr-web/Licha/blob/master/.github/themes/readme.md#dark)
+* [Light](https://github.com/Alexandr-web/Licha/blob/master/.github/themes/readme.md#light)
 
 
 We will take this piece of code as a basis, we will only change the parameters of the getTheme method
 
 ```js
-import { Sinera, Utils, } from "./Sinera";
+import { Licha, Utils, } from "./Licha";
 
 const utils = new Utils();
 
 window.addEventListener("load", () => {
-    new Sinera({
+    new Licha({
         selectorCanvas: "canvas",
         theme: utils.getTheme(/** Will only change here */),
         fontFamily: "Poppins",

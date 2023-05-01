@@ -8,7 +8,7 @@ import { IChartClass, } from "./chart";
 import { IData, } from "./data";
 import { IBounds, } from "./global";
 import { IItemLegend, ILegend, ILegendClass, } from "./legend";
-import { ISineraClass, } from "./sinera";
+import { ILichaClass, } from "./licha";
 import { ITheme, } from "./utils";
 
 export interface IChartEventsClass {
@@ -18,7 +18,7 @@ export interface IChartEventsClass {
     readonly theme?: ITheme | TEmptyObject;
     readonly data: IData;
     readonly legend?: ILegend | TEmptyObject;
-    readonly sineraContext: ISineraClass;
+    readonly lichaContext: ILichaClass;
     readonly update: TUpdate;
     readonly fontFamily: string;
 

@@ -6,10 +6,10 @@ module.exports = {
   entry: path.resolve(__dirname, "src/ts/index.ts"),
   mode: "development",
   output: {
-    filename: "Sinera.js",
+    filename: "Licha.js",
     path: path.resolve(__dirname, "dist"),
     libraryTarget: "umd",
-    library: "Sinera",
+    library: "Licha",
   },
   plugins: [
     new HtmlWebpackPlugin({ template: path.resolve(__dirname, "src/index.html"), }),
