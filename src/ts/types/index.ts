@@ -1,4 +1,4 @@
-import { ISineraClass, } from "../interfaces/sinera";
+import { ILichaClass, } from "../interfaces/licha";
 
 export type TGridFormat = "vertical" | "horizontal" | "default";
 export type TCapType = "square" | "circle" | "rhomb" | "triangle";
@@ -10,7 +10,7 @@ export type TAxisXPlace = "top" | "bottom";
 export type TAxisYPlace = "right" | "left";
 export type TLegendPlace = "left" | "center" | "right";
 export type TChartTitlePlace = "left" | "center" | "right";
-export type TUpdate = () => ISineraClass;
+export type TUpdate = () => ILichaClass;
 export type TEditValue = (value: number) => string;
 export type TEditName = (name: number | string) => string;
 export type TIgnoreNamesFunc = (name: string, index: number) => boolean;

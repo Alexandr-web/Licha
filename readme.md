@@ -1,27 +1,27 @@
 <div align="center">
   <h1>
-    <b>Sinera</b>
+    <b>Licha</b>
   </h1>
   <p>
-    Sinera is a JavaScript project that will help you build a line chart
+    Licha is a JavaScript project that will help you build a line chart
   </p>
 </div>
 
-* [Usage](https://github.com/Alexandr-web/Sinera#usage)
-* [Params](https://github.com/Alexandr-web/Sinera#params)
-* [Utils](https://github.com/Alexandr-web/Sinera#utils)
-* [Works](https://github.com/Alexandr-web/Sinera/blob/master/.github/works/readme.md)
+* [Usage](https://github.com/Alexandr-web/Licha#usage)
+* [Params](https://github.com/Alexandr-web/Licha#params)
+* [Utils](https://github.com/Alexandr-web/Licha#utils)
+* [Works](https://github.com/Alexandr-web/Licha/blob/master/.github/works/readme.md)
 
 ## Usage
 
 How to use this tool?
 
 ```js
-import { Sinera, Utils, } from "./dist/Sinera.js";
+import { Licha, Utils, } from "./dist/Licha.js";
 
 const utils = new Utils();
 
-new Sinera({
+new Licha({
     theme: utils.getTheme(0, "light"),
     padding: 10,
     selectorCanvas: "canvas",
@@ -49,23 +49,23 @@ new Sinera({
 
 ## Params
 
-Parameters passed to the Sinera class constructor
+Parameters passed to the Licha class constructor
 
-* [selectorCanvas](https://github.com/Alexandr-web/Sinera#selectorcanvas)
-* [fontFamily](https://github.com/Alexandr-web/Sinera#fontfamily)
-* [background](https://github.com/Alexandr-web/Sinera#background)
-* [padding](https://github.com/Alexandr-web/Sinera#padding)
-* [type](https://github.com/Alexandr-web/Sinera#type)
-* [title](https://github.com/Alexandr-web/Sinera#title)
-* [axisY](https://github.com/Alexandr-web/Sinera#axisy)
-* [axisX](https://github.com/Alexandr-web/Sinera#axisx)
-* [line](https://github.com/Alexandr-web/Sinera#line)
-* [cap](https://github.com/Alexandr-web/Sinera#cap)
-* [grid](https://github.com/Alexandr-web/Sinera#grid)
-* [legend](https://github.com/Alexandr-web/Sinera#legend)
-* [blockInfo](https://github.com/Alexandr-web/Sinera#blockinfo)
-* [data](https://github.com/Alexandr-web/Sinera#data)
-* [theme](https://github.com/Alexandr-web/Sinera#theme)
+* [selectorCanvas](https://github.com/Alexandr-web/Licha#selectorcanvas)
+* [fontFamily](https://github.com/Alexandr-web/Licha#fontfamily)
+* [background](https://github.com/Alexandr-web/Licha#background)
+* [padding](https://github.com/Alexandr-web/Licha#padding)
+* [type](https://github.com/Alexandr-web/Licha#type)
+* [title](https://github.com/Alexandr-web/Licha#title)
+* [axisY](https://github.com/Alexandr-web/Licha#axisy)
+* [axisX](https://github.com/Alexandr-web/Licha#axisx)
+* [line](https://github.com/Alexandr-web/Licha#line)
+* [cap](https://github.com/Alexandr-web/Licha#cap)
+* [grid](https://github.com/Alexandr-web/Licha#grid)
+* [legend](https://github.com/Alexandr-web/Licha#legend)
+* [blockInfo](https://github.com/Alexandr-web/Licha#blockinfo)
+* [data](https://github.com/Alexandr-web/Licha#data)
+* [theme](https://github.com/Alexandr-web/Licha#theme)
 
 ### `selectorCanvas`
 
@@ -978,29 +978,29 @@ Parameters passed to the Sinera class constructor
 
 | Description  | Example | Type |
 | ------------- | ------------- | ------------- |
-| Accepts a data object belonging to the same theme. [More](https://github.com/Alexandr-web/Sinera#utils) | `theme: new Utils(0, "light")`  | `object` |
+| Accepts a data object belonging to the same theme. [More](https://github.com/Alexandr-web/Licha#utils) | `theme: new Utils(0, "light")`  | `object` |
 
 ## Utils
 
 The Utils class contains helper resources such as themes and various colors
 
-### How to choose and apply a theme? [View all themes](https://github.com/Alexandr-web/Sinera/blob/master/.github/themes/readme.md)
+### How to choose and apply a theme? [View all themes](https://github.com/Alexandr-web/Licha/blob/master/.github/themes/readme.md)
 
 ```js
 const utils = new Utils();
 
 // Accepts index and theme
 // The default index is 0 and the theme is dark
-new Sinera({ theme: utils.getTheme(2, "light") }).init();
+new Licha({ theme: utils.getTheme(2, "light") }).init();
 ```
 
-### How to apply any color? [View all colors](https://github.com/Alexandr-web/Sinera/blob/master/.github/colors/readme.md)
+### How to apply any color? [View all colors](https://github.com/Alexandr-web/Licha/blob/master/.github/colors/readme.md)
 
 ```js
 const utils = new Utils();
 
 // Accepts the name of the color and its transparency (default 1)
-new Sinera({ background: utils.getColor("jet", 0.6) }).init();
+new Licha({ background: utils.getColor("jet", 0.6) }).init();
 ```
 
 To develop this tool, I was inspired by [Chart.js](https://www.chartjs.org/) library

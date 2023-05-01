@@ -7,7 +7,7 @@ import { ICanvasClass, } from "./interfaces/canvas";
 import { IItemLegend, ILegend, ILegendClass, } from "./interfaces/legend";
 import { ITheme, } from "./interfaces/utils";
 import { IData, } from "./interfaces/data";
-import { ISineraClass, } from "./interfaces/sinera";
+import { ILichaClass, } from "./interfaces/licha";
 import { IAxisPoints, } from "./interfaces/axis";
 import { IChartClass, } from "./interfaces/chart";
 import { IChartEventsClass, } from "./interfaces/chartEvents";
@@ -23,13 +23,13 @@ class ChartEvents implements IChartEventsClass {
     public readonly theme?: ITheme | TEmptyObject;
     public readonly data: IData;
     public readonly legend?: ILegend | TEmptyObject;
-    public readonly sineraContext: ISineraClass;
+    public readonly lichaContext: ILichaClass;
     public readonly update: TUpdate;
     public readonly fontFamily: string;
 
     constructor(
         data: IData,
-        sineraContext: ISineraClass,
+        lichaContext: ILichaClass,
         update: TUpdate,
         blockInfo: IBlockInfo | TEmptyObject,
         axisX: IAxisX | TEmptyObject,
@@ -52,8 +52,8 @@ class ChartEvents implements IChartEventsClass {
         this.legend = legend || {};
         // Данные групп
         this.data = data;
-        // Содержит контекст класса Sinera
-        this.sineraContext = sineraContext;
+        // Содержит контекст класса Licha
+        this.lichaContext = lichaContext;
         // Метод, который обновляет диаграмму
         this.update = update;
     }
@@ -64,7 +64,7 @@ class ChartEvents implements IChartEventsClass {
      * @private
      */
     private _windowResizeHandler(): void {
-        this.update.call(this.sineraContext);
+        this.update.call(this.lichaContext);
     }
 
     // Добавление события resize элементу window
@@ -98,10 +98,10 @@ class ChartEvents implements IChartEventsClass {
                 }
 
                 return point;
-            }).filter(({ x, group, }) => !this.sineraContext.hideGroups.includes(group) && mousePos.x > (x - 5) && mousePos.x < (x + 5));
+            }).filter(({ x, group, }) => !this.lichaContext.hideGroups.includes(group) && mousePos.x > (x - 5) && mousePos.x < (x + 5));
 
             if (activeElements.length) {
-                this.update.call(this.sineraContext);
+                this.update.call(this.lichaContext);
 
                 const [{ x, }]: Array<IPointX> = activeElements;
                 const { title, groups, background, padding, } = this.blockInfo;
@@ -164,7 +164,7 @@ class ChartEvents implements IChartEventsClass {
      * @private
      */
     private _leavemouseFromCanvasAreaHandler(): void {
-        this.update.call(this.sineraContext);
+        this.update.call(this.lichaContext);
     }
 
     /**
@@ -194,23 +194,23 @@ class ChartEvents implements IChartEventsClass {
 
         if (findMatchLegendItem) {
             const { group, } = findMatchLegendItem;
-            const findIdxHideGroup: number = this.sineraContext.hideGroups.indexOf(group);
+            const findIdxHideGroup: number = this.lichaContext.hideGroups.indexOf(group);
 
             if (findIdxHideGroup !== -1) {
-                this.sineraContext.hideGroups.splice(findIdxHideGroup, 1);
+                this.lichaContext.hideGroups.splice(findIdxHideGroup, 1);
             } else {
-                this.sineraContext.hideGroups.push(group);
+                this.lichaContext.hideGroups.push(group);
             }
 
             // Вызываем функцию-обработчик для обработки события клика на элемент легенды
             if (isFunction(events.onClick)) {
-                const hiddenLegendItems = legendItems.filter(({ group: g, }) => this.sineraContext.hideGroups.includes(g));
-                const notHiddenItems = legendItems.filter(({ group: g, }) => !this.sineraContext.hideGroups.includes(g));
+                const hiddenLegendItems = legendItems.filter(({ group: g, }) => this.lichaContext.hideGroups.includes(g));
+                const notHiddenItems = legendItems.filter(({ group: g, }) => !this.lichaContext.hideGroups.includes(g));
 
                 events.onClick.call({ element: findMatchLegendItem, hiddenElements: hiddenLegendItems, elements: legendItems, notHiddenElements: notHiddenItems, });
             }
 
-            this.update.call(this.sineraContext);
+            this.update.call(this.lichaContext);
         }
     }
 
