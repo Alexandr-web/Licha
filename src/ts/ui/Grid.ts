@@ -90,12 +90,12 @@ class Grid implements IGridClass {
 			return;
 		}
 
-		const pointsY: Array<IPointY> = this.pointsY;
+		const pointsYOnScreen: Array<IPointY> = this._getPointsOnScreen(this.pointsY);
 		const pointsX: Array<IPointX> = this.pointsX;
 		const { x: startX, } = pointsX[0];
-		const { y: startY, } = pointsY[0];
+		const { y: startY, } = pointsYOnScreen[0];
 		const { x: endX, } = pointsX[pointsX.length - 1];
-		const { y: endY, } = pointsY[pointsY.length - 1];
+		const { y: endY, } = pointsYOnScreen[pointsYOnScreen.length - 1];
 
 		new CustomFigure(
 			startX,

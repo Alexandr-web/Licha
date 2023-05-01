@@ -14,100 +14,124 @@
 We will take this piece of code as a basis, we will only change the parameters of the getTheme method
 
 ```js
-new Sinera({
-  theme: utils.getTheme(/** Will only change here */),
-  padding: { left: 20, },
-  selectorCanvas: "canvas",
-  title: {
-    font: {
-      size: 19,
-      text: "Title",
-    },
-    gaps: { bottom: 10 },
-  },
-  blockInfo: {
-    padding: {
-      top: 10,
-      left: 10,
-      bottom: 10,
-      right: 10,
-    },
-    title: {
-      font: { size: 16, },
-      gaps: { bottom: 20, },
-    },
-    groups: {
-      font: { size: 12, },
-      gaps: { bottom: 10, right: 10, },
-    },
-  },
-  legend: {
-    font: { size: 16, },
-    circle: { radius: 4, },
-    gaps: {
-      circle: { right: 8, },
-      group: { right: 8, bottom: 10, },
-      legend: { bottom: 10, },
-    },
-  },
-  axisX: {
-    font: { size: 16, },
-    title: {
-      font: { size: 18, text: "Days", },
-      gaps: { top: 25 },
-    },
-  },
-  axisY: {
-    font: { size: 16, },
-    step: 3,
-    title: {
-      font: {
-        size: 18,
-        text: "Sold",
-      },
-      gaps: { right: 25 },
-    },
-    editValue: (val) => new Intl.NumberFormat("ru-RU", { style: "currency", currency: "RUB", maximumSignificantDigits: 1, }).format(val),
-  },
-  cap: {
-    format: "square",
-    size: 10,
-    stroke: { width: 2, },
-  },
-  grid: {
-    line: {
-        width: 1,
-        dotted: true,
-    },
-    format: "horizontal", 
-  },
-  line: { width: 3, },
-  data: {
-    "Group 1": {
-      cap: { format: "circle", size: 6, },
-      data: [
-        { name: "Monday", value: 100_000, },
-        { name: "Tuesday", value: 50_000, },
-        { name: "Wednesday", value: 10_000, },
-        { name: "Thuesday", value: 35_000, },
-        { name: "Friday", value: 5000, },
-        { name: "Saturday", value: 50_000, },
-        { name: "Sunday", value: 32_000, }
-      ],
-    },
-    "Group 2": {
-      data: [
-        { name: "Monday", value: 5000, },
-        { name: "Tuesday", value: 1200, },
-        { name: "Wednesday", value: 41_000, },
-        { name: "Thuesday", value: 23_999.4121, },
-        { name: "Friday", value: 5000.42141, },
-        { name: "Saturday", value: 16_000, },
-        { name: "Sunday", value: 8400, }
-      ],
-    },
-  },
-}).init();
+import { Sinera, Utils, } from "./Sinera";
+
+const utils = new Utils();
+
+window.addEventListener("load", () => {
+    new Sinera({
+        selectorCanvas: "canvas",
+        theme: utils.getTheme(/** Will only change here */),
+        fontFamily: "Poppins",
+        blockInfo: {
+            groups: {
+                gaps: {
+                    right: 5,
+                    bottom: 10,
+                },
+            },
+            events: {
+                onAimed() {
+                    downloadCanvasPicture();
+                },
+            },
+            title: { gaps: { bottom: 15, }, },
+        },
+        legend: {
+            circle: { radius: 4, },
+            place: "center",
+            maxCount: 3,
+            gaps: {
+                circle: { right: 5, },
+                group: {
+                    right: 8,
+                    bottom: 5,
+                },
+                legend: { bottom: 15, },
+            },
+        },
+        title: {
+            font: {
+                text: "It's my new chart!!!",
+                size: 20,
+                weight: 400,
+            },
+            gaps: { bottom: 10, },
+            place: "center",
+        },
+        axisX: {
+            font: { showText: true, },
+            ignoreNames: (n, i) => i % 2 !== 0,
+            title: {
+                font: {
+                    text: "Year",
+                    weight: 400,
+                },
+                gaps: { top: 15, },
+            },
+        },
+        axisY: {
+            font: { showText: true, },
+            place: "right",
+            step: 4,
+            title: {
+                font: {
+                    weight: 400,
+                    text: "Percent",
+                },
+                gaps: { right: 15, },
+            },
+            editValue: (val) => val + "%",
+        },
+        grid: {
+            line: {
+                width: 0.5,
+                stretch: true,
+            },
+        },
+        cap: {
+            format: "circle",
+            size: 5,
+            stroke: { width: 2, },
+        },
+        data: {
+            "Pink": {
+                data: [
+                    { name: 2010, value: 30, },
+                    { name: 2011, value: 40, },
+                    { name: 2012, value: 50, },
+                    { name: 2013, value: 50.5142, },
+                    { name: 2014, value: 60, },
+                    { name: 2015, value: 80, },
+                    { name: 2016, value: 15, },
+                    { name: 2017, value: 16, },
+                    { name: 2018, value: 17, },
+                    { name: 2019, value: 12.321, },
+                    { name: 2020, value: 11.3222, },
+                    { name: 2021, value: 50, },
+                    { name: 2022, value: 90.332131, }
+                ],
+            },
+            "Purple": {
+                data: [
+                    { name: 2010, value: 80, },
+                    { name: 2011, value: 34, },
+                    { name: 2012, value: 65.2321, },
+                    { name: 2013, value: 21.5142, },
+                    { name: 2014, value: 93, },
+                    { name: 2015, value: 22, },
+                    { name: 2016, value: 52.32131, },
+                    { name: 2017, value: 72.666, },
+                    { name: 2018, value: 31.4211, },
+                    { name: 2019, value: 79.321, },
+                    { name: 2020, value: 90.3222, },
+                    { name: 2021, value: 54.321, },
+                    { name: 2022, value: 39.332131, }
+                ],
+            },
+        },
+    }).init();
+});
 ```
 
 ## Dark
