@@ -30,11 +30,6 @@ window.addEventListener("load", () => {
                     bottom: 10,
                 },
             },
-            events: {
-                onAimed() {
-                    downloadCanvasPicture();
-                },
-            },
             title: { gaps: { bottom: 15, }, },
         },
         legend: {
