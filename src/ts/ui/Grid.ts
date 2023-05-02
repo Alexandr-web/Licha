@@ -216,14 +216,15 @@ class Grid implements IGridClass {
 	private _drawVerticalLines(color: string | Array<string>): void {
 		const { width, dotted, stretch, } = this.line;
 		const axisYOnScreen = this._getPointsOnScreen(this.pointsY) as Array<IPointY>;
+		const axisXOnScreen = this._getPointsOnScreen(this.pointsX) as Array<IPointX>;
 		const { y: startYPointY, } = axisYOnScreen[0];
 		const { y: endYPointY, } = axisYOnScreen[axisYOnScreen.length - 1];
 
 		// Рисуем линии
-		this.names.map((name: string) => {
-			const { x, height, width: pointXNameWidth, onScreen, y: yPointX, } = this.pointsX.find((axisXDataItem) => axisXDataItem.name === name) as IPointX;
-			const useStretch: boolean = stretch && onScreen && this.showPointsX;
-			const endYPos = this._getEndYPosForVerticalLines(useStretch, yPointX, height, endYPointY, pointXNameWidth, startYPointY);
+		axisXOnScreen.map(({ x, height, width: widthPointX, y, }) => {
+			// const { x, height, width: pointXNameWidth, onScreen, y: yPointX, } = this.pointsX.find((axisXDataItem) => axisXDataItem.name === name) as IPointX;
+			const useStretch: boolean = stretch && this.showPointsX;
+			const endYPos = this._getEndYPosForVerticalLines(useStretch, y, height, endYPointY, widthPointX, startYPointY);
 
 			new Line(
 				x,
