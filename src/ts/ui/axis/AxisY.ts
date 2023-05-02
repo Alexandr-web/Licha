@@ -10,6 +10,7 @@ import isFunction from "../../helpers/isFunction";
 import ifTrueThenOrElse from "../../helpers/ifTrueThenOrElse";
 import getRadians from "../../helpers/getRadians";
 import defaultParams from "../../helpers/defaultParams";
+import getRoundedNumber from "../../helpers/getRoundedNumber";
 
 import { ISpecialFontData, } from "../../interfaces/text";
 import { IBounds, ISize, IGaps, IPos, } from "../../interfaces/global";
@@ -43,7 +44,7 @@ class AxisY extends Axis implements IAxisYClass {
 		super(ctx, sortNames, bounds, fontFamily, themeForPoint, themeForTitle, title, font);
 
 		// Шаг, с которым будут рисоваться значения на оси ординат
-		this.step = step;
+		this.step = Math.floor(step);
 		// Метод, который позволяет изменить вид значения на оси ординат
 		this.editValue = editValue;
 		// Содержит данные групп
@@ -126,12 +127,11 @@ class AxisY extends Axis implements IAxisYClass {
 
 	/**
 	 * Определяет точки для оси ординат из диапазона
-	 * @param {number} lastValue 
 	 * @param {Array<number>} range 
 	 * @private
 	 * @returns {Array<number>}
 	 */
-	private _getPointsFromRange(lastValue: number, range: Array<number>): Array<number> {
+	private _getPointsFromRange(range: Array<number>): Array<number> {
 		const points: Array<number> = [];
 
 		switch (this.sortValues) {
@@ -141,10 +141,6 @@ class AxisY extends Axis implements IAxisYClass {
 			case "more-less":
 				points.push(...range);
 				break;
-		}
-
-		if (!points.includes(lastValue)) {
-			points.push(lastValue);
 		}
 
 		return points;
@@ -161,9 +157,10 @@ class AxisY extends Axis implements IAxisYClass {
 	 */
 	private _fillDataPoints(values: Array<number>, showText: boolean, bounds: IBounds, size: number, weight: number): void {
 		values.map((uValue: number) => {
+			const correctValue: string = this._getCorrectValue(uValue).toString();
 			const maxValue: IPointY = (quickSort(this.points, "value") as Array<IPointY>).find(({ value, }) => value >= uValue);
 			const minValue: IPointY = (quickSort(this.points, "value").reverse() as Array<IPointY>).find(({ value, }) => value <= uValue);
-			const textSizes: ISize = getTextSize(size, weight, uValue.toString(), this.ctx, this.fontFamily);
+			const textSizes: ISize = getTextSize(size, weight, correctValue, this.ctx, this.fontFamily);
 			const posYItem: IPos = {
 				x: ifTrueThenOrElse(showText, bounds.horizontal.start, 0),
 				y: minValue.y + (uValue - minValue.value) * ((maxValue.y - minValue.y) / ((maxValue.value - minValue.value) || 1)),
@@ -209,17 +206,17 @@ class AxisY extends Axis implements IAxisYClass {
 		const { size = defaultSize, showText = Boolean(Object.keys(this.font).length), weight = defaultWeight, color = this.themeForPoint.color, } = this.font;
 		const firstValue: number = Math.ceil(values[0]);
 		const lastValue: number = Math.floor(values[values.length - 1]);
-		const firstValueSizes: ISize = getTextSize(size, weight, firstValue.toString(), this.ctx, this.fontFamily);
 		const range: Array<number> = getRange(Math.min(firstValue, lastValue), Math.max(firstValue, lastValue), this.step);
-		const points: Array<number> = this._getPointsFromRange(lastValue, range);
+		const points: Array<number> = this._getPointsFromRange(range.map((n) => getRoundedNumber(n)));
 
 		points.map((value: number, index: number) => {
+			const correctValue: string = this._getCorrectValue(value).toString();
 			// Содержит размеры значения
-			const valueSizes: ISize = getTextSize(size, weight, this._getCorrectValue(value).toString(), this.ctx, this.fontFamily);
+			const valueSizes: ISize = getTextSize(size, weight, correctValue, this.ctx, this.fontFamily);
 			// Начальная точка для отрисовки элементов
-			const startPoint: number = bounds.vertical.start + firstValueSizes.height / 2 + gaps.top;
+			const startPoint: number = bounds.vertical.start + valueSizes.height / 2 + gaps.top;
 			// Конечная точка для отрисовки элементов
-			const endPoint: number = bounds.vertical.end - firstValueSizes.height / 2 - startPoint - gaps.bottom;
+			const endPoint: number = bounds.vertical.end - valueSizes.height / 2 - startPoint - gaps.bottom;
 			// Интервал для отрисовки элементов
 			const step: number = endPoint / (points.length - 1);
 			// Координаты для отрисовки элементов
@@ -231,7 +228,7 @@ class AxisY extends Axis implements IAxisYClass {
 				...this.font,
 				color,
 				str: getTextStr(size, weight, this.fontFamily),
-				text: this._getCorrectValue(value).toString(),
+				text: correctValue,
 			};
 
 			// Добавляем данные нарисованных точек в массив
@@ -253,6 +250,7 @@ class AxisY extends Axis implements IAxisYClass {
 			}
 		});
 
+		// Добавляем остальные точки в массив, не рисуя их
 		this._fillDataPoints(values, showText, bounds, size, weight);
 
 		return this;
