@@ -285,10 +285,12 @@ class Chart implements IChartClass {
 		const gapLeftIfFirstNameIsNotIgnoreAndRotateAxisXIsFalse: number = ifTrueThenOrElse([firstNameIsNotIgnore, !rotateAxisX], firstNameWidth / 2, 0);
 		// Отступ слева, если первое название отображено и правило rotate у axisX правдиво
 		const gapLeftIfFirstNameIsNotIgnoreAndRotateAxisXIsTrue: number = ifTrueThenOrElse([firstNameIsNotIgnore, rotateAxisX], firstNameHeight / 2, 0);
+		// Максимальная ширина значения точки
+		const axisYPointWidth: number = axisY.getMaxTextWidthAtYAxis();
 		// Отступ слева, если ось ординат находится слева
-		const gapLeftIfAxisYPlaceIsLeft: number = ifTrueThenOrElse([showYText, axisYPlace === "left"], axisY.getMaxTextWidthAtYAxis() + gapRightAxisY, 0);
+		const gapLeftIfAxisYPlaceIsLeft: number = ifTrueThenOrElse([showYText, axisYPlace === "left"], axisYPointWidth + gapRightAxisY, 0);
 		// Отступ слева, если ось ординат находится справа
-		const gapRightIfAxisYPlaceIsRight: number = ifTrueThenOrElse([axisYPlace === "right", showYText], axisY.getMaxTextWidthAtYAxis() + gapRightAxisY, 0);
+		const gapRightIfAxisYPlaceIsRight: number = ifTrueThenOrElse([axisYPlace === "right", showYText], axisYPointWidth + gapRightAxisY, 0);
 
 		return {
 			left: gapLeftIfFirstNameIsNotIgnoreAndRotateAxisXIsTrue + gapLeftIfFirstNameIsNotIgnoreAndRotateAxisXIsFalse + axisYTitleHeight + axisYTitleGapRight + gapLeftIfAxisYPlaceIsLeft,

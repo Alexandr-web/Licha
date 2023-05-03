@@ -1,14 +1,15 @@
 import ifTrueThenOrElse from "./ifTrueThenOrElse";
 
 /**
- * Округляет число до "красивого" значения
- * @param {number} num Содержит массив чисел
+ * Округляет число
+ * @param {number} n Целое число
+ * @param {string} method Метод класса Math, который будет применяться для округления
  * @returns {number}
  */
-export default function (num: number): number {
-    const n: number = Math.abs(num);
-    const count: number = 10 ** (Math.abs(n).toString().length - 1);
-    const nextNum: number = n % count ? n + count - (n % count) : n;
+export default function (n: number, method = "ceil"): number {
+    const num: number = Math.abs(n);
+    const count: number = 10 ** (num.toString().length - 1);
+    const res: number = Math[method](num / count) * count;
 
-    return ifTrueThenOrElse(num < 0, -nextNum, nextNum);
+    return ifTrueThenOrElse(n < 0, -res, res);
 }
