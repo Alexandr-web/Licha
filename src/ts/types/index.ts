@@ -11,7 +11,7 @@ export type TAxisYPlace = "right" | "left";
 export type TLegendPlace = "left" | "center" | "right";
 export type TChartTitlePlace = "left" | "center" | "right";
 export type TUpdate = () => ILichaClass;
-export type TEditValue = (value: number) => string;
+export type TEditValue = (value: number) => string | number;
 export type TEditName = (name: number | string) => string;
 export type TIgnoreNamesFunc = (name: string, index: number) => boolean;
 export type TIgnoreNames = Array<string | number> | TIgnoreNamesFunc;

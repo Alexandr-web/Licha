@@ -6,11 +6,11 @@ import getTextSize from "../../helpers/getTextSize";
 import getRange from "../../helpers/getRange";
 import quickSort from "../../helpers/quickSort";
 import getTextStr from "../../helpers/getTextStr";
-import isFunction from "../../helpers/isFunction";
 import ifTrueThenOrElse from "../../helpers/ifTrueThenOrElse";
 import getRadians from "../../helpers/getRadians";
 import defaultParams from "../../helpers/defaultParams";
 import getRoundedNumber from "../../helpers/getRoundedNumber";
+import getCorrectValue from "../../helpers/getCorrectValue";
 
 import { ISpecialFontData, } from "../../interfaces/text";
 import { IBounds, ISize, IGaps, IPos, } from "../../interfaces/global";
@@ -70,16 +70,6 @@ class AxisY extends Axis implements IAxisYClass {
 	}
 
 	/**
-	 * Определяет корректное значение точки на оси ординат
-	 * @param {number} value Значение точки
-	 * @private
-	 * @returns {string | number} Корректное значение точки
-	 */
-	private _getCorrectValue(value: number): string | number {
-		return isFunction(this.editValue) ? this.editValue(value) : value;
-	}
-
-	/**
 	 * Рисует заголовок на оси ординат
 	 * @param {IGaps} gaps Отступы заголовка
 	 * @returns {IAxisYClass}
@@ -132,18 +122,12 @@ class AxisY extends Axis implements IAxisYClass {
 	 * @returns {Array<number>}
 	 */
 	private _getPointsFromRange(range: Array<number>): Array<number> {
-		const points: Array<number> = [];
-
 		switch (this.sortValues) {
 			case "less-more":
-				points.push(...range.reverse());
-				break;
+				return range.reverse();
 			case "more-less":
-				points.push(...range);
-				break;
+				return range;
 		}
-
-		return points;
 	}
 
 	/**
@@ -157,7 +141,7 @@ class AxisY extends Axis implements IAxisYClass {
 	 */
 	private _fillDataPoints(values: Array<number>, showText: boolean, bounds: IBounds, size: number, weight: number): void {
 		values.map((uValue: number) => {
-			const correctValue: string = this._getCorrectValue(uValue).toString();
+			const correctValue: string = getCorrectValue.call(this, uValue).toString();
 			const maxValue: IPointY = (quickSort(this.points, "value") as Array<IPointY>).find(({ value, }) => value >= uValue);
 			const minValue: IPointY = (quickSort(this.points, "value").reverse() as Array<IPointY>).find(({ value, }) => value <= uValue);
 			const textSizes: ISize = getTextSize(size, weight, correctValue, this.ctx, this.fontFamily);
@@ -206,11 +190,15 @@ class AxisY extends Axis implements IAxisYClass {
 		const { size = defaultSize, showText = Boolean(Object.keys(this.font).length), weight = defaultWeight, color = this.themeForPoint.color, } = this.font;
 		const firstValue: number = Math.ceil(values[0]);
 		const lastValue: number = Math.floor(values[values.length - 1]);
-		const range: Array<number> = getRange(Math.min(firstValue, lastValue), Math.max(firstValue, lastValue), this.step);
-		const points: Array<number> = this._getPointsFromRange(range.map((n) => getRoundedNumber(n)));
+		const minValue: number = Math.min(firstValue, lastValue);
+		const maxValue: number = Math.max(firstValue, lastValue);
+		const methodToRoundMinValue: string = ifTrueThenOrElse(minValue < 0, "ceil", "floor");
+		const methodToRoundMaxValue: string = ifTrueThenOrElse(maxValue < 0, "floor", "ceil");
+		const range: Array<number> = getRange(getRoundedNumber(minValue, methodToRoundMinValue), getRoundedNumber(maxValue, methodToRoundMaxValue), this.step);
+		const points: Array<number> = this._getPointsFromRange(range);
 
 		points.map((value: number, index: number) => {
-			const correctValue: string = this._getCorrectValue(value).toString();
+			const correctValue: string = getCorrectValue.call(this, value).toString();
 			// Содержит размеры значения
 			const valueSizes: ISize = getTextSize(size, weight, correctValue, this.ctx, this.fontFamily);
 			// Начальная точка для отрисовки элементов
