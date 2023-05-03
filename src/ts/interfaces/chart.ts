@@ -4,9 +4,6 @@ import { IStroke, ISize, IGaps, IPadding, IPos, IBounds, } from "./global";
 import { IChartLineStyle, } from "./lineChart";
 import { IFontWithText, } from "./text";
 import { IData, } from "./data";
-import { IAxisYClass, IAxisY, IAxisYTitle, } from "./axisY";
-import { IAxisX, IAxisXClass, IAxisXTitle, } from "./axisX";
-import { ILegendClass, ILegendData, } from "./legend";
 
 export interface IChartCapStyle {
     size: number;
@@ -49,8 +46,4 @@ export interface IChartClass {
 
     getBounds(): IBounds;
     drawTitle(): IChartClass;
-    getGapsForYPoints(axisY: IAxisYClass, axisX: IAxisXClass, chartTitle: IChartTitle, legend: ILegendData): IGaps;
-    getGapsForXPoints(axisY: IAxisYClass, axisX: IAxisXClass, chart: IChartClass, legend: ILegendData): IGaps;
-    getGapsForLegend(chartTitle: IChartTitleData): IGaps;
-    getGapsForAxisYTitle(chartTitle: IChartTitleData, legend: ILegendClass, axisX: IAxisX, names: Array<string | number>): IGaps;
 }
