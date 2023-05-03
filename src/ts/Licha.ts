@@ -8,6 +8,7 @@ import Legend from "./ui/Legend";
 import Axis from "./ui/axis/Axis";
 import Utils from "./Utils/Utils";
 import ChartEvents from "./ChartEvents";
+import Gaps from "./Gaps";
 
 import { TEmptyObject, TTypeChart, } from "./types/index";
 
@@ -142,7 +143,7 @@ class Licha implements ILichaClass {
 	private _setLegend(canvas: ICanvasClass, chart: IChartClass): ILegendClass {
 		const { font, circle, gaps: legendGaps, maxCount, place, } = this.legend;
 		const showLegend = Boolean(Object.keys(this.legend).length);
-		const gaps: IGaps = chart.getGapsForLegend(chart.titleData);
+		const gaps: IGaps = new Gaps(this.data, canvas.ctx, this.fontFamily).getGapsForLegend(chart.titleData);
 
 		return new Legend(
 			showLegend,
@@ -176,7 +177,7 @@ class Licha implements ILichaClass {
 		const themeForPoint: IAxisThemePoint = (this.theme.axis || {}).point;
 		const { sort: sortNames, } = this.axisX;
 		const names: Array<string | number> = new Axis(canvas.ctx, sortNames, chart.getBounds(), this.fontFamily).getAxesData(this.data).names;
-		const gaps: IGaps = chart.getGapsForAxisYTitle(chart.titleData, legend, this.axisX, names);
+		const gaps: IGaps = new Gaps(this.data, canvas.ctx, this.fontFamily).getGapsForAxisYTitle(chart.titleData, legend, this.axisX, names);
 
 		return new AxisY(
 			editValue,
@@ -233,12 +234,15 @@ class Licha implements ILichaClass {
 	 * @param {IAxisXClass} axisX Экземпляр класса AxisX
 	 * @param {ILegendClass} legend Экземпляр класса Legend
 	 * @param {IChartClass} chart Экземпляр класса Chart
+	 * @param {ICanvasClass} canvas Экземпляр класса Canvas
 	 * @private
 	 * @returns {IAxisPoints} Данные всех осевых точек
 	 */
-	private _setPoints(axisY: IAxisYClass, axisX: IAxisXClass, legend: ILegendClass, chart: IChartClass): IAxisPoints {
-		const y: IAxisYClass = axisY.drawPoints(chart.getGapsForYPoints(axisY, axisX, chart.titleData, { ...this.legend, ...legend, } as ILegendData));
-		const x: IAxisXClass = axisX.drawPoints(chart.getGapsForXPoints(axisY, axisX, chart, { ...this.legend, ...legend, } as ILegendData));
+	private _setPoints(axisY: IAxisYClass, axisX: IAxisXClass, legend: ILegendClass, chart: IChartClass, canvas: ICanvasClass): IAxisPoints {
+		const gapsForYPoints: IGaps = new Gaps(this.data, canvas.ctx, this.fontFamily).getGapsForYPoints(axisY, axisX, chart.titleData, { ...this.legend, ...legend, } as ILegendData);
+		const y: IAxisYClass = axisY.drawPoints(gapsForYPoints);
+		const gapsForXPoints: IGaps = new Gaps(this.data, canvas.ctx, this.fontFamily).getGapsForXPoints(y, axisX, chart, { ...this.legend, ...legend, } as ILegendData);
+		const x: IAxisXClass = axisX.drawPoints(gapsForXPoints);
 
 		return {
 			pointsY: y.points as Array<IPointY>,
@@ -311,7 +315,7 @@ class Licha implements ILichaClass {
 		const axisY: IAxisYClass = this._setAxisYTitle(canvas, chart, legend);
 		const axisX: IAxisXClass = this._setAxisXTitle(canvas, chart);
 
-		this._setPoints(axisY, axisX, legend, chart);
+		this._setPoints(axisY, axisX, legend, chart, canvas);
 		this._setGrid(canvas, axisX, axisY);
 		this._drawChartByType(axisY, axisX, canvas);
 
@@ -325,7 +329,7 @@ class Licha implements ILichaClass {
 		const legend: ILegendClass = this._setLegend(canvas, chart);
 		const axisY: IAxisYClass = this._setAxisYTitle(canvas, chart, legend);
 		const axisX: IAxisXClass = this._setAxisXTitle(canvas, chart);
-		const points: IAxisPoints = this._setPoints(axisY, axisX, legend, chart);
+		const points: IAxisPoints = this._setPoints(axisY, axisX, legend, chart, canvas);
 		const chartEvents: IChartEventsClass = new ChartEvents(this.data, this, this.update, this.blockInfo, this.axisX, this.axisY, this.theme, this.legend, this.fontFamily);
 
 		chartEvents.init(canvas, chart, points, legend);
