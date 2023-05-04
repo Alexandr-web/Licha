@@ -7,9 +7,9 @@
   </p>
 </div>
 
-* [Использование](https://github.com/Alexandr-web/Licha#использование)
-* [Параметры](https://github.com/Alexandr-web/Licha#параметры)
-* [Утилиты](https://github.com/Alexandr-web/Licha#утилиты)
+* [Использование](https://github.com/Alexandr-web/Licha/blob/master/.github/rusDoc.md#использование)
+* [Параметры](https://github.com/Alexandr-web/Licha/blob/master/.github/rusDoc.md#параметры)
+* [Утилиты](https://github.com/Alexandr-web/Licha/blob/master/.github/rusDoc.md#утилиты)
 * [Работы](https://github.com/Alexandr-web/Licha/blob/master/.github/works/readme.md)
 
 ## Использование
