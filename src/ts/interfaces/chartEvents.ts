@@ -23,8 +23,9 @@ export interface IChartEventsClass {
     readonly fontFamily: string;
 
     windowResize(): void;
-    mousemoveByCanvas(canvas: ICanvasClass, bounds: IBounds, { pointsX, pointsY, }): void;
+    mousemoveByCanvas(canvas: ICanvasClass, bounds: IBounds, { pointsX, pointsY, }, eventName: string): void;
     leavemouseFromCanvasArea(canvas: ICanvasClass): void;
-    clickByCanvasArea(canvas: ICanvasClass, legendItems: Array<IItemLegend>): void;
+    leavetouchFromCanvasArea(): void;
+    clickByCanvasArea(canvas: ICanvasClass, legendItems: Array<IItemLegend>, eventName: string): void;
     init(canvas: ICanvasClass, chart: IChartClass, points: IAxisPoints, legend: ILegendClass): void;
 }

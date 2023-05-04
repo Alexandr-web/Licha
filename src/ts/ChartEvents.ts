@@ -143,8 +143,9 @@ class ChartEvents implements IChartEventsClass {
      * @param {ICanvasClass} canvas Экземпляр класса Canvas
      * @param {IBounds} bounds Содержит границы холста
      * @param {{ pointsX: Array<IPointX>, pointsY: Array<IPointY> }} param2 Содержит данные всех осевых точек
+     * @param {string} eventName Название события ("mousemove" или "touchmove")
      */
-    public mousemoveByCanvas(canvas: ICanvasClass, bounds: IBounds, { pointsX, pointsY, }): void {
+    public mousemoveByCanvas(canvas: ICanvasClass, bounds: IBounds, { pointsX, pointsY, }, eventName: string): void {
         if (!Object.keys(this.blockInfo).length) {
             return;
         }
@@ -155,7 +156,7 @@ class ChartEvents implements IChartEventsClass {
         const endY: number = lastPointYOrdinate - firstPointYHeight / 2;
         const startY: number = firstPointYOrdinate - lastPointYHeight / 2;
 
-        canvas.canvasElement.addEventListener("mousemove", (e: MouseEvent) => this._mousemoveByCanvasHandler(e, endY, pointsX, startY, canvas, bounds));
+        canvas.canvasElement.addEventListener(eventName, (e: MouseEvent) => this._mousemoveByCanvasHandler(e, endY, pointsX, startY, canvas, bounds));
     }
 
     /**
@@ -165,6 +166,25 @@ class ChartEvents implements IChartEventsClass {
      */
     private _leavemouseFromCanvasAreaHandler(): void {
         this.update.call(this.lichaContext);
+    }
+
+    /**
+     * Обработчки события touchstart у элемента window
+     * Обновляет график, если пользователь не касается холста
+     * @param {TouchEvent} e Содержит данные события
+     * @private
+     */
+    private _leavetouchFormCanvasAreaHandler(e: TouchEvent): void {
+        const target = e.target as HTMLElement;
+
+        if (target.nodeName !== "CANVAS") {
+            this.update.call(this.lichaContext);
+        }
+    }
+
+    // Добавление события touchstart элементу window
+    public leavetouchFromCanvasArea(): void {
+        window.addEventListener("touchstart", this._leavetouchFormCanvasAreaHandler.bind(this));
     }
 
     /**
@@ -218,9 +238,10 @@ class ChartEvents implements IChartEventsClass {
      * Добавление события click элементу canvas
      * @param {ICanvasClass} canvas Экземпляр класса Canvas
      * @param {Array<IItemLegend>} legendItems Содержит данные элементов легенды
+     * @param {string} eventName Название события ("click" или "touchstart")
      */
-    public clickByCanvasArea(canvas: ICanvasClass, legendItems: Array<IItemLegend>): void {
-        canvas.canvasElement.addEventListener("click", (e: MouseEvent) => this._clickByCanvasAreaHandler(e, legendItems));
+    public clickByCanvasArea(canvas: ICanvasClass, legendItems: Array<IItemLegend>, eventName: string): void {
+        canvas.canvasElement.addEventListener(eventName, (e: MouseEvent) => this._clickByCanvasAreaHandler(e, legendItems));
     }
 
     /**
@@ -231,9 +252,12 @@ class ChartEvents implements IChartEventsClass {
      * @param {ILegendClass} legend 
      */
     public init(canvas: ICanvasClass, chart: IChartClass, points: IAxisPoints, legend: ILegendClass): void {
-        this.mousemoveByCanvas(canvas, chart.getBounds(), points);
+        this.mousemoveByCanvas(canvas, chart.getBounds(), points, "mousemove");
+        this.mousemoveByCanvas(canvas, chart.getBounds(), points, "touchmove");
         this.leavemouseFromCanvasArea(canvas);
-        this.clickByCanvasArea(canvas, legend.items);
+        this.leavetouchFromCanvasArea();
+        this.clickByCanvasArea(canvas, legend.items, "click");
+        this.clickByCanvasArea(canvas, legend.items, "touchstart");
         this.windowResize();
     }
 }
