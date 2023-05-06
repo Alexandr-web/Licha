@@ -51,21 +51,21 @@ new Licha({
 
 Параметры, которые принимает конструктор класса Licha
 
-* [selectorCanvas](https://github.com/Alexandr-web/Licha#selectorcanvas)
-* [fontFamily](https://github.com/Alexandr-web/Licha#fontfamily)
-* [background](https://github.com/Alexandr-web/Licha#background)
-* [padding](https://github.com/Alexandr-web/Licha#padding)
-* [type](https://github.com/Alexandr-web/Licha#type)
-* [title](https://github.com/Alexandr-web/Licha#title)
-* [axisY](https://github.com/Alexandr-web/Licha#axisy)
-* [axisX](https://github.com/Alexandr-web/Licha#axisx)
-* [line](https://github.com/Alexandr-web/Licha#line)
-* [cap](https://github.com/Alexandr-web/Licha#cap)
-* [grid](https://github.com/Alexandr-web/Licha#grid)
-* [legend](https://github.com/Alexandr-web/Licha#legend)
-* [blockInfo](https://github.com/Alexandr-web/Licha#blockinfo)
-* [data](https://github.com/Alexandr-web/Licha#data)
-* [theme](https://github.com/Alexandr-web/Licha#theme)
+* [selectorCanvas](https://github.com/Alexandr-web/Licha/blob/master/.github/rusDoc.md#selectorcanvas)
+* [fontFamily](https://github.com/Alexandr-web/Licha/blob/master/.github/rusDoc.md#fontfamily)
+* [background](https://github.com/Alexandr-web/Licha/blob/master/.github/rusDoc.md#background)
+* [padding](https://github.com/Alexandr-web/Licha/blob/master/.github/rusDoc.md#padding)
+* [type](https://github.com/Alexandr-web/Licha/blob/master/.github/rusDoc.md#type)
+* [title](https://github.com/Alexandr-web/Licha/blob/master/.github/rusDoc.md#title)
+* [axisY](https://github.com/Alexandr-web/Licha/blob/master/.github/rusDoc.md#axisy)
+* [axisX](https://github.com/Alexandr-web/Licha/blob/master/.github/rusDoc.md#axisx)
+* [line](https://github.com/Alexandr-web/Licha/blob/master/.github/rusDoc.md#line)
+* [cap](https://github.com/Alexandr-web/Licha/blob/master/.github/rusDoc.md#cap)
+* [grid](https://github.com/Alexandr-web/Licha/blob/master/.github/rusDoc.md#grid)
+* [legend](https://github.com/Alexandr-web/Licha/blob/master/.github/rusDoc.md#legend)
+* [blockInfo](https://github.com/Alexandr-web/Licha/blob/master/.github/rusDoc.md#blockinfo)
+* [data](https://github.com/Alexandr-web/Licha/blob/master/.github/rusDoc.md#data)
+* [theme](https://github.com/Alexandr-web/Licha/blob/master/.github/rusDoc.md#theme)
 
 ### `selectorCanvas`
 
@@ -984,7 +984,7 @@ new Licha({
 
 | Описание | Пример | Тип |
 | ------------- | ------------- | ------------- |
-| Принимает объект данных, принадлежащий некоторой теме. [Больше](https://github.com/Alexandr-web/Licha#utils) | `theme: new Utils(0, "light")` | `object` |
+| Принимает объект данных, принадлежащий некоторой теме. [Больше](https://github.com/Alexandr-web/Licha/blob/master/.github/rusDoc.md#utils) | `theme: new Utils(0, "light")` | `object` |
 
 ## Утилиты
 
