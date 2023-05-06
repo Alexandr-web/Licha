@@ -176,7 +176,7 @@ class BlockInfo extends Element implements IBlockInfoClass {
 	 * @private
 	 * @returns {ILinePos}
 	 */
-	private _getNewLinesPosIfWindowIsOutOfBounds(posX: number, blockWidth: number, groupPos: IPos, group: IBlockInfoElementWithSizeGroup): ILinePos {
+	private _getNewLinesPosIfWindowIsOutOfBoundsWidth(posX: number, blockWidth: number, groupPos: IPos, group: IBlockInfoElementWithSizeGroup): ILinePos {
 		return {
 			moveTo: {
 				x: posX - (blockWidth + this.triangleSizes.height * 2),
@@ -193,18 +193,20 @@ class BlockInfo extends Element implements IBlockInfoClass {
 
 	/**
 	 * Рисует линии
-	 * @param {boolean} windowIsOutOfBounds Правило, говорящее, что окно вышло за границы диаграммы
+	 * @param {boolean} windowIsOutOfBoundsWidth Правило, согласно которому окно вышло за границы ширины графика
+	 * @param {boolean} windowIsOutOfBoundsHeight Правило, согласно которому окно вышло за границы ширины графика
 	 * @param {number} blockWidth Ширина окна
+	 * @param {number} blockHeight Высота окна
 	 * @private
 	 */
-	private _drawLines(windowIsOutOfBounds: boolean, blockWidth: number): void {
+	private _drawLines(windowIsOutOfBoundsWidth: boolean, windowIsOutOfBoundsHeight: boolean, blockWidth: number, blockHeight: number): void {
 		const padding = this.padding as IPadding;
 		const { x, } = this._getCoordinates();
 
 		for (let i = 0; i < this.elements.length; i++) {
 			const { group, } = this._getElementsWithSize()[i];
-			const groupPos: IPos = this._getGroupsCoordinates(i);
-			const posX: number = x + blockWidth - (padding.right || 0);
+			const groupPos: IPos = this._getGroupsCoordinates(i, windowIsOutOfBoundsHeight, blockHeight);
+			const posX: number = x + blockWidth - padding.right;
 
 			let linePos: ILinePos = {
 				moveTo: {
@@ -219,8 +221,8 @@ class BlockInfo extends Element implements IBlockInfoClass {
 				],
 			};
 
-			if (windowIsOutOfBounds) {
-				linePos = this._getNewLinesPosIfWindowIsOutOfBounds(posX, blockWidth, groupPos, group);
+			if (windowIsOutOfBoundsWidth) {
+				linePos = this._getNewLinesPosIfWindowIsOutOfBoundsWidth(posX, blockWidth, groupPos, group);
 			}
 
 			new Line(
@@ -249,20 +251,27 @@ class BlockInfo extends Element implements IBlockInfoClass {
 
 	/**
 	 * Рисует заголовок
-	 * @param {boolean} windowIsOutOfBounds Правило, говорящее, что окно вышло за границы диаграммы
+	 * @param {boolean} windowIsOutOfBoundsWidth Правило, согласно которому окно вышло за границы ширины графика
+	 * @param {boolean} windowIsOutOfBoundsHeight Правило, согласно которому окно вышло за границы высоты графика
 	 * @param {number} blockWidth Ширина окна
+	 * @param {number} blockHeight Высота окна
 	 * @private
 	 */
-	private _drawTitle(windowIsOutOfBounds: boolean, blockWidth: number): void {
+	private _drawTitle(windowIsOutOfBoundsWidth: boolean, windowIsOutOfBoundsHeight: boolean, blockWidth: number, blockHeight: number): void {
 		const padding = this.padding as IPadding;
+		const { height: titleHeight, } = this._getTitleSize();
 		const { x, y, } = this._getCoordinates();
 		const coordinates: IPos = {
-			x: x + (padding.left || 0),
-			y: y + (padding.top || 0) + this._getTitleSize().height,
+			x: x + padding.left,
+			y: y + padding.top + titleHeight,
 		};
 
-		if (windowIsOutOfBounds) {
+		if (windowIsOutOfBoundsWidth) {
 			coordinates.x -= blockWidth + this.triangleSizes.height * 2;
+		}
+
+		if (windowIsOutOfBoundsHeight) {
+			coordinates.y -= blockHeight - titleHeight;
 		}
 
 		const { size: defaultSize, weight: defaultWeight, } = defaultParams.titleFont;
@@ -285,29 +294,38 @@ class BlockInfo extends Element implements IBlockInfoClass {
 	/**
 	 * Определяет позицию группы
 	 * @param {number} index Индекс текущей группы
+	 * @param {boolean} windowIsOutOfBoundsHeight Правило, согласно которому окно вышло за границы высоты графика
+	 * @param {number} blockHeight Высота окна
 	 * @private
 	 * @returns {IPos} Позиция группы
 	 */
-	private _getGroupsCoordinates(index: number): IPos {
+	private _getGroupsCoordinates(index: number, windowIsOutOfBoundsHeight: boolean, blockHeight: number): IPos {
 		const { x, y, } = this._getCoordinates();
 		const { gaps = {}, } = this.titleData;
 		const padding = this.padding as IPadding;
 		const prevGroups: Array<IBlockInfoElementWithSize> = this._getElementsWithSize().filter((element: IBlockInfoElementWithSize, idx: number) => idx <= index);
 		const top: number = this._getTopGroupsDistance(prevGroups.map(({ group: g, }) => g));
-
-		return {
+		const pos: IPos = {
 			x: x + (padding.left || 0),
 			y: y + top + this._getTitleSize().height + (gaps.bottom || 0),
 		};
+
+		if (windowIsOutOfBoundsHeight) {
+			pos.y -= blockHeight - (gaps.bottom || 0);
+		}
+
+		return pos;
 	}
 
 	/**
 	 * Рисует группы
-	 * @param {boolean} windowIsOutOfBounds Правило, говорящее, что окно вышло за границы диаграммы
+	 * @param {boolean} windowIsOutOfBoundsWidth Правило, согласно которому окно вышло за границы ширины графика
+	 * @param {boolean} windowIsOutOfBoundsHeight Правило, согласно которому окно вышло за границы высоты графика
 	 * @param {number} blockWidth Ширина окна
+	 * @param {number} blockHeight Высота окна
 	 * @private
 	 */
-	private _drawGroups(windowIsOutOfBounds: boolean, blockWidth: number): void {
+	private _drawGroups(windowIsOutOfBoundsWidth: boolean, windowIsOutOfBoundsHeight: boolean, blockWidth: number, blockHeight: number): void {
 		const { size: defaultSize, weight: defaultWeight, } = defaultParams.textFont;
 		const { font: groupsFont = {}, } = this.groupsData;
 		const { size = defaultSize, weight = defaultWeight, color = this.themeForGroup.color, } = groupsFont;
@@ -318,9 +336,9 @@ class BlockInfo extends Element implements IBlockInfoClass {
 				color,
 				str: getTextStr(size, weight, this.fontFamily),
 			};
-			const coordinates: IPos = this._getGroupsCoordinates(index);
+			const coordinates: IPos = this._getGroupsCoordinates(index, windowIsOutOfBoundsHeight, blockHeight);
 
-			if (windowIsOutOfBounds) {
+			if (windowIsOutOfBoundsWidth) {
 				coordinates.x -= blockWidth + this.triangleSizes.height * 2;
 			}
 
@@ -348,19 +366,29 @@ class BlockInfo extends Element implements IBlockInfoClass {
 	}
 
 	/**
-	 * Проверяет на выход окна за границы диаграммы
+	 * Проверяет вышло ли окно за пределы ширины графика
 	 * @param {number} blockWidth Ширина окна
 	 * @private
 	 * @returns {boolean}
 	 */
-	private _outOfBounds(blockWidth: number): boolean {
+	private _outOfBoundsWidth(blockWidth: number): boolean {
 		return this._getCoordinates().x + blockWidth > this.bounds.width;
+	}
+
+	/**
+	 * Проверяет вышло ли окно за пределы высоты графика
+	 * @param {number} blockHeight Высота окна
+	 * @private
+	 * @returns {boolean}
+	 */
+	private _outOfBoundsHeight(blockHeight: number): boolean {
+		return this._getCoordinates().y + blockHeight > this.bounds.height;
 	}
 
 	/**
 	 * Определяет размеры окна
 	 * @private
-	 * @returns {ISize} Размеры окна ({ width, height })
+	 * @returns {ISize} Размеры окна
 	 */
 	private _getWindowSize(): ISize {
 		const padding = this.padding as IPadding;
@@ -394,9 +422,9 @@ class BlockInfo extends Element implements IBlockInfoClass {
 	/**
 	 * Рисует треугольник
 	 * @private
-	 * @param {boolean} windowIsOutOfBounds Правило, говорящее, что окно вышло за границы диаграммы
+	 * @param {boolean} windowIsOutOfBoundsWidth Правило, согласно которому окно вышло за границы ширины графика
 	 */
-	private _drawTriangle(windowIsOutOfBounds: boolean): void {
+	private _drawTriangle(windowIsOutOfBoundsWidth: boolean): void {
 		const x: number = this.x;
 		const y: number = this.y;
 		const triangleData: ITriangleData = {
@@ -410,7 +438,7 @@ class BlockInfo extends Element implements IBlockInfoClass {
 			endY: y + this.triangleSizes.width,
 		};
 
-		if (windowIsOutOfBounds) {
+		if (windowIsOutOfBoundsWidth) {
 			const { x: newX, y: newY, lineTo, } = this._getNewPosTriangleIfWindowIsOutOfBounds(x, y);
 
 			Object.assign(triangleData, { x: newX, y: newY, lineTo, });
@@ -429,16 +457,21 @@ class BlockInfo extends Element implements IBlockInfoClass {
 
 	/**
 	 * Рисует окно
-	 * @param {boolean} windowIsOutOfBounds Правило, говорящее, что окно вышло за границы диаграммы
+	 * @param {boolean} windowIsOutOfBoundsWidth Правило, согласно которому окно вышло за границы ширины графика
+	 * @param {boolean} windowIsOutOfBoundsHeight Правило, согласно которому окно вышло за границы высоты графика
 	 * @param {number} width Ширина окна
 	 * @param {number} height Высота окна
 	 * @private
 	 */
-	private _drawWindow(windowIsOutOfBounds: boolean, width: number, height: number): void {
+	private _drawWindow(windowIsOutOfBoundsWidth: boolean, windowIsOutOfBoundsHeight: boolean, width: number, height: number): void {
 		const coordinates: IPos = this._getCoordinates();
 
-		if (windowIsOutOfBounds) {
+		if (windowIsOutOfBoundsWidth) {
 			coordinates.x -= (width + this.triangleSizes.height * 2);
+		}
+
+		if (windowIsOutOfBoundsHeight) {
+			coordinates.y -= height - this.triangleSizes.width;
 		}
 
 		new Rect(
@@ -455,14 +488,15 @@ class BlockInfo extends Element implements IBlockInfoClass {
 
 	// Рисует окно об активной группе
 	public init(): void {
-		const windowIsOutOfBounds: boolean = this._outOfBounds(this._getWindowSize().width);
 		const { width, height, } = this._getWindowSize();
+		const windowIsOutOfBoundsWidth: boolean = this._outOfBoundsWidth(width);
+		const windowIsOutOfBoundsHeight: boolean = this._outOfBoundsHeight(height);
 
-		this._drawTriangle(windowIsOutOfBounds);
-		this._drawWindow(windowIsOutOfBounds, width, height);
-		this._drawTitle(windowIsOutOfBounds, width);
-		this._drawGroups(windowIsOutOfBounds, width);
-		this._drawLines(windowIsOutOfBounds, width);
+		this._drawTriangle(windowIsOutOfBoundsWidth);
+		this._drawWindow(windowIsOutOfBoundsWidth, windowIsOutOfBoundsHeight, width, height);
+		this._drawTitle(windowIsOutOfBoundsWidth, windowIsOutOfBoundsHeight, width, height);
+		this._drawGroups(windowIsOutOfBoundsWidth, windowIsOutOfBoundsHeight, width, height);
+		this._drawLines(windowIsOutOfBoundsWidth, windowIsOutOfBoundsHeight, width, height);
 	}
 }
 
