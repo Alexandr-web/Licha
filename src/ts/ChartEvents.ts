@@ -80,13 +80,14 @@ class ChartEvents implements IChartEventsClass {
      * Рисует окно с информацией об активной группе
      * @param {MouseEvent} e Объект события
      * @param {number} endY Конечная область видимости окна с информацией об активной группе
-     * @param {Array<IPointX>} pointsX Содержит данные всех точек на оси абсцисс
+     * @param {Array<IPointX>} pointsX Содержит данные всех точек оси абсцисс
+     * @param {Array<IPointY>} pointsY Содержит данные всех точек оси ординат
      * @param {number} startY Начальная область видимости окна с информацией об активной группе
      * @param {ICanvasClass} canvas Экземпляр класса Canvas
      * @param {IBounds} bounds Содержит границы холста
      * @private
      */
-    private _mousemoveByCanvasHandler(e: MouseEvent, endY: number, pointsX: Array<IPointX>, startY: number, canvas: ICanvasClass, bounds: IBounds): void {
+    private _mousemoveByCanvasHandler(e: MouseEvent, endY: number, pointsX: Array<IPointX>, pointsY: Array<IPointY>, startY: number, canvas: ICanvasClass, bounds: IBounds): void {
         const mousePos: IPos = { x: e.offsetX, y: e.offsetY, };
         const { events = {}, } = this.blockInfo;
 
@@ -107,11 +108,23 @@ class ChartEvents implements IChartEventsClass {
                 this.update.call(this.lichaContext);
 
                 const [{ x, }]: Array<IPointX> = activeElements;
-                const { title, groups, background, padding, } = this.blockInfo;
+                const { title, groups, background, padding, showOnPoints, } = this.blockInfo;
                 const themeForWindow: IBlockInfoThemeWindow = (this.theme.blockInfo || {}).window;
                 const themeForLine: ILineTheme = this.theme.line;
                 const themeForTitle: IBlockInfoThemeTitle = (this.theme.blockInfo || {}).title;
                 const themeForGroup: IBlockInfoThemeGroup = (this.theme.blockInfo || {}).group;
+                const pos: IPos = {
+                    x,
+                    y: mousePos.y,
+                };
+
+                // Если включено правило, то заменяем позицию блока по оси ординат на самую наименьшую ординату точки
+                if (showOnPoints) {
+                    const arrayPointsY: Array<IPointY> = activeElements.map(({ value: pointXValue, }) => pointsY.find(({ value: pointYValue, }) => pointYValue === pointXValue));
+                    const findLowY: number = Math.min(...arrayPointsY.map(({ y, height, }) => y - height / 2));
+
+                    pos.y = findLowY;
+                }
 
                 new BlockInfo(
                     this.axisY.editValue,
@@ -121,8 +134,8 @@ class ChartEvents implements IChartEventsClass {
                     activeElements,
                     title,
                     groups,
-                    x,
-                    mousePos.y,
+                    pos.x,
+                    pos.y,
                     background,
                     canvas.ctx,
                     this.fontFamily,
@@ -161,7 +174,7 @@ class ChartEvents implements IChartEventsClass {
         const endY: number = lastPointYOrdinate - firstPointYHeight / 2;
         const startY: number = firstPointYOrdinate - lastPointYHeight / 2;
 
-        canvas.canvasElement.addEventListener(eventName, (e: MouseEvent) => this._mousemoveByCanvasHandler(e, endY, pointsX, startY, canvas, bounds));
+        canvas.canvasElement.addEventListener(eventName, (e: MouseEvent) => this._mousemoveByCanvasHandler(e, endY, pointsX, pointsY, startY, canvas, bounds));
     }
 
     /**
