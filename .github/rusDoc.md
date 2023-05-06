@@ -586,7 +586,7 @@ new Licha({
 
       | Описание | Пример | Тип |
       | ------------- | ------------- | ------------- |
-      | Вызывается при нажатии на элемент легенды | `legend: { events: { onClick() { console.log(this) }, }, }` | `function` |
+      | Вызывается при нажатии на элемент легенды | `legend: { events: { onClick() { console.log("Click!") }, }, }` | `function(item: object, hiddenItems: Array<object>, items: Array<object>, notHiddenItems: Array<object>)` |
 
   * #### `circle`
 
@@ -706,11 +706,17 @@ new Licha({
 
     ##### Принимаемые параметры
 
-    * ##### `onAimed`
+    * ##### `onFocus`
 
       | Описание | Пример | Тип |
       | ------------- | ------------- | ------------- |
-      | Вызывается при наведении на точку | `blockInfo: { events: { onAimed() { console.log(this) }, }, }` | `function` |
+      | Вызывается при наведении на точку | `blockInfo: { events: { onFocus() { console.log("Focus!") }, }, }` | `function(pos: object, elements: Array<object>)` |
+
+    * ##### `onHide`
+
+      | Описание | Пример | Тип |
+      | ------------- | ------------- | ------------- |
+      | Вызывается, когда блок исчезает | `blockInfo: { events: { onHide() { console.log("Hide!") }, }, }` | `function` |
 
   * #### `groups`
 

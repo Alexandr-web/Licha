@@ -26,6 +26,7 @@ class ChartEvents implements IChartEventsClass {
     public readonly lichaContext: ILichaClass;
     public readonly update: TUpdate;
     public readonly fontFamily: string;
+    public focusPosX: number | null;
 
     constructor(
         data: IData,
@@ -56,6 +57,8 @@ class ChartEvents implements IChartEventsClass {
         this.lichaContext = lichaContext;
         // Метод, который обновляет диаграмму
         this.update = update;
+        // Позиция, на которой был осуществлен фокус
+        this.focusPosX = null;
     }
 
     /**
@@ -131,8 +134,10 @@ class ChartEvents implements IChartEventsClass {
                 ).init();
 
                 // Вызываем функцию-обработчик для обработки события наведения на точку
-                if (isFunction(events.onAimed)) {
-                    events.onAimed.call({ ...mousePos, activeElements, });
+                if (isFunction(events.onFocus) && this.focusPosX !== x) {
+                    events.onFocus(mousePos, activeElements);
+
+                    this.focusPosX = x;
                 }
             }
         }
@@ -165,7 +170,15 @@ class ChartEvents implements IChartEventsClass {
      * @private
      */
     private _leavemouseFromCanvasAreaHandler(): void {
+        const { events = {}, } = this.blockInfo;
+
         this.update.call(this.lichaContext);
+
+        // Вызываем функцию-обработчик для обработки события скрытия блока с информацией об активном элементе
+        if (isFunction(events.onHide) && this.focusPosX !== null) {
+            this.focusPosX = null;
+            events.onHide();
+        }
     }
 
     /**
@@ -176,9 +189,16 @@ class ChartEvents implements IChartEventsClass {
      */
     private _leavetouchFormCanvasAreaHandler(e: TouchEvent): void {
         const target = e.target as HTMLElement;
+        const { events = {}, } = this.blockInfo;
 
         if (target.nodeName !== "CANVAS") {
             this.update.call(this.lichaContext);
+
+            // Вызываем функцию-обработчик для обработки события скрытия блока с информацией об активном элементе
+            if (isFunction(events.onHide) && this.focusPosX !== null) {
+                this.focusPosX = null;
+                events.onHide();
+            }
         }
     }
 
@@ -224,10 +244,10 @@ class ChartEvents implements IChartEventsClass {
 
             // Вызываем функцию-обработчик для обработки события клика на элемент легенды
             if (isFunction(events.onClick)) {
-                const hiddenLegendItems = legendItems.filter(({ group: g, }) => this.lichaContext.hideGroups.includes(g));
-                const notHiddenItems = legendItems.filter(({ group: g, }) => !this.lichaContext.hideGroups.includes(g));
+                const hiddenLegendItems: Array<IItemLegend> = legendItems.filter(({ group: g, }) => this.lichaContext.hideGroups.includes(g));
+                const notHiddenItems: Array<IItemLegend> = legendItems.filter(({ group: g, }) => !this.lichaContext.hideGroups.includes(g));
 
-                events.onClick.call({ element: findMatchLegendItem, hiddenElements: hiddenLegendItems, elements: legendItems, notHiddenElements: notHiddenItems, });
+                events.onClick(findMatchLegendItem, hiddenLegendItems, legendItems, notHiddenItems);
             }
 
             this.update.call(this.lichaContext);

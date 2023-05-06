@@ -3,7 +3,7 @@ import { IPos, IPadding, ISize, IBounds, IGaps, } from "./global";
 import { ILineTo, ILineTheme, } from "./line";
 import { IFont, } from "./text";
 import { IData, } from "./data";
-import { TEmptyObject, TEditName, TEditValue, TOnAimed, } from "../types/index";
+import { TEmptyObject, TEditName, TEditValue, TOnFocus, TOnHide, } from "../types/index";
 import { IElementClass, } from "./element";
 
 export interface IBlockInfoThemeWindow {
@@ -36,7 +36,8 @@ export interface IGroupsBlockInfo {
 }
 
 export interface IEventsBlockInfo {
-    onAimed?: TOnAimed;
+    onFocus?: TOnFocus;
+    onHide?: TOnHide;
 }
 
 export interface ITitleBlockInfo {

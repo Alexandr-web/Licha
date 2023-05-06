@@ -80,7 +80,7 @@ class BlockInfo extends Element implements IBlockInfoClass {
 		// Содержит данные групп
 		this.groupsData = groupsData;
 		// Ширина линий
-		this.groupLineWidth = 5;
+		this.groupLineWidth = 6;
 		// Размеры треугольника
 		this.triangleSizes = {
 			height: 10,

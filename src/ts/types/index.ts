@@ -1,3 +1,6 @@
+import { IPointX, } from "../interfaces/axisX";
+import { IPos, } from "../interfaces/global";
+import { IItemLegend, } from "../interfaces/legend";
 import { ILichaClass, } from "../interfaces/licha";
 
 export type TGridFormat = "vertical" | "horizontal" | "default";
@@ -17,5 +20,6 @@ export type TIgnoreNamesFunc = (name: string, index: number) => boolean;
 export type TIgnoreNames = Array<string | number> | TIgnoreNamesFunc;
 export type TMethodForCorrectText = (text: number | string) => number | string;
 export type TColorFunc = (opacity?: number) => string;
-export type TOnAimed = () => any;
-export type TOnClick = () => any;
+export type TOnFocus = (mousePos: IPos, activeElements: Array<IPointX>) => any;
+export type TOnClick = (findMatchLegendItem: IItemLegend, hiddenLegendItems: Array<IItemLegend>, legendItems: Array<IItemLegend>, notHiddenItems: Array<IItemLegend>) => any;
+export type TOnHide = () => any;

@@ -21,6 +21,7 @@ export interface IChartEventsClass {
     readonly lichaContext: ILichaClass;
     readonly update: TUpdate;
     readonly fontFamily: string;
+    focusPosX: number | null;
 
     windowResize(): void;
     mousemoveByCanvas(canvas: ICanvasClass, bounds: IBounds, { pointsX, pointsY, }, eventName: string): void;
