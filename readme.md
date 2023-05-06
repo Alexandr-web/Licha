@@ -588,7 +588,7 @@ Parameters passed to the Licha class constructor
 
       | Description | Example | Type |
       | ------------- | ------------- | ------------- |
-      | Called when the legend element is clicked | `legend: { events: { onClick() { console.log(this) }, }, }` | `function` |
+      | Called when the legend element is clicked | `legend: { events: { onClick() { console.log("Click!") }, }, }` | `function(item: object, hiddenItems: Array<object>, items: Array<object>, notHiddenItems: Array<object>)` |
 
   * #### `circle`
 
@@ -708,11 +708,17 @@ Parameters passed to the Licha class constructor
 
     ##### Accepted parameters
 
-    * ##### `onAimed`
+    * ##### `onFocus`
 
       | Description | Example | Type |
       | ------------- | ------------- | ------------- |
-      | Called when a block with information about the active element is hovered over a point | `blockInfo: { events: { onAimed() { console.log(this) }, }, }` | `function` |
+      | Called when a block with information about the active element is hovered over a point | `blockInfo: { events: { onFocus() { console.log("Focus!") }, }, }` | `function(pos: object, elements: Array<object>)` |
+
+    * ##### `onHide`
+
+      | Description | Example | Type |
+      | ------------- | ------------- | ------------- |
+      | Called when the block disappears | `blockInfo: { events: { onHide() { console.log("Hide!") }, }, }` | `function` |
 
   * #### `groups`
 
