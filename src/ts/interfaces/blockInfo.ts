@@ -57,6 +57,7 @@ export interface IBlockInfo {
     readonly title: ITitleBlockInfo;
     readonly padding?: IPadding | TEmptyObject | number;
     readonly events?: IEventsBlockInfo | TEmptyObject;
+    readonly showOnPoints?: boolean;
 }
 
 export interface IBlockInfoElementWithSizeGroup extends ISize {

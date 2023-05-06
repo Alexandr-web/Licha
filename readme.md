@@ -694,6 +694,12 @@ Parameters passed to the Licha class constructor
 
 #### Accepted parameters
 
+  * #### `showOnPoints`
+
+    | Description | Example | Type |
+    | ------------- | ------------- | ------------- |
+    | The rule according to which the position of the block along the y-axis will have the smallest y-ordinate among the points | `blockInfo: { showOnPoints: true, }` | `boolean` |
+
   * #### `background`
 
     | Description | Example | Type |
