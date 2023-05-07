@@ -14,7 +14,7 @@
 We will take this piece of code as a basis, we will only change the parameters of the getTheme method
 
 ```js
-import { Licha, Utils, } from "./Licha";
+import { Licha, Utils, } from "licha";
 
 const utils = new Utils();
 
