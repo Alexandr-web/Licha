@@ -17,7 +17,7 @@
 Как использовать этот инструмент?
 
 ```js
-import { Licha, Utils, } from "./dist/Licha.js";
+import { Licha, Utils, } from "licha";
 
 const utils = new Utils();
 

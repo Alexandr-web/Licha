@@ -12,7 +12,7 @@
 <img src="./w1.PNG" />
 
 ```js
-import { Licha, Utils, } from "./Licha";
+import { Licha, Utils, } from "licha";
 
 const utils = new Utils();
 
