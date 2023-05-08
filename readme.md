@@ -9,10 +9,19 @@
 
 [Русская версия](https://github.com/Alexandr-web/Licha/blob/master/.github/rusDoc.md)
 
+* [Install](https://github.com/Alexandr-web/Licha#install)
 * [Usage](https://github.com/Alexandr-web/Licha#usage)
 * [Params](https://github.com/Alexandr-web/Licha#params)
 * [Utils](https://github.com/Alexandr-web/Licha#utils)
 * [Works](https://github.com/Alexandr-web/Licha/blob/master/.github/works/readme.md)
+
+## Install
+
+Make sure you have [Node.js](https://nodejs.org/en) installed
+
+```
+$ npm i licha
+```
 
 ## Usage
 

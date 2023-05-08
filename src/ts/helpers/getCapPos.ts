@@ -2,6 +2,7 @@ import { ICapCoordinates, } from "../interfaces/cap";
 import { TCapType, } from "../types/index";
 
 /**
+ * Определяет позицию колпачка в зависимости от его типа
  * @param {TCapType} format Формат колпачка
  * @param {number} x Позиция колпачка по оси абсцисс
  * @param {number} y Позиция колпачка по оси ординат

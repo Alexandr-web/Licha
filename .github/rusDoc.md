@@ -7,10 +7,19 @@
   </p>
 </div>
 
+* [Установка](https://github.com/Alexandr-web/Licha/blob/master/.github/rusDoc.md#установка)
 * [Использование](https://github.com/Alexandr-web/Licha/blob/master/.github/rusDoc.md#использование)
 * [Параметры](https://github.com/Alexandr-web/Licha/blob/master/.github/rusDoc.md#параметры)
 * [Утилиты](https://github.com/Alexandr-web/Licha/blob/master/.github/rusDoc.md#утилиты)
 * [Работы](https://github.com/Alexandr-web/Licha/blob/master/.github/works/readme.md)
+
+## Установка
+
+Убедитесь, что у вас установлен [Node.js](https://nodejs.org/en)
+
+```
+$ npm i licha
+```
 
 ## Использование
 
