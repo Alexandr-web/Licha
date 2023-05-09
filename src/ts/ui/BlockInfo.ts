@@ -160,8 +160,8 @@ class BlockInfo extends Element implements IBlockInfoClass {
 	private _getTopGroupsDistance(elements: Array<IBlockInfoElementWithSizeGroup>): number {
 		const { gaps, } = this.groupsData;
 
-		return elements.reduce((acc: number, { height, }) => {
-			acc += height + gaps.bottom;
+		return elements.reduce((acc: number, { height, }, idx: number) => {
+			acc += height + ifTrueThenOrElse(idx < elements.length - 1, gaps.bottom, 0);
 
 			return acc;
 		}, 0);
@@ -301,17 +301,19 @@ class BlockInfo extends Element implements IBlockInfoClass {
 	 */
 	private _getGroupsCoordinates(index: number, windowIsOutOfBoundsHeight: boolean, blockHeight: number): IPos {
 		const { x, y, } = this._getCoordinates();
+		const triangleWidth: number = this.triangleSizes.width;
 		const { gaps = {}, } = this.titleData;
 		const padding = this.padding as IPadding;
-		const prevGroups: Array<IBlockInfoElementWithSize> = this._getElementsWithSize().filter((element: IBlockInfoElementWithSize, idx: number) => idx <= index);
-		const top: number = this._getTopGroupsDistance(prevGroups.map(({ group: g, }) => g));
+		const prevAndCurrentGroup: Array<IBlockInfoElementWithSize> = this._getElementsWithSize().filter((element: IBlockInfoElementWithSize, idx: number) => idx <= index);
+		const top: number = this._getTopGroupsDistance(prevAndCurrentGroup.map(({ group: g, }) => g));
+		const titleHeight: number = this._getTitleSize().height;
 		const pos: IPos = {
-			x: x + (padding.left || 0),
-			y: y + top + this._getTitleSize().height + (gaps.bottom || 0),
+			x: x + padding.left,
+			y: y + top + padding.top + titleHeight + (gaps.bottom || 0),
 		};
 
 		if (windowIsOutOfBoundsHeight) {
-			pos.y -= blockHeight - (gaps.bottom || 0);
+			pos.y = y + triangleWidth - top;
 		}
 
 		return pos;
@@ -396,7 +398,7 @@ class BlockInfo extends Element implements IBlockInfoClass {
 		const { gaps: gapsTitle, } = this.titleData;
 		const groups: Array<IBlockInfoElementWithSizeGroup> = this._getElementsWithSize().map(({ group, }) => group);
 		const width: number = this._getMaxContentWidth(this._getElementsWithSize()) + padding.right + padding.left + gapsGroups.right + this.groupLineWidth;
-		const height: number = this._getTitleSize().height + this._getTopGroupsDistance(groups) + gapsTitle.bottom + padding.bottom;
+		const height: number = this._getTitleSize().height + this._getTopGroupsDistance(groups) + gapsTitle.bottom + padding.bottom + padding.top;
 
 		return { width, height, };
 	}
