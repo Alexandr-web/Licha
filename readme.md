@@ -13,7 +13,6 @@
 * [Usage](https://github.com/Alexandr-web/Licha#usage)
 * [Params](https://github.com/Alexandr-web/Licha#params)
 * [Utils](https://github.com/Alexandr-web/Licha#utils)
-* [Update](https://github.com/Alexandr-web/Licha/blob/master/.github/rusDoc.md#update)
 * [Works](https://github.com/Alexandr-web/Licha/blob/master/.github/works/readme.md)
 
 ## Install
@@ -1025,79 +1024,6 @@ const utils = new Utils();
 
 // Accepts the name of the color and its transparency (default 1)
 new Licha({ background: utils.getColor("jet", 0.6) }).init();
-```
-
-## Update
-
-It is also possible to update chart data using the update method
-
-```js
-import { Licha, Utils, } from "./Licha";
-
-const utils = new Utils();
-const chart = new Licha({
-    selectorCanvas: "canvas",
-    theme: utils.getTheme(3, "light"),
-    fontFamily: "Poppins",
-    axisX: {
-        place: "top",
-        title: {
-            font: {
-                text: "Year",
-                weight: 400,
-            },
-            gaps: { top: 15, },
-        },
-    },
-    axisY: {
-        step: 3,
-        title: {
-            font: {
-                weight: 400,
-                text: "Percent",
-            },
-            gaps: { right: 15, },
-        },
-        editValue: (val) => val + "%",
-    },
-    grid: { line: { width: 0.5, }, },
-    data: {
-        "Group 1": {
-            data: [
-                { name: 2010, value: 30, },
-                { name: 2011, value: 40, },
-                { name: 2012, value: 50, },
-                { name: 2013, value: 50.5142, },
-                { name: 2014, value: 60, }
-            ],
-        },
-        "Group 2": {
-            data: [
-                { name: 2010, value: 0, },
-                { name: 2011, value: 141, },
-                { name: 2012, value: 88.321, },
-                { name: 2013, value: 42.321, },
-                { name: 2014, value: 45.321, }
-            ],
-        },
-    },
-}).init();
-
-// After a second and a half, the chart data will be updated.
-setTimeout(() => {
-    chart.update();
-}, 1500);
-
-// Adding a new group
-chart.data["Group 3"] = {
-    data: [
-        { name: 2010, value: 10, },
-        { name: 2011, value: 20, },
-        { name: 2012, value: 10, },
-        { name: 2013, value: 23.5142, },
-        { name: 2014, value: 72, }
-    ],
-};
 ```
 
 To develop this tool, I was inspired by [Chart.js](https://www.chartjs.org/) library
