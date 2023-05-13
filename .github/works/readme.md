@@ -822,12 +822,10 @@ new Licha({
         place: "right",
     },
     axisX: {
-        font: { showText: true, },
         sort: "more-less",
         ignoreNames: (n, i) => i % 2 !== 0,
     },
     axisY: {
-        font: { showText: true, },
         place: "right",
         step: 4,
         editValue: (val) => val + "%",

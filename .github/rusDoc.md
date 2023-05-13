@@ -1038,7 +1038,6 @@ const chart = new Licha({
     theme: utils.getTheme(3, "light"),
     fontFamily: "Poppins",
     axisX: {
-        font: { showText: true, },
         place: "top",
         title: {
             font: {
@@ -1049,7 +1048,6 @@ const chart = new Licha({
         },
     },
     axisY: {
-        font: { showText: true, },
         step: 3,
         title: {
             font: {

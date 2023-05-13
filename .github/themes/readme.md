@@ -55,7 +55,6 @@ window.addEventListener("load", () => {
             place: "center",
         },
         axisX: {
-            font: { showText: true, },
             ignoreNames: (n, i) => i % 2 !== 0,
             title: {
                 font: {
@@ -66,7 +65,6 @@ window.addEventListener("load", () => {
             },
         },
         axisY: {
-            font: { showText: true, },
             place: "right",
             step: 4,
             title: {

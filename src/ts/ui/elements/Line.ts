@@ -22,7 +22,7 @@ class Line extends Element implements ILineClass {
 		this.lineTo = lineTo;
 		// Ширина линии
 		this.width = width || 1;
-		// Правило, говорящее, что линия будет состоять из точек
+		// Правило, согласно которому линия будет состоять из точек
 		this.dotted = dotted;
 	}
 

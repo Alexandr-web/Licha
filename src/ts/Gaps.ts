@@ -56,7 +56,7 @@ class Gaps implements IGapsClass {
         // Высота и отступы заголовка оси абсцисс
         const { height: axisXTitleDataHeight = 0, gaps: axisXTitleDataGaps = {}, } = axisXTitleData as IAxisXTitleData;
         // Правило, при котором элементы оси абсцисс будут отображаться на диаграмме
-        const { showText: showXText = Boolean(Object.keys(axisX.font).length), } = axisXFont;
+        const { showText: showXText = true, } = axisXFont;
 
         // Максимальная ширина точки оси абсцисс
         const { width: maxWidthPointX, height: maxHeightPointX, } = getMaxSizePoint(axisXFont, axisX.getAxesData(this.data).names, this.ctx, this.fontFamily, getCorrectName.bind(axisX));
@@ -112,9 +112,9 @@ class Gaps implements IGapsClass {
         // Нижний отступ заголовка диаграммы
         const { bottom: chartTitleGapBottom = 0, } = chartTitleGaps as IGaps;
         // Жирность, размер элементов оси абсцисс и правило, при котором элементы оси абсцисс будут отображаться на диаграмме
-        const { weight = defaultWeight, size = defaultSize, showText: showXText = Boolean(Object.keys(axisXFont).length), } = axisXFont;
+        const { weight = defaultWeight, size = defaultSize, showText: showXText = true, } = axisXFont;
         // Правило, при котором элементы оси ординат будут отображаться на диаграмме
-        const { showText: showYText = Boolean(Object.keys(axisYFont).length), } = axisYFont;
+        const { showText: showYText = true, } = axisYFont;
         // Названия, которые не будут отображаться на диаграмме
         const ignoreNames: Array<string | number> = axisX.getIgnoreNames();
         // Все названия
@@ -199,7 +199,7 @@ class Gaps implements IGapsClass {
         // Заголовок и данные шрифта оси абсцисс
         const { title: axisXTitle = {}, font: axisXFont = {}, rotate: rotateAxisX, place: axisXPlace = defaultParams.axisX.place, } = axisX;
         // Правило, которое говорит, что текст на оси абсцисс будет отображен
-        const { showText: showTextAxisX = Boolean(Object.keys(axisXFont).length), } = axisXFont;
+        const { showText: showTextAxisX = true, } = axisXFont;
         // Данные шрифта и отступы заголовка оси абсцисс
         const { font: axisXTitleFont = {}, gaps: axisXTitleGaps = {}, } = axisXTitle as IAxisXTitle;
         // Размер, жирность и текст заголовка оси абсцисс
