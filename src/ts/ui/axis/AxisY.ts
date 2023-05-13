@@ -187,7 +187,7 @@ class AxisY extends Axis implements IAxisYClass {
 		const values: Array<number> = this.getAxesData(this.data).values;
 		const bounds: IBounds = this.bounds;
 		const { size: defaultSize, weight: defaultWeight, } = defaultParams.textFont;
-		const { size = defaultSize, showText = Boolean(Object.keys(this.font).length), weight = defaultWeight, color = this.themeForPoint.color, } = this.font;
+		const { size = defaultSize, showText = true, weight = defaultWeight, color = this.themeForPoint.color, } = this.font;
 		const firstValue: number = Math.ceil(values[0]);
 		const lastValue: number = Math.floor(values[values.length - 1]);
 		const minValue: number = Math.min(firstValue, lastValue);

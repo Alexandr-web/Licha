@@ -245,7 +245,7 @@ class AxisX extends Axis implements IAxisXClass {
 		const bounds: IBounds | TEmptyObject = this.bounds;
 		const ignoreNames: Array<string | number> = this.getIgnoreNames();
 		const { size: defaultSize, weight: defaultWeight, } = defaultParams.textFont;
-		const { size = defaultSize, weight = defaultWeight, showText = Boolean(Object.keys(this.font).length), color = this.themeForPoint.color, } = this.font;
+		const { size = defaultSize, weight = defaultWeight, showText = true, color = this.themeForPoint.color, } = this.font;
 
 		names.map((name: string | number, index: number) => {
 			// Начальная точка для отрисовки элементов

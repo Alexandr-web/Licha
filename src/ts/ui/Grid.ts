@@ -55,10 +55,10 @@ class Grid implements IGridClass {
 		this.placeAxisY = axisY.place || defaultParams.axisY.place;
 		// Правило, при котором текст оси абсцисс будет повернут на 90 градусов
 		this.rotateAxisX = axisX.rotate;
-		// Правило, говорящее, что точки на оси абсцисс будут отрисованы
-		this.showPointsX = ifTrueThenOrElse(isUndefined(axisX.font.showText), Boolean(Object.keys(axisX.font).length), axisX.font.showText);
-		// Правило, говорящее, что точки на оси ординат будут отрисованы
-		this.showPointsY = ifTrueThenOrElse(isUndefined(axisY.font.showText), Boolean(Object.keys(axisY.font).length), axisY.font.showText);
+		// Правило, согласно которому точки на оси абсцисс будут отрисованы
+		this.showPointsX = ifTrueThenOrElse(isUndefined(axisX.font.showText), true, axisX.font.showText);
+		// Правило, согласно которому точки на оси ординат будут отрисованы
+		this.showPointsY = ifTrueThenOrElse(isUndefined(axisY.font.showText), true, axisY.font.showText);
 		// Содержит данные линии
 		this.line = line;
 		// Формат сетки
