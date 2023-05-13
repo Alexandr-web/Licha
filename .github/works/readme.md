@@ -20,6 +20,7 @@ new Licha({
     theme: utils.getTheme(11),
     padding: 10,
     selectorCanvas: "canvas",
+    axisY: { font: { showText: false, }, },
     axisX: {
         font: { size: 14, },
         place: "top",
@@ -127,6 +128,8 @@ new Licha({
     padding: 10,
     selectorCanvas: "canvas",
     background: "#1F212E",
+    axisX: { font: { showText: false, }, },
+    axisY: { font: { showText: false, }, },
     line: {
         color: utils.getColor("limeGreen"),
         width: 1,
@@ -161,6 +164,8 @@ new Licha({
     padding: 10,
     selectorCanvas: "canvas",
     background: "#ffffff",
+    axisX: { font: { showText: false, }, },
+    axisY: { font: { showText: false, }, },
     cap: {
         format: "square",
         size: 7,
@@ -387,6 +392,7 @@ new Licha({
     padding: 10,
     selectorCanvas: "canvas",
     background: "white",
+    axisY: { font: { showText: false, }, },
     axisX: {
         font: {
             size: 14,
@@ -447,6 +453,7 @@ new Licha({
         rotate: true,
         place: "top",
     },
+    axisY: { font: { showText: false, }, },
     grid: { line: { width: 0.5, color: "#5E628B", }, },
     line: { width: 2, },
     cap: {
