@@ -11,6 +11,7 @@
 * [Использование](https://github.com/Alexandr-web/Licha/blob/master/.github/rusDoc.md#использование)
 * [Параметры](https://github.com/Alexandr-web/Licha/blob/master/.github/rusDoc.md#параметры)
 * [Утилиты](https://github.com/Alexandr-web/Licha/blob/master/.github/rusDoc.md#утилиты)
+* [Обновление данных](https://github.com/Alexandr-web/Licha/blob/master/.github/rusDoc.md#обновлениеданных)
 * [Работы](https://github.com/Alexandr-web/Licha/blob/master/.github/works/readme.md)
 
 ## Установка
@@ -1022,6 +1023,81 @@ const utils = new Utils();
 
 // Принимает название цвета и его прозрачность (По умолчанию 1)
 new Licha({ background: utils.getColor("jet", 0.6) }).init();
+```
+
+## Обновление данных
+
+Также возможно обновлять данные диаграммы, используя метод `update`
+
+```js
+import { Licha, Utils, } from "./Licha";
+
+const utils = new Utils();
+const chart = new Licha({
+    selectorCanvas: "canvas",
+    theme: utils.getTheme(3, "light"),
+    fontFamily: "Poppins",
+    axisX: {
+        font: { showText: true, },
+        place: "top",
+        title: {
+            font: {
+                text: "Год",
+                weight: 400,
+            },
+            gaps: { top: 15, },
+        },
+    },
+    axisY: {
+        font: { showText: true, },
+        step: 3,
+        title: {
+            font: {
+                weight: 400,
+                text: "Проценты",
+            },
+            gaps: { right: 15, },
+        },
+        editValue: (val) => val + "%",
+    },
+    grid: { line: { width: 0.5, }, },
+    data: {
+        "Group 1": {
+            data: [
+                { name: 2010, value: 30, },
+                { name: 2011, value: 40, },
+                { name: 2012, value: 50, },
+                { name: 2013, value: 50.5142, },
+                { name: 2014, value: 60, }
+            ],
+        },
+        "Group 2": {
+            data: [
+                { name: 2010, value: 0, },
+                { name: 2011, value: 141, },
+                { name: 2012, value: 88.321, },
+                { name: 2013, value: 42.321, },
+                { name: 2014, value: 45.321, }
+            ],
+        },
+    },
+}).init();
+
+// Через полторы секунды данные диаграммы будут обновлены
+setTimeout(() => {
+    chart.update();
+}, 1500);
+
+// Добавляем новую группу
+chart.data["Group 3"] = {
+    data: [
+        { name: 2010, value: 10, },
+        { name: 2011, value: 20, },
+        { name: 2012, value: 10, },
+        { name: 2013, value: 23.5142, },
+        { name: 2014, value: 72, }
+    ],
+};
 ```
 
 Разработкой данного инструмента вдохновлялся библиотекой [Chart.js](https://www.chartjs.org/)
