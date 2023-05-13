@@ -11,7 +11,7 @@
 * [Использование](https://github.com/Alexandr-web/Licha/blob/master/.github/rusDoc.md#использование)
 * [Параметры](https://github.com/Alexandr-web/Licha/blob/master/.github/rusDoc.md#параметры)
 * [Утилиты](https://github.com/Alexandr-web/Licha/blob/master/.github/rusDoc.md#утилиты)
-* [Обновление данных](https://github.com/Alexandr-web/Licha/blob/master/.github/rusDoc.md#обновлениеданных)
+* [Обновление данных](https://github.com/Alexandr-web/Licha/blob/master/.github/rusDoc.md#обновление-данных)
 * [Работы](https://github.com/Alexandr-web/Licha/blob/master/.github/works/readme.md)
 
 ## Установка
