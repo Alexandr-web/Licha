@@ -38,6 +38,8 @@ new Licha({
     selectorCanvas: "canvas",
     background: [utils.getColor("bistre"), utils.getColor("charcoal")],
     grid: { line: { width: 1, }, },
+    axisX: { font: { showText: false, }, },
+    axisY: { font: { showText: false, }, },
     data: {
         "Group 1": {
             data: [
