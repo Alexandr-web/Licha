@@ -60,7 +60,7 @@ new Licha({
 <img src="./w2.PNG" />
 
 ```js
-import { Licha, Utils, } from "./Licha";
+import { Licha, Utils, } from "licha";
 
 const utils = new Utils();
 
@@ -120,7 +120,7 @@ new Licha({
 <img src="./w3.PNG" />
 
 ```js
-import { Licha, Utils, } from "./Licha";
+import { Licha, Utils, } from "licha";
 
 const utils = new Utils();
 
@@ -156,7 +156,7 @@ new Licha({
 <img src="./w4.PNG" />
 
 ```js
-import { Licha, Utils, } from "./Licha";
+import { Licha, Utils, } from "licha";
 
 const utils = new Utils();
 
@@ -224,7 +224,7 @@ new Licha({
 <img src="./w5.PNG" />
 
 ```js
-import { Licha, Utils, } from "./Licha";
+import { Licha, Utils, } from "licha";
 
 const utils = new Utils();
 
@@ -284,7 +284,7 @@ new Licha({
 <img src="./w6.PNG" />
 
 ```js
-import { Licha, Utils, } from "./Licha";
+import { Licha, Utils, } from "licha";
 
 const utils = new Utils();
 
@@ -384,7 +384,7 @@ new Licha({
 <img src="./w7.PNG" />
 
 ```js
-import { Licha, Utils, } from "./Licha";
+import { Licha, Utils, } from "licha";
 
 const utils = new Utils();
 
@@ -430,7 +430,7 @@ new Licha({
 <img src="./w8.PNG" />
 
 ```js
-import { Licha, } from "./Licha";
+import { Licha, } from "licha";
 
 new Licha({
     padding: 10,
@@ -518,7 +518,7 @@ new Licha({
 <img src="./w9.PNG" />
 
 ```js
-import { Licha, } from "./Licha";
+import { Licha, } from "licha";
 
 new Licha({
     padding: 10,
@@ -578,7 +578,7 @@ new Licha({
 <img src="./w10.PNG" />
 
 ```js
-import { Licha, } from "./Licha";
+import { Licha, } from "licha";
 
 new Licha({
     padding: 10,
@@ -674,7 +674,7 @@ new Licha({
 <img src="./w11.PNG" />
 
 ```js
-import { Licha, Utils, } from "./Licha";
+import { Licha, Utils, } from "licha";
 
 const utils = new Utils();
 
@@ -797,7 +797,7 @@ new Licha({
 <img src="./w12.png" />
 
 ```js
-import { Licha, Utils, } from "./Licha";
+import { Licha, Utils, } from "licha";
 
 const utils = new Utils();
 
